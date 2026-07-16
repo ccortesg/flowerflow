@@ -118,6 +118,6 @@ class PublicLandingTest extends TestCase
         $this->get('/login')->assertOk()
             ->assertDontSee('ff-public-header', false)
             ->assertDontSee('ff-final-cta', false)
-            ->assertSee('ff-navbar', false);
+            ->assertSee('ff-login-header', false);
     }
 }

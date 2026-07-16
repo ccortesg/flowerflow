@@ -2,7 +2,7 @@
 
 ## Sistema visual Fase 01
 
-La primera implementación usó carbón `#17352f`, verde `#167c5b`, verde oscuro `#0b5c42`, lima `#d9ed55`, coral `#ff765f` y crema `#fffdf5`. El rediseño público V2 conserva esos tokens para las áreas autenticadas y encapsula en `.ff-public-landing` un sistema cálido derivado de las referencias aprobadas: naranja `#ed5b21`, naranja oscuro `#bd3f12`, crema `#fffaf4`, carbón `#2b221f` y superficies blancas. El naranja se usa como fondo con texto carbón o como botón con blanco sólo en su variante oscura/medida; el foco visible usa azul `#1e6fa8` y no depende del color de marca.
+La primera implementación usó carbón `#17352f`, verde `#167c5b`, verde oscuro `#0b5c42`, lima `#d9ed55`, coral `#ff765f` y crema `#fffdf5`. La landing V2 encapsula en `.ff-public-landing` un sistema cálido derivado de las referencias aprobadas: naranja `#ed5b21`, naranja oscuro `#bd3f12`, crema `#fffaf4`, carbón `#2b221f` y superficies blancas. El acceso y la experiencia participante adoptan la misma dirección mediante contextos separados `.ff-auth-login-page` y `.ff-participant-*`, sin sustituir estilos del panel administrativo. El naranja se usa como fondo con texto carbón o como botón con blanco sólo en su variante oscura/medida; el foco visible nunca depende sólo del color de marca.
 
 La V2 usa radio de 0.7–1.75rem según jerarquía, sombras suaves, tipografía `system-ui` y CTA naranja. Título, fecha, categorías, reglas y premio siempre viven en HTML. No se descarga ni enlaza material de Apple; el único dispositivo visible es un recorte local del cartel aprobado y no se utiliza como fuente jurídica.
 
@@ -22,7 +22,7 @@ La V2 usa radio de 0.7–1.75rem según jerarquía, sombras suaves, tipografía 
 
 ## Landing pública V2 implementada
 
-**Corte:** 2026-07-15. **Alcance:** sólo `/`, su header y footer públicos; login, registro y shell autenticado conservan el chrome anterior.
+**Corte:** 2026-07-15. **Alcance original:** sólo `/`, su header y footer públicos. El acceso y el shell participante se rediseñaron después en el milestone documentado a continuación; la landing conserva su encapsulado y no fue sustituida.
 
 - Contenedor central de máximo `73.75rem` (1180 px), flujo vertical natural y secciones con espacio consistente.
 - Header sticky con ambos logotipos, anchors reales, login, CTA condicionado por registro y menú móvil con Escape, cierre por selección y `aria-expanded`.
@@ -36,8 +36,22 @@ La V2 usa radio de 0.7–1.75rem según jerarquía, sombras suaves, tipografía 
 
 Pruebas automatizadas: `tests/Feature/PublicLandingTest.php` cubre contenido, assets, PDF, flag público, combinación registro/recepción, fallback, anchors/FAQ y preservación del chrome de otras rutas invitadas.
 
-**Fecha de corte:** 2026-07-15  
-**Estado:** baseline histórica más landing pública V2 implementada; los módulos futuros permanecen como diseño de experiencia
+## Acceso y experiencia participante rediseñados
+
+**Corte:** 2026-07-16. **Alcance:** `/login`, `/panel/login`, shell participante, `/perfil` y `/propuestas`; sin cambios de ruta, esquema o dependencia.
+
+- `/login` usa header de marca dual, tarjeta centrada, mostrar/ocultar accesible con `aria-pressed`, recuperación, registro por flag y banda informativa con texto jurídico/operativo aprobado. `/panel/login` conserva sus textos y omite registro y beneficios de participante.
+- El shell participante usa sidebar carbón de 272 px, ambos logotipos, sólo destinos reales, ayuda mediante `mailto`, cierre de sesión y offcanvas Bootstrap en móvil. El chip superior usa nombre, iniciales y rol derivados de la cuenta; no hay fotografía, campana o contador ficticio.
+- `/perfil` muestra `100%` únicamente cuando `ParticipantProfile::isComplete()` es verdadero. La mejora progresiva inicia en resumen con JavaScript y habilita edición real por sección; sin JavaScript el formulario completo permanece disponible. Correo readonly, teléfono E.164, edad, residencia y consentimientos conservan sus contratos backend.
+- Las preferencias opcionales se separan visualmente de las declaraciones obligatorias. El teléfono se identifica como registrado, nunca verificado, y la franja de privacidad enlaza al PDF vigente sin modificarlo.
+- `/propuestas` presenta sólo la relación del usuario autenticado, máximo configurable, estados `Borrador`/`Enviada`, folio real, última actualización convertida a `America/Hermosillo` y acciones reales. Nueva/editar respetan flag, límite y estado.
+- Búsqueda por título/categoría y filtro por estado funcionan completamente en cliente para un máximo de tres registros. Sin JavaScript todos permanecen visibles; el contador usa `aria-live` y el listado se transforma en tarjetas en tablet/móvil.
+- Remix/Iconify existente aporta iconografía local. Los únicos recursos de imagen son logotipos autorizados con dimensiones reservadas; no se añadieron emojis, imágenes remotas ni activos simulados.
+
+Pruebas automatizadas: `tests/Feature/ParticipantExperienceRedesignTest.php` cubre variantes de acceso, datos/completitud de perfil, aislamiento de propuestas, zona horaria, acciones, vacío, límite y feature flag. La validación visual comparativa queda registrada en `design-qa.md`.
+
+**Fecha de corte:** 2026-07-16
+**Estado:** baseline histórica más landing pública V2 y experiencia participante implementadas; los módulos futuros permanecen como diseño de experiencia
 **Etiquetas:** `DECISION` = confirmado; `ASSUMPTION` = dirección recomendada; `PENDING` = requiere insumo o aprobación.
 
 ## Limitación del insumo

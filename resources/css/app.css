@@ -1,4 +1,6 @@
+@import '../assets/vendor/fonts/iconify/iconify.css';
 @import './pages/public-landing.css';
+@import './pages/participant-experience.css';
 
 :root {
   --ff-ink: #17352f;
