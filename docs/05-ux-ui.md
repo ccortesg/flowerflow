@@ -50,6 +50,20 @@ Pruebas automatizadas: `tests/Feature/PublicLandingTest.php` cubre contenido, as
 
 Pruebas automatizadas: `tests/Feature/ParticipantExperienceRedesignTest.php` cubre variantes de acceso, datos/completitud de perfil, aislamiento de propuestas, zona horaria, acciones, vacío, límite y feature flag. La validación visual comparativa queda registrada en `design-qa.md`.
 
+## Inicio participante rediseñado
+
+**Corte:** 2026-07-16. **Alcance:** `/inicio` y el menú compartido del área participante; sin cambios al panel administrativo, rutas públicas, esquema o dependencias.
+
+- El hero usa el nombre completo del perfil y conserva `users.name` como fallback. La franja autorizada `hermosillo-atardecer.webp` y el logotipo vigente aparecen como decoración tenue; el contenido y los datos permanecen en HTML.
+- Tres tarjetas muestran conteo propio total, cantidad enviada, límite configurado y completitud real de `ParticipantProfile`. El CTA para crear sólo existe cuando recepción, convocatoria, perfil y límite lo permiten; en otro caso se ofrece perfil o un estado textual no accionable.
+- “Siguientes pasos” usa una lista ordenada. Sólo “Crea tu propuesta” se convierte en enlace cuando la acción está disponible; evaluación y resultados son información sin controles muertos.
+- “Información importante” usa cierre y categorías activas de base, ordenadas por `sort_order`, además del premio y gratuidad exactos de la mecánica vigente. Sin convocatoria activa, la pantalla conserva un estado informativo y no falla.
+- El menú participante de escritorio y offcanvas queda reducido a Inicio, Mis propuestas, Nueva propuesta condicional y Mi perfil. Documentos y preguntas frecuentes se retiraron sólo de ese parcial; `/documentos`, los tres PDF y la FAQ de la landing se conservan.
+- Las grillas pasan de tres a dos y una columna según contenido; el hero pierde altura fija en móvil, las acciones mantienen al menos 44 px y no hay overflow horizontal ni dependencia de hover.
+- Frente a la imagen se omiten deliberadamente la campana, contadores de notificación, nombre ficticio, “Participa en la evaluación”, laptop y enlaces inexistentes. No se añadieron páginas de evaluación o resultados.
+
+Pruebas automatizadas: `ParticipantExperienceRedesignTest` cubre datos dinámicos, aislamiento, CTA por perfil/límite/flag, ausencia de convocatoria, navegación compartida, redirección privilegiada y preservación pública/administrativa. La comparación visual se registra en `design-qa.md`.
+
 ## Asistente de nueva propuesta implementado
 
 **Corte:** 2026-07-16. **Alcance:** creación, edición y revisión del borrador con las rutas ya existentes; sin migraciones, dependencias ni activos nuevos.

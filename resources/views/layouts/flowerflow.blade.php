@@ -16,6 +16,7 @@
   $isLandingPage = request()->routeIs('landing');
   $isLoginPage = request()->routeIs('login', 'panel.login');
   $isParticipant = auth()->check() && ! auth()->user()->hasAnyRole(['admin', 'reviewer']);
+  $isDashboardPage = request()->routeIs('dashboard');
   $isProfilePage = request()->routeIs('profile.*');
   $isSubmissionsPage = request()->routeIs('submissions.index');
   $isSubmissionWizardPage = request()->routeIs('submissions.create', 'submissions.edit');
@@ -25,11 +26,31 @@
       && $routeSubmission->isDraft();
 
   if ($isParticipant) {
-      $displayName = trim(auth()->user()->profile?->first_names ?: auth()->user()->name);
+      $profileDisplayName = trim(implode(' ', array_filter([
+          trim((string) auth()->user()->profile?->first_names),
+          trim((string) auth()->user()->profile?->last_names),
+      ])));
+      $displayName = $profileDisplayName !== '' ? $profileDisplayName : trim((string) auth()->user()->name);
       $nameParts = collect(preg_split('/\s+/u', $displayName) ?: [])->filter()->take(2);
       $userInitials = $nameParts->map(fn ($part) => mb_strtoupper(mb_substr($part, 0, 1)))->implode('') ?: 'FF';
       $roleName = auth()->user()->getRoleNames()->first();
       $roleLabel = $roleName === 'participant' ? 'Participante' : 'Cuenta verificada';
+      $participantSubmissionLimit = (int) config('flowerflow.limits.submissions_per_user');
+      $participantSubmissionCount = isset($submissionCount)
+          ? (int) $submissionCount
+          : (isset($submissions) && $submissions instanceof \Illuminate\Support\Collection
+              ? $submissions->count()
+              : auth()->user()->submissions()->count());
+      $participantProfileComplete = auth()->user()->profile?->isComplete() ?? false;
+      $participantDeadline = \Carbon\CarbonImmutable::parse(
+          config('flowerflow.submissions_close_at'),
+          config('flowerflow.timezone')
+      );
+      $participantReceptionOpen = (bool) config('flowerflow.flags.submissions')
+          && now()->lessThanOrEqualTo($participantDeadline);
+      $participantHasActiveCompetition = isset($competition) && $competition instanceof \App\Models\Competition
+          ? (bool) $competition->active
+          : \App\Models\Competition::query()->where('active', true)->exists();
   }
 @endphp
 <body @class([
@@ -37,6 +58,7 @@
   'ff-auth-login-page' => $isLoginPage,
   'ff-panel-login-page' => request()->routeIs('panel.login'),
   'ff-participant-shell-page' => $isParticipant,
+  'ff-participant-dashboard-page' => $isParticipant && $isDashboardPage,
   'ff-participant-profile-page' => $isParticipant && $isProfilePage,
   'ff-participant-submissions-page' => $isParticipant && $isSubmissionsPage,
   'ff-participant-submission-wizard-page' => $isParticipant && $isSubmissionWizardPage,

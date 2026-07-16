@@ -4,8 +4,10 @@
   $isDraftSubmission = $routeSubmission instanceof \App\Models\Submission && $routeSubmission->isDraft();
   $isNewProposalActive = request()->routeIs('submissions.create', 'submissions.edit')
       || (request()->routeIs('submissions.show') && $isDraftSubmission);
-  $canCreateAnother = auth()->user()->submissions()->count() < (int) config('flowerflow.limits.submissions_per_user');
-  $showNewProposal = config('flowerflow.flags.submissions') && ($isNewProposalActive || $canCreateAnother);
+  $canCreateAnother = $participantSubmissionCount < $participantSubmissionLimit;
+  $showNewProposal = $participantReceptionOpen
+      && $participantHasActiveCompetition
+      && ($isNewProposalActive || ($participantProfileComplete && $canCreateAnother));
   $newProposalUrl = request()->routeIs('submissions.edit') && $isDraftSubmission
       ? route('submissions.edit', ['submission' => $routeSubmission, 'step' => request()->integer('step', 1)])
       : (request()->routeIs('submissions.show') && $isDraftSubmission
@@ -23,32 +25,24 @@
     <span class="ff-participant-brand-name">Hermosillo Florece 2026</span>
   </a>
 
-  <nav class="ff-participant-menu" aria-label="Menú participante">
-    <a href="{{ route('dashboard') }}" @if(request()->routeIs('dashboard')) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
+  <nav class="ff-participant-menu" aria-label="Menú participante" data-testid="participant-menu">
+    <a href="{{ route('dashboard') }}" data-participant-nav-item="dashboard" @if(request()->routeIs('dashboard')) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
       <span class="ri ri-home-5-line" aria-hidden="true"></span>
       <span>Inicio</span>
     </a>
-    <a href="{{ route('submissions.index') }}" @if(request()->routeIs('submissions.index') || (request()->routeIs('submissions.show') && ! $isDraftSubmission)) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
+    <a href="{{ route('submissions.index') }}" data-participant-nav-item="submissions" @if(request()->routeIs('submissions.index') || (request()->routeIs('submissions.show') && ! $isDraftSubmission)) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
       <span class="ri ri-file-list-3-line" aria-hidden="true"></span>
       <span>Mis propuestas</span>
     </a>
     @if($showNewProposal)
-      <a href="{{ $newProposalUrl }}" @if($isNewProposalActive) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
+      <a href="{{ $newProposalUrl }}" data-participant-nav-item="create" @if($isNewProposalActive) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
         <span class="ri ri-add-circle-line" aria-hidden="true"></span>
         <span>Nueva propuesta</span>
       </a>
     @endif
-    <a href="{{ route('profile.edit') }}" @if(request()->routeIs('profile.*')) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
+    <a href="{{ route('profile.edit') }}" data-participant-nav-item="profile" @if(request()->routeIs('profile.*')) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
       <span class="ri ri-user-3-line" aria-hidden="true"></span>
       <span>Mi perfil</span>
-    </a>
-    <a href="{{ route('documents') }}" @if(request()->routeIs('documents')) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
-      <span class="ri ri-file-text-line" aria-hidden="true"></span>
-      <span>Documentos</span>
-    </a>
-    <a href="{{ route('landing') }}#preguntas" @if($mobile) data-bs-dismiss="offcanvas" @endif>
-      <span class="ri ri-question-answer-line" aria-hidden="true"></span>
-      <span>Preguntas frecuentes</span>
     </a>
   </nav>
 

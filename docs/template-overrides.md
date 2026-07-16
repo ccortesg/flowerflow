@@ -153,6 +153,8 @@ Nota 2026-07-16 — acceso y participante: el rediseño vive en la capa propia (
 
 Nota 2026-07-16 — asistente de nueva propuesta: se añadió un stepper Blade semántico y comportamiento progresivo en `resources/js/app.js` sobre formularios e inputs nativos. No se incorporaron `bs-stepper`, Dropzone, FormValidation, SweetAlert ni solicitudes a URLs aportadas por usuarios. Quill ya existente continúa como editor y la persistencia/validación/autorización permanecen en Laravel. Los seis PNG de referencia se usaron sólo para comparación y no se copiaron al producto.
 
+Nota 2026-07-16 — inicio participante: `/inicio` reutiliza el shell, tokens, Remix/Iconify y la franja panorámica autorizada de la landing. El menú se redujo en el único parcial compartido para escritorio/offcanvas, sin ocultamiento CSS. No se editó core del proveedor, `public/build`, panel administrativo, landing, PDF ni rutas públicas; la captura de referencia no se copió ni incorporó al build.
+
 ## 7. Regla de actualización
 
 Antes de actualizar Materialize:
