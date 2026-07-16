@@ -27,6 +27,7 @@
 | F1-017 | AWS sólo documentación | docs 07, ADR 0002; cero acceso EC2 | revisión de diff/operación | VERIFIED |
 | F1-018 | Flags productivos seguros | config/env: registro/recepción/resultados false | flags test + config review | VERIFIED |
 | F1-019 | Acceso, perfil y propuestas con sistema visual participante responsive y datos reales | `layouts/flowerflow`, vistas `auth/login`, `participant/profile`, `submissions/index`, navegación compartida y CSS/JS encapsulados | `ParticipantExperienceRedesignTest`, suite, build, teclado/móvil y `design-qa.md` | IMPLEMENTED local; QA visual en curso |
+| F1-020 | Nueva propuesta como asistente real de cuatro pasos, persistencia por sección y revisión final | `SubmissionController`, `SubmissionDraftRequest`, vistas `submissions/form`/`show`, stepper, CSS/JS progresivo y config central | `SubmissionWizardTest`, `SubmissionFlowTest`, suite/build, permisos negativos y `design-qa.md` | IMPLEMENTED local; gates finales/QA visual en curso |
 
 ## Cobertura y limitación
 
@@ -77,10 +78,10 @@
 | ELG-003 | PENDING | Allowlist, vigencia y retención de comprobantes. | Upload/política de datos | Sólo formatos aprobados; retención ejecutable y documentada. | U + F archivos + OPS eliminación | MVP |
 | ELG-004 | DECISION | Revisión registra decisión, razones, actor, fecha y versión. | `/admin/elegibilidad/{id}` | Revisor decide sobre snapshot fijo y deja historial. | F + UAT | MVP |
 | ELG-005 | DECISION | Solicitud de corrección y reenvío controlado. | Seguimiento participante/admin | Participante ve motivo/plazo y genera nueva versión cuando aplica. | U estados + F + B | MVP |
-| SUB-001 | DECISION | Borrador y autosave recuperable. | Mis proyectos/wizard | Edición persiste sin envío y comunica guardado/error. | U + F + B reconexión | MVP |
-| SUB-002 | ASSUMPTION | Wizard por pasos con resumen final. | `/participante/proyectos/{id}/editar/*` | Usuario completa pasos, vuelve atrás y corrige desde resumen. | B móvil/escritorio + A11Y | MVP |
-| SUB-003 | PENDING | Reglas de equipo, máximo e invitaciones/aceptaciones. | Equipo/wizard | Permisos y envío reflejan regla aprobada. | U + F + B + SEC | MVP recortable |
-| SUB-004 | PENDING | Límites de proyectos, texto y anexos. | Wizard/configuración | Límites centralizados se validan en servidor y UI. | U límites + F boundary + B | MVP |
+| SUB-001 | DECISION Fase 01 | Borrador recuperable mediante guardado explícito; autoguardado queda pendiente de endpoint y control de concurrencia. | Mis propuestas/wizard | Edición persiste sin envío, advierte cambios locales y sólo confirma guardado tras respuesta real. | F por paso + B abandono/error | MVP |
+| SUB-002 | DECISION Fase 01 | Wizard de cuatro pasos con revisión final sobre rutas existentes. | `/propuestas/nueva/crear`, `/propuestas/{id}/editar?step=1|2|3`, detalle borrador | Usuario completa pasos, vuelve atrás, preserva otras secciones y corrige desde revisión. | `SubmissionWizardTest` + B móvil/escritorio + A11Y | MVP |
+| SUB-003 | DECISION Fase 01 / PENDING invitaciones | Participación individual o equipo de máximo cinco, representante incluida; invitaciones quedan fuera. | Equipo/wizard | Campos condicionales, declaración y límite se validan en servidor; sólo propietario edita. | F positivo/negativo + SEC | MVP recortable |
+| SUB-004 | DECISION Fase 01 | Máximo tres propuestas, una por categoría, límites de texto y cuota compartida de anexos centralizados. | Wizard/configuración | Servidor y UI usan configuración; archivos existentes y nuevos cuentan en la misma cuota. | `SubmissionWizardTest` límites/hosts/cuota + B | MVP |
 | SUB-005 | DECISION | Envío exige correo verificado, elegibilidad mínima y legal vigente. | Acción de envío | Cada precondición bloquea con mensaje accionable; todas juntas permiten. | U + F matriz + B | MVP |
 | SUB-006 | DECISION | Envío idempotente genera folio y versión inmutable. | Envío/acuse | Doble clic/reintento produce un envío y un folio; snapshot no cambia. | U + F concurrencia/idempotencia + B | MVP |
 | SUB-007 | DECISION | Corrección crea nueva versión, no sobrescribe enviada. | Versiones/seguimiento | Auditor puede reconstruir cada envío y versión revisada. | U + F + UAT | MVP |

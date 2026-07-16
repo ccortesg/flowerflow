@@ -1,4 +1,17 @@
-@php($mobile = $mobile ?? false)
+@php
+  $mobile = $mobile ?? false;
+  $routeSubmission = request()->route('submission');
+  $isDraftSubmission = $routeSubmission instanceof \App\Models\Submission && $routeSubmission->isDraft();
+  $isNewProposalActive = request()->routeIs('submissions.create', 'submissions.edit')
+      || (request()->routeIs('submissions.show') && $isDraftSubmission);
+  $canCreateAnother = auth()->user()->submissions()->count() < (int) config('flowerflow.limits.submissions_per_user');
+  $showNewProposal = config('flowerflow.flags.submissions') && ($isNewProposalActive || $canCreateAnother);
+  $newProposalUrl = request()->routeIs('submissions.edit') && $isDraftSubmission
+      ? route('submissions.edit', ['submission' => $routeSubmission, 'step' => request()->integer('step', 1)])
+      : (request()->routeIs('submissions.show') && $isDraftSubmission
+          ? route('submissions.show', $routeSubmission)
+          : route('submissions.create'));
+@endphp
 
 <div class="ff-participant-navigation">
   <a class="ff-participant-brand" href="{{ route('dashboard') }}" @if($mobile) data-bs-dismiss="offcanvas" @endif>
@@ -15,10 +28,16 @@
       <span class="ri ri-home-5-line" aria-hidden="true"></span>
       <span>Inicio</span>
     </a>
-    <a href="{{ route('submissions.index') }}" @if(request()->routeIs('submissions.*')) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
+    <a href="{{ route('submissions.index') }}" @if(request()->routeIs('submissions.index') || (request()->routeIs('submissions.show') && ! $isDraftSubmission)) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
       <span class="ri ri-file-list-3-line" aria-hidden="true"></span>
       <span>Mis propuestas</span>
     </a>
+    @if($showNewProposal)
+      <a href="{{ $newProposalUrl }}" @if($isNewProposalActive) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
+        <span class="ri ri-add-circle-line" aria-hidden="true"></span>
+        <span>Nueva propuesta</span>
+      </a>
+    @endif
     <a href="{{ route('profile.edit') }}" @if(request()->routeIs('profile.*')) aria-current="page" @endif @if($mobile) data-bs-dismiss="offcanvas" @endif>
       <span class="ri ri-user-3-line" aria-hidden="true"></span>
       <span>Mi perfil</span>

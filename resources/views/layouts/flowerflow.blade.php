@@ -18,6 +18,11 @@
   $isParticipant = auth()->check() && ! auth()->user()->hasAnyRole(['admin', 'reviewer']);
   $isProfilePage = request()->routeIs('profile.*');
   $isSubmissionsPage = request()->routeIs('submissions.index');
+  $isSubmissionWizardPage = request()->routeIs('submissions.create', 'submissions.edit');
+  $routeSubmission = request()->route('submission');
+  $isSubmissionReviewPage = request()->routeIs('submissions.show')
+      && $routeSubmission instanceof \App\Models\Submission
+      && $routeSubmission->isDraft();
 
   if ($isParticipant) {
       $displayName = trim(auth()->user()->profile?->first_names ?: auth()->user()->name);
@@ -34,6 +39,8 @@
   'ff-participant-shell-page' => $isParticipant,
   'ff-participant-profile-page' => $isParticipant && $isProfilePage,
   'ff-participant-submissions-page' => $isParticipant && $isSubmissionsPage,
+  'ff-participant-submission-wizard-page' => $isParticipant && $isSubmissionWizardPage,
+  'ff-participant-submission-review-page' => $isParticipant && $isSubmissionReviewPage,
 ])>
 <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
@@ -45,13 +52,17 @@
 
     <div class="ff-participant-workspace">
       <header class="ff-participant-mobile-header d-lg-none">
-        <a class="ff-participant-mobile-brand" href="{{ route('dashboard') }}" aria-label="Ir al inicio de Flower Flow">
-          <img src="{{ asset('assets/flowerflow/logo_flowerflow_transparente.png') }}" width="48" height="48" alt="">
-          <strong>Flower Flow</strong>
-        </a>
-        <button class="ff-icon-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#participantNavigation" aria-controls="participantNavigation" aria-label="Abrir menú">
+        <button class="ff-icon-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#participantNavigation" aria-controls="participantNavigation" aria-expanded="false" aria-label="Abrir menú">
           <span class="ri ri-menu-line" aria-hidden="true"></span>
         </button>
+        <a class="ff-participant-mobile-brand" href="{{ route('dashboard') }}" aria-label="Ir al inicio de Flower Flow">
+          <img src="{{ asset('assets/flowerflow/logo_flowerflow_transparente.png') }}" width="48" height="48" alt="">
+          <span aria-hidden="true"></span>
+          <img src="{{ asset('assets/flowerflow/logo_florecehermosillo_transparente.png') }}" width="48" height="48" alt="">
+        </a>
+        <div class="ff-user-chip ff-user-chip-mobile" aria-label="Cuenta de {{ $displayName }}; {{ $roleLabel }}">
+          <span class="ff-user-initials" aria-hidden="true">{{ $userInitials }}</span>
+        </div>
       </header>
 
       <div class="offcanvas offcanvas-start ff-participant-offcanvas" tabindex="-1" id="participantNavigation" aria-labelledby="participantNavigationLabel">

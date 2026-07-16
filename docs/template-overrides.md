@@ -11,7 +11,7 @@
 | `resources/views/layouts/flowerflow.blade.php` | Layout propio público/autenticado | Separar SEO/noindex, roles y navegación | browser público/participante/admin. |
 | `resources/views/{public,auth,participant,submissions,panel}` | Vistas propias sin datos demo | Dominio FlowerFlow | Feature + browser. |
 | `resources/css/pages/public-landing.css`, `resources/views/public/partials/landing-*` | Rediseño V2 encapsulado exclusivamente en `/` | Igualar referencias pública escritorio/móvil sin contaminar auth/panel | `PublicLandingTest`, build y `docs/design-qa.md`. |
-| `resources/css/pages/participant-experience.css`, `resources/views/partials/participant-navigation.blade.php` | Sistema visual encapsulado para acceso y participante | Igualar referencias de login, perfil y propuestas sin cambiar panel administrativo | `ParticipantExperienceRedesignTest`, build y `design-qa.md`. |
+| `resources/css/pages/participant-experience.css`, `resources/js/app.js`, `resources/views/partials/{participant-navigation,submission-wizard-stepper}.blade.php` | Sistema visual e interacción progresiva para acceso, participante y asistente de propuesta | Igualar referencias sin cambiar panel administrativo ni depender de un plugin de wizard/upload | `ParticipantExperienceRedesignTest`, `SubmissionWizardTest`, build y `design-qa.md`. |
 | `public/assets/flowerflow/landing/*.webp` | Recortes optimizados del cartel autorizado | Ciudad y premio sin recurso remoto ni texto jurídico rasterizado | SHA-256, dimensiones y revisión visual documentada en docs 05. |
 | `vite.config.js` | Sin cambio Fase 01 | Evitar poda riesgosa antes de baseline visual | Deuda: entradas globales grandes. |
 | `resources/assets/vendor/**` | Sin edición manual | Frontera vendorizada | `git diff` y build. |
@@ -150,6 +150,8 @@ Nota 2026-07-15: el campo de teléfono de registro/perfil usa un componente prop
 Nota 2026-07-15 — landing V2: se modificó únicamente la capa propia (`layouts/flowerflow.blade.php`, parciales públicos, CSS/JS de aplicación y assets autorizados). `resources/assets/vendor/**`, `_referencia/`, los layouts autenticados y el core de Materialize permanecen sin edición. Los paths públicos de los assets existentes no cambiaron.
 
 Nota 2026-07-16 — acceso y participante: el rediseño vive en la capa propia (`layouts/flowerflow.blade.php`, `participant-navigation.blade.php`, vistas de login/perfil/propuestas y `participant-experience.css`). Se reutiliza el archivo Iconify/Remix existente sin editarlo; `resources/assets/vendor/**`, `_referencia/`, el panel administrativo y `public/build` permanecen sin edición manual. No se añadieron dependencias ni cambiaron rutas públicas de assets.
+
+Nota 2026-07-16 — asistente de nueva propuesta: se añadió un stepper Blade semántico y comportamiento progresivo en `resources/js/app.js` sobre formularios e inputs nativos. No se incorporaron `bs-stepper`, Dropzone, FormValidation, SweetAlert ni solicitudes a URLs aportadas por usuarios. Quill ya existente continúa como editor y la persistencia/validación/autorización permanecen en Laravel. Los seis PNG de referencia se usaron sólo para comparación y no se copiaron al producto.
 
 ## 7. Regla de actualización
 

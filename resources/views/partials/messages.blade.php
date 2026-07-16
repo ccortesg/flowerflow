@@ -13,7 +13,7 @@
     <div class="alert alert-warning" role="alert">{{ session('warning') }}</div>
 @endif
 @if($errors->any())
-    <div class="alert alert-danger" role="alert" aria-live="assertive">
+    <div class="alert alert-danger" role="alert" aria-live="assertive" tabindex="-1" data-error-summary>
         <strong>No pudimos guardar la información.</strong>
         <p class="mb-0 mt-1">Revisa los campos indicados e inténtalo nuevamente:</p>
         <ul class="mb-0 mt-2">

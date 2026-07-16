@@ -35,16 +35,20 @@ class SubmissionController extends Controller
     public function create(): View
     {
         $this->assertProfileReady();
-        $competition = Competition::query()->with('categories')->where('active', true)->firstOrFail();
+        $competition = Competition::query()
+            ->with(['categories' => fn ($query) => $query->where('active', true)->orderBy('sort_order')])
+            ->where('active', true)
+            ->firstOrFail();
 
-        return view('submissions.form', ['submission' => new Submission, 'competition' => $competition]);
+        return view('submissions.form', [
+            'submission' => new Submission,
+            'competition' => $competition,
+            'wizardStep' => 1,
+        ]);
     }
 
-    public function store(
-        SubmissionDraftRequest $request,
-        SubmissionContentSanitizer $sanitizer,
-        SubmissionFileStore $fileStore
-    ): RedirectResponse {
+    public function store(SubmissionDraftRequest $request): RedirectResponse
+    {
         $this->assertProfileReady();
         $user = $request->user();
         if ($user->submissions()->count() >= config('flowerflow.limits.submissions_per_user')) {
@@ -52,33 +56,29 @@ class SubmissionController extends Controller
         }
 
         $competition = Competition::query()->where('active', true)->firstOrFail();
-        $category = Category::query()->where('public_id', $request->string('category_public_id'))->whereBelongsTo($competition)->firstOrFail();
+        $category = $this->categoryForCompetition($competition->id, $request->string('category_public_id')->toString());
 
         if ($user->submissions()->whereBelongsTo($competition)->whereBelongsTo($category)->exists()) {
             throw ValidationException::withMessages(['category_public_id' => 'Sólo puedes registrar una propuesta por categoría.']);
         }
 
-        $submission = DB::transaction(function () use ($request, $user, $competition, $category, $sanitizer, $fileStore): Submission {
+        $submission = DB::transaction(function () use ($request, $user, $competition, $category): Submission {
             $team = $this->syncTeam($request, null);
             $submission = $user->submissions()->create([
                 'competition_id' => $competition->id,
                 'category_id' => $category->id,
                 'team_id' => $team?->id,
-                ...$this->draftAttributes($request, $sanitizer),
+                ...$this->stepOneAttributes($request),
             ]);
-            $this->syncLinks($submission, $request);
-            foreach ($request->file('documents', []) as $file) {
-                $fileStore->store($submission, $file);
-            }
-            foreach ($request->file('editor_images', []) as $file) {
-                $fileStore->store($submission, $file, 'editor_image');
-            }
             $submission->events()->create(['actor_user_id' => $user->id, 'event' => 'draft_created', 'created_at' => now('UTC')]);
 
             return $submission;
         });
 
-        return redirect()->route('submissions.edit', $submission)->with('status', 'Borrador guardado.');
+        $nextStep = $request->wizardAction() === 'continue' ? 2 : 1;
+
+        return redirect()->route('submissions.edit', ['submission' => $submission, 'step' => $nextStep])
+            ->with('status', 'Borrador guardado.');
     }
 
     public function show(Submission $submission, SubmissionContentSanitizer $sanitizer): View
@@ -95,9 +95,12 @@ class SubmissionController extends Controller
     {
         $this->authorize('update', $submission);
         $submission->load(['team.members', 'files', 'externalLinks']);
-        $competition = Competition::query()->with('categories')->findOrFail($submission->competition_id);
+        $competition = Competition::query()
+            ->with(['categories' => fn ($query) => $query->where('active', true)->orderBy('sort_order')])
+            ->findOrFail($submission->competition_id);
+        $wizardStep = $this->requestedWizardStep();
 
-        return view('submissions.form', compact('submission', 'competition'));
+        return view('submissions.form', compact('submission', 'competition', 'wizardStep'));
     }
 
     public function update(
@@ -107,39 +110,58 @@ class SubmissionController extends Controller
         SubmissionFileStore $fileStore
     ): RedirectResponse {
         $this->authorize('update', $submission);
-        $category = Category::query()->where('public_id', $request->string('category_public_id'))
-            ->where('competition_id', $submission->competition_id)->firstOrFail();
+        $step = $request->wizardStep();
+        $category = null;
 
-        $duplicate = $request->user()->submissions()->where('competition_id', $submission->competition_id)
-            ->where('category_id', $category->id)->whereKeyNot($submission->id)->exists();
-        if ($duplicate) {
-            throw ValidationException::withMessages(['category_public_id' => 'Sólo puedes registrar una propuesta por categoría.']);
+        if ($step === 1) {
+            $category = $this->categoryForCompetition(
+                $submission->competition_id,
+                $request->string('category_public_id')->toString()
+            );
+
+            $duplicate = $request->user()->submissions()->where('competition_id', $submission->competition_id)
+                ->where('category_id', $category->id)->whereKeyNot($submission->id)->exists();
+            if ($duplicate) {
+                throw ValidationException::withMessages(['category_public_id' => 'Sólo puedes registrar una propuesta por categoría.']);
+            }
         }
 
-        DB::transaction(function () use ($request, $submission, $category, $sanitizer, $fileStore): void {
+        DB::transaction(function () use ($request, $submission, $category, $sanitizer, $fileStore, $step): void {
             $submission = Submission::query()->lockForUpdate()->findOrFail($submission->id);
-            $incomingBytes = collect([...$request->file('documents', []), ...$request->file('editor_images', [])])
-                ->sum(fn ($file) => $file->getSize());
-            if ($submission->files()->sum('size_bytes') + $incomingBytes > config('flowerflow.limits.upload_kib') * 1024) {
-                throw ValidationException::withMessages(['documents' => 'Los archivos de la propuesta no pueden superar 10 MiB acumulados.']);
+
+            if ($step === 1) {
+                $team = $this->syncTeam($request, $submission->team);
+                $submission->update([
+                    'category_id' => $category->id,
+                    'team_id' => $team?->id,
+                    ...$this->stepOneAttributes($request),
+                ]);
             }
-            $team = $this->syncTeam($request, $submission->team);
-            $submission->update([
-                'category_id' => $category->id,
-                'team_id' => $team?->id,
-                ...$this->draftAttributes($request, $sanitizer),
+
+            if ($step === 2) {
+                $submission->update($this->stepTwoAttributes($request, $sanitizer));
+            }
+
+            if ($step === 3) {
+                $this->storeStepThree($request, $submission, $fileStore);
+            }
+
+            $submission->events()->create([
+                'actor_user_id' => $request->user()->id,
+                'event' => 'draft_updated',
+                'metadata' => ['wizard_step' => $step, 'wizard_action' => $request->wizardAction()],
+                'created_at' => now('UTC'),
             ]);
-            $this->syncLinks($submission, $request);
-            foreach ($request->file('documents', []) as $file) {
-                $fileStore->store($submission, $file);
-            }
-            foreach ($request->file('editor_images', []) as $file) {
-                $fileStore->store($submission, $file, 'editor_image');
-            }
-            $submission->events()->create(['actor_user_id' => $request->user()->id, 'event' => 'draft_updated', 'created_at' => now('UTC')]);
         });
 
-        return back()->with('status', 'Cambios guardados.');
+        if ($request->wizardAction() === 'continue' && $step === 3) {
+            return redirect()->route('submissions.show', $submission)->with('status', 'Borrador guardado. Revisa todo antes de enviarlo.');
+        }
+
+        $nextStep = $request->wizardAction() === 'continue' ? min($step + 1, 3) : $step;
+
+        return redirect()->route('submissions.edit', ['submission' => $submission, 'step' => $nextStep])
+            ->with('status', 'Borrador guardado.');
     }
 
     public function submit(
@@ -210,16 +232,73 @@ class SubmissionController extends Controller
         }
     }
 
-    private function draftAttributes(SubmissionDraftRequest $request, SubmissionContentSanitizer $sanitizer): array
+    private function stepOneAttributes(SubmissionDraftRequest $request): array
     {
         return [
             'participation_type' => $request->string('participation_type'),
             'title' => $request->string('title')->trim(),
             'summary' => $request->string('summary')->trim(),
-            'description_delta' => json_decode($request->input('description_delta') ?: '{}', true, flags: JSON_THROW_ON_ERROR),
+        ];
+    }
+
+    private function stepTwoAttributes(
+        SubmissionDraftRequest $request,
+        SubmissionContentSanitizer $sanitizer
+    ): array {
+        return [
+            'description_delta' => $request->filled('description_delta')
+                ? json_decode($request->input('description_delta'), true, flags: JSON_THROW_ON_ERROR)
+                : null,
             'description_html' => $sanitizer->sanitize($request->string('description_html')->toString()),
             'description_text' => trim($request->string('description_text')->toString()),
         ];
+    }
+
+    private function storeStepThree(
+        SubmissionDraftRequest $request,
+        Submission $submission,
+        SubmissionFileStore $fileStore
+    ): void {
+        $incomingBytes = collect([...$request->file('documents', []), ...$request->file('editor_images', [])])
+            ->sum(fn ($file) => $file->getSize());
+
+        if ($submission->files()->sum('size_bytes') + $incomingBytes > config('flowerflow.limits.upload_kib') * 1024) {
+            throw ValidationException::withMessages([
+                'documents' => 'El total acumulado de documentos e imágenes no puede superar 10 MiB.',
+            ]);
+        }
+
+        $this->syncLinks($submission, $request);
+        foreach ($request->file('documents', []) as $file) {
+            $fileStore->store($submission, $file);
+        }
+        foreach ($request->file('editor_images', []) as $file) {
+            $fileStore->store($submission, $file, 'editor_image');
+        }
+    }
+
+    private function categoryForCompetition(int $competitionId, string $publicId): Category
+    {
+        $category = Category::query()
+            ->where('public_id', $publicId)
+            ->where('competition_id', $competitionId)
+            ->where('active', true)
+            ->first();
+
+        if (! $category) {
+            throw ValidationException::withMessages([
+                'category_public_id' => 'Selecciona una categoría activa de esta convocatoria.',
+            ]);
+        }
+
+        return $category;
+    }
+
+    private function requestedWizardStep(): int
+    {
+        $step = request()->integer('step', 1);
+
+        return in_array($step, [1, 2, 3], true) ? $step : 1;
     }
 
     private function syncTeam(SubmissionDraftRequest $request, ?Team $team): ?Team

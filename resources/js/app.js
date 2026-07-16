@@ -7,6 +7,7 @@ import 'quill/dist/quill.snow.css';
 document.querySelectorAll('[data-flowerflow-editor]').forEach(editor => {
   const quill = new Quill(editor, {
     theme: 'snow',
+    placeholder: editor.dataset.placeholder ?? '',
     modules: { toolbar: [['bold', 'italic', 'underline'], [{ header: [2, 3, false] }], [{ list: 'ordered' }, { list: 'bullet' }], ['link'], ['clean']] }
   });
   const toolbar = editor.previousElementSibling;
@@ -42,14 +43,28 @@ document.querySelectorAll('[data-flowerflow-editor]').forEach(editor => {
   const html = form.querySelector('[name="description_html"]');
   const delta = form.querySelector('[name="description_delta"]');
   const text = form.querySelector('[name="description_text"]');
+  const counter = form.querySelector('[data-editor-counter]');
+  const maximum = Number(editor.dataset.max ?? 0);
+  const editable = editor.querySelector('.ql-editor');
+  editable?.setAttribute('role', 'textbox');
+  editable?.setAttribute('aria-multiline', 'true');
   if (html?.value) quill.clipboard.dangerouslyPasteHTML(html.value);
   const sync = () => {
     html.value = quill.getSemanticHTML();
     delta.value = JSON.stringify(quill.getContents());
     text.value = quill.getText().trim();
+    const length = [...text.value].length;
+    if (counter) counter.textContent = `${length} / ${maximum}`;
+    const exceedsLimit = maximum > 0 && length > maximum;
+    editable?.setAttribute('aria-invalid', exceedsLimit ? 'true' : 'false');
+    editor.dataset.editorInvalid = exceedsLimit ? 'true' : 'false';
   };
-  quill.on('text-change', sync);
+  quill.on('text-change', () => {
+    sync();
+    form.dispatchEvent(new CustomEvent('flowerflow:changed'));
+  });
   form.addEventListener('submit', sync);
+  sync();
 });
 
 document.querySelectorAll('[data-confirm]').forEach(form => {
@@ -58,12 +73,262 @@ document.querySelectorAll('[data-confirm]').forEach(form => {
   });
 });
 
-document.querySelectorAll('[data-team-toggle]').forEach(select => {
-  const target = document.querySelector(select.dataset.teamToggle);
-  const update = () => target?.classList.toggle('d-none', select.value !== 'team');
-  select.addEventListener('change', update);
+document.querySelectorAll('[data-team-choice]').forEach(group => {
+  const target = group.closest('form')?.querySelector('[data-team-fields]');
+  const controls = [...(target?.querySelectorAll('input, select, textarea') ?? [])];
+  const update = () => {
+    const isTeam = group.querySelector('[name="participation_type"]:checked')?.value === 'team';
+    if (target) target.hidden = !isTeam;
+    controls.forEach(control => {
+      control.disabled = !isTeam;
+    });
+  };
+  group.addEventListener('change', update);
   update();
 });
+
+document.querySelectorAll('[data-character-counter]').forEach(counter => {
+  const input = document.getElementById(counter.dataset.for);
+  const maximum = Number(counter.dataset.max ?? input?.maxLength ?? 0);
+  const update = () => {
+    const length = [...(input?.value ?? '')].length;
+    counter.textContent = `${length} / ${maximum}`;
+  };
+  input?.addEventListener('input', update);
+  update();
+});
+
+document.querySelectorAll('[data-wizard-form]').forEach(form => {
+  const status = form.querySelector('[data-wizard-save-status]');
+  const quotaProgress = form.querySelector('[data-quota-progress]');
+  const quotaText = form.querySelector('[data-quota-text]');
+  const quotaError = form.querySelector('[data-quota-error]');
+  const existingBytes = Number(form.dataset.existingBytes ?? 0);
+  const quotaBytes = Number(form.dataset.quotaBytes ?? 0);
+  const pickers = [...form.querySelectorAll('[data-file-picker]')];
+  let dirty = false;
+  let submitting = false;
+
+  const setDirty = () => {
+    if (submitting || dirty) return;
+    dirty = true;
+    status?.classList.add('is-dirty');
+    if (status) status.textContent = 'Cambios sin guardar';
+  };
+
+  const selectedBytes = () => pickers.reduce((total, picker) => {
+    const input = picker.querySelector('[data-file-input]');
+    return total + [...(input?.files ?? [])].reduce((sum, file) => sum + file.size, 0);
+  }, 0);
+
+  const updateQuota = () => {
+    const total = existingBytes + selectedBytes();
+    if (quotaProgress) quotaProgress.value = Math.min(total, quotaBytes);
+    if (quotaText) quotaText.textContent = `${(total / 1048576).toFixed(2)} de ${(quotaBytes / 1048576).toFixed(0)} MiB`;
+    const exceeded = quotaBytes > 0 && total > quotaBytes;
+    if (quotaError) quotaError.hidden = !exceeded;
+    return !exceeded;
+  };
+
+  pickers.forEach(picker => {
+    const input = picker.querySelector('[data-file-input]');
+    const dropzone = picker.querySelector('[data-file-dropzone]');
+    const list = picker.querySelector('[data-file-list]');
+    const previewUrls = new Map();
+    let selectedFiles = [...(input?.files ?? [])];
+
+    const assignFiles = () => {
+      if (!input || typeof DataTransfer === 'undefined') return false;
+      const transfer = new DataTransfer();
+      selectedFiles.forEach(file => transfer.items.add(file));
+      input.files = transfer.files;
+      return true;
+    };
+
+    const fileKey = file => `${file.name}:${file.size}:${file.lastModified}`;
+    const formatSize = bytes => bytes >= 1048576
+      ? `${(bytes / 1048576).toFixed(2)} MiB`
+      : `${Math.max(1, Math.round(bytes / 1024))} KiB`;
+
+    const render = () => {
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
+      previewUrls.clear();
+      list?.replaceChildren();
+
+      selectedFiles.forEach((file, index) => {
+        const item = document.createElement('li');
+        if (picker.dataset.kind === 'image' && file.type.startsWith('image/')) {
+          const image = document.createElement('img');
+          const url = URL.createObjectURL(file);
+          previewUrls.set(fileKey(file), url);
+          image.src = url;
+          image.alt = '';
+          item.append(image);
+        } else {
+          const icon = document.createElement('span');
+          icon.className = 'ri ri-file-text-line';
+          icon.setAttribute('aria-hidden', 'true');
+          item.append(icon);
+        }
+
+        const details = document.createElement('span');
+        const name = document.createElement('strong');
+        const size = document.createElement('small');
+        name.textContent = file.name;
+        size.textContent = formatSize(file.size);
+        details.append(name, size);
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.setAttribute('aria-label', `Quitar ${file.name}`);
+        const removeIcon = document.createElement('span');
+        removeIcon.className = 'ri ri-delete-bin-line';
+        removeIcon.setAttribute('aria-hidden', 'true');
+        const removeText = document.createElement('span');
+        removeText.textContent = 'Quitar';
+        remove.append(removeIcon, removeText);
+        remove.addEventListener('click', () => {
+          selectedFiles.splice(index, 1);
+          assignFiles();
+          render();
+          updateQuota();
+          setDirty();
+        });
+
+        item.append(details, remove);
+        list?.append(item);
+      });
+    };
+
+    const addFiles = files => {
+      const known = new Set(selectedFiles.map(fileKey));
+      files.forEach(file => {
+        if (!known.has(fileKey(file))) {
+          selectedFiles.push(file);
+          known.add(fileKey(file));
+        }
+      });
+      if (!assignFiles()) return;
+      render();
+      updateQuota();
+      setDirty();
+    };
+
+    input?.addEventListener('change', () => {
+      selectedFiles = [...input.files];
+      render();
+      updateQuota();
+      setDirty();
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone?.addEventListener(eventName, event => {
+        event.preventDefault();
+        dropzone.classList.add('is-dragging');
+      });
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone?.addEventListener(eventName, event => {
+        event.preventDefault();
+        dropzone.classList.remove('is-dragging');
+      });
+    });
+    dropzone?.addEventListener('drop', event => addFiles([...event.dataTransfer.files]));
+    render();
+  });
+
+  const youtubeInput = form.querySelector('[data-youtube-url]');
+  const youtubePreview = form.querySelector('[data-youtube-preview]');
+
+  const youtubeId = value => {
+    if (!value) return null;
+    try {
+      const url = new URL(value);
+      const hosts = (youtubeInput?.dataset.allowedHosts ?? '').split(',').filter(Boolean);
+      if (url.protocol !== 'https:' || url.username || url.password || !hosts.includes(url.hostname.toLowerCase())) return null;
+      const id = url.hostname.toLowerCase() === 'youtu.be'
+        ? url.pathname.split('/').filter(Boolean)[0]
+        : (url.pathname === '/watch' ? url.searchParams.get('v') : url.pathname.match(/^\/(?:embed|shorts)\/([^/]+)/)?.[1]);
+      return id && /^[A-Za-z0-9_-]{11}$/.test(id) ? id : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const updateYoutubePreview = () => {
+    if (!youtubePreview) return;
+    youtubePreview.replaceChildren();
+    const value = youtubeInput?.value.trim() ?? '';
+    const id = youtubeId(value);
+    if (id) {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${id}`;
+      iframe.title = 'Vista previa del video de YouTube';
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allow = 'accelerometer; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      youtubePreview.append(iframe);
+      return;
+    }
+    const message = document.createElement('p');
+    message.textContent = value
+      ? 'Ingresa un enlace HTTPS válido de YouTube para mostrar la vista previa.'
+      : 'La vista previa aparecerá aquí cuando ingreses un enlace válido de YouTube.';
+    message.classList.toggle('is-invalid', Boolean(value));
+    youtubePreview.append(message);
+  };
+
+  youtubeInput?.addEventListener('input', updateYoutubePreview);
+  updateYoutubePreview();
+
+  form.addEventListener('input', setDirty);
+  form.addEventListener('change', setDirty);
+  form.addEventListener('flowerflow:changed', setDirty);
+  updateQuota();
+
+  form.closest('.ff-wizard-page')?.querySelectorAll('[data-wizard-navigation]').forEach(link => {
+    link.addEventListener('click', event => {
+      if (dirty && !window.confirm('Tienes cambios sin guardar. ¿Deseas salir de este paso?')) event.preventDefault();
+    });
+  });
+
+  form.addEventListener('submit', event => {
+    const action = event.submitter?.value ?? 'save';
+    const editor = form.querySelector('[data-flowerflow-editor]');
+    const description = form.querySelector('[name="description_text"]');
+    if (action === 'continue' && editor && !(description?.value.trim())) {
+      event.preventDefault();
+      window.alert('Escribe la descripción detallada antes de continuar.');
+      editor.querySelector('.ql-editor')?.focus();
+      return;
+    }
+    if (editor?.dataset.editorInvalid === 'true') {
+      event.preventDefault();
+      window.alert('La descripción supera el máximo de caracteres permitido.');
+      editor.querySelector('.ql-editor')?.focus();
+      return;
+    }
+    if (!updateQuota()) {
+      event.preventDefault();
+      quotaError?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    submitting = true;
+    dirty = false;
+    status?.classList.remove('is-dirty');
+    status?.classList.add('is-saving');
+    if (status) status.textContent = 'Guardando...';
+  });
+
+  window.addEventListener('beforeunload', event => {
+    if (!dirty || submitting) return;
+    event.preventDefault();
+    event.returnValue = '';
+  });
+});
+
+document.querySelector('[data-error-summary]')?.focus();
 
 const passwordRules = {
   length: value => [...value].length >= 8,

@@ -30,18 +30,32 @@ class SubmissionFlowTest extends TestCase
         $category = Category::first();
 
         $response = $this->actingAs($user)->post('/propuestas', [
+            'wizard_step' => 1,
+            'wizard_action' => 'continue',
             'category_public_id' => $category->public_id,
             'participation_type' => 'individual',
             'title' => 'Cruces seguros',
             'summary' => 'Una propuesta para mejorar cruces peatonales.',
-            'description_delta' => json_encode(['ops' => [['insert' => 'Detalle']]]),
-            'description_html' => '<p>Detalle seguro</p><script>alert(1)</script><a href="javascript:alert(2)">malo</a>',
-            'description_text' => 'Detalle seguro',
-            'documents' => [UploadedFile::fake()->createWithContent('propuesta.pdf', "%PDF-1.4\n1 0 obj\n<<>>\nendobj\n%%EOF")],
         ]);
 
         $submission = Submission::firstOrFail();
-        $response->assertRedirect(route('submissions.edit', $submission));
+        $response->assertRedirect(route('submissions.edit', ['submission' => $submission, 'step' => 2]));
+
+        $this->actingAs($user)->put(route('submissions.update', $submission), [
+            'wizard_step' => 2,
+            'wizard_action' => 'continue',
+            'description_delta' => json_encode(['ops' => [['insert' => 'Detalle']]]),
+            'description_html' => '<p>Detalle seguro</p><script>alert(1)</script><a href="javascript:alert(2)">malo</a>',
+            'description_text' => 'Detalle seguro',
+        ])->assertRedirect(route('submissions.edit', ['submission' => $submission, 'step' => 3]));
+
+        $this->actingAs($user)->put(route('submissions.update', $submission), [
+            'wizard_step' => 3,
+            'wizard_action' => 'continue',
+            'documents' => [UploadedFile::fake()->createWithContent('propuesta.pdf', "%PDF-1.4\n1 0 obj\n<<>>\nendobj\n%%EOF")],
+        ])->assertRedirect(route('submissions.show', $submission));
+
+        $submission->refresh();
         $this->assertStringNotContainsString('<script', $submission->description_html);
         $this->assertStringNotContainsString('javascript:', $submission->description_html);
         $this->assertStringStartsWith('submissions/'.$submission->public_id.'/', $submission->files->first()->path);
@@ -58,7 +72,7 @@ class SubmissionFlowTest extends TestCase
         $this->assertSame('submitted', $submission->status);
         $this->assertSame('HMO26-'.str_pad((string) $submission->id, 6, '0', STR_PAD_LEFT), $submission->folio);
         $this->assertDatabaseCount('submission_versions', 1);
-        $this->assertDatabaseCount('submission_events', 2);
+        $this->assertDatabaseCount('submission_events', 4);
         $this->assertDatabaseCount('legal_acceptances', 3);
         Mail::assertQueued(SubmissionReceived::class, 1);
 
@@ -76,19 +90,24 @@ class SubmissionFlowTest extends TestCase
     {
         $user = $this->participant();
         $category = Category::first();
-        $base = [
+        $this->actingAs($user)->post('/propuestas', [
+            'wizard_step' => 1,
+            'wizard_action' => 'continue',
             'category_public_id' => $category->public_id, 'participation_type' => 'individual',
             'title' => 'Propuesta', 'summary' => 'Resumen válido',
-            'description_delta' => '{}', 'description_html' => '<p>Detalle</p>', 'description_text' => 'Detalle',
-        ];
+        ])->assertRedirect();
+        $submission = Submission::firstOrFail();
 
-        $this->actingAs($user)->post('/propuestas', [...$base,
+        $this->actingAs($user)->put(route('submissions.update', $submission), [
+            'wizard_step' => 3,
+            'wizard_action' => 'save',
             'youtube_url' => 'https://example.com/video',
             'public_folder_url' => 'https://127.0.0.1/private',
             'documents' => [UploadedFile::fake()->create('grande.pdf', 10241, 'application/pdf')],
         ])->assertSessionHasErrors(['youtube_url', 'public_folder_url', 'documents']);
 
-        $this->assertDatabaseCount('submissions', 0);
+        $this->assertDatabaseCount('submission_files', 0);
+        $this->assertDatabaseCount('submission_external_links', 0);
     }
 
     public function test_one_submission_per_category_and_three_total(): void
@@ -104,6 +123,8 @@ class SubmissionFlowTest extends TestCase
         }
 
         $this->actingAs($user)->post('/propuestas', [
+            'wizard_step' => 1,
+            'wizard_action' => 'continue',
             'category_public_id' => $categories->first()->public_id,
             'participation_type' => 'individual',
             'title' => 'Una cuarta',

@@ -59,9 +59,11 @@ class SecurityAndFlagsTest extends TestCase
 
     public function test_security_headers_are_applied(): void
     {
+        $contentSecurityPolicy = "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; frame-src https://www.youtube-nocookie.com";
+
         $this->get('/')->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertHeader('X-Frame-Options', 'DENY')
-            ->assertHeader('Content-Security-Policy');
+            ->assertHeader('Content-Security-Policy', $contentSecurityPolicy);
     }
 
     public function test_utc_submission_time_is_presented_in_hermosillo(): void
