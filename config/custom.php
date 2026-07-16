@@ -13,8 +13,8 @@ return [
         'mySkins' => 'default', // Skin options: 'default', 'bordered'
         'hasSemiDark' => false, // Semi-dark mode: true/false (false by default)
         'myRTLMode' => false, // Right-to-left (RTL) layout: true/false (false by default)
-        'hasCustomizer' => true, // Enable/Disable customizer: true (default) or false
-        'displayCustomizer' => true, // Display customizer UI: true (default) or false
+        'hasCustomizer' => false, // Product UI is fixed for this phase.
+        'displayCustomizer' => false,
         'contentLayout' => 'compact', // Layout size: 'compact' (container-xxl) or 'wide' (container-fluid)
         'navbarType' => 'sticky', // Navbar type: 'sticky', 'static', or 'hidden' (only for vertical layout)
         'footerFixed' => false, // Footer fixed position: true/false (false by default)

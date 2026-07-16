@@ -6,6 +6,13 @@
 /storage/*.key
 /storage/pail
 /vendor
+/bootstrap/cache/*.php
+
+# Local-only Pixinvent reference and generated review artifacts.
+/_referencia/
+/tmp/
+/.playwright-cli/
+/output/playwright/
 
 /.env
 /.env.*

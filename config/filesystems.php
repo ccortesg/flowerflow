@@ -33,7 +33,8 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // Private submissions are delivered only by policy-protected controllers.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],

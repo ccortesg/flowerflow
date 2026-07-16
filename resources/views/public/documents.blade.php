@@ -1,0 +1,5 @@
+@extends('layouts.flowerflow')
+@section('title', 'Documentos')
+@section('content')
+<section class="ff-section"><div class="container"><p class="ff-kicker">Versión jurídica vigente</p><h1>Documentos de Hermosillo Florece 2026</h1><p class="lead">Consulta y conserva estos archivos PDF sin alteraciones.</p><div class="list-group mt-4"><a class="list-group-item list-group-item-action p-4" href="{{ asset('documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf') }}"><strong>Mecánica y convocatoria</strong><br><small>PDF · versión 1.0</small></a><a class="list-group-item list-group-item-action p-4" href="{{ asset('documentos/2026/02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026.pdf') }}"><strong>Términos y condiciones</strong><br><small>PDF · versión 1.0</small></a><a class="list-group-item list-group-item-action p-4" href="{{ asset('documentos/2026/03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026.pdf') }}"><strong>Aviso de privacidad integral</strong><br><small>PDF · versión 1.0</small></a></div></div></section>
+@endsection
