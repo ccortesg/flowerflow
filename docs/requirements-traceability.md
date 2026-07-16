@@ -11,7 +11,7 @@
 | F1-001 | Reconciliar docs/ExecPlan sin borrar historia | `AGENTS.md`, ExecPlan, docs 00–14, ADR 0005/0006 | Revisión documental | IMPLEMENTED |
 | F1-002 | Base reproducible Laravel/MySQL/Yarn | `composer.lock`, `yarn.lock`, `.env.example`, docs 11 | Composer validate/audit, Yarn frozen/build y migración/seed MySQL | VERIFIED local |
 | F1-003 | Activos autorizados/hashes | `formatos/`, `imagen/`, script y `public/documentos/2026` | SHA-256 exacto y revisión 14 páginas | VERIFIED |
-| F1-004 | Landing con contenido crítico/CTA por estado | landing Blade, flags/config, assets propios | `PublicLandingTest` + browser desktop/móvil | VERIFIED local |
+| F1-004 | Landing V2 con contenido crítico, CTA por estado y responsive encapsulado | `public/landing.blade.php`, parciales `public/partials/landing-*`, `resources/css/pages/public-landing.css`, flags y derivados locales | `PublicLandingTest`: 6 pruebas/61 aserciones + build; browser desktop/móvil registrado en `docs/design-qa.md` | VERIFIED automatizado; QA visual en curso |
 | F1-005 | Auth, correo verificado, reset y 2FA | Fortify 1.37.2, vistas propias y página `/correo-verificado` | rutas, login/logout browser, signed verify y mail fake | VERIFIED local; UAT correo pendiente |
 | F1-006 | RBAC/panel sólo admin | Permission 8.3.0, middleware y Policy | `PanelAuthorizationTest`, IDOR y browser admin | VERIFIED local |
 | F1-007 | Registro/perfil 18+/residencia/E.164/WhatsApp | `CreateNewUser`, profile model/request/controller/view y teléfono México `+52` | `RegistrationProfileFlowTest`, `ProfileEligibilityTest` | VERIFIED local |

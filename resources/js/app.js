@@ -170,6 +170,51 @@ document.querySelectorAll('[data-phone-number]').forEach(component => {
   update();
 });
 
+document.querySelectorAll('[data-public-header]').forEach(header => {
+  const toggle = header.querySelector('[data-public-menu-toggle]');
+  const navigation = header.querySelector('[data-public-nav]');
+
+  if (!toggle || !navigation) return;
+
+  const closeMenu = ({ restoreFocus = false } = {}) => {
+    navigation.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menú');
+    document.body.classList.remove('ff-public-menu-open');
+    if (restoreFocus) toggle.focus();
+  };
+
+  const openMenu = () => {
+    navigation.classList.add('is-open');
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', 'Cerrar menú');
+    document.body.classList.add('ff-public-menu-open');
+  };
+
+  toggle.addEventListener('click', () => {
+    if (toggle.getAttribute('aria-expanded') === 'true') closeMenu();
+    else openMenu();
+  });
+
+  navigation.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => closeMenu());
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      closeMenu({ restoreFocus: true });
+    }
+  });
+
+  document.addEventListener('click', event => {
+    if (toggle.getAttribute('aria-expanded') === 'true' && !header.contains(event.target)) closeMenu();
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.matchMedia('(min-width: 62rem)').matches) closeMenu();
+  });
+});
+
 import.meta.glob([
   '../assets/img/**',
   // '../assets/json/**',
