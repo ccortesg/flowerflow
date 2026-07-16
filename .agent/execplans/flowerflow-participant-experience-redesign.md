@@ -3,7 +3,7 @@
 **Estado:** In progress
 
 **Creado:** 2026-07-16 America/Hermosillo  
-**Milestone:** rediseño local de inicio de sesión, perfil, propuestas y asistente de nueva propuesta
+**Milestone:** rediseño local de inicio de sesión, inicio participante, perfil, propuestas y asistente de nueva propuesta
 
 ## Propósito y resultado observable
 
@@ -15,6 +15,7 @@ Incluido:
 
 - `/login` y su variante `/panel/login`;
 - shell autenticado compartido para participantes, incluida su adaptación móvil;
+- `/inicio`, con saludo real, resumen de propuestas/perfil, guía de participación e información de la convocatoria activa;
 - `/perfil`, con resumen real de completitud y edición progresiva mediante `PUT /perfil`;
 - `/propuestas`, con datos reales, máximo configurado, acciones autorizadas, búsqueda y filtro progresivos;
 - `/propuestas/nueva/crear`, `/propuestas/{submission}/editar?step=1|2|3` y la revisión del borrador en `/propuestas/{submission}`, con persistencia explícita por paso;
@@ -61,6 +62,7 @@ Decisiones y supuestos:
 7. Ejecutar suite, Pint acotado, Composer, build, rutas, vistas y revisión del diff.
 8. Verificar en navegador escritorio/móvil/teclado y cerrar `design-qa.md` contra las referencias.
 9. Rediseñar la nueva propuesta como asistente real de cuatro pasos, cubrir preservación/validación por paso, archivos/enlaces y revisión final, actualizar documentación y repetir todos los gates.
+10. Rediseñar `/inicio` con datos reales y simplificar el menú participante compartido, preservando documentos/FAQ públicos y el panel administrativo.
 
 ## Validación
 
@@ -81,6 +83,8 @@ Criterios:
 - `/perfil` usa `isComplete()`, conserva `old()`, errores, nombres de campos y endpoint;
 - `/propuestas` sólo muestra propuestas de la persona autenticada, estados reales, fecha en Hermosillo y acciones autorizadas;
 - el CTA se oculta al deshabilitar recepción o alcanzar el máximo;
+- `/inicio` muestra nombre completo con fallback, conteos propios, perfil real, límite configurado, cierre/categorías de la convocatoria activa y un CTA que además exige perfil completo;
+- el menú participante de escritorio y móvil contiene sólo Inicio, Mis propuestas, Nueva propuesta condicional y Mi perfil; `/documentos`, sus PDF y la FAQ pública permanecen intactos;
 - cada paso guarda únicamente su sección, volver atrás no borra otras secciones y continuar conduce 1 → 2 → 3 → revisión;
 - la descripción sólo es obligatoria al continuar, los documentos sólo al finalizar y la suma de archivos existentes/nuevos respeta la cuota configurada;
 - enlaces con hosts ajenos o credenciales integradas se rechazan y la vista previa usa `youtube-nocookie.com` sin solicitudes de servidor;
@@ -107,6 +111,10 @@ No se desplegará en este milestone. Un despliegue futuro requerirá el flujo pr
 - [x] 2026-07-16 02:39 MST — Suite completa verde inicial: 44 pruebas/355 aserciones; Pint acotado y build Vite con Yarn 1.22.22 verdes.
 - [!] 2026-07-16 02:42 MST — QA visual del asistente bloqueado: servidor y cuenta sintética funcionaron, pero el navegador integrado falló al inicializar (`Cannot redefine property: process`) antes de crear captura. La cuenta fue eliminada y el servidor exclusivo se detuvo; Playwright CLI requiere autorización.
 - [x] 2026-07-16 02:55 MST — Cobertura obligatoria completada y suite final verde: 45 pruebas/393 aserciones; CSP permite únicamente previews `blob:` locales y frames de `youtube-nocookie.com`.
+- [x] 2026-07-16 07:20 MST — Referencia de `/inicio`, prompt, reglas, ADR, documentación y PDF jurídicos inspeccionados; baseline verde: 45 pruebas/393 aserciones, Composer y Vite. Pint global conserva la deuda previa aprobada.
+- [x] 2026-07-16 07:33 MST — Dashboard dinámico y menú participante reducido implementados sin migraciones, dependencias ni activos nuevos; prueba enfocada verde: 9 pruebas/170 aserciones.
+- [x] 2026-07-16 07:39 MST — Gates automatizados finales verdes: 50 pruebas/500 aserciones, Pint PHP acotado, Composer, caché de vistas y build Vite con Yarn 1.22.22.
+- [!] 2026-07-16 07:41 MST — QA visual de `/inicio` bloqueado: el navegador integrado falló durante la inicialización (`Cannot redefine property: process`) antes de abrir una pestaña. La cuenta sintética fue eliminada y el servidor exclusivo se detuvo; `design-qa.md` conserva `final result: blocked` y Playwright CLI requiere autorización expresa.
 
 ## Hallazgos y pendientes
 
@@ -115,4 +123,5 @@ No se desplegará en este milestone. Un despliegue futuro requerirá el flujo pr
 - La suite pasó con Pint acotado; el fallo global preexistente no fue modificado ni ocultado.
 - El requisito histórico `SUB-001` mencionaba autoguardado como aspiración de MVP; para esta Fase 01 se resuelve como guardado explícito y advertencia local de cambios, sin simular persistencia automática.
 - El formulario monolítico anterior mezclaba campos, archivos y enlaces en un solo `POST`; el asistente exige `wizard_step`/`wizard_action` y limita cada actualización a una sección para evitar sobreescrituras laterales.
+- La referencia de `/inicio` contenía una campana, textos de evaluación participativa y un premio incorrecto; se omitieron deliberadamente y se usaron sólo rutas, estados, premio y datos aprobados.
 - `PENDING`: la aprobación para despliegue y UAT productivo no forma parte de este trabajo local.
