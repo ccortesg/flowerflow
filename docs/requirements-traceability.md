@@ -1,6 +1,6 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
-**Fecha de corte:** 2026-07-15  
+**Fecha de corte:** 2026-07-16
 **Estado histórico:** baseline de planificación. La tabla Fase 01 siguiente registra implementación actual.
 **Convenciones:** `DECISION` confirmado; `ASSUMPTION` supuesto de trabajo; `PENDING` requiere información/aprobación.
 
@@ -26,9 +26,9 @@
 | F1-016 | Correo post-commit, sin adjuntos | queued Mailable y config central | Mail fake | VERIFIED local; SMTP pendiente |
 | F1-017 | AWS sólo documentación | docs 07, ADR 0002; cero acceso EC2 | revisión de diff/operación | VERIFIED |
 | F1-018 | Flags productivos seguros | config/env: registro/recepción/resultados false | flags test + config review | VERIFIED |
-| F1-019 | Acceso, perfil y propuestas con sistema visual participante responsive y datos reales | `layouts/flowerflow`, vistas `auth/login`, `participant/profile`, `submissions/index`, navegación compartida y CSS/JS encapsulados | `ParticipantExperienceRedesignTest`, suite, build, teclado/móvil y `design-qa.md` | IMPLEMENTED local; QA visual en curso |
-| F1-020 | Nueva propuesta como asistente real de cuatro pasos, persistencia por sección y revisión final | `SubmissionController`, `SubmissionDraftRequest`, vistas `submissions/form`/`show`, stepper, CSS/JS progresivo y config central | `SubmissionWizardTest`, `SubmissionFlowTest`, suite/build, permisos negativos y `design-qa.md` | IMPLEMENTED local; gates finales/QA visual en curso |
-| F1-021 | Inicio participante dinámico y menú global reducido sin perder contenido público | `DashboardController`, `participant/dashboard`, `participant-navigation`, layout y CSS participante | `ParticipantExperienceRedesignTest`: conteos/aislamiento, perfil, convocatoria/zona, CTA, rutas participantes y preservación pública/admin | IMPLEMENTED local; QA visual en curso |
+| F1-019 | Acceso, perfil y propuestas con sistema visual participante responsive y datos reales | `layouts/flowerflow`, vistas `auth/login`, `participant/profile`, `submissions/index`, navegación compartida y CSS/JS encapsulados | `ParticipantExperienceRedesignTest`, suite/build y UAT manual de teclado/móvil registrada en `design-qa.md` | VERIFIED local; QA visual aceptado por usuario |
+| F1-020 | Nueva propuesta como asistente real de cuatro pasos, persistencia por sección y revisión final | `SubmissionController`, `SubmissionDraftRequest`, vistas `submissions/form`/`show`, stepper, CSS/JS progresivo y config central | `SubmissionWizardTest`, `SubmissionFlowTest`, suite/build, permisos negativos y UAT manual registrada en `design-qa.md` | VERIFIED local; QA visual aceptado por usuario |
+| F1-021 | Inicio participante dinámico y menú global reducido sin perder contenido público | `DashboardController`, `participant/dashboard`, `participant-navigation`, layout y CSS participante | `ParticipantExperienceRedesignTest`: conteos/aislamiento, perfil, convocatoria/zona, CTA, preservación pública/admin y UAT manual | VERIFIED local; QA visual aceptado por usuario |
 
 ## Cobertura y limitación
 

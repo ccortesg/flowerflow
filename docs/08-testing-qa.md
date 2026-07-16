@@ -6,7 +6,7 @@ Unit cubre sanitización. Feature preparado cubre landing/legales, registro con 
 
 Comandos de gate: `php artisan migrate --seed`, `php artisan test`, `./vendor/bin/pint --test`, `composer validate --strict`, `composer audit --locked`, `scripts/build_frontend_production.sh`, hashes y browser QA. No usar datos reales ni enviar correo real.
 
-**Estado:** plan; las suites de dominio no existen todavía.  
+**Estado:** la baseline siguiente se conserva como registro histórico. La Fase 01 ya cuenta con suites de dominio, gates automatizados y UAT visual del área participante registrados en los ExecPlan y matrices vigentes.
 **Regla:** detener y reparar. Ningún milestone avanza con tests, build o criterios obligatorios fallando.
 
 ## Baseline 2026-07-15
@@ -42,6 +42,12 @@ La contraseña local se entrega fuera del repositorio y vive sólo en .env ignor
 2. **Feature/integration:** rutas, Form Requests, Policies, transacciones, MySQL, storage, mail/queue.
 3. **Browser:** recorridos críticos por rol, responsive, teclado y errores.
 4. **Operación:** deploy, health, workers, backup/restore, observabilidad y rollback.
+
+## Cierre browser/UAT del área participante — 2026-07-16
+
+El usuario responsable confirmó haber completado todas las validaciones visuales y responsive del área participante. La aceptación cubre acceso, inicio, perfil, propuestas y asistente de cuatro pasos en móvil, tablet y escritorio; estados representativos, teclado, foco, zoom, reflow, reduced motion, consola, assets, controles y overflow horizontal quedaron marcados como revisados sin hallazgos P0/P1/P2 reportados.
+
+La evidencia de cierre es la aceptación manual explícita del usuario. No se recibieron ni versionaron capturas o reportes binarios. Los gates automatizados asociados permanecen registrados en el ExecPlan con resultado final de 50 pruebas y 500 aserciones, Pint PHP acotado, Composer y Vite verdes. El historial completo se conserva en `design-qa.md`.
 
 ## Matriz funcional
 
