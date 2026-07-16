@@ -19,6 +19,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/propuestas', [SubmissionController::class, 'index'])->name('submissions.index');
     Route::get('/propuestas/{submission}', [SubmissionController::class, 'show'])->name('submissions.show');
     Route::get('/propuestas/{submission}/archivos/{file}', [SubmissionController::class, 'download'])->name('submissions.files.download');
+    Route::post('/propuestas/{submission}/reenviar-confirmacion', [SubmissionController::class, 'resendConfirmation'])
+        ->middleware('throttle:3,10')->name('submissions.confirmation.resend');
 
     Route::middleware('submissions.open')->group(function () {
         Route::get('/propuestas/nueva/crear', [SubmissionController::class, 'create'])->name('submissions.create');

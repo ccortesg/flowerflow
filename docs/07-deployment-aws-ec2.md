@@ -556,6 +556,19 @@ Controles mínimos:
 
 Para el MVP se propone `QUEUE_CONNECTION=database` hasta aprobar Redis. Las migraciones de `jobs`, `job_batches` y `failed_jobs` deben existir antes de iniciar el worker.
 
+Contrato de correo transaccional:
+
+```dotenv
+QUEUE_CONNECTION=database
+MAIL_TIMEOUT=10
+FLOWERFLOW_MAIL_QUEUE_CONNECTION=database
+FLOWERFLOW_MAIL_QUEUE=default
+FLOWERFLOW_MAIL_TRIES=4
+FLOWERFLOW_MAIL_JOB_TIMEOUT=30
+```
+
+El worker debe escuchar `default`. Verificación, recuperación y acuse se cifran en la cola, se despachan post-commit y aplican backoff 60/300/900. No usar `QUEUE_CONNECTION=sync` en producción: volvería a acoplar SMTP a la respuesta HTTP.
+
 Configuración conceptual:
 
 ```ini
@@ -577,7 +590,7 @@ stdout_logfile_backups=10
 environment=APP_ENV="production"
 ```
 
-`numprocs`, colas, timeout, memoria y reintentos son `PENDING` de pruebas de carga y contratos de cada job. Los jobs de correo y exportación deben ser idempotentes.
+`numprocs` y memoria siguen `PENDING` de pruebas de carga. Para correo, `default`, timeout 30 y cuatro intentos totales ya son contrato; los jobs deben conservar idempotencia y observabilidad en `failed_jobs`.
 
 Activación propuesta:
 

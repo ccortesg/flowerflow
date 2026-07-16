@@ -121,6 +121,7 @@ La matriz no sustituye Policies. Super admin puede usar un bypass controlado só
 ## Autenticación y sesiones
 
 - Verificación de correo antes del envío final.
+- Contraseñas nuevas: mínimo 8 caracteres, mayúscula, minúscula, número, símbolo y confirmación; checklist cliente como ayuda, regla Laravel como autoridad.
 - Rate limit separado para login, registro, reset, verificación, contacto y uploads.
 - Respuestas de reset/verificación no confirman si el email existe.
 - 2FA obligatorio para super_admin, call_admin, reviewer, judge, privacy_support y auditor antes de producción.
@@ -216,6 +217,9 @@ Cada paso conserva fecha, actor, razón y evidencia mínima. Plazos, identidad a
 - Remitente/reply-to funcional propuesto: convocatoria@flowerflow.com.mx; privacidad: privacidad@flowerflow.com.mx.
 - SMTP, credenciales y reputación son PENDING; no inventarlos.
 - Email transaccional en HTML responsive y texto plano, sin documentos ni PII sensible.
+- Verificación, reset y acuse usan plantillas en español de México con marcas Flower Flow/Florece Hermosillo, enlaces absolutos y alternativa de texto.
+- Jobs de correo cifrados y post-commit en `database/default`; timeout SMTP 10 segundos, timeout de job 30 segundos y backoff 60/300/900 con cuatro intentos totales.
+- Si falla la creación del job, registro/propuesta permanecen confirmados y la interfaz ofrece aviso/reenvío sin error 500. Si falla SMTP en el worker, se reintenta y termina observable en `failed_jobs`.
 - Delivery log registra tipo, destinatario interno, estado, intentos y error clasificado, no cuerpo completo.
 - Event ID único por usuario/tipo evita duplicados; backoff y failed_jobs para reintentos.
 - Marketing masivo y listas sin consentimiento quedan fuera.

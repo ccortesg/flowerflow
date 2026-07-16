@@ -18,6 +18,7 @@ La baseline dejó de ser un starter sin dominio. El código contiene una vertica
 - envío transaccional e idempotente, folio, snapshot inmutable, eventos, aceptaciones separadas y correo en cola después del commit;
 - `/panel` con conteos, distribución, filtros, detalle, archivos bajo Policy y cuenta/seguridad;
 - comando `flowerflow:admin` con captura oculta de contraseña.
+- contraseña mínima de 8 con complejidad backend y checklist accesible; verificación, reset y acuse de propuesta con plantillas dual-brand en español y cola resiliente.
 
 No existen evaluación, jueces, rúbricas, ganadores, resultados públicos, despliegue productivo ni cambios en AWS.
 

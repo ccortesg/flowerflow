@@ -66,7 +66,7 @@ La contraseña local se entrega fuera del repositorio y vive sólo en .env ignor
 | Evaluación | borrador, total y submit | no asignado, score fuera rango, incomplete, tardío | Unit/feature |
 | Reopen | reabre con permiso/razón | juez se reabre a sí mismo | Feature |
 | Ganador | decisión separada con razón | selección aleatoria, publicar sin permiso/consentimiento | Feature |
-| Correo | plantilla/evento/locale correctos | retry, duplicado, fallo SMTP, PII en body | Unit/feature |
+| Correo | plantilla/evento/locale correctos; HTML/texto y ambas marcas | retry, duplicado, falla de dispatch/SMTP, PII en body | Unit/feature |
 | Export | allowlist y auditoría | rol/columnas ajenas, expirado | Feature |
 | Privacidad | intake/transiciones/evidencia | acceso de rol ajeno, cierre sin evidencia | Feature |
 | Auditoría | actor/acción/entidad/redacción | secreto/PII en before-after o job payload | Unit/feature |
@@ -129,8 +129,9 @@ Usar Storage fake para lógica y storage real en una suite de integración.
 
 - Notification/Mail fakes prueban destinatario, locale, evento y ausencia de anexos/PII.
 - event_id único evita duplicados.
-- Reintento aplica backoff; excepción termina en failed_jobs con payload redactado.
-- Worker usa colas/timeout/tries documentados.
+- Verificación/reset/acuse son jobs cifrados, post-commit y prueban conexión `database`, cola `default`, cuatro intentos, timeout 30 y backoff 60/300/900.
+- Falla al programar devuelve aviso/reintento sin 500; falla de transporte termina en `failed_jobs` después de los reintentos.
+- Worker escucha `default`; SMTP usa timeout de 10 segundos.
 - Scheduler no se superpone en tareas críticas y usa zona explícita.
 - Smoke staging valida entrega real a buzones de prueba, SPF/DKIM/DMARC y bounce.
 

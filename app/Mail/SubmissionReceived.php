@@ -3,19 +3,24 @@
 namespace App\Mail;
 
 use App\Models\Submission;
+use App\Support\ConfiguresTransactionalMail;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SubmissionReceived extends Mailable implements ShouldQueue
+class SubmissionReceived extends Mailable implements ShouldBeEncrypted, ShouldQueueAfterCommit
 {
-    use Queueable, SerializesModels;
+    use ConfiguresTransactionalMail, Queueable, SerializesModels;
 
-    public function __construct(public Submission $submission) {}
+    public function __construct(public Submission $submission)
+    {
+        $this->configureTransactionalMail();
+    }
 
     public function envelope(): Envelope
     {
@@ -27,6 +32,9 @@ class SubmissionReceived extends Mailable implements ShouldQueue
 
     public function content(): Content
     {
-        return new Content(view: 'mail.submission-received');
+        return new Content(
+            view: 'mail.submission-received',
+            text: 'mail.submission-received-text'
+        );
     }
 }

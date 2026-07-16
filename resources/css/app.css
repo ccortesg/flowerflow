@@ -36,4 +36,10 @@ a { color: var(--ff-green-dark); }
 .table td, .table th { vertical-align: middle; }
 .badge-draft { background: #fff2cc; color: #6f5200; }
 .badge-submitted { background: #dcefe7; color: #0b5c42; }
+.ff-password-requirements { border-left: .25rem solid #c9d8d0; padding-left: 1rem; color: #4b625b; }
+.ff-password-requirements li { display: flex; align-items: baseline; gap: .55rem; margin-bottom: .35rem; }
+.ff-password-rule-icon { display: inline-flex; justify-content: center; width: 1rem; font-weight: 800; }
+.ff-password-requirements li.is-valid, .ff-password-match.is-valid { color: #13734f; }
+.ff-password-requirements li.is-invalid, .ff-password-match.is-invalid { color: #b42318; }
+.ff-password-match { color: #5f6f69; }
 @media (max-width: 767.98px) { .ff-sidebar { min-height: auto; } }

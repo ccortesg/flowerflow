@@ -14,6 +14,8 @@ La contraseña MySQL vive sólo en `.env` ignorado. No se pega en comandos, docu
 
 La interfaz, correos y validaciones usan español de México (`APP_LOCALE=es_MX` y HTML `lang="es-MX"`). La aplicación, la sesión MySQL y los timestamps persistidos operan en UTC (`APP_TIMEZONE=UTC`, `DB_TIMEZONE=+00:00`); las fechas de la convocatoria se presentan con `FLOWERFLOW_TIMEZONE=America/Hermosillo`. No cambies la sesión de la aplicación a `-07:00`: convierte sólo al consultar o presentar.
 
+Las contraseñas nuevas requieren al menos 8 caracteres, mayúscula, minúscula, número, símbolo y confirmación; las pantallas muestran el avance sin sustituir la validación backend. Verificación, recuperación y acuse de propuesta usan plantillas HTML/texto en español con ambas marcas y se programan en la cola `database/default` con payload cifrado, timeout y reintentos.
+
 ## Arranque
 
 ```bash

@@ -6,13 +6,15 @@ use App\Mail\SubmissionReceived;
 use App\Models\LegalDocument;
 use App\Models\Submission;
 use App\Models\User;
+use App\Services\ResilientMailDispatcher;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class FinalizeSubmission
 {
+    public function __construct(private ResilientMailDispatcher $mailDispatcher) {}
+
     public function execute(Submission $submission, User $actor, array $acceptances, ?string $idempotencyKey): Submission
     {
         $result = DB::transaction(function () use ($submission, $actor, $acceptances, $idempotencyKey): Submission {
@@ -85,7 +87,11 @@ class FinalizeSubmission
                 ]);
             }
 
-            DB::afterCommit(fn () => Mail::to($actor)->queue(new SubmissionReceived($locked)));
+            DB::afterCommit(fn () => $this->mailDispatcher->queue(
+                $actor,
+                new SubmissionReceived($locked),
+                'Tu propuesta quedó registrada, pero no pudimos programar el correo de confirmación. Conserva el folio y vuelve a intentarlo desde la propuesta más tarde.'
+            ));
 
             return $locked;
         }, 3);

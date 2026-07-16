@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Actions\FinalizeSubmission;
 use App\Http\Requests\SubmissionDraftRequest;
 use App\Http\Requests\SubmitSubmissionRequest;
+use App\Mail\SubmissionReceived;
 use App\Models\Category;
 use App\Models\Competition;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\Team;
+use App\Services\ResilientMailDispatcher;
 use App\Services\SubmissionContentSanitizer;
 use App\Services\SubmissionFileStore;
+use App\Support\MailDispatchStatus;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -138,12 +142,41 @@ class SubmissionController extends Controller
         return back()->with('status', 'Cambios guardados.');
     }
 
-    public function submit(SubmitSubmissionRequest $request, Submission $submission, FinalizeSubmission $action): RedirectResponse
-    {
+    public function submit(
+        SubmitSubmissionRequest $request,
+        Submission $submission,
+        FinalizeSubmission $action,
+        MailDispatchStatus $mailStatus
+    ): RedirectResponse {
         $this->authorize('submit', $submission);
         $result = $action->execute($submission, $request->user(), $request->validated(), $request->header('Idempotency-Key'));
 
-        return redirect()->route('submissions.show', $result)->with('status', 'Propuesta enviada con folio '.$result->folio.'.');
+        $response = redirect()->route('submissions.show', $result)
+            ->with('status', 'Propuesta enviada con folio '.$result->folio.'. Programamos el correo de confirmación.');
+
+        return $mailStatus->failed()
+            ? $response->with('warning', $mailStatus->warning())
+            : $response;
+    }
+
+    public function resendConfirmation(
+        Request $request,
+        Submission $submission,
+        ResilientMailDispatcher $mailDispatcher,
+        MailDispatchStatus $mailStatus
+    ): RedirectResponse {
+        $this->authorize('view', $submission);
+        abort_unless($submission->user_id === $request->user()->id && $submission->status === 'submitted', 403);
+
+        $mailDispatcher->queue(
+            $request->user(),
+            new SubmissionReceived($submission),
+            'No pudimos programar nuevamente el correo de confirmación. Conserva tu folio e inténtalo más tarde.'
+        );
+
+        return $mailStatus->failed()
+            ? back()->with('warning', $mailStatus->warning())
+            : back()->with('status', 'Programamos nuevamente el correo de confirmación. Revisa también el correo no deseado.');
     }
 
     public function download(Submission $submission, SubmissionFile $file): BinaryFileResponse
