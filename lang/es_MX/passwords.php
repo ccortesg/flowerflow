@@ -2,8 +2,8 @@
 
 return [
     'reset' => 'Tu contraseña se restableció correctamente.',
-    'sent' => 'Te enviamos el enlace para restablecer tu contraseña.',
+    'sent' => 'Si existe una cuenta con ese correo, programamos el enlace para restablecer la contraseña. Revisa también el correo no deseado.',
     'throttled' => 'Espera un momento antes de intentarlo de nuevo.',
     'token' => 'El código para restablecer la contraseña no es válido.',
-    'user' => 'No encontramos una cuenta con ese correo electrónico.',
+    'user' => 'Si existe una cuenta con ese correo, programamos el enlace para restablecer la contraseña. Revisa también el correo no deseado.',
 ];

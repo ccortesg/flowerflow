@@ -13,3 +13,9 @@ Evita implementar credenciales/2FA manualmente y evita un sistema RBAC paralelo.
 ## Verificación
 
 Tests de login/verificación, rate limit, participante rechazado en `/panel`, admin admitido, IDOR y comando de administrador. Revisar recuperación 2FA en UAT.
+
+## Adenda de contraseña y correo — 2026-07-15
+
+La política única acepta desde 8 caracteres y conserva mayúscula, minúscula, número, símbolo y confirmación. `Password::defaults()` es autoritativo para registro, reset, cambio y comando administrativo; un componente Blade/JavaScript replica cada criterio como apoyo visual accesible.
+
+Verificación y recuperación usan notificaciones propias `ShouldQueueAfterCommit` y cifradas. El acuse de propuesta comparte conexión `database`, cola `default`, cuatro intentos totales, backoff 60/300/900 y timeout de job de 30 segundos. Una falla al programar el job se registra sin correo ni contenido y produce aviso/reintento, nunca revierte la operación principal ni se convierte en HTTP 500.

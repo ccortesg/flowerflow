@@ -74,6 +74,7 @@ El prompt de Fase 01 v2 tiene autoridad para este milestone y resuelve las decis
 - Browser QA real completado en escritorio y 390×844 para público, participante, archivo/envío y panel admin; cero errores/advertencias de consola.
 - Browser QA detectó una interpretación horaria incorrecta; se corrigió a aplicación/persistencia UTC y presentación `America/Hermosillo`, con prueba de regresión.
 - Interfaz, correos y validaciones fijados en español de México (`es_MX`/`es-MX`); la zona visible de negocio es `America/Hermosillo`.
+- Contrato productivo de build fijado: Node 22.23.1 por usuario con NVM, Corepack sin `sudo`, Yarn 1.22.22 y helper reproducible; DB UTC y presentación Hermosillo quedaron documentadas.
 
 ## Decisiones y supuestos
 
@@ -86,6 +87,7 @@ El prompt de Fase 01 v2 tiene autoridad para este milestone y resuelve las decis
 - Comprobantes privados separados de anexos; jueces nunca ven residencia/PII.
 - Puntuación servidor; ganador separado; sin selección aleatoria; resultados off.
 - Inicio público activo; registro y envíos desactivados por defecto; panel activo.
+- El build productivo usa Node 22.23.1 bajo NVM del usuario `ubuntu`; el Node global de la EC2 no se modifica.
 - Participantes mayores de 18 años residentes de Hermosillo; individual o equipos hasta cinco; una propuesta por categoría y máximo tres.
 - Cierre `2026-08-15 23:59:59` en Hermosillo, persistido/comparado en UTC.
 - Cuota acumulada de proyecto de 10 MiB, con múltiples archivos y allowlist aprobada.
@@ -93,7 +95,7 @@ El prompt de Fase 01 v2 tiene autoridad para este milestone y resuelve las decis
 
 ### ASSUMPTION hasta aprobación
 
-- PHP 8.3 y Node 20 se estandarizan.
+- PHP 8.3 y Node 22.23.1 por usuario mediante NVM se estandarizan; el Node global de Administratec no se modifica.
 - Sesión/cache/cola database para MVP; worker persistente.
 - Storage privado en EBS cifrado o S3 y base en RDS o EC2 son decisiones de preflight; se prefieren S3/RDS si presupuesto y operación los aprueban.
 - Retención propuesta en docs/03-data-model.md.
@@ -107,6 +109,11 @@ El prompt de Fase 01 v2 tiene autoridad para este milestone y resuelve las decis
 - Datos publicables definitivos y operación de entrega del premio.
 - SMTP, CAPTCHA, staging/UAT owner.
 - Acceso e inventario EC2, DB productiva, backup y RPO/RTO.
+
+## Hallazgos operativos posteriores al cierre local
+
+- En la EC2 se observó Node 18.19.1 sin Corepack. Instalar el Corepack más reciente con `npm --global` falló primero por incompatibilidad de motor y después por permisos sobre `/usr/local`.
+- La remediación aprobada es NVM exclusivo para `ubuntu`, Node 22.23.1 y `scripts/build_frontend_production.sh`; no se usa `sudo npm install --global` ni se reemplaza el runtime que puede utilizar Administratec.
 
 ## Seguridad de secretos
 
@@ -132,7 +139,7 @@ Resultado: baseline revisable y contrato de producto aprobado.
 
 ### Paso 1 — Hacer instalable el starter
 
-1. Estandarizar PHP 8.3, Composer compatible, Node 20 y un package manager.
+1. Estandarizar PHP 8.3, Composer compatible, Node 22.23.1 aislado y Yarn 1.22.22.
 2. Instalar dependencias sin upgrades mayores; revisar resolución antes de aceptar.
 3. Fijar composer.lock y lock JS elegido.
 4. Crear .env local desde ejemplo, generar APP_KEY y configurar MySQL sandbox.
@@ -259,8 +266,7 @@ php artisan migrate:status
 php artisan test
 ./vendor/bin/pint --test
 composer audit --locked
-corepack yarn@1.22.22 install --frozen-lockfile
-corepack yarn@1.22.22 build
+scripts/build_frontend_production.sh
 ~~~
 
 Validación adicional:

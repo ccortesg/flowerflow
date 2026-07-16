@@ -61,6 +61,15 @@ class SubmissionFlowTest extends TestCase
         $this->assertDatabaseCount('submission_events', 2);
         $this->assertDatabaseCount('legal_acceptances', 4);
         Mail::assertQueued(SubmissionReceived::class, 1);
+
+        $this->actingAs($user)->post(route('submissions.confirmation.resend', $submission))
+            ->assertRedirect()
+            ->assertSessionHas('status');
+        Mail::assertQueued(SubmissionReceived::class, 2);
+
+        $other = $this->participant();
+        $this->actingAs($other)->post(route('submissions.confirmation.resend', $submission))->assertForbidden();
+        Mail::assertQueued(SubmissionReceived::class, 2);
     }
 
     public function test_external_link_allowlist_and_total_quota_are_enforced(): void

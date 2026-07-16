@@ -29,5 +29,10 @@ return [
         'reply_to' => env('MAIL_REPLY_TO_ADDRESS', 'convocatoria@flowerflow.com.mx'),
         'reply_to_name' => env('MAIL_REPLY_TO_NAME', 'FLOWER FLOW'),
         'privacy_reply_to' => env('PRIVACY_REPLY_TO_ADDRESS', 'privacidad@flowerflow.com.mx'),
+        'queue_connection' => env('FLOWERFLOW_MAIL_QUEUE_CONNECTION', 'database'),
+        'queue' => env('FLOWERFLOW_MAIL_QUEUE', 'default'),
+        'tries' => (int) env('FLOWERFLOW_MAIL_TRIES', 4),
+        'timeout' => (int) env('FLOWERFLOW_MAIL_JOB_TIMEOUT', 30),
+        'backoff' => [60, 300, 900],
     ],
 ];

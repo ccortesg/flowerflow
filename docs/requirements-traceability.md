@@ -65,7 +65,7 @@
 | PUB-002 | DECISION | Resultados públicos desactivados por defecto. | `/resultados`; admin ganadores | Sin activación autorizada no se expone resultado. | F + B + SEC | MVP-R |
 | PUB-003 | DECISION | Publicar sólo campos autorizados tras confirmación. | Resultados/archivo 2026 | Preview y salida pública omiten PII/documentos no consentidos. | F + B + SEC + UAT | MVP-R |
 | PUB-004 | DECISION | Galería pública no pertenece al MVP. | `/proyectos` | No consume ruta crítica; requiere consentimiento/moderación posterior. | Revisión de alcance | F2 |
-| IAM-001 | ASSUMPTION | Registro, login, logout y restablecimiento. | `/registro`, `/login`, `/contrasena/*` | Usuario crea y recupera cuenta sin enumeración de correo. | F + B + SEC | MVP |
+| IAM-001 | DECISION | Registro, login, logout y restablecimiento; contraseña mínima de 8 con mayúscula, minúscula, número, símbolo y confirmación. | Fortify, vistas auth y componente `password-fields` | Backend aplica regla única; UI muestra requisitos/confirmación; recuperación no enumera correo. | `AuthMailHardeningTest` + browser | MVP |
 | IAM-002 | DECISION | Verificación de correo antes de enviar. | Verificación; wizard | Usuario no verificado puede guardar borrador pero no enviar. | F + B | MVP |
 | IAM-003 | DECISION | Roles/permisos de mínimo privilegio y Policies por recurso. | Todas las rutas autenticadas | Cada rol sólo accede a recursos autorizados incluso por URL directa. | F matriz RBAC + SEC IDOR | MVP |
 | IAM-004 | DECISION | 2FA y confirmación de contraseña en acciones privilegiadas. | Cuenta/admin | Rol privilegiado no accede/ejecuta acción crítica sin controles. | F + B + SEC | MVP |
@@ -101,8 +101,8 @@
 | WIN-001 | DECISION | Declarar ganador es separado del cálculo. | `/admin/ganadores` | Resultado calculado no cambia proyecto a ganador automáticamente. | U + F | MVP |
 | WIN-002 | DECISION | Declaración registra categoría, proyecto, actor, justificación y fecha. | Ganadores/auditoría | Decisión incompleta o sin permiso se rechaza. | F + SEC + UAT | MVP |
 | WIN-003 | PENDING | Empates, recusaciones, categoría desierta y premio. | Ganadores/reglas | Flujo implementa sólo regla aprobada y nunca azar. | U reglas + F + UAT | MVP |
-| COM-001 | DECISION | Notificaciones transaccionales de eventos críticos. | Auth, proyectos, elegibilidad, jueces, resultados | Evento genera destinatario/plantilla correctos sin PII sensible. | F con fakes + revisión plantilla | MVP |
-| COM-002 | DECISION | Cola, reintento e idempotencia de correo. | Jobs/failed jobs | Reintento no duplica efectos; fallo queda observable. | U + F queue fake + OPS | MVP |
+| COM-001 | DECISION | Notificaciones transaccionales de eventos críticos en español, HTML/texto y marca dual. | `VerifyEmailNotification`, `ResetPasswordNotification`, `SubmissionReceived`, `resources/views/mail` | Verificación, reset y acuse generan plantilla profesional sin adjuntos/PII adicional. | `AuthMailHardeningTest` + revisión render | MVP |
+| COM-002 | DECISION | Cola cifrada post-commit, reintento y recuperación de correo. | `ResilientMailDispatcher`, `database/default`, `failed_jobs`, reenvíos | Cuatro intentos con 60/300/900; falla de enqueue avisa sin 500 y permite reintentar; fallo SMTP queda observable. | Feature con dispatcher/Mail fake + OPS worker | MVP |
 | COM-003 | DECISION | Usar `convocatoria@flowerflow.com.mx` para convocatoria y `privacidad@flowerflow.com.mx` para privacidad. | Plantillas/configuración | Remitente/reply-to y canal corresponden al propósito sin mezclar casos. | F con mail fake + revisión de configuración | MVP |
 | COM-004 | PENDING | SMTP y entregabilidad SPF/DKIM/DMARC. | Configuración/runbook AWS | Dominio autentica envío y se monitorean rebotes. | OPS DNS + smoke correo | MVP |
 | COM-005 | DECISION | Marketing masivo no está aprobado. | Comunicaciones | No existe envío promocional/masivo en MVP. | Revisión de rutas/permisos | OUT |
@@ -153,7 +153,7 @@
 | DEP-004 | PENDING | Definir DB productiva y backups. | EC2/RDS por decidir | Esquema/usuario exclusivos, cifrado, RPO/RTO y restauración probada. | Backup/restore drill | MVP |
 | DEP-005 | PENDING | Definir dominio, DNS y TLS. | Vhost/certificado | HTTPS canónico, headers y renovación monitoreada. | OPS DNS/TLS + browser smoke | MVP |
 | DEP-006 | PENDING | Scheduler y workers propios. | `systemd`/Supervisor/cron | Jobs, reintentos y cierre funcionan sin interferir con `administratec`. | OPS queue/scheduler smoke | MVP |
-| DEP-007 | DECISION | Build Vite controlado con Yarn Classic 1.22.22; no editar `public/build` manualmente. | CI/release | Artefacto reproducible corresponde al commit/release. | `corepack yarn@1.22.22 build` + checksum/revisión | MVP |
+| DEP-007 | DECISION | Build Vite con Node 22.23.1 aislado por NVM y Yarn Classic 1.22.22; no editar `public/build` manualmente. | CI/release | Artefacto reproducible corresponde al commit/release sin alterar el Node global. | `scripts/build_frontend_production.sh` + manifest/revisión | MVP |
 | DEP-008 | DECISION | No desplegar sin backup, UAT, checklist y aprobación. | Gate de producción | Las cuatro evidencias existen y responsables firman. | Revisión de release | PLAN |
 | OPS-001 | DECISION | Health check y monitoreo de 5xx, jobs, correo, disco y recursos. | EC2/alertas | Alertas tienen umbral, canal y dueño. | Simulación controlada + OPS | MVP |
 | OPS-002 | DECISION | Logs redactados y con rotación. | Laravel/web server/systemd | No contienen passwords, tokens, documentos o PII completa; disco no crece sin límite. | Revisión muestras + logrotate test | MVP |
@@ -212,8 +212,7 @@ Los comandos exactos se ajustarán al entorno y se ejecutarán sólo en mileston
 php artisan route:list
 php artisan test
 ./vendor/bin/pint --test
-corepack yarn@1.22.22 install --frozen-lockfile
-corepack yarn@1.22.22 build
+scripts/build_frontend_production.sh
 composer audit --locked
 ```
 

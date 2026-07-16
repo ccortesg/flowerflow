@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetPasswordNotification;
+use App\Notifications\VerifyEmailNotification;
+use App\Services\ResilientMailDispatcher;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,6 +52,24 @@ class User extends Authenticatable implements MustVerifyEmailContract
     public function legalAcceptances(): HasMany
     {
         return $this->hasMany(LegalAcceptance::class);
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        app(ResilientMailDispatcher::class)->notify(
+            $this,
+            new VerifyEmailNotification,
+            'No pudimos programar el correo de verificación en este momento. Tu cuenta está segura; intenta reenviarlo más tarde.'
+        );
+    }
+
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        app(ResilientMailDispatcher::class)->notify(
+            $this,
+            new ResetPasswordNotification($token),
+            'No pudimos programar el correo para restablecer tu contraseña. Inténtalo de nuevo más tarde.'
+        );
     }
 
     /**

@@ -70,7 +70,7 @@ Radio principal 1.25–1.5rem, sombras suaves, jerarquía system-ui y CTA verde.
 
 | Página | Ruta conceptual | Consideraciones |
 | --- | --- | --- |
-| Registro | `/registro` | Consentimientos claros; contraseña accesible; mensajes no enumerables. |
+| Registro | `/registro` | Contraseña mínima de 8 con checklist visual/accesible, confirmación y mostrar/ocultar; mensajes no enumerables. |
 | Verificar correo | `/correo/verificar` | Reenvío con rate limit y estado comprensible. |
 | Login | `/login` | Recuperación visible; soporte a 2FA cuando aplique. |
 | Recuperar/restablecer | `/contrasena/*` | No confirmar existencia de cuenta. |

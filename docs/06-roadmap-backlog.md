@@ -92,7 +92,7 @@ Bloqueos externos de la ruta: licencia Materialize, textos legales, reglas de el
 - **Reglas:** cero datos reales; cero secretos versionados; MySQL local sólo sandbox; no tocar EC2 sin preflight/aprobación.
 - **Tareas:** inicializar control de versiones autorizado; preservar licencia; instalar/fijar PHP y JS; elegir package manager; crear entorno local; completar .env.example sin secretos; migrar tablas base en sandbox; validar Apache/Vite; inventariar EC2; cerrar decisiones P0.
 - **Artefactos probables:** composer.lock, lock JS elegido, .env.example, README, configuración local y CI; sin dominio todavía.
-- **Dependencias:** acceso a origen/licencia y EC2; PHP 8.3, Composer moderno, Node 20.
+- **Dependencias:** acceso a origen/licencia y EC2; PHP 8.3, Composer moderno, Node 22.23.1 aislado por NVM.
 - **Riesgos:** dependencias incompatibles, assets rotos, acceso AWS tardío.
 - **Estimación:** 4 a 6 días-persona.
 - **Responsables:** backend + DevOps + producto.

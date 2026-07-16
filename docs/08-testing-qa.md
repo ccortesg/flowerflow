@@ -4,7 +4,7 @@
 
 Unit cubre sanitización. Feature preparado cubre landing/legales, perfil 18+/E.164/WhatsApp reversible, flags seguros, límite de panel, IDOR, deadline inclusivo, allowlist, cuota, XSS, privacidad de archivos, una propuesta/categoría, máximo total, snapshot/idempotencia, legales separados y mail en cola. Debe ejecutarse sobre MySQL local, no SQLite, después de configurar `.env` ignorado.
 
-Comandos de gate: `php artisan migrate --seed`, `php artisan test`, `./vendor/bin/pint --test`, `composer validate --strict`, `composer audit --locked`, `corepack yarn@1.22.22 install --frozen-lockfile`, `corepack yarn@1.22.22 build`, hashes y browser QA. No usar datos reales ni enviar correo real.
+Comandos de gate: `php artisan migrate --seed`, `php artisan test`, `./vendor/bin/pint --test`, `composer validate --strict`, `composer audit --locked`, `scripts/build_frontend_production.sh`, hashes y browser QA. No usar datos reales ni enviar correo real.
 
 **Estado:** plan; las suites de dominio no existen todavía.  
 **Regla:** detener y reparar. Ningún milestone avanza con tests, build o criterios obligatorios fallando.
@@ -66,7 +66,7 @@ La contraseña local se entrega fuera del repositorio y vive sólo en .env ignor
 | Evaluación | borrador, total y submit | no asignado, score fuera rango, incomplete, tardío | Unit/feature |
 | Reopen | reabre con permiso/razón | juez se reabre a sí mismo | Feature |
 | Ganador | decisión separada con razón | selección aleatoria, publicar sin permiso/consentimiento | Feature |
-| Correo | plantilla/evento/locale correctos | retry, duplicado, fallo SMTP, PII en body | Unit/feature |
+| Correo | plantilla/evento/locale correctos; HTML/texto y ambas marcas | retry, duplicado, falla de dispatch/SMTP, PII en body | Unit/feature |
 | Export | allowlist y auditoría | rol/columnas ajenas, expirado | Feature |
 | Privacidad | intake/transiciones/evidencia | acceso de rol ajeno, cierre sin evidencia | Feature |
 | Auditoría | actor/acción/entidad/redacción | secreto/PII en before-after o job payload | Unit/feature |
@@ -129,8 +129,9 @@ Usar Storage fake para lógica y storage real en una suite de integración.
 
 - Notification/Mail fakes prueban destinatario, locale, evento y ausencia de anexos/PII.
 - event_id único evita duplicados.
-- Reintento aplica backoff; excepción termina en failed_jobs con payload redactado.
-- Worker usa colas/timeout/tries documentados.
+- Verificación/reset/acuse son jobs cifrados, post-commit y prueban conexión `database`, cola `default`, cuatro intentos, timeout 30 y backoff 60/300/900.
+- Falla al programar devuelve aviso/reintento sin 500; falla de transporte termina en `failed_jobs` después de los reintentos.
+- Worker escucha `default`; SMTP usa timeout de 10 segundos.
 - Scheduler no se superpone en tareas críticas y usa zona explícita.
 - Smoke staging valida entrega real a buzones de prueba, SPF/DKIM/DMARC y bounce.
 
@@ -205,8 +206,7 @@ php artisan route:list
 php artisan test
 ./vendor/bin/pint --test
 composer audit --locked
-corepack yarn@1.22.22 install --frozen-lockfile
-corepack yarn@1.22.22 build
+scripts/build_frontend_production.sh
 ~~~
 
 Yarn Classic 1.22.22 y `yarn.lock` son autoritativos. No generar `package-lock.json` ni ejecutar ambos package managers. La auditoría JavaScript del árbol heredado permanece como carril de riesgo separado y no bloquea este gate local.

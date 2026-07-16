@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\MailDispatchStatus;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -13,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->scoped(MailDispatchStatus::class, fn () => new MailDispatchStatus);
     }
 
     /**
@@ -21,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Password::defaults(fn () => Password::min(12)->mixedCase()->numbers()->symbols());
+        Password::defaults(fn () => Password::min(8)->mixedCase()->numbers()->symbols());
 
         Vite::useStyleTagAttributes(function (?string $src, string $url, ?array $chunk, ?array $manifest) {
             if ($src !== null) {

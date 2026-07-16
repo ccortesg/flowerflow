@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class CreateAdministrator extends Command
 {
@@ -25,7 +26,7 @@ class CreateAdministrator extends Command
         $validator = Validator::make(compact('email', 'name', 'password'), [
             'email' => ['required', 'email:rfc', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:12'],
+            'password' => ['required', 'string', Password::default()],
         ]);
 
         if ($validator->fails()) {

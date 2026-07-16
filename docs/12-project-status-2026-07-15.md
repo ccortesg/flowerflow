@@ -18,6 +18,7 @@ La baseline dejó de ser un starter sin dominio. El código contiene una vertica
 - envío transaccional e idempotente, folio, snapshot inmutable, eventos, aceptaciones separadas y correo en cola después del commit;
 - `/panel` con conteos, distribución, filtros, detalle, archivos bajo Policy y cuenta/seguridad;
 - comando `flowerflow:admin` con captura oculta de contraseña.
+- contraseña mínima de 8 con complejidad backend y checklist accesible; verificación, reset y acuse de propuesta con plantillas dual-brand en español y cola resiliente.
 
 No existen evaluación, jueces, rúbricas, ganadores, resultados públicos, despliegue productivo ni cambios en AWS.
 
@@ -33,7 +34,7 @@ No existen evaluación, jueces, rúbricas, ganadores, resultados públicos, desp
 | Flags seguros | público y panel activos; registro, recepción y resultados inactivos por defecto. |
 | Jurídico | PDFs 1.0 conservados por hash; v1.1/adenda pendiente de aprobación y publicación. |
 | Dependencias | Fortify 1.37.2, Permission 8.3.0 y HTML Sanitizer 7.4.14 fijados en `composer.lock`. |
-| Package manager | Yarn Classic 1.22.22; no se crea `package-lock.json`. |
+| Package manager | Node 22.23.1 por usuario con NVM y Yarn Classic 1.22.22; no se modifica el Node global ni se crea `package-lock.json`. |
 
 ## Evidencia ejecutada
 
@@ -42,6 +43,7 @@ No existen evaluación, jueces, rúbricas, ganadores, resultados públicos, desp
 - `scripts/publish_authorized_assets.sh` reproduce copias binarias verificadas.
 - `composer validate --strict` y `composer audit --locked`: correctos, sin advisories.
 - `yarn install --frozen-lockfile` y `yarn build`: correctos; 2,220 módulos transformados en el build final.
+- Se incorporaron `.nvmrc` y `scripts/build_frontend_production.sh` para exigir Node 22.23.1/Corepack/Yarn 1.22.22 en producción sin modificar el Node global de Administratec; su ejecución real en EC2 queda pendiente.
 - Lint PHP del código, migraciones y configuración: correcto.
 - `php artisan route:list`: 44 rutas con flags seguros; 46 al habilitar registro local, incluidas Fortify y panel.
 - MySQL WSL2 verificado: 8.0.46, schema `flowerflow`, cuenta `flowerflow_user@localhost`; seis migraciones aplicadas y seeder reproducible.
