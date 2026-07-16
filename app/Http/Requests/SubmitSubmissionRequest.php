@@ -17,7 +17,6 @@ class SubmitSubmissionRequest extends FormRequest
             'accept_call_rules' => ['accepted'],
             'accept_terms' => ['accepted'],
             'accept_privacy' => ['accepted'],
-            'optional_updates' => ['nullable', 'boolean'],
         ];
     }
 }

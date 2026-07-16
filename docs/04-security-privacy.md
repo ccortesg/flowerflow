@@ -218,6 +218,8 @@ Cada paso conserva fecha, actor, razón y evidencia mínima. Plazos, identidad a
 - SMTP, credenciales y reputación son PENDING; no inventarlos.
 - Email transaccional en HTML responsive y texto plano, sin documentos ni PII sensible.
 - Verificación, reset y acuse usan plantillas en español de México con marcas Flower Flow/Florece Hermosillo, enlaces absolutos y alternativa de texto.
+- El registro crea usuario, perfil mínimo, rol y evidencias legales en una sola transacción; si falta un documento activo o falla una validación no queda cuenta parcial.
+- El consentimiento para futuras actividades se captura desde registro, aparece marcado por defecto por decisión de producto, se guarda como propósito independiente y puede revertirse en perfil; no habilita envíos masivos sin flujo aprobado.
 - Jobs de correo cifrados y post-commit en `database/default`; timeout SMTP 10 segundos, timeout de job 30 segundos y backoff 60/300/900 con cuatro intentos totales.
 - Si falla la creación del job, registro/propuesta permanecen confirmados y la interfaz ofrece aviso/reenvío sin error 500. Si falla SMTP en el worker, se reintenta y termina observable en `failed_jobs`.
 - Delivery log registra tipo, destinatario interno, estado, intentos y error clasificado, no cuerpo completo.

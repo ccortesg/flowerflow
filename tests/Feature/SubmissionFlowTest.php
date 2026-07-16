@@ -48,7 +48,7 @@ class SubmissionFlowTest extends TestCase
         Storage::disk('local')->assertExists($submission->files->first()->path);
 
         $acceptances = [
-            'accept_call_rules' => '1', 'accept_terms' => '1', 'accept_privacy' => '1', 'optional_updates' => '0',
+            'accept_call_rules' => '1', 'accept_terms' => '1', 'accept_privacy' => '1',
         ];
         $headers = ['Idempotency-Key' => 'test-idempotency-001'];
         $this->actingAs($user)->withHeaders($headers)->post(route('submissions.submit', $submission), $acceptances)->assertRedirect();
@@ -59,7 +59,7 @@ class SubmissionFlowTest extends TestCase
         $this->assertSame('HMO26-'.str_pad((string) $submission->id, 6, '0', STR_PAD_LEFT), $submission->folio);
         $this->assertDatabaseCount('submission_versions', 1);
         $this->assertDatabaseCount('submission_events', 2);
-        $this->assertDatabaseCount('legal_acceptances', 4);
+        $this->assertDatabaseCount('legal_acceptances', 3);
         Mail::assertQueued(SubmissionReceived::class, 1);
 
         $this->actingAs($user)->post(route('submissions.confirmation.resend', $submission))

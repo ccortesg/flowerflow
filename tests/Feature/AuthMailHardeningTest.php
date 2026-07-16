@@ -33,7 +33,7 @@ class AuthMailHardeningTest extends TestCase
     public function test_backend_accepts_eight_character_password_and_rejects_seven(): void
     {
         $user = app(CreateNewUser::class)->create([
-            'name' => 'Cuenta de prueba',
+            ...$this->registrationData(),
             'email' => 'ocho@example.test',
             'password' => 'Aa1!aaaa',
             'password_confirmation' => 'Aa1!aaaa',
@@ -43,7 +43,7 @@ class AuthMailHardeningTest extends TestCase
 
         try {
             app(CreateNewUser::class)->create([
-                'name' => 'Cuenta corta',
+                ...$this->registrationData(),
                 'email' => 'siete@example.test',
                 'password' => 'Aa1!aaa',
                 'password_confirmation' => 'Aa1!aaa',
@@ -195,5 +195,21 @@ class AuthMailHardeningTest extends TestCase
             'status' => 'submitted',
             'folio' => 'HMO26-000099',
         ]);
+    }
+
+    /** @return array<string, string> */
+    private function registrationData(): array
+    {
+        return [
+            'first_names' => 'Cuenta',
+            'last_names' => 'Prueba',
+            'mobile_national' => '662 123 4567',
+            'whatsapp_opt_in' => '1',
+            'birth_date' => '1990-01-01',
+            'neighborhood' => 'Centro',
+            'resident_declaration' => '1',
+            'accept_legal' => '1',
+            'future_activities_opt_in' => '1',
+        ];
     }
 }

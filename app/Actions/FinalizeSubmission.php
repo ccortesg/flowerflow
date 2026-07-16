@@ -70,7 +70,6 @@ class FinalizeSubmission
                 'call_rules' => ['accepted' => true, 'document' => 'mechanics'],
                 'terms' => ['accepted' => true, 'document' => 'terms'],
                 'privacy' => ['accepted' => true, 'document' => 'privacy'],
-                'optional_updates' => ['accepted' => (bool) ($acceptances['optional_updates'] ?? false), 'document' => 'privacy'],
             ];
 
             foreach ($purposes as $purpose => $meta) {

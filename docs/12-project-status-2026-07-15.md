@@ -10,15 +10,16 @@ Estado: Fase 01 local completada y verificada; sin despliegue y con recepción d
 La baseline dejó de ser un starter sin dominio. El código contiene una vertical local y revisable para:
 
 - landing pública semántica con poster/logos autorizados y tres PDFs jurídicos v1.0;
-- Fortify para login, reset, verificación de correo, cambio de contraseña y 2FA;
+- Fortify para registro completo, login, reset, verificación de correo, cambio de contraseña y 2FA;
 - Spatie Permission más Policy para separar participante y panel administrador;
-- perfil de participante con nombres separados, E.164, WhatsApp opcional reversible, fecha de nacimiento, colonia y declaraciones;
+- registro/perfil de participante con nombres separados, celular México `+52` normalizado a E.164, WhatsApp opcional reversible, fecha de nacimiento, colonia, residencia, aceptación legal y consentimiento opcional de futuras actividades;
 - concurso/categorías, participación individual/equipo, máximo de cinco integrantes, borradores y una propuesta por categoría;
 - Quill con Delta, HTML sanitizado y texto plano; archivos privados, hashes y cuota de 10 MiB; allowlist de enlaces sin fetch del servidor;
 - envío transaccional e idempotente, folio, snapshot inmutable, eventos, aceptaciones separadas y correo en cola después del commit;
 - `/panel` con conteos, distribución, filtros, detalle, archivos bajo Policy y cuenta/seguridad;
 - comando `flowerflow:admin` con captura oculta de contraseña.
 - contraseña mínima de 8 con complejidad backend y checklist accesible; verificación, reset y acuse de propuesta con plantillas dual-brand en español y cola resiliente.
+- confirmación amigable al abrir el enlace firmado de verificación, más mensajes de auth/panel en español de México.
 
 No existen evaluación, jueces, rúbricas, ganadores, resultados públicos, despliegue productivo ni cambios en AWS.
 
@@ -47,7 +48,8 @@ No existen evaluación, jueces, rúbricas, ganadores, resultados públicos, desp
 - Lint PHP del código, migraciones y configuración: correcto.
 - `php artisan route:list`: 44 rutas con flags seguros; 46 al habilitar registro local, incluidas Fortify y panel.
 - MySQL WSL2 verificado: 8.0.46, schema `flowerflow`, cuenta `flowerflow_user@localhost`; seis migraciones aplicadas y seeder reproducible.
-- Suite completa sobre MySQL: 15 pruebas, 67 aserciones, verde; sesión de conexión fijada y comprobada en `+00:00`.
+- Suite completa sobre MySQL: 28 pruebas, 161 aserciones, verde; sesión de conexión fijada y comprobada en `+00:00`.
+- Pruebas focales de registro completo: `RegistrationProfileFlowTest`, `AuthMailHardeningTest`, `ProfileEligibilityTest` y `SubmissionFlowTest` verdes con 18 pruebas/124 aserciones.
 - Pint acotado al código activo, compilación de vistas, `git diff --check` y escaneo de patrones de secretos: verdes.
 - Browser QA real con Playwright CLI: landing, login/logout, tablero participante, borrador con PDF privado, envío con folio y panel admin; escritorio y 390×844, sin errores ni advertencias de consola.
 - El browser QA detectó y permitió corregir una interpretación horaria: la aplicación opera en UTC y presenta `America/Hermosillo`; existe una prueba de regresión específica.

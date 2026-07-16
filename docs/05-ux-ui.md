@@ -70,8 +70,8 @@ Radio principal 1.25–1.5rem, sombras suaves, jerarquía system-ui y CTA verde.
 
 | Página | Ruta conceptual | Consideraciones |
 | --- | --- | --- |
-| Registro | `/registro` | Contraseña mínima de 8 con checklist visual/accesible, confirmación y mostrar/ocultar; mensajes no enumerables. |
-| Verificar correo | `/correo/verificar` | Reenvío con rate limit y estado comprensible. |
+| Registro | `/registro` | Perfil mínimo desde el alta, teléfono México `+52`, documentos descargables, consentimientos, contraseña mínima de 8 con checklist visual/accesible, confirmación y mostrar/ocultar; mensajes no enumerables. |
+| Verificar correo | `/correo/verificar` y `/correo-verificado` | Reenvío con rate limit, estado comprensible y confirmación amigable al abrir el enlace firmado. |
 | Login | `/login` | Recuperación visible; soporte a 2FA cuando aplique. |
 | Recuperar/restablecer | `/contrasena/*` | No confirmar existencia de cuenta. |
 | 2FA | `/cuenta/2fa` | Roles privilegiados; códigos de recuperación seguros. |
@@ -83,7 +83,7 @@ Radio principal 1.25–1.5rem, sombras suaves, jerarquía system-ui y CTA verde.
 | Página | Ruta conceptual | Tarea principal |
 | --- | --- | --- |
 | Dashboard | `/participante` | Ver convocatoria, pendientes y proyectos. |
-| Elegibilidad/perfil | `/participante/perfil` | Completar datos y residencia. |
+| Elegibilidad/perfil | `/participante/perfil` | Revisar o actualizar los datos capturados en registro y las preferencias reversibles. |
 | Mis proyectos | `/participante/proyectos` | Listar borradores, enviados y estados. |
 | Nuevo proyecto | `/participante/proyectos/crear` | Iniciar wizard. |
 | Wizard | `/participante/proyectos/{id}/editar/{paso?}` | Completar y guardar pasos. |
@@ -160,16 +160,16 @@ La navegación se genera según permiso, no sólo rol. Debe agrupar operación, 
 
 1. Visitante llega a inicio y ve estado/fecha.
 2. Revisa requisitos y documentos antes de registrarse.
-3. Completa formulario breve con labels y ayuda.
-4. Recibe pantalla neutral de confirmación.
-5. Verifica correo y vuelve al siguiente paso correcto.
+3. Completa sus datos de participante, teléfono México `+52`, contraseña y consentimientos en un solo formulario con labels y ayuda.
+4. Recibe pantalla neutral para revisar su correo.
+5. Verifica correo y ve una confirmación amigable antes de iniciar sesión o continuar.
 
 **Aceptación:** funciona con teclado, lector de pantalla y móvil; errores no borran valores seguros; no se enumera correo.
 
 ### 2. Perfil y residencia
 
 1. Explicar qué dato se solicita, finalidad, visibilidad y retención pendiente.
-2. Capturar perfil mínimo.
+2. Revisar o corregir el perfil mínimo capturado en registro.
 3. Cargar comprobante privado con formatos/límites visibles.
 4. Confirmar recepción, no “aprobación”.
 5. Mostrar estado: pendiente, corrección, elegible o no elegible.
