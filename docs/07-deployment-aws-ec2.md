@@ -442,22 +442,86 @@ Ningún usuario de aplicación productivo debe tener `WITH GRANT OPTION`, privil
 
 La unidad de despliegue debe ser un release inmutable identificado por fecha y SHA de Git. Se prefiere artefacto construido en CI; si el build se hace en EC2, validar capacidad y retirar dependencias de build no requeridas por runtime.
 
+### 12.1 Node y Corepack aislados de Administratec
+
+El build de FlowerFlow fija Node `22.23.1` en `.nvmrc` y Yarn `1.22.22` en `package.json`. En la EC2 compartida, Node se instala con NVM exclusivamente para el usuario de despliegue; no se reemplaza `/usr/bin/node` ni se ejecuta `sudo npm install -g`. Node 18 está fuera de soporte y `corepack@0.35.0` requiere Node `22.22.2` o superior dentro de la rama 22.
+
+Como usuario `ubuntu` o el usuario de despliegue aprobado:
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+nvm install 22.23.1
+nvm alias default 22.23.1
+nvm use 22.23.1
+
+node --version
+command -v node
+npm config get prefix
+```
+
+`command -v node` y el prefijo npm deben quedar bajo `$HOME/.nvm`, no bajo `/usr/local`. Si el binario incluido no expone Corepack:
+
+```bash
+if ! command -v corepack >/dev/null 2>&1; then
+  npm install --global corepack@0.35.0
+fi
+
+corepack enable
+corepack --version
+```
+
+Todo lo anterior se ejecuta sin `sudo`. Node sólo construye `public/build` y no participa en las solicitudes PHP.
+
 Secuencia propuesta dentro de un nuevo release:
 
 ```bash
 cd /var/www/flowerflow/releases/<timestamp>-<git-sha>
 composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
-corepack yarn@1.22.22 install --frozen-lockfile
-corepack yarn@1.22.22 build
+scripts/build_frontend_production.sh
 composer check-platform-reqs --no-dev
 test -f public/build/manifest.json
+```
+
+Para la instalación productiva actual, donde Apache apunta directamente a `/var/www/flowerflow`, la secuencia equivalente es:
+
+```bash
+cd /var/www/flowerflow
+composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+scripts/build_frontend_production.sh
+composer check-platform-reqs --no-dev
+test -s public/build/manifest.json
 ```
 
 Después del build puede retirarse `node_modules` del artefacto runtime si no lo requiere ninguna tarea. No editar manualmente `public/build`.
 
 Preparación Laravel, sólo con `.env` y `shared/storage` enlazados:
 
-El archivo de entorno protegido debe conservar este contrato no secreto: `APP_LOCALE=es_MX`, `APP_FALLBACK_LOCALE=es_MX`, `APP_TIMEZONE=UTC`, `DB_TIMEZONE=+00:00` y `FLOWERFLOW_TIMEZONE=America/Hermosillo`. Así, la interfaz y las reglas de negocio usan español de México y horario de Hermosillo, mientras PHP/MySQL persisten instantes sin ambigüedad en UTC.
+El archivo de entorno protegido debe conservar este contrato no secreto: `APP_LOCALE=es_MX`, `APP_FALLBACK_LOCALE=es_MX`, `APP_TIMEZONE=UTC`, `DB_TIMEZONE=+00:00` y `FLOWERFLOW_TIMEZONE=America/Hermosillo`. Así, la interfaz y las reglas de negocio usan español de México y horario de Hermosillo, mientras PHP/MySQL persisten instantes sin ambigüedad en UTC. El cierre `2026-08-15 23:59:59 America/Hermosillo` se conserva como `2026-08-16 06:59:59 UTC`.
+
+Verificación desde la conexión real de Laravel:
+
+```bash
+php artisan tinker --execute="dump([
+    'app_timezone' => config('app.timezone'),
+    'business_timezone' => config('flowerflow.timezone'),
+    'mysql_timezone' => Illuminate\\Support\\Facades\\DB::selectOne(
+        'select @@session.time_zone as timezone'
+    )->timezone,
+]);"
+```
+
+Para inspección manual sin cambiar el contrato de la aplicación:
+
+```sql
+SELECT
+    submitted_at AS fecha_utc,
+    CONVERT_TZ(submitted_at, '+00:00', '-07:00') AS fecha_hermosillo
+FROM submissions;
+```
 
 ```bash
 php artisan about
@@ -668,8 +732,7 @@ sudo -u <flowerflow-deploy-user> mkdir -p "$release"
 # Extraer aquí el artefacto verificado del SHA aprobado.
 cd "$release"
 composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
-corepack yarn@1.22.22 install --frozen-lockfile
-corepack yarn@1.22.22 build
+scripts/build_frontend_production.sh
 ```
 
 Crear symlinks a `shared/.env` y `shared/storage` sin imprimir el archivo de entorno. Validar permisos con el usuario efectivo de PHP y del worker.

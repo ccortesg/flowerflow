@@ -8,21 +8,22 @@ Aplicación Laravel 12 para la convocatoria Hermosillo Florece 2026. La Fase 01 
 - PHP 8.3 con `pdo_mysql`
 - MySQL 8, base `flowerflow`, usuario `flowerflow_user`
 - Composer 2.10+
-- Node 20 y Yarn Classic 1.22.22
+- Node 22.23.1 mediante NVM y Yarn Classic 1.22.22
 
 La contraseña MySQL vive sólo en `.env` ignorado. No se pega en comandos, documentación ni commits. Consulta [desarrollo local](docs/11-local-development.md) y el [estado de Fase 01](docs/12-project-status-2026-07-15.md).
 
-La interfaz, correos y validaciones usan español de México (`APP_LOCALE=es_MX` y HTML `lang="es-MX"`). La aplicación y los timestamps persistidos operan en UTC (`APP_TIMEZONE=UTC`); las fechas de la convocatoria se presentan con `FLOWERFLOW_TIMEZONE=America/Hermosillo`.
+La interfaz, correos y validaciones usan español de México (`APP_LOCALE=es_MX` y HTML `lang="es-MX"`). La aplicación, la sesión MySQL y los timestamps persistidos operan en UTC (`APP_TIMEZONE=UTC`, `DB_TIMEZONE=+00:00`); las fechas de la convocatoria se presentan con `FLOWERFLOW_TIMEZONE=America/Hermosillo`. No cambies la sesión de la aplicación a `-07:00`: convierte sólo al consultar o presentar.
 
 ## Arranque
 
 ```bash
 composer install
-corepack yarn@1.22.22 install --frozen-lockfile
+NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"
+nvm use
+scripts/build_frontend_production.sh
 scripts/publish_authorized_assets.sh
 php artisan key:generate
 php artisan migrate --seed
-corepack yarn@1.22.22 build
 php artisan serve --host=127.0.0.1 --port=8000
 ```
 
@@ -41,8 +42,7 @@ php artisan test
 ./vendor/bin/pint --test
 composer validate --strict
 composer audit --locked
-corepack yarn@1.22.22 install --frozen-lockfile
-corepack yarn@1.22.22 build
+scripts/build_frontend_production.sh
 ```
 
 Los PDFs jurídicos y PNG autorizados se publican únicamente mediante `scripts/publish_authorized_assets.sh`, que verifica hashes antes de copiar.
@@ -51,4 +51,4 @@ Gate local de Fase 01 verificado el 2026-07-15: 15 pruebas/67 aserciones sobre M
 
 ## Despliegue
 
-El destino futuro es AWS EC2 Ubuntu donde ya opera Administratec, con host canónico `app.flowerflow.com.mx`. Esta rama no accede ni modifica AWS. Ver [runbook EC2](docs/07-deployment-aws-ec2.md).
+El destino es AWS EC2 Ubuntu donde ya opera Administratec, con host canónico `app.flowerflow.com.mx`. Node se instala por usuario con NVM para no reemplazar el runtime global de Administratec; nunca uses `sudo npm install -g corepack`. Ver [runbook EC2](docs/07-deployment-aws-ec2.md).

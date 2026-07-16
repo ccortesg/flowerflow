@@ -282,6 +282,19 @@ Contrato propuesto:
 - salidas se convierten explícitamente para la persona usuaria;
 - tests cubren segundos antes, en y después de apertura/cierre.
 
+La diferencia es intencional: `DB_TIMEZONE=+00:00` hace determinista la sesión usada por Laravel y `FLOWERFLOW_TIMEZONE=America/Hermosillo` conserva el significado local de las reglas. Cambiar ambas a `-07:00` produciría reinterpretaciones y posibles desfases dobles.
+
+Consulta explícita para revisión manual:
+
+```sql
+SELECT
+    submitted_at AS fecha_utc,
+    CONVERT_TZ(submitted_at, '+00:00', '-07:00') AS fecha_hermosillo
+FROM submissions;
+```
+
+Como alternativa, un cliente de administración puede ejecutar `SET SESSION time_zone='-07:00'` y consultar columnas `TIMESTAMP` sin aplicar además `CONVERT_TZ`. Esa sesión es independiente de la conexión Laravel.
+
 No usar abreviaturas `MST`, offsets fijos o la zona `SYSTEM` como regla de negocio.
 
 ## 11. Troubleshooting

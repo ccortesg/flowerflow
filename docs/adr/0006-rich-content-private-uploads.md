@@ -12,4 +12,4 @@ Toolbar Quill mínima; sin Base64/hotlinks; allowlist de extensiones; MIME/firma
 
 ## Consecuencias
 
-ClamAV y almacenamiento S3/EBS siguen pendientes de capacidad/arquitectura. Los formatos Office binarios requieren defensa heurística adicional y antivirus antes de producción. Tests cubren XSS, cuota, hosts, privacidad e idempotencia.
+ClamAV y almacenamiento S3/EBS siguen pendientes de capacidad/arquitectura. El owner aceptó temporalmente el 2026-07-15 abrir la recepción sin motor antimalware, conservando los controles actuales y la posibilidad operativa de cerrarla; la defensa heurística adicional para formatos Office continúa como remediación prioritaria. Tests cubren XSS, cuota, hosts, privacidad e idempotencia.

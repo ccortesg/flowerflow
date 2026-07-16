@@ -11,7 +11,7 @@
 - Consentimientos: WhatsApp y avisos opcionales son reversibles y separados; jurídicos versionados por propósito.
 - Logs/correo: no adjuntar proyecto/PII; secreto DB sólo `.env`; mail post-commit en cola.
 
-Pendiente antes de producción: antivirus real, revisión de formatos Office binarios, CSP sin excepción si es viable, retención/borrado, SMTP, revisión legal v1.1, secret scan y prueba de carga/concurrencia MySQL.
+Pendiente operativo: antivirus real, revisión de formatos Office binarios, CSP sin excepción si es viable, retención/borrado, SMTP, revisión legal v1.1, secret scan y prueba de carga/concurrencia MySQL. El owner aceptó temporalmente el 2026-07-15 abrir la recepción sin motor antimalware; esto no elimina el riesgo ni autoriza retirar allowlist, firma, cuota, almacenamiento privado, monitoreo o capacidad de cierre inmediato.
 
 **Estado:** controles propuestos; requieren aprobación de producto/legal e implementación posterior.  
 **Objetivo:** WCAG y seguridad son criterios de aceptación, no declaraciones de cumplimiento.

@@ -6,7 +6,7 @@
 |---|---|---|
 | Legal v1.0 no cubre todos los campos/canales | Recepción productiva apagada; v1.1 en `legal-change-log.md` | Aprobación y publicación versionada. |
 | Licencia Pixinvent no comprobada | `_referencia` sólo local; adaptación puntual | Evidencia comercial antes de producción. |
-| Upload Office/ODF complejo | Firma, macros OOXML y ZIP bomb; privado | ClamAV/cuarentena y pruebas corpus antes de activar. |
+| Upload Office/ODF complejo | Firma, macros OOXML, ZIP bomb y ausencia temporal de antimalware; privado | Riesgo aceptado temporalmente por el owner el 2026-07-15; conservar allowlist, validación de firma, cuota, storage privado y monitoreo. ClamAV/cuarentena y pruebas corpus siguen pendientes. |
 | Bundle demo excesivo | Build verde pero chunks grandes | Racionalizar entradas tras browser baseline. |
 | MySQL Feature aún no ejecutado | Suite lista, secreto no expuesto | Configurar `.env`, migrar y correr. |
 | EC2 compartida con Administratec desconocida | Cero cambios AWS; preflight read-only | Inventario/capacidad/aislamiento aprobados. |
@@ -23,7 +23,7 @@ Escala: probabilidad e impacto Bajo/Medio/Alto/Crítico. El dueño es un perfil 
 | R04 | Licencia/variante Materialize no confirmada | Medio | Alto | Sponsor | localizar factura/licencia y dominio autorizado | usar sólo código autorizado o reemplazar shell | Abierto P0 |
 | R05 | No hay Git en Flower Flow | Alto | Alto | Líder técnico | inicializar/importar con baseline y revisión, .env ignorado | snapshot firmado antes de cambios | Abierto |
 | R06 | Sin composer.lock/vendor; backend no reproducible | Alto | Crítico | Backend | instalar con Composer aprobado, fijar lock y baseline | detener implementación | Abierto P0 |
-| R07 | Yarn lock sin Yarn; node WSL no normalizado | Alto | Alto | Frontend | elegir un package manager y Node 20 reproducible | build en entorno controlado | Abierto |
+| R07 | Node global de EC2 puede pertenecer a Administratec; Node 18 no soporta Corepack actual | Alto | Alto | Frontend/DevOps | Node 22.23.1 por usuario con NVM, Yarn 1.22.22 y helper que rechaza root/versiones incompatibles | conservar Node global y construir artefacto aislado | Mitigado |
 | R08 | Auditorías CVE bloqueadas por herramientas/locks | Alto | Alto | Security | actualizar Composer dentro de M0, lock y audit JS correcto | revisión manual/lista de CVE; no deploy | Abierto |
 | R09 | .gitignore permitía .env | Medio | Crítico | Líder técnico | corregido a /.env y patrón .env.*; secret scan | rotar cualquier clave expuesta | Mitigado |
 | R10 | Credencial local con GRANT OPTION | Alto | Medio | DBA/dev | mantener loopback/sandbox; crear usuario sin grant option en futuros entornos | revocar/rotar antes de datos | Abierto |
@@ -40,7 +40,7 @@ Escala: probabilidad e impacto Bajo/Medio/Alto/Crítico. El dueño es un perfil 
 | R21 | Customizer/metadatos/robots Pixinvent | Alto | Alto | Frontend/SEO | M1 limpia, noindex por ambiente y metadata propia | bloquear indexación temporal | Abierto |
 | R22 | Paquetes JS duplicados aumentan bundle/CVE | Alto | Medio | Frontend | registrar uso y retirar sólo tras build/regresión | conservar temporalmente con riesgo aceptado | Abierto |
 | R23 | Fuga de comprobantes a jueces/exports | Medio | Crítico | Backend/security | storage/tablas/Policies/proyecciones separadas y tests negativos | revocar acceso, incident response y notificación legal | Abierto |
-| R24 | Upload malicioso o agotamiento de disco | Alto | Crítico | Backend/DevOps | quotas, allowlist, private storage, scan, alarms | cerrar uploads, cuarentena y ampliar volumen | Abierto |
+| R24 | Upload malicioso o agotamiento de disco | Alto | Crítico | Backend/DevOps | quotas, allowlist, firma real, storage privado y alarmas; antimalware aún no instalado | cerrar uploads, cuarentena y ampliar volumen | Aceptado temporalmente 2026-07-15; remediación pendiente |
 | R25 | Doble envío cerca del cierre | Alto | Crítico | Backend | idempotencia, unique constraints, locks y load test | deduplicación auditada sin borrar evidencia | Abierto |
 | R26 | Timezone/hora de cierre ambigua | Alto | Crítico | Producto | aprobar instante exacto Hermosillo, persistir UTC y test bordes | extensión administrativa auditada | Abierto P0 |
 | R27 | Rúbrica/jueces/empates sin definir | Alto | Crítico | Producto | decisión antes del 18-jul | diferir módulo de evaluación | Abierto P0 |

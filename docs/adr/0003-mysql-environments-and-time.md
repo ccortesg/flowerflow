@@ -125,6 +125,8 @@ Se adopta como invariante:
 
 El valor MySQL `SYSTEM` observado localmente no es suficientemente determinista entre WSL, staging y AWS. Fase 01 fija `DB_TIMEZONE=+00:00` en la conexión Laravel y lo comprueba con una prueba sobre `@@session.time_zone`.
 
+La inspección humana no cambia este contrato. Workbench, DBeaver o el cliente MySQL pueden usar una sesión propia con `SET SESSION time_zone='-07:00'`, o convertir explícitamente con `CONVERT_TZ(valor_utc, '+00:00', '-07:00')`. No se aplican ambos métodos sobre el mismo valor.
+
 Para apertura/cierre se guarda, como mínimo:
 
 ```text

@@ -11,7 +11,7 @@
 | quill | 2.0.3 | Editor rico requerido | BSD-3-Clause | textarea plano no cubre requisito | INSTALLED heredado/adaptado |
 | bootstrap | 5.3.6 | Shell responsive starter | MIT | CSS propio completo | INSTALLED heredado |
 
-`composer.lock` contiene 135 paquetes y `composer audit --locked` no reportó advisories. Yarn 1.22.22 instaló el lock y el build fue verde; persisten warnings de resolución Algolia, peers de loaders/ESLint y chunks demo grandes. No se añadió Playwright, S3, ClamAV, Mailpit ni otra dependencia propuesta.
+`composer.lock` contiene 135 paquetes y `composer audit --locked` no reportó advisories. Yarn 1.22.22 instaló el lock y el build fue verde; producción fija Node 22.23.1 mediante `.nvmrc` y no modifica el Node global de la EC2. Persisten warnings de resolución Algolia, peers de loaders/ESLint y chunks demo grandes. No se añadió Playwright, S3, ClamAV, Mailpit ni otra dependencia propuesta.
 
 Fecha de corte: 2026-07-15
 

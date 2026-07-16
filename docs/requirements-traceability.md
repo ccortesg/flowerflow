@@ -153,7 +153,7 @@
 | DEP-004 | PENDING | Definir DB productiva y backups. | EC2/RDS por decidir | Esquema/usuario exclusivos, cifrado, RPO/RTO y restauración probada. | Backup/restore drill | MVP |
 | DEP-005 | PENDING | Definir dominio, DNS y TLS. | Vhost/certificado | HTTPS canónico, headers y renovación monitoreada. | OPS DNS/TLS + browser smoke | MVP |
 | DEP-006 | PENDING | Scheduler y workers propios. | `systemd`/Supervisor/cron | Jobs, reintentos y cierre funcionan sin interferir con `administratec`. | OPS queue/scheduler smoke | MVP |
-| DEP-007 | DECISION | Build Vite controlado con Yarn Classic 1.22.22; no editar `public/build` manualmente. | CI/release | Artefacto reproducible corresponde al commit/release. | `corepack yarn@1.22.22 build` + checksum/revisión | MVP |
+| DEP-007 | DECISION | Build Vite con Node 22.23.1 aislado por NVM y Yarn Classic 1.22.22; no editar `public/build` manualmente. | CI/release | Artefacto reproducible corresponde al commit/release sin alterar el Node global. | `scripts/build_frontend_production.sh` + manifest/revisión | MVP |
 | DEP-008 | DECISION | No desplegar sin backup, UAT, checklist y aprobación. | Gate de producción | Las cuatro evidencias existen y responsables firman. | Revisión de release | PLAN |
 | OPS-001 | DECISION | Health check y monitoreo de 5xx, jobs, correo, disco y recursos. | EC2/alertas | Alertas tienen umbral, canal y dueño. | Simulación controlada + OPS | MVP |
 | OPS-002 | DECISION | Logs redactados y con rotación. | Laravel/web server/systemd | No contienen passwords, tokens, documentos o PII completa; disco no crece sin límite. | Revisión muestras + logrotate test | MVP |
@@ -212,8 +212,7 @@ Los comandos exactos se ajustarán al entorno y se ejecutarán sólo en mileston
 php artisan route:list
 php artisan test
 ./vendor/bin/pint --test
-corepack yarn@1.22.22 install --frozen-lockfile
-corepack yarn@1.22.22 build
+scripts/build_frontend_production.sh
 composer audit --locked
 ```
 

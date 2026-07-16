@@ -4,7 +4,7 @@
 
 Resueltas: destino AWS EC2 Ubuntu (no GoDaddy), host/panel, MySQL local, cierre y zona, categorías, límites de equipo/propuestas/archivos, Fortify, Spatie, Quill+sanitizer, flags y formato de folio/snapshot.
 
-Siguen abiertas y no bloquean código local detrás de flags: hora exacta de apertura; fecha de salida; licencia Pixinvent; aceptación de integrantes y persona en varios equipos; texto v1.1/WhatsApp; proveedores adicionales; cantidad máxima definitiva de archivos e imágenes; antivirus; SMTP/DNS; EC2/PHP/web server/capacidad; DB productiva; EBS/S3; staging, backups, RPO/RTO, monitoreo y responsables UAT/soporte. Rúbrica, desempate, conflictos y anonimización pertenecen a fase posterior.
+Siguen abiertas y no bloquean código local detrás de flags: hora exacta de apertura; fecha de salida; licencia Pixinvent; aceptación de integrantes y persona en varios equipos; texto v1.1/WhatsApp; proveedores adicionales; cantidad máxima definitiva de archivos e imágenes; remediación antimalware después de la aceptación temporal del riesgo; SMTP/DNS; EC2/PHP/web server/capacidad; DB productiva; EBS/S3; staging, backups, RPO/RTO, monitoreo y responsables UAT/soporte. Rúbrica, desempate, conflictos y anonimización pertenecen a fase posterior.
 
 **Fecha de corte:** 2026-07-15  
 **Uso:** registro de decisiones para planificación y aprobación.  
@@ -80,7 +80,7 @@ Siguen abiertas y no bloquean código local detrás de flags: hora exacta de ape
 | Q-020 | PENDING | ¿Cuáles son campos y límites de texto definitivos? | Configuración central por convocatoria; contador accesible y validación de servidor. | Alto: modelo, wizard y tests. |
 | Q-021 | PENDING | ¿Cuántos anexos, de qué tipo y tamaño? | Allowlist mínima; cuotas por proyecto; archivos privados; validar MIME/firma. | **Crítico:** seguridad, disco y UX. |
 | Q-022 | PENDING | ¿Se requiere video o enlaces externos? | Excluir upload de video del MVP; aceptar enlaces sólo con sanitización si se aprueba. | Alto: almacenamiento, seguridad y evaluación. |
-| Q-023 | PENDING | ¿Se requiere escaneo antivirus? | Evaluar ClamAV en EC2; documentar cuarentena/alternativa si el costo operativo no cabe. | Alto: seguridad y capacidad. |
+| Q-023 | DECISION TEMPORAL | La recepción puede abrirse temporalmente sin motor antimalware por aceptación expresa del owner el 2026-07-15. | Mantener controles de formato, firma, cuota y privacidad; evaluar ClamAV en EC2 y documentar cuarentena/fallback. La aceptación no equivale a riesgo resuelto. | Alto: seguridad y capacidad; revisión obligatoria. |
 | Q-024 | PENDING | ¿Los documentos Word finales ya están en el repositorio? | No crear textos legales ficticios; solicitar versiones aprobadas y hashes. | **Crítico:** apertura y aceptaciones. |
 | Q-025 | PENDING | ¿La administración editará contenido o basta despliegue por código? | Contenido por código para MVP; CMS sólo si un caso operativo aprobado lo exige. | Medio: alcance, XSS y mantenimiento. |
 

@@ -4,7 +4,7 @@
 
 Unit cubre sanitización. Feature preparado cubre landing/legales, perfil 18+/E.164/WhatsApp reversible, flags seguros, límite de panel, IDOR, deadline inclusivo, allowlist, cuota, XSS, privacidad de archivos, una propuesta/categoría, máximo total, snapshot/idempotencia, legales separados y mail en cola. Debe ejecutarse sobre MySQL local, no SQLite, después de configurar `.env` ignorado.
 
-Comandos de gate: `php artisan migrate --seed`, `php artisan test`, `./vendor/bin/pint --test`, `composer validate --strict`, `composer audit --locked`, `corepack yarn@1.22.22 install --frozen-lockfile`, `corepack yarn@1.22.22 build`, hashes y browser QA. No usar datos reales ni enviar correo real.
+Comandos de gate: `php artisan migrate --seed`, `php artisan test`, `./vendor/bin/pint --test`, `composer validate --strict`, `composer audit --locked`, `scripts/build_frontend_production.sh`, hashes y browser QA. No usar datos reales ni enviar correo real.
 
 **Estado:** plan; las suites de dominio no existen todavía.  
 **Regla:** detener y reparar. Ningún milestone avanza con tests, build o criterios obligatorios fallando.
@@ -205,8 +205,7 @@ php artisan route:list
 php artisan test
 ./vendor/bin/pint --test
 composer audit --locked
-corepack yarn@1.22.22 install --frozen-lockfile
-corepack yarn@1.22.22 build
+scripts/build_frontend_production.sh
 ~~~
 
 Yarn Classic 1.22.22 y `yarn.lock` son autoritativos. No generar `package-lock.json` ni ejecutar ambos package managers. La auditoría JavaScript del árbol heredado permanece como carril de riesgo separado y no bloquea este gate local.
