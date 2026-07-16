@@ -1,5 +1,18 @@
 # Registro de riesgos
 
+## Altas/abiertas de Fase 01
+
+| Riesgo | Estado/mitigación | Gate |
+|---|---|---|
+| Legal v1.0 no cubre todos los campos/canales | Recepción productiva apagada; v1.1 en `legal-change-log.md` | Aprobación y publicación versionada. |
+| Licencia Pixinvent no comprobada | `_referencia` sólo local; adaptación puntual | Evidencia comercial antes de producción. |
+| Upload Office/ODF complejo | Firma, macros OOXML y ZIP bomb; privado | ClamAV/cuarentena y pruebas corpus antes de activar. |
+| Bundle demo excesivo | Build verde pero chunks grandes | Racionalizar entradas tras browser baseline. |
+| MySQL Feature aún no ejecutado | Suite lista, secreto no expuesto | Configurar `.env`, migrar y correr. |
+| EC2 compartida con Administratec desconocida | Cero cambios AWS; preflight read-only | Inventario/capacidad/aislamiento aprobados. |
+| SMTP/DNS desconocidos | local `log`, mail en cola | Proveedor, SPF/DKIM/DMARC y captura staging. |
+| WhatsApp preseleccionado | sólo UI nueva; no persiste hasta submit y es reversible | Validación jurídica/UAT. |
+
 Escala: probabilidad e impacto Bajo/Medio/Alto/Crítico. El dueño es un perfil hasta asignar una persona.
 
 | ID | Riesgo / señal | Prob. | Impacto | Dueño | Mitigación preventiva | Contingencia | Estado |

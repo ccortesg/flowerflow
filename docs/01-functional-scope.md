@@ -1,22 +1,35 @@
 # Alcance funcional — Flower Flow 2026
 
+> **Sustitución parcial aprobada, 2026-07-15:** la fuente ya no está truncada; el prompt Fase 01 v2 resolvió identidad, categorías, fecha/hora y alcance. En esta fase sí se implementan sitio público, auth, perfil, borradores/envío, archivos y panel mínimo. No se implementan revisión de elegibilidad, jueces, rúbrica, ganadores ni resultados. El objetivo no es “recibir, revisar y evaluar”; es dejar recepción local/test preparada detrás de flags, sin activarla en producción.
+
+## Contrato Fase 01 vigente
+
+- Responsable: FLORECE HERMOSILLO; agrupación: FLOWER FLOW.
+- Participante: persona física 18+, residente de Hermosillo; cuenta representa al equipo.
+- Equipo: máximo cinco incluyendo representante; declaración de elegibilidad de todos.
+- Propuesta: una por categoría, máximo tres, español, resumen, contenido rico, al menos un archivo.
+- Archivos: PDF, Office y ODF permitidos, más JPEG/PNG/WebP del editor; 10 MiB acumulados.
+- Enlaces: YouTube y carpeta pública en proveedores allowlist; nunca fetch server-side.
+- Finalización: correo verificado, perfil completo, legales separados, snapshot/folio/idempotencia.
+- Flags default: público/panel `true`; registro/recepción/resultados `false`.
+
 **Fecha de corte:** 2026-07-15  
 **Estado:** propuesta de planificación  
 **Regla de lectura:** `DECISION` está confirmado; `ASSUMPTION` permite estimar sin inventar una aprobación; `PENDING` bloquea la implementación afectada.
 
 ## Limitación de la fuente
 
-**PENDING:** el insumo funcional comienza truncado. Inicia en subsecciones de comunicaciones, reportes y privacidad, y después muestra “7. Módulo de jueces” y “8. Resultados públicos”; faltan los módulos 1–6 y la introducción. La organización de módulos 1–6 de este documento es una reconstrucción recomendada, no una transcripción del alcance original.
+**RESOLVED 2026-07-15:** el prompt Fase 01 v2 aportó la fuente completa y sustituye la reconstrucción inicial para el alcance de recepción.
 
 ## Meta del MVP
 
-**DECISION:** entregar únicamente la capacidad necesaria para recibir, revisar y evaluar proyectos con seguridad y trazabilidad antes del 2026-08-15.
+**DECISION Fase 01:** entregar la capacidad local/test para informar, registrar cuenta/perfil, preparar y enviar propuestas y administrarlas mínimamente. Revisión/evaluación quedan para fases posteriores.
 
-**PENDING:** hora exacta del cierre, fecha de apertura y fecha objetivo de salida a producción.
+**DECISION:** cierre `2026-08-15 23:59:59 America/Hermosillo`, inclusivo. **PENDING:** fecha/hora de apertura y fecha objetivo de salida.
 
 La ruta crítica funcional es:
 
-`convocatoria y legales → identidad → perfil/elegibilidad → proyecto y archivos → envío versionado → revisión → asignación → evaluación → decisión administrativa`
+`convocatoria y legales → identidad → perfil/elegibilidad → proyecto y archivos → envío versionado → panel mínimo`
 
 Resultados públicos, reportes ampliados y comunicaciones no críticas no pueden retrasar esa ruta.
 

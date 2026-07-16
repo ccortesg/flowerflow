@@ -1,5 +1,11 @@
 # Preguntas abiertas y decisiones — Flower Flow 2026
 
+## Resoluciones Fase 01 — 2026-07-15
+
+Resueltas: destino AWS EC2 Ubuntu (no GoDaddy), host/panel, MySQL local, cierre y zona, categorías, límites de equipo/propuestas/archivos, Fortify, Spatie, Quill+sanitizer, flags y formato de folio/snapshot.
+
+Siguen abiertas y no bloquean código local detrás de flags: hora exacta de apertura; fecha de salida; licencia Pixinvent; aceptación de integrantes y persona en varios equipos; texto v1.1/WhatsApp; proveedores adicionales; cantidad máxima definitiva de archivos e imágenes; antivirus; SMTP/DNS; EC2/PHP/web server/capacidad; DB productiva; EBS/S3; staging, backups, RPO/RTO, monitoreo y responsables UAT/soporte. Rúbrica, desempate, conflictos y anonimización pertenecen a fase posterior.
+
 **Fecha de corte:** 2026-07-15  
 **Uso:** registro de decisiones para planificación y aprobación.  
 **Etiquetas:** `DECISION` confirmado; `ASSUMPTION` supuesto recomendado mientras llega respuesta; `PENDING` respuesta/aprobación necesaria.
@@ -37,11 +43,11 @@
 
 | ID | Estado | Pregunta | Recomendación / supuesto de trabajo | Impacto si cambia |
 | --- | --- | --- | --- | --- |
-| Q-001 | PENDING | ¿Dónde está la introducción y el contenido original de módulos 1–6? | Obtenerlo antes de aprobar el ExecPlan; mientras tanto usar la reconstrucción sólo para estimar. | **Crítico:** puede redefinir todo el producto. |
+| Q-001 | RESOLVED 2026-07-15 | ¿Dónde está la introducción y el contenido original de módulos 1–6? | El prompt Fase 01 v2 es la fuente completa para esta fase. | Sin impacto pendiente en recepción. |
 | Q-002 | PENDING | ¿Quién tiene autoridad final para aprobar alcance, UAT, textos legales y producción? | Nombrar una persona de producto y una legal; separar aprobación técnica de publicación. | **Crítico:** bloquea decisiones y salida. |
 | Q-003 | PENDING | ¿Cuál es la fecha deseada de lanzamiento público? | Salir con margen de al menos 7–10 días antes del cierre, sujeto a la ruta crítica real. | **Crítico:** determina calendario, recortes y soporte. |
 | Q-004 | PENDING | ¿Cuál es la fecha/hora de apertura? | No abrir hasta completar UAT, backup/restauración y smoke test. | Alto: afecta estados, scheduler y comunicación. |
-| Q-005 | PENDING | ¿Cuál es la hora exacta de cierre del 2026-08-15? | Usar una hora explícita en `America/Hermosillo`; no asumir 23:59. | **Crítico:** regla de envío y disputas. |
+| Q-005 | RESOLVED 2026-07-15 | ¿Cuál es la hora exacta de cierre del 2026-08-15? | `23:59:59 America/Hermosillo`, inclusivo; persistir UTC. | Implementado y cubierto por prueba de frontera. |
 | Q-006 | PENDING | ¿Habrá periodo de gracia o excepciones administrativas? | Sin gracia automática; sólo excepción individual, justificada, autorizada y auditada. | Alto: estados, permisos y legalidad operativa. |
 | Q-007 | PENDING | ¿Qué alcance puede recortarse si el calendario no es viable? | Recortar resultados públicos, CMS, dashboards, exports avanzados y colaboración compleja antes que seguridad/revisión/evaluación. | **Crítico:** viabilidad del MVP. |
 
@@ -173,4 +179,3 @@
 - Aislamiento con `administratec` verificado.
 - Monitoreo/guardia activos.
 - Aprobación expresa de producto, legal y responsable técnico.
-

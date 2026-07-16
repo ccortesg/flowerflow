@@ -1,5 +1,13 @@
 # Modelo de datos preliminar
 
+## Adenda Fase 01 implementada — 2026-07-15
+
+Tablas nuevas: `competitions`, `categories`, `participant_profiles`, `legal_documents`, `legal_acceptances`, `teams`, `team_members`, `submissions`, `submission_files`, `submission_external_links`, `submission_versions`, `submission_events` y las tablas RBAC de Spatie. `users.public_id` y las entidades expuestas usan ULID público.
+
+Invariantes de base: `competition+user+category` único, folio e idempotency key únicos, snapshot `submission+version` único, links `submission+kind` únicos. Los perfiles no se duplican dentro de propuestas; el snapshot copia el estado de envío. Archivos conservan actor, disk/path privado, nombre original/servidor, tipo de formato, MIME, extensión, bytes y SHA-256. Legales conservan código, versión, vigencia, obligatoriedad, hash y path; aceptaciones conservan propósito independiente, valor, versión, UTC, IP, agente y contexto.
+
+El cierre sembrado es `2026-08-16 06:59:59 UTC`, equivalente a `2026-08-15 23:59:59 America/Hermosillo`. `opens_at` queda nullable/configurable porque no existe hora jurídica aprobada.
+
 **Estado:** hipótesis validable; no representa migraciones ejecutadas.  
 **Motor:** MySQL 8, InnoDB, utf8mb4.  
 **Tiempo:** persistencia UTC; presentación y reglas en America/Hermosillo.

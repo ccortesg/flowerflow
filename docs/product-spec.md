@@ -1,5 +1,7 @@
 # Especificación de producto — Flower Flow 2026
 
+> **Adenda autoritativa Fase 01 — 2026-07-15:** el alcance aprobado es recepción local/test, no el MVP completo histórico. Cierre inclusivo: 15 de agosto de 2026 a las 23:59:59 en `America/Hermosillo`; categorías exactas: Movilidad con Flow, Hermosillo Florece y Mi familia, mi mascota; participación individual/equipo hasta cinco; una propuesta por categoría y tres totales. Registro/recepción/resultados están apagados por defecto. Evaluación, jueces, ganadores y publicación permanecen fuera. Ver `docs/01-functional-scope.md` y `docs/legal-change-log.md`.
+
 **Fecha de corte:** 2026-07-15  
 **Estado:** planificación; no autoriza implementación ni despliegue  
 **Propósito:** consolidar el producto que debe construirse, sus límites y las decisiones que requieren aprobación.
@@ -99,7 +101,7 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 - **CAL-001 — DECISION:** modelar una convocatoria versionable con slug, estado, fechas y zona horaria.
 - **CAL-002 — ASSUMPTION:** el MVP tendrá una sola edición activa, pero el modelo no bloqueará ediciones posteriores.
 - **CAL-003 — DECISION:** mostrar categorías, calendario, preguntas frecuentes y documentos legales vigentes.
-- **CAL-004 — PENDING:** definir fecha/hora de apertura y hora exacta de cierre.
+- **CAL-004 — DECISION/PENDING:** cierre inclusivo aprobado `2026-08-15 23:59:59 America/Hermosillo`; fecha/hora de apertura pendiente y configurable.
 - **CAL-005 — DECISION:** cerrar automáticamente nuevos envíos al vencer el plazo; una excepción requiere actor autorizado, justificación y auditoría.
 
 ### Identidad y acceso

@@ -1,5 +1,7 @@
 # Auditoría técnica del repositorio
 
+> **Actualización Fase 01 (2026-07-15):** este documento conserva la fotografía de la baseline. Desde el commit base `403656dce350709d066aaab0576175036a9f339c` ya existen Git, locks, dependencias instaladas, dominio FlowerFlow, rutas mutables, pruebas y build verde. El estado vigente está en `docs/12-project-status-2026-07-15.md`; las afirmaciones “no existe” de este informe no describen el checkout actual.
+
 Fecha de corte: 2026-07-15  
 Ruta auditada: /mnt/c/wamp64/www/flowerflow  
 Modalidad: sólo lectura sobre la baseline inicial

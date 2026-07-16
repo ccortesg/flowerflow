@@ -1,5 +1,7 @@
 # Despliegue en AWS EC2 con Ubuntu
 
+> **Adenda Fase 01:** host canónico `app.flowerflow.com.mx`, `DocumentRoot=/var/www/flowerflow/current/public` (ruta final sujeta a inventario), panel `/panel`, SMTP externo con remitente `notificaciones@flowerflow.com.mx`. No se accedió ni modificó la EC2. El preflight de sólo lectura de este runbook sigue siendo el siguiente paso autorizado por separado; debe identificar Ubuntu, Apache/Nginx, PHP-FPM/extensiones, capacidad, aislamiento de Administratec, MySQL vs RDS, EBS vs S3 privado, secretos, worker/scheduler, staging, backup/restore, RPO/RTO, monitoreo, TLS/DNS y salida SMTP.
+
 Fecha de evidencia: `2026-07-15`  
 Estado: `RUNBOOK PROPUESTO — NO EJECUTADO`  
 Decisión de destino: `ACCEPTED` por [ADR 0002](adr/0002-aws-ec2-ubuntu.md)  
@@ -445,8 +447,8 @@ Secuencia propuesta dentro de un nuevo release:
 ```bash
 cd /var/www/flowerflow/releases/<timestamp>-<git-sha>
 composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
-npm ci
-npm run build
+corepack yarn@1.22.22 install --frozen-lockfile
+corepack yarn@1.22.22 build
 composer check-platform-reqs --no-dev
 test -f public/build/manifest.json
 ```
@@ -454,6 +456,8 @@ test -f public/build/manifest.json
 Después del build puede retirarse `node_modules` del artefacto runtime si no lo requiere ninguna tarea. No editar manualmente `public/build`.
 
 Preparación Laravel, sólo con `.env` y `shared/storage` enlazados:
+
+El archivo de entorno protegido debe conservar este contrato no secreto: `APP_LOCALE=es_MX`, `APP_FALLBACK_LOCALE=es_MX`, `APP_TIMEZONE=UTC`, `DB_TIMEZONE=+00:00` y `FLOWERFLOW_TIMEZONE=America/Hermosillo`. Así, la interfaz y las reglas de negocio usan español de México y horario de Hermosillo, mientras PHP/MySQL persisten instantes sin ambigüedad en UTC.
 
 ```bash
 php artisan about
@@ -664,8 +668,8 @@ sudo -u <flowerflow-deploy-user> mkdir -p "$release"
 # Extraer aquí el artefacto verificado del SHA aprobado.
 cd "$release"
 composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
-npm ci
-npm run build
+corepack yarn@1.22.22 install --frozen-lockfile
+corepack yarn@1.22.22 build
 ```
 
 Crear symlinks a `shared/.env` y `shared/storage` sin imprimir el archivo de entorno. Validar permisos con el usuario efectivo de PHP y del worker.

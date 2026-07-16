@@ -1,5 +1,18 @@
 # Seguridad y privacidad desde el diseño
 
+## Controles Fase 01 ejecutados
+
+- Fortify: hashing Laravel, rate limit de login/2FA, reset, verificación, password confirmation y TOTP.
+- RBAC Spatie más Policy propietario/admin; `/panel` sólo admin y descargas con Policy.
+- CSP/headers: `nosniff`, `DENY`, referrer/permissions policy; `style-src 'unsafe-inline'` es excepción temporal por Bootstrap/Quill y debe revisarse.
+- HTML: toolbar mínima, Delta+HTML+texto, sanitizer servidor al guardar y al renderizar; se eliminan scripts, handlers, Base64 y esquemas activos.
+- Archivos: allowlist, límite individual/acumulado, firma PDF/imagen/Office, detección de macros OOXML, path traversal y ZIP bomb; nombre ULID; hash; disk local con `serve=false`.
+- Enlaces: HTTPS y hosts exactos; sin DNS, HTTP, preview o descarga server-side, reduciendo SSRF.
+- Consentimientos: WhatsApp y avisos opcionales son reversibles y separados; jurídicos versionados por propósito.
+- Logs/correo: no adjuntar proyecto/PII; secreto DB sólo `.env`; mail post-commit en cola.
+
+Pendiente antes de producción: antivirus real, revisión de formatos Office binarios, CSP sin excepción si es viable, retención/borrado, SMTP, revisión legal v1.1, secret scan y prueba de carga/concurrencia MySQL.
+
 **Estado:** controles propuestos; requieren aprobación de producto/legal e implementación posterior.  
 **Objetivo:** WCAG y seguridad son criterios de aceptación, no declaraciones de cumplimiento.
 
@@ -229,4 +242,3 @@ Cada paso conserva fecha, actor, razón y evidencia mínima. Plazos, identidad a
 - Logs sin PII/secreto y rotación/alertas activas.
 - Resultados públicos apagados.
 - Revisión legal de textos, retención, premio y consentimientos.
-

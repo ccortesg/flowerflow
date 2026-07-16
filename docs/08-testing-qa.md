@@ -1,5 +1,11 @@
 # Estrategia de pruebas y calidad
 
+## Suite Fase 01
+
+Unit cubre sanitización. Feature preparado cubre landing/legales, perfil 18+/E.164/WhatsApp reversible, flags seguros, límite de panel, IDOR, deadline inclusivo, allowlist, cuota, XSS, privacidad de archivos, una propuesta/categoría, máximo total, snapshot/idempotencia, legales separados y mail en cola. Debe ejecutarse sobre MySQL local, no SQLite, después de configurar `.env` ignorado.
+
+Comandos de gate: `php artisan migrate --seed`, `php artisan test`, `./vendor/bin/pint --test`, `composer validate --strict`, `composer audit --locked`, `corepack yarn@1.22.22 install --frozen-lockfile`, `corepack yarn@1.22.22 build`, hashes y browser QA. No usar datos reales ni enviar correo real.
+
 **Estado:** plan; las suites de dominio no existen todavía.  
 **Regla:** detener y reparar. Ningún milestone avanza con tests, build o criterios obligatorios fallando.
 
@@ -130,7 +136,17 @@ Usar Storage fake para lógica y storage real en una suite de integración.
 
 ## Frontend, navegador y accesibilidad
 
-Herramienta PENDING: evaluar Playwright después de M0; no está instalada.
+Para el gate local de Fase 01 se usó Playwright CLI mediante la herramienta de Codex, sin añadir una dependencia E2E al repositorio. Se recorrieron landing, autenticación, participante, archivo privado, envío final y panel admin en escritorio y 390×844. La consola terminó con cero errores y cero advertencias. La selección de una herramienta E2E permanente para CI continúa como decisión posterior.
+
+Evidencia del 2026-07-15:
+
+- `php artisan test`: 15 pruebas, 67 aserciones, verde sobre MySQL `flowerflow`;
+- frontera inclusiva de cierre y conversión UTC -> `America/Hermosillo` cubiertas por Feature tests;
+- locale `es_MX`, HTML `es-MX`, validaciones en español y zona de negocio cubiertos por prueba de regresión;
+- browser QA detectó y cerró el defecto de interpretación horaria antes del cierre;
+- editor enriquecido y navegación confirmados en español de México mediante navegador real;
+- capturas locales en `output/playwright/`, excluidas de Git;
+- sólo datos sintéticos `example.test`; sin correo real ni datos personales reales.
 
 Recorridos:
 
@@ -182,19 +198,18 @@ Dataset sintético inicial PENDING por volumen; mínimo recomendado: 10 mil part
 Se fijarán exactamente en M0; secuencia propuesta:
 
 ~~~text
-composer validate --no-check-publish
-composer install
+composer validate --strict
+composer install --no-interaction
 php artisan about
 php artisan route:list
 php artisan test
 ./vendor/bin/pint --test
-composer audit
-npm ci
-npm run build
-npm audit --omit=dev
+composer audit --locked
+corepack yarn@1.22.22 install --frozen-lockfile
+corepack yarn@1.22.22 build
 ~~~
 
-Si se conserva Yarn, reemplazar npm ci/audit por comandos compatibles y documentar la herramienta. No ejecutar ambos package managers.
+Yarn Classic 1.22.22 y `yarn.lock` son autoritativos. No generar `package-lock.json` ni ejecutar ambos package managers. La auditoría JavaScript del árbol heredado permanece como carril de riesgo separado y no bloquea este gate local.
 
 Para MySQL local, cargar la contraseña desde .env o un prompt/archivo protegido; no incluirla en la línea de comando ni logs.
 
@@ -232,4 +247,3 @@ Para MySQL local, cargar la contraseña desde .env o un prompt/archivo protegido
 ## Evidencia
 
 Cada ejecución registra commit/release, ambiente, comandos, salida resumida, fixtures, capturas sin PII, defectos y aprobación. La evidencia sensible se almacena con acceso limitado y retención definida.
-

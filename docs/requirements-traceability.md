@@ -1,8 +1,31 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
 **Fecha de corte:** 2026-07-15  
-**Estado:** baseline de planificación; ninguna fila implica implementación terminada  
+**Estado histórico:** baseline de planificación. La tabla Fase 01 siguiente registra implementación actual.
 **Convenciones:** `DECISION` confirmado; `ASSUMPTION` supuesto de trabajo; `PENDING` requiere información/aprobación.
+
+## Trazabilidad Fase 01 aprobada
+
+| ID | Requisito | Implementación/evidencia | Prueba/gate | Estado |
+|---|---|---|---|---|
+| F1-001 | Reconciliar docs/ExecPlan sin borrar historia | `AGENTS.md`, ExecPlan, docs 00–14, ADR 0005/0006 | Revisión documental | IMPLEMENTED |
+| F1-002 | Base reproducible Laravel/MySQL/Yarn | `composer.lock`, `yarn.lock`, `.env.example`, docs 11 | Composer validate/audit, Yarn frozen/build y migración/seed MySQL | VERIFIED local |
+| F1-003 | Activos autorizados/hashes | `formatos/`, `imagen/`, script y `public/documentos/2026` | SHA-256 exacto y revisión 14 páginas | VERIFIED |
+| F1-004 | Landing con contenido crítico/CTA por estado | landing Blade, flags/config, assets propios | `PublicLandingTest` + browser desktop/móvil | VERIFIED local |
+| F1-005 | Auth, correo verificado, reset y 2FA | Fortify 1.37.2 y vistas propias | rutas, login/logout browser y mail fake | VERIFIED local; UAT correo pendiente |
+| F1-006 | RBAC/panel sólo admin | Permission 8.3.0, middleware y Policy | `PanelAuthorizationTest`, IDOR y browser admin | VERIFIED local |
+| F1-007 | Perfil 18+/residencia/E.164/WhatsApp | profile model/request/controller/view | `ProfileEligibilityTest` | VERIFIED local |
+| F1-008 | 3 categorías exactas/cierre Hermosillo | `FlowerFlowSeeder`, config/middleware | seed, frontera y regresión UTC/Hermosillo | VERIFIED local |
+| F1-009 | Equipo ≤5, una/categoría, máximo 3 | request, constraints, controller/action | Feature positivo/negativo | VERIFIED local |
+| F1-010 | Rich text seguro | Quill + Delta/HTML/texto + Symfony sanitizer | Unit XSS + Feature stored XSS + browser | VERIFIED local |
+| F1-011 | Upload privado/10 MiB/formatos/hash | inspector/store/Policy, disk `serve=false` | MIME/signature/quota/IDOR + PDF browser | VERIFIED local; antivirus pendiente |
+| F1-012 | Links allowlist sin SSRF | Form Request host exacto, no cliente HTTP | hosts internos/prohibidos | VERIFIED local |
+| F1-013 | Legales versionados/consentimientos separados | tablas, seeder, UI y `legal-change-log.md` | hashes + acceptance rows | IMPLEMENTED local; v1.1 pendiente |
+| F1-014 | Envío transaccional/idempotente | `FinalizeSubmission`, lock, snapshot, folio, event | doble POST, una versión/mail + envío browser | VERIFIED local |
+| F1-015 | Panel mínimo sin evaluación | counts/distribución/lista/detalle/cuenta | admin/participant/browser desktop/móvil | VERIFIED local |
+| F1-016 | Correo post-commit, sin adjuntos | queued Mailable y config central | Mail fake | VERIFIED local; SMTP pendiente |
+| F1-017 | AWS sólo documentación | docs 07, ADR 0002; cero acceso EC2 | revisión de diff/operación | VERIFIED |
+| F1-018 | Flags productivos seguros | config/env: registro/recepción/resultados false | flags test + config review | VERIFIED |
 
 ## Cobertura y limitación
 
@@ -32,11 +55,11 @@
 
 | ID | Estado | Requisito | Módulo / páginas o artefactos | Historia y aceptación resumida | Verificación planeada | Fase |
 | --- | --- | --- | --- | --- | --- | --- |
-| SRC-001 | PENDING | Recuperar introducción y módulos 1–6 omitidos. | Todos los docs; `docs/10-open-questions.md` | Como producto, quiero reconciliar la fuente completa; el diff no deja contradicciones silenciosas. | Revisión documental + aprobación | PLAN |
+| SRC-001 | RESOLVED | Prompt Fase 01 v2 recibido y reconciliado. | Todos los docs; `docs/10-open-questions.md` | El diff marca reglas anteriores sustituidas sin borrar historia. | Revisión documental | F1 |
 | CAL-001 | DECISION | Convocatoria con edición, slug, fechas, zona y estado. | Público/admin; inicio, convocatoria, calendario | Administrador configura edición; público ve estado y fechas correctas. | U + F + B + UAT | MVP |
 | CAL-002 | ASSUMPTION | Una sola convocatoria activa en MVP, modelo extensible. | Convocatoria/configuración | No se mezclan proyectos entre ediciones; restricción documentada. | U + F | MVP |
 | CAL-003 | ASSUMPTION | Estados persistidos `draft/scheduled/open/closed/judging/results_published/archived`; elegibilidad se deriva de proyectos. | Servicio de estados; admin | Sólo transiciones válidas por actor/precondición y no hay pseudoestado global desincronizado. | U + F | MVP |
-| CAL-004 | PENDING | Fecha de apertura y hora exacta de cierre. | Inicio, calendario, scheduler | Cierre usa valor aprobado en `America/Hermosillo`. | U fecha/zona + B deadline | MVP |
+| CAL-004 | DECISION/PENDING | Cierre inclusivo `2026-08-15 23:59:59 America/Hermosillo`; apertura pendiente. | Inicio, config y middleware | Persiste UTC y bloquea desde el segundo siguiente. | Feature de frontera + browser | F1 |
 | CAL-005 | DECISION | No aceptar envío después del cierre salvo excepción auditada. | Wizard/envío; admin | Envío ordinario falla después del deadline; excepción exige permiso/razón. | U + F concurrencia + SEC | MVP |
 | PUB-001 | ASSUMPTION | Sitio público con bases, categorías, proceso, FAQ y documentos. | `/`, `/convocatoria`, `/categorias`, `/como-participar`, `/preguntas-frecuentes`, `/documentos` | Visitante comprende requisitos y siguiente acción sin autenticarse. | B + A11Y + UAT | MVP |
 | PUB-002 | DECISION | Resultados públicos desactivados por defecto. | `/resultados`; admin ganadores | Sin activación autorizada no se expone resultado. | F + B + SEC | MVP-R |
@@ -123,14 +146,14 @@
 | ENV-001 | DECISION | MySQL local en `127.0.0.1:3306`. | `.env` local no versionado; docs | Conectividad usa host/puerto definidos sin publicar secretos. | Diagnóstico de conexión redactado | PLAN |
 | ENV-002 | DECISION | Base `flowerflow` y usuario `flowerflow_user`. | Ambiente local/pruebas | Aplicación de prueba usa esquema/usuario indicados. | Consulta `SELECT DATABASE(), CURRENT_USER()` con salida segura | PLAN |
 | ENV-003 | DECISION | Contraseña provista fuera del repo sólo en `.env` local. | Gestión de secretos | Valor literal ausente de docs, ejemplos, git, logs y fixtures. | Secret scan + revisión manual | PLAN |
-| ENV-004 | PENDING | Confirmar que la base local es exclusiva/desechable. | MySQL local | No se ejecutan migraciones/seeders hasta confirmar backup/uso. | Aprobación del propietario + inventario read-only | PLAN |
+| ENV-004 | DECISION local | La base local vacía se autorizó como ambiente de pruebas. | MySQL local | Migraciones/seeders y suite se ejecutan sólo en `flowerflow`; datos QA sintéticos se retiran al cerrar. | Confirmación del propietario + inventario vacío + gate verde | F1 |
 | DEP-001 | DECISION | Producción en AWS EC2 Ubuntu coexistente con `administratec`. | Runbook/ADR AWS | Arquitectura y riesgos reflejan el destino real. | Revisión documental | PLAN |
 | DEP-002 | DECISION | Aislar vhost, ruta, usuario, env, DB, storage, cache/sesión, procesos y logs. | EC2 | Flower Flow no comparte secretos ni namespace operativo; fallos no colisionan por configuración. | OPS preflight + smoke cruzado | MVP |
 | DEP-003 | PENDING | Inventariar Ubuntu, CPU/RAM/disco, web server, PHP-FPM y extensiones. | EC2 | Laravel 12/PHP 8.2+ y carga prevista son compatibles. | Comandos read-only + matriz de versiones | PLAN |
 | DEP-004 | PENDING | Definir DB productiva y backups. | EC2/RDS por decidir | Esquema/usuario exclusivos, cifrado, RPO/RTO y restauración probada. | Backup/restore drill | MVP |
 | DEP-005 | PENDING | Definir dominio, DNS y TLS. | Vhost/certificado | HTTPS canónico, headers y renovación monitoreada. | OPS DNS/TLS + browser smoke | MVP |
 | DEP-006 | PENDING | Scheduler y workers propios. | `systemd`/Supervisor/cron | Jobs, reintentos y cierre funcionan sin interferir con `administratec`. | OPS queue/scheduler smoke | MVP |
-| DEP-007 | DECISION | Build Vite controlado; no editar `public/build` manualmente. | CI/release | Artefacto reproducible corresponde al commit/release. | `npm run build` + checksum/revisión | MVP |
+| DEP-007 | DECISION | Build Vite controlado con Yarn Classic 1.22.22; no editar `public/build` manualmente. | CI/release | Artefacto reproducible corresponde al commit/release. | `corepack yarn@1.22.22 build` + checksum/revisión | MVP |
 | DEP-008 | DECISION | No desplegar sin backup, UAT, checklist y aprobación. | Gate de producción | Las cuatro evidencias existen y responsables firman. | Revisión de release | PLAN |
 | OPS-001 | DECISION | Health check y monitoreo de 5xx, jobs, correo, disco y recursos. | EC2/alertas | Alertas tienen umbral, canal y dueño. | Simulación controlada + OPS | MVP |
 | OPS-002 | DECISION | Logs redactados y con rotación. | Laravel/web server/systemd | No contienen passwords, tokens, documentos o PII completa; disco no crece sin límite. | Revisión muestras + logrotate test | MVP |
@@ -189,9 +212,9 @@ Los comandos exactos se ajustarán al entorno y se ejecutarán sólo en mileston
 php artisan route:list
 php artisan test
 ./vendor/bin/pint --test
-npm run build
-composer audit
-npm audit --omit=dev
+corepack yarn@1.22.22 install --frozen-lockfile
+corepack yarn@1.22.22 build
+composer audit --locked
 ```
 
 **PENDING:** confirmar herramientas adicionales y compatibilidad antes de añadir PHPStan/Larastan, Playwright, Dusk o escáneres.
