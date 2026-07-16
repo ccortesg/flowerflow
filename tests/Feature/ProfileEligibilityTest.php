@@ -17,10 +17,10 @@ class ProfileEligibilityTest extends TestCase
         $user->assignRole('participant');
 
         $this->actingAs($user)->put('/perfil', [
-            'first_names' => 'Ana', 'last_names' => 'Prueba', 'mobile_e164' => '6621234567',
+            'first_names' => 'Ana', 'last_names' => 'Prueba', 'mobile_national' => '66212345',
             'birth_date' => now()->subYears(17)->toDateString(), 'neighborhood' => 'Centro',
             'adult_declaration' => '1', 'resident_declaration' => '1',
-        ])->assertSessionHasErrors(['mobile_e164', 'birth_date']);
+        ])->assertSessionHasErrors(['mobile_national', 'birth_date']);
 
         $this->assertDatabaseCount('participant_profiles', 0);
     }
@@ -31,7 +31,7 @@ class ProfileEligibilityTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('participant');
         $payload = [
-            'first_names' => 'Ana', 'last_names' => 'Prueba', 'mobile_e164' => '+526621234567',
+            'first_names' => 'Ana', 'last_names' => 'Prueba', 'mobile_national' => '662 123 4567',
             'birth_date' => '1990-01-01', 'neighborhood' => 'Centro',
             'adult_declaration' => '1', 'resident_declaration' => '1',
         ];
@@ -40,5 +40,6 @@ class ProfileEligibilityTest extends TestCase
         $this->assertTrue($user->fresh()->profile->whatsapp_opt_in);
         $this->actingAs($user)->put('/perfil', [...$payload, 'whatsapp_opt_in' => '0'])->assertSessionHasNoErrors();
         $this->assertFalse($user->fresh()->profile->whatsapp_opt_in);
+        $this->assertSame('+526621234567', $user->fresh()->profile->mobile_e164);
     }
 }

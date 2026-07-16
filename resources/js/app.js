@@ -139,6 +139,37 @@ document.querySelectorAll('[data-password-toggle]').forEach(button => {
   });
 });
 
+document.querySelectorAll('[data-phone-number]').forEach(component => {
+  const input = component.querySelector('[data-phone-national]');
+  const status = component.querySelector('[data-phone-status]');
+
+  const update = () => {
+    let digits = (input?.value ?? '').replace(/\D/g, '');
+    if (digits.startsWith('52') && digits.length > 10) digits = digits.slice(2);
+    digits = digits.slice(0, 10);
+
+    const groups = [digits.slice(0, 3), digits.slice(3, 6), digits.slice(6, 10)].filter(Boolean);
+    if (input) input.value = groups.join(' ');
+
+    const hasValue = digits.length > 0;
+    const isComplete = digits.length === 10;
+    input?.setCustomValidity(hasValue && !isComplete ? 'Escribe los 10 dígitos de tu celular.' : '');
+    if (input) input.setAttribute('aria-invalid', hasValue && !isComplete ? 'true' : 'false');
+
+    status?.classList.toggle('is-valid', isComplete);
+    status?.classList.toggle('is-invalid', hasValue && !isComplete);
+    if (status) {
+      status.textContent = isComplete
+        ? `Número completo: +52 ${groups.join(' ')}`
+        : (hasValue ? `Faltan ${10 - digits.length} dígitos.` : 'Escribe tu número celular completo.');
+    }
+  };
+
+  input?.addEventListener('input', update);
+  component.closest('form')?.addEventListener('submit', update);
+  update();
+});
+
 import.meta.glob([
   '../assets/img/**',
   // '../assets/json/**',

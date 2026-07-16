@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', LandingController::class)->name('landing');
 Route::view('/documentos', 'public.documents')->name('documents');
+Route::view('/correo-verificado', 'auth.email-verified')->name('verification.success');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/inicio', DashboardController::class)->name('dashboard');
