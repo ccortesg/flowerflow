@@ -10,6 +10,8 @@
 | `resources/css/app.css`, `resources/js/app.js` | Tokens, shell, Bootstrap/Quill mínimo | Marca y flujo aprobado | build + responsive/XSS. |
 | `resources/views/layouts/flowerflow.blade.php` | Layout propio público/autenticado | Separar SEO/noindex, roles y navegación | browser público/participante/admin. |
 | `resources/views/{public,auth,participant,submissions,panel}` | Vistas propias sin datos demo | Dominio FlowerFlow | Feature + browser. |
+| `resources/css/pages/public-landing.css`, `resources/views/public/partials/landing-*` | Rediseño V2 encapsulado exclusivamente en `/` | Igualar referencias pública escritorio/móvil sin contaminar auth/panel | `PublicLandingTest`, build y `docs/design-qa.md`. |
+| `public/assets/flowerflow/landing/*.webp` | Recortes optimizados del cartel autorizado | Ciudad y premio sin recurso remoto ni texto jurídico rasterizado | SHA-256, dimensiones y revisión visual documentada en docs 05. |
 | `vite.config.js` | Sin cambio Fase 01 | Evitar poda riesgosa antes de baseline visual | Deuda: entradas globales grandes. |
 | `resources/assets/vendor/**` | Sin edición manual | Frontera vendorizada | `git diff` y build. |
 
@@ -143,6 +145,8 @@ Nada de esta lista fue ejecutado durante la fase documental:
 Toda modificación futura al core vendorizado debe añadir una fila. Los cambios en componentes propios no son overrides del proveedor, pero deben quedar trazables en Git y en el ExecPlan.
 
 Nota 2026-07-15: el campo de teléfono de registro/perfil usa un componente propio (`resources/views/components/phone-number-field.blade.php`) inspirado en el patrón visual de grupo de entrada de Pixinvent. No copia assets, no modifica archivos core del template y no añade dependencia de máscara o selector internacional.
+
+Nota 2026-07-15 — landing V2: se modificó únicamente la capa propia (`layouts/flowerflow.blade.php`, parciales públicos, CSS/JS de aplicación y assets autorizados). `resources/assets/vendor/**`, `_referencia/`, los layouts autenticados y el core de Materialize permanecen sin edición. Los paths públicos de los assets existentes no cambiaron.
 
 ## 7. Regla de actualización
 

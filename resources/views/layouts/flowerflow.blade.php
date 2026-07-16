@@ -11,7 +11,8 @@
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   @stack('head')
 </head>
-<body>
+@php($isLandingPage = request()->routeIs('landing'))
+<body @class(['ff-public-landing' => $isLandingPage])>
 <a class="skip-link" href="#contenido">Saltar al contenido</a>
 @if(auth()->check())
   <div class="container-fluid ff-shell">
@@ -39,24 +40,32 @@
     </div>
   </div>
 @else
-  <header class="ff-navbar sticky-top">
-    <nav class="navbar navbar-expand-lg container" aria-label="Navegación principal">
-      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="{{ route('landing') }}">
-        <img class="ff-logo" src="{{ asset('assets/flowerflow/logo_flowerflow_transparente.png') }}" alt="Logo FlowerFlow"> FlowerFlow
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPublica" aria-controls="navPublica" aria-expanded="false" aria-label="Abrir navegación"><span class="navbar-toggler-icon"></span></button>
-      <div class="collapse navbar-collapse" id="navPublica">
-        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-          <li class="nav-item"><a class="nav-link" href="{{ route('landing') }}#categorias">Categorías</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ route('landing') }}#como-participar">Cómo participar</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ route('documents') }}">Documentos</a></li>
-          <li class="nav-item"><a class="btn btn-flower ms-lg-2" href="{{ route('login') }}">Iniciar sesión</a></li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-  <main id="contenido">@include('partials.messages') @yield('content')</main>
-  <footer class="bg-dark text-white py-5"><div class="container small"><div class="row g-4"><div class="col-md-7"><strong>FLORECE HERMOSILLO</strong><p class="mb-0 mt-2">Agrupación: FLOWER FLOW<br>Colonia Centro Hermosillo, Sonora. CP 83000</p></div><div class="col-md-5"><strong>Contacto</strong><p class="mb-0 mt-2"><a class="text-white" href="mailto:convocatoria@flowerflow.com.mx">convocatoria@flowerflow.com.mx</a><br><a class="text-white" href="mailto:privacidad@flowerflow.com.mx">privacidad@flowerflow.com.mx</a></p></div></div></div></footer>
+  @if($isLandingPage)
+    @include('public.partials.landing-header')
+  @else
+    <header class="ff-navbar sticky-top">
+      <nav class="navbar navbar-expand-lg container" aria-label="Navegación principal">
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="{{ route('landing') }}">
+          <img class="ff-logo" src="{{ asset('assets/flowerflow/logo_flowerflow_transparente.png') }}" alt="Logo FlowerFlow"> FlowerFlow
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPublica" aria-controls="navPublica" aria-expanded="false" aria-label="Abrir navegación"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navPublica">
+          <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+            <li class="nav-item"><a class="nav-link" href="{{ route('landing') }}#categorias">Categorías</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('landing') }}#como-participar">Cómo participar</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('documents') }}">Documentos</a></li>
+            <li class="nav-item"><a class="btn btn-flower ms-lg-2" href="{{ route('login') }}">Iniciar sesión</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+  @endif
+  <main id="contenido" @class(['ff-landing-main' => $isLandingPage])>@include('partials.messages') @yield('content')</main>
+  @if($isLandingPage)
+    @include('public.partials.landing-footer')
+  @else
+    <footer class="bg-dark text-white py-5"><div class="container small"><div class="row g-4"><div class="col-md-7"><strong>FLORECE HERMOSILLO</strong><p class="mb-0 mt-2">Agrupación: FLOWER FLOW<br>Colonia Centro Hermosillo, Sonora. CP 83000</p></div><div class="col-md-5"><strong>Contacto</strong><p class="mb-0 mt-2"><a class="text-white" href="mailto:convocatoria@flowerflow.com.mx">convocatoria@flowerflow.com.mx</a><br><a class="text-white" href="mailto:privacidad@flowerflow.com.mx">privacidad@flowerflow.com.mx</a></p></div></div></div></footer>
+  @endif
 @endif
 @stack('scripts')
 </body>

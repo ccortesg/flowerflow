@@ -2,9 +2,9 @@
 
 ## Sistema visual Fase 01
 
-Tokens derivados del poster/logos: carbón `#17352f`, verde `#167c5b`, verde oscuro `#0b5c42`, lima `#d9ed55`, coral `#ff765f` y crema `#fffdf5`. Carbón/blanco y verde oscuro/blanco superan 7:1 aproximadamente; verde principal/blanco supera 4.5:1 para texto normal. Lima y coral se usan como superficies/acento con texto carbón, no como texto claro. Se requiere confirmar con auditoría browser antes de declarar WCAG.
+La primera implementación usó carbón `#17352f`, verde `#167c5b`, verde oscuro `#0b5c42`, lima `#d9ed55`, coral `#ff765f` y crema `#fffdf5`. El rediseño público V2 conserva esos tokens para las áreas autenticadas y encapsula en `.ff-public-landing` un sistema cálido derivado de las referencias aprobadas: naranja `#ed5b21`, naranja oscuro `#bd3f12`, crema `#fffaf4`, carbón `#2b221f` y superficies blancas. El naranja se usa como fondo con texto carbón o como botón con blanco sólo en su variante oscura/medida; el foco visible usa azul `#1e6fa8` y no depende del color de marca.
 
-Radio principal 1.25–1.5rem, sombras suaves, jerarquía system-ui y CTA verde. El poster es la pieza hero principal, pero título, fecha, categorías y premio se repiten en HTML. No se usa logo/imagen de Apple.
+La V2 usa radio de 0.7–1.75rem según jerarquía, sombras suaves, tipografía `system-ui` y CTA naranja. Título, fecha, categorías, reglas y premio siempre viven en HTML. No se descarga ni enlaza material de Apple; el único dispositivo visible es un recorte local del cartel aprobado y no se utiliza como fuente jurídica.
 
 ## Activos autorizados
 
@@ -15,11 +15,29 @@ Radio principal 1.25–1.5rem, sombras suaves, jerarquía system-ui y CTA verde.
 | `imagen/logo_flowerflow.png` | `fa4892…aca5` | PNG 320×320 RGB | No | Alternativa de marca | Copia idéntica. |
 | `imagen/logo_flowerflow_transparente.png` | `472f0f…baf5` | PNG 320×320 RGBA | Sí | Navbar; `alt="Logo FlowerFlow"` o vacío cuando decorativo | Copia idéntica; 52×52 CSS sin deformar. |
 | `imagen/poster_evento.png` | `6fb16d…ebd9` | PNG 1122×1402 RGB | No | Hero; alt resume cartel, fecha/categorías viven en HTML | Copia idéntica; `width/height` evita layout shift; es el mayor LCP. |
+| `public/assets/flowerflow/landing/hermosillo-atardecer.webp` | `40c0e8…1e90` | WebP 1680×282 RGB | No | Franja panorámica del hero; `alt` describe Hermosillo al atardecer | Recorte determinista del cartel: origen `(0,500)`, `1122×188`, reescalado Lanczos; no contiene texto. |
+| `public/assets/flowerflow/landing/premio-ipad-pro.webp` | `a1b782…2609ba` | WebP 514×757 RGB | No | Composición de premio; decorativa porque el nombre y reglas están en HTML | Recorte determinista del cartel: origen `(820,895)`, `302×445`, reescalado Lanczos; excluye el texto incorrecto “Max”. |
 
 `scripts/publish_authorized_assets.sh` verifica y copia; originales nunca se sobrescriben. La landing, auth, perfil, propuesta y panel deben probarse a 360/768/1440 px, teclado, zoom 200/400 %, foco, errores y reduced motion.
 
+## Landing pública V2 implementada
+
+**Corte:** 2026-07-15. **Alcance:** sólo `/`, su header y footer públicos; login, registro y shell autenticado conservan el chrome anterior.
+
+- Contenedor central de máximo `73.75rem` (1180 px), flujo vertical natural y secciones con espacio consistente.
+- Header sticky con ambos logotipos, anchors reales, login, CTA condicionado por registro y menú móvil con Escape, cierre por selección y `aria-expanded`.
+- Hero con título HTML, cierre oficial en `America/Hermosillo`, estados de recepción/registro controlados por flags, CTAs y composición local del premio.
+- Categorías servidas por base de datos y fallback seguro de tres categorías cuando no hay competencia activa.
+- Proceso 2×2, requisitos 3×2, premio, documentos PDF descargables, FAQ Bootstrap con relaciones ARIA y CTA final.
+- Breakpoints por contenido: navegación/hero a 992 px, grillas principales a 768 px y ajuste extremo a 375 px. Se cubre el intervalo 320–1920 px sin ancho fijo de página.
+- Íconos: subconjunto de Remix/Iconify ya presente, incrustado como máscaras de datos locales; decorativos con `aria-hidden="true"`. No hay emojis ni dependencia nueva.
+- Assets críticos incluyen `width`/`height`; la segunda imagen del premio usa `loading="lazy"`; `prefers-reduced-motion` elimina transiciones perceptibles.
+- El cartel original contiene “iPad Pro Max”, pero los PDF oficiales y el HTML autoritativo indican `Apple iPad Pro`. La V2 no muestra ni afirma “Max”.
+
+Pruebas automatizadas: `tests/Feature/PublicLandingTest.php` cubre contenido, assets, PDF, flag público, combinación registro/recepción, fallback, anchors/FAQ y preservación del chrome de otras rutas invitadas.
+
 **Fecha de corte:** 2026-07-15  
-**Estado:** diseño de experiencia para revisión; no representa pantallas implementadas  
+**Estado:** baseline histórica más landing pública V2 implementada; los módulos futuros permanecen como diseño de experiencia
 **Etiquetas:** `DECISION` = confirmado; `ASSUMPTION` = dirección recomendada; `PENDING` = requiere insumo o aprobación.
 
 ## Limitación del insumo
@@ -276,8 +294,8 @@ Los valores finales deben medirse en contexto; no se consideran aprobados por ap
 
 ### Restricciones de assets
 
-- No extraer/copiar assets del cartel sin licencia.
-- No usar imágenes ni logotipos de Apple o iPad Pro sin autorización.
+- No extraer/copiar assets del cartel fuera de los derivados locales autorizados y documentados para la landing V2.
+- No descargar, enlazar ni incorporar imágenes o logotipos de Apple. El recorte del dispositivo proviene exclusivamente del cartel entregado por el usuario.
 - Placeholders deben identificarse como tales.
 - Fotografías con texto necesitan overlay y prueba de contraste.
 - Imágenes optimizadas a WebP/AVIF cuando sea viable, con dimensiones y `alt`.
