@@ -7,11 +7,13 @@
 - Ejecutar un milestone por vez. No desplegar ni alterar producción sin aprobación expresa, backup verificado, UAT y rollback probado.
 - Mantener el código en inglés y la interfaz/documentación operativa para usuarios en español.
 
-## Límites de la fase 0
+## Autorización actual y límites
 
-- Hasta que se apruebe `.agent/execplans/flowerflow-mvp.md`, sólo se permiten diagnóstico y documentación.
-- No instalar o actualizar dependencias, crear migraciones, sembrar datos, modificar la base, implementar pantallas o cambiar infraestructura.
-- El destino previsto es AWS EC2 con Ubuntu, en coexistencia aislada con `administratec`; GoDaddy está fuera de alcance.
+- La Fase 01 `public-submissions` fue aprobada expresamente el 2026-07-15 mediante `Prompt_Optimo_Codex_FlowerFlow_Fase_01_v2.md` y se ejecuta en `codex/phase-01-public-submissions`.
+- Están autorizados en local/test: dependencias compatibles, migraciones revisadas, datos sintéticos, sitio público, auth/perfil participante, propuestas, archivos privados, aceptaciones, envío idempotente y panel privilegiado mínimo.
+- Quedan fuera de esta fase: residencia documental ordinaria, revisión administrativa completa, jueces, rúbrica, evaluación, selección/publicación de ganadores, comunicaciones masivas, ARCO completo y reportes avanzados.
+- No desplegar ni modificar EC2, DNS, TLS, SMTP real o `administratec`; AWS sólo se documenta y prepara mediante preflight de solo lectura para una tarea posterior.
+- `formatos/` conserva los PDF jurídicos v1.0 exactos y versionables; `imagen/` conserva originales autorizados; `_referencia/` es sólo lectura, local, ignorada y nunca forma parte del build o release.
 
 ## Seguridad y datos
 
@@ -30,6 +32,7 @@
 - No crear repositories genéricos, APIs, microservicios, SPA ni Redis sin necesidad aprobada.
 - No añadir dependencias de producción sin actualizar `docs/dependency-register.md` y crear/actualizar un ADR.
 - No editar `public/build` manualmente. Importar JS/CSS por página mediante Vite y retirar demos sólo después de verificar el build.
+- No sobrescribir originales de `imagen/` ni `formatos/`; publicar copias o derivaciones reproducibles y verificar hashes.
 
 ## Calidad
 
@@ -44,4 +47,3 @@
 - Preservar cambios ajenos y evitar ediciones solapadas. Dividir trabajo paralelo por archivos/módulos con propietario explícito.
 - Actualizar el ExecPlan vivo: progreso, decisiones, hallazgos inesperados, evidencia y próximos pasos.
 - Entregar lista exacta de archivos, comandos ejecutados, resultados, riesgos residuales y rollback.
-

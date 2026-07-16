@@ -123,7 +123,7 @@ Se adopta como invariante:
 - jobs, auditoría, exports y APIs incluyen UTC inequívoco;
 - reglas de deadline se calculan server-side, nunca con el reloj del navegador.
 
-El valor MySQL `SYSTEM` observado localmente no es suficientemente determinista entre WSL, staging y AWS. En un milestone aprobado se agregará una configuración equivalente a `DB_TIMEZONE=+00:00` y se comprobará la zona de sesión al conectar.
+El valor MySQL `SYSTEM` observado localmente no es suficientemente determinista entre WSL, staging y AWS. Fase 01 fija `DB_TIMEZONE=+00:00` en la conexión Laravel y lo comprueba con una prueba sobre `@@session.time_zone`.
 
 Para apertura/cierre se guarda, como mínimo:
 

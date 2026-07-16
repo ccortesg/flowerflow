@@ -1,5 +1,11 @@
 # Roadmap y backlog
 
+## Estado Fase 01 — 2026-07-15
+
+Completado en código: locks/runtime, assets legales/branding, configuración/flags, auth/RBAC, modelo/migraciones/seed, perfil, borradores/equipos, sanitización, uploads/enlaces, finalización/snapshot/correo, panel mínimo y pruebas preparadas.
+
+Gate inmediato: contraseña local colocada fuera de Git → migrate/seed MySQL → Feature/Pint/build → browser desktop/móvil → commits locales. Después: UAT y aprobación legal v1.1. Carriles posteriores separados: racionalizar Vite, antivirus, SMTP, staging/EC2, evaluación/jueces y resultados. No mezclar esos carriles con el cierre local.
+
 **Fecha de planificación:** 2026-07-15  
 **Fecha límite indicada:** 2026-08-15; hora PENDING  
 **Ventana:** 31 días calendario, aproximadamente 23 laborables.  

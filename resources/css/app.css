@@ -1,0 +1,39 @@
+:root {
+  --ff-ink: #17352f;
+  --ff-green: #167c5b;
+  --ff-green-dark: #0b5c42;
+  --ff-lime: #d9ed55;
+  --ff-coral: #ff765f;
+  --ff-cream: #fffdf5;
+}
+
+body { color: var(--ff-ink); background: #f8faf8; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: var(--ff-green-dark); }
+.skip-link { position: absolute; left: -9999px; top: 0; z-index: 9999; }
+.skip-link:focus { left: 1rem; top: 1rem; background: #fff; padding: .75rem; }
+.ff-navbar { background: rgba(255, 253, 245, .96); border-bottom: 1px solid #dfe8e2; }
+.ff-logo { width: 52px; height: 52px; object-fit: contain; }
+.ff-hero { background: radial-gradient(circle at 90% 10%, #e8f69b, transparent 35%), linear-gradient(135deg, #f4fff9, #fff8ee); }
+.ff-poster { width: min(100%, 520px); height: auto; border-radius: 1.5rem; box-shadow: 0 1.5rem 4rem rgba(20, 64, 50, .2); }
+.ff-kicker { color: var(--ff-green-dark); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.ff-display { font-weight: 800; font-size: clamp(2.4rem, 7vw, 5.6rem); line-height: .98; }
+.btn-flower { --bs-btn-bg: var(--ff-green); --bs-btn-border-color: var(--ff-green); --bs-btn-color: #fff; --bs-btn-hover-bg: var(--ff-green-dark); --bs-btn-hover-border-color: var(--ff-green-dark); }
+.ff-section { padding-block: clamp(3rem, 7vw, 6rem); }
+.ff-card { border: 0; border-radius: 1.25rem; box-shadow: 0 .75rem 2rem rgba(20, 64, 50, .08); height: 100%; }
+.ff-deadline { border-left: .4rem solid var(--ff-coral); background: #fff; }
+.ff-prize { background: var(--ff-lime); }
+.ff-status { display: inline-flex; align-items: center; gap: .45rem; border-radius: 999px; background: #edf7f2; color: var(--ff-green-dark); padding: .5rem .9rem; font-weight: 700; }
+.ff-status::before { content: ''; width: .65rem; height: .65rem; border-radius: 50%; background: currentColor; }
+.ff-shell { min-height: 100vh; }
+.ff-sidebar { background: var(--ff-ink); color: #fff; min-height: 100vh; }
+.ff-sidebar a { color: #dcebe5; text-decoration: none; display: block; padding: .7rem .85rem; border-radius: .65rem; }
+.ff-sidebar a:hover, .ff-sidebar a[aria-current='page'] { color: #fff; background: rgba(255,255,255,.12); }
+.ql-editor { min-height: 240px; background: #fff; }
+.ql-snow .ql-tooltip::before { content: 'Visitar enlace:' !important; }
+.ql-snow .ql-tooltip a.ql-action::after { content: 'Editar' !important; }
+.ql-snow .ql-tooltip.ql-editing a.ql-action::after { content: 'Guardar' !important; }
+.ql-snow .ql-tooltip a.ql-remove::before { content: 'Quitar' !important; }
+.table td, .table th { vertical-align: middle; }
+.badge-draft { background: #fff2cc; color: #6f5200; }
+.badge-submitted { background: #dcefe7; color: #0b5c42; }
+@media (max-width: 767.98px) { .ff-sidebar { min-height: auto; } }

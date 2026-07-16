@@ -1,15 +1,16 @@
 # ExecPlan: Flower Flow MVP 2026
 
-**Estado:** Proposed — listo para revisión, no autorizado para implementar  
+**Estado:** Completed — Fase 01 `public-submissions`; UAT/producción requieren nueva puerta
 **Creado:** 2026-07-15 America/Hermosillo  
 **Owner propuesto:** líder técnico Flower Flow  
-**Fecha objetivo:** producción controlada 2026-08-07; cierre 2026-08-15, hora PENDING
+**Milestone activo:** recepción pública local/test; sin despliegue
+**Cierre aprobado:** 2026-08-15 23:59:59 `America/Hermosillo`
 
 ## Propósito
 
-Construir un MVP Laravel seguro para que participantes creen y envíen proyectos, revisores determinen elegibilidad y jueces asignados evalúen sin acceso a identidad o comprobantes. Administración debe operar el flujo y declarar ganadores mediante una acción separada; la publicación pública permanece apagada.
+Construir en local/test el primer recorrido vertical revisable de Flower Flow: presencia pública profesional, registro y verificación, perfil participante, borrador individual/equipo, descripción enriquecida sanitizada, archivos privados, enlaces externos controlados, aceptaciones jurídicas versionadas, envío idempotente con folio y panel privilegiado mínimo.
 
-Al terminar, un recorrido sintético completo funciona en staging y producción AWS EC2 Ubuntu, con autorización negativa, auditoría, backup restaurado, workers/scheduler observables y rollback ensayado.
+Al terminar esta fase, el recorrido sintético funciona localmente sobre MySQL, con pruebas de autorización negativa, build reproducible, documentación y evidencia visual. Producción, EC2, jueces, evaluación y publicación de ganadores permanecen fuera de alcance.
 
 ## Autoridad
 
@@ -28,20 +29,19 @@ Antes de ejecutar, leer:
 - docs/10-open-questions.md
 - docs/adr
 
-Este plan no sustituye decisiones P0. Si una regla aprobada contradice un ASSUMPTION, actualizar primero producto, ADR, modelo, trazabilidad y este ExecPlan.
+El prompt de Fase 01 v2 tiene autoridad para este milestone y resuelve las decisiones indicadas en el registro de decisiones. Si contradice un supuesto anterior, se actualizan producto, ADR, modelo, trazabilidad y este ExecPlan antes de cerrar la fase.
 
 ## Alcance
 
 ### Incluido
 
-- Baseline reproducible PHP/JS/MySQL y aislamiento AWS.
-- Branding/limpieza mínima de Materialize.
+- Baseline reproducible PHP/JS/MySQL y preflight AWS sólo documental.
+- Branding y sitio público terminado con activos autorizados de `imagen/`.
 - Auth, verificación, reset, 2FA privilegiado, RBAC y Policies.
-- Convocatoria/categorías, contenido público esencial y legales versionados.
-- Perfil, residencia, elegibilidad, borrador, integrantes básicos, anexos, preview y envío.
-- Backoffice, asignación, conflicto, rúbrica y evaluación.
-- Auditoría/notificaciones/reportes mínimos y decisión de ganador sin publicación.
-- QA, accesibilidad crítica, performance, backup/restore, UAT, deploy y estabilización.
+- Convocatoria/categorías, contenido público y PDF jurídicos v1.0 versionados por hash.
+- Perfil ampliado, borrador individual/equipo, editor seguro, múltiples archivos, video/carpeta pública, preview y envío idempotente.
+- Panel privilegiado mínimo en `/panel`, sin módulo de evaluación.
+- Auditoría y notificaciones transaccionales mínimas; QA, accesibilidad crítica y rollback local.
 
 ### Excluido
 
@@ -49,8 +49,9 @@ Este plan no sustituye decisiones P0. Si una regla aprobada contradice un ASSUMP
 - Publicación pública de ganadores hasta aprobación posterior.
 - Upgrade mayor Laravel, microservicios, SPA y Redis obligatorio.
 - Cambios o despliegues de Administratec.
+- Residencia documental ordinaria, revisión administrativa completa, jueces, rúbrica, evaluación, ganador, comunicaciones masivas, reportes avanzados, CMS general y ARCO completo.
 
-## Estado de partida verificable
+## Estado de partida verificable (baseline histórica)
 
 - Laravel 12 y PHP declarado 8.2+, sin composer.lock/vendor.
 - Materialize/Pixinvent 3.0.0 Commercial, variante/licencia del dominio PENDING.
@@ -59,8 +60,20 @@ Este plan no sustituye decisiones P0. Si una regla aprobada contradice un ASSUMP
 - No existe autenticación backend ni módulo de dominio.
 - MySQL WSL2 8.0.46 activo sólo en loopback; schema flowerflow vacío; usuario local verificado.
 - El secreto local fue entregado fuera del repositorio; nunca se escribe aquí.
-- No existe Git en el directorio al corte.
+- Git existe con base `403656dce350709d066aaab0576175036a9f339c`; rama activa `codex/phase-01-public-submissions`.
 - Target decidido: AWS EC2 Ubuntu compartida con Administratec sólo a nivel de host, con aislamiento completo.
+- Los tres PDF de `formatos/` coinciden con los hashes aprobados; `imagen/` contiene poster y cuatro logotipos autorizados; `_referencia/` es la Full local de 1,301 archivos y está ignorada.
+
+### Estado actual Fase 01
+
+- Laravel 12.64.0, Fortify 1.37.2, Permission 8.3.0 y HTML Sanitizer 7.4.14 fijados en `composer.lock`; `composer audit` verde.
+- Yarn 1.22.22 fijado; instalación congelada y build Vite verdes, sin `package-lock.json`.
+- Se implementaron dominio, rutas, vistas, flags, auth/RBAC, perfil, propuestas/archivos/envío y panel mínimo.
+- Activos públicos se copian por script y conservan hashes exactos; `_referencia/` permaneció intacta.
+- MySQL 8.0.46 local migrado/sembrado; suite completa verde con 15 pruebas y 67 aserciones, incluida sesión MySQL `+00:00`.
+- Browser QA real completado en escritorio y 390×844 para público, participante, archivo/envío y panel admin; cero errores/advertencias de consola.
+- Browser QA detectó una interpretación horaria incorrecta; se corrigió a aplicación/persistencia UTC y presentación `America/Hermosillo`, con prueba de regresión.
+- Interfaz, correos y validaciones fijados en español de México (`es_MX`/`es-MX`); la zona visible de negocio es `America/Hermosillo`.
 
 ## Decisiones y supuestos
 
@@ -69,25 +82,29 @@ Este plan no sustituye decisiones P0. Si una regla aprobada contradice un ASSUMP
 - AWS EC2 Ubuntu es el destino; GoDaddy queda descartado.
 - Arquitectura propuesta: monolito modular Laravel/Blade/Materialize.
 - MySQL, InnoDB y utf8mb4; persistencia UTC y presentación America/Hermosillo.
+- Español de México (`es_MX`) en contenido visible, correos y validaciones.
 - Comprobantes privados separados de anexos; jueces nunca ven residencia/PII.
 - Puntuación servidor; ganador separado; sin selección aleatoria; resultados off.
+- Inicio público activo; registro y envíos desactivados por defecto; panel activo.
+- Participantes mayores de 18 años residentes de Hermosillo; individual o equipos hasta cinco; una propuesta por categoría y máximo tres.
+- Cierre `2026-08-15 23:59:59` en Hermosillo, persistido/comparado en UTC.
+- Cuota acumulada de proyecto de 10 MiB, con múltiples archivos y allowlist aprobada.
+- Documentos de residencia se solicitan preferentemente sólo a finalistas/posibles ganadores y no bloquean el registro ordinario de esta fase.
 
 ### ASSUMPTION hasta aprobación
 
 - PHP 8.3 y Node 20 se estandarizan.
 - Sesión/cache/cola database para MVP; worker persistente.
 - Storage privado en EBS cifrado o S3 y base en RDS o EC2 son decisiones de preflight; se prefieren S3/RDS si presupuesto y operación los aprueban.
-- Un representante puede gestionar equipo básico; máximo y aceptaciones PENDING.
 - Retención propuesta en docs/03-data-model.md.
+- Fecha exacta de apertura permanece configurable; registro y envíos siguen apagados por flags hasta revisión legal/operativa.
 
 ### PENDING P0
 
-- Recuperar módulos 1-6 del input original.
 - Licencia/variante Materialize.
-- Apertura/cierre exactos, edad, equipos, cupos y límites de archivos.
-- Documentos de residencia, retención y textos legales finales.
+- Fecha/hora de apertura, retención y aprobación del texto jurídico v1.1/adenda.
 - Rúbrica, número de jueces, evaluación ciega, empates/categoría desierta.
-- Premio/datos publicables.
+- Datos publicables definitivos y operación de entrega del premio.
 - SMTP, CAPTCHA, staging/UAT owner.
 - Acceso e inventario EC2, DB productiva, backup y RPO/RTO.
 
@@ -101,7 +118,7 @@ Este plan no sustituye decisiones P0. Si una regla aprobada contradice un ASSUMP
 
 ## Plan de ejecución
 
-Sólo M0 puede comenzar después de la aprobación inicial. Cada milestone requiere su propia confirmación de alcance y un registro de evidencia.
+La Fase 01 autoriza M0, shell, identidad, convocatoria/legal, perfil y envío, además del panel mínimo definido. Los milestones futuros conservan su propia puerta de aprobación.
 
 ### Paso 0 — Congelar baseline y decisiones
 
@@ -234,17 +251,16 @@ Resultado: convocatoria cerrada sin pérdida ni acceso indebido.
 Los comandos reales se fijan al completar M0. Base:
 
 ~~~text
-composer validate --no-check-publish
-composer install
+composer validate --strict
+composer install --no-interaction
 php artisan about
 php artisan route:list
 php artisan migrate:status
 php artisan test
 ./vendor/bin/pint --test
-composer audit
-npm ci
-npm run build
-npm audit --omit=dev
+composer audit --locked
+corepack yarn@1.22.22 install --frozen-lockfile
+corepack yarn@1.22.22 build
 ~~~
 
 Validación adicional:
@@ -291,8 +307,15 @@ Cada milestone especifica su rollback local en docs/06-roadmap-backlog.md.
 - [x] 2026-07-15 — Se verificó conexión read-only/metadata a MySQL; schema vacío; sin migraciones.
 - [x] 2026-07-15 — Se produjo la documentación de fase 0 y ADR propuestos.
 - [x] 2026-07-15 — Se corrigió .gitignore para excluir .env y variantes.
-- [ ] PENDING aprobación — Recuperar fuente truncada y cerrar decisiones P0.
-- [ ] PENDING aprobación — Ejecutar Paso 0/M0.
+- [x] 2026-07-15 15:20 MST — El prompt de Fase 01 v2 recuperó y aprobó el alcance público/recepción, reglas de participantes, archivos, legales y cierre.
+- [x] 2026-07-15 15:45 MST — Se verificaron commit base, rama objetivo, hashes PDF y activos autorizados; `_referencia/` quedó ignorada y sin rastrear.
+- [x] 2026-07-15 16:00 MST — Baseline reproducible: Composer/Yarn locks, auditorías y build verificados.
+- [x] 2026-07-15 17:30 MST — Dominio, auth/RBAC, perfil, recepción segura, panel y activos versionados implementados.
+- [x] 2026-07-15 18:10 MST — Docs 00–14, auditoría Pixinvent, cambio jurídico y ADR reconciliados.
+- [x] 2026-07-15 — MySQL 8.0.46 migrado y sembrado sobre `flowerflow`; usuario efectivo `flowerflow_user@localhost` verificado sin exponer el secreto.
+- [x] 2026-07-15 — Suite completa verde: 15 pruebas, 67 aserciones; Composer/Yarn/build/Pint/vistas y escaneo de secretos verdes.
+- [x] 2026-07-15 — Browser QA desktop/móvil completado; flujo real de archivo/envío/panel verde y regresión UTC/Hermosillo corregida.
+- [x] 2026-07-15 — Localización activa confirmada en navegador: español de México y fechas visibles en `America/Hermosillo`.
 
 ## Hallazgos inesperados
 
@@ -303,6 +326,7 @@ Cada milestone especifica su rollback local en docs/06-roadmap-backlog.md.
 - El usuario MySQL sandbox tiene WITH GRANT OPTION; no reutilizar en producción.
 - Vistas demo referencian Jetstream y assets ausentes.
 - Parte de la documentación de Administratec no refleja su checkout actual; la EC2 debe inspeccionarse directamente.
+- El browser QA encontró que `APP_TIMEZONE=America/Hermosillo` reinterpretaba timestamps UTC; la aplicación y PHP/Laravel quedan en UTC y sólo la presentación usa la zona de negocio.
 
 ## Registro de decisiones
 
@@ -313,14 +337,18 @@ Cada milestone especifica su rollback local en docs/06-roadmap-backlog.md.
 | 2026-07-15 | modular monolith | plazo y starter existente | Proposed |
 | 2026-07-15 | database queue/cache/session MVP | menor operación, sin asumir Redis | Proposed |
 | 2026-07-15 | resultado público apagado | privacidad y aprobación pendiente | Accepted por alcance |
+| 2026-07-15 | Fase 01 `public-submissions` | aprobación expresa del prompt v2 | Accepted / Active |
+| 2026-07-15 | cierre 15-ago-2026 23:59:59 Hermosillo | regla aprobada para frontera de envío | Accepted |
+| 2026-07-15 | Fortify + Spatie Permission | backend auth propio y permisos con Policies | Accepted para compatibilidad PHP 8.3/Laravel 12 |
+| 2026-07-15 | jueces/evaluación/ganadores fuera del milestone | evitar migraciones y UI prematuras | Accepted |
 
-## Criterio de finalización del ExecPlan
+## Criterio de finalización de Fase 01
 
-- MVP observable y matrices de seguridad pasan.
+- Recorrido local público/participante/admin observable y matrices de seguridad de Fase 01 pasan.
 - Traceability enlaza cada requisito crítico a prueba/evidencia.
 - Build/tests/auditorías en verde y cero P0/P1 abierto.
-- UAT, licencia, legal, backup/restore y producción aprobados.
-- Release EC2 aislada, monitoreada y reversible.
+- UAT, licencia, legal, backup/restore y producción permanecen gates posteriores; no se simulan como cumplidos.
+- No se realiza release EC2 dentro de esta fase.
 - Documentación y registro vivo reflejan el sistema real.
 
-Este ExecPlan está listo para revisión; ejecutarlo requiere aprobación explícita y cierre de P0.
+Este ExecPlan queda cerrado para Fase 01 con gate MySQL/Feature/browser verde. Cualquier UAT formal, producción o acceso a AWS necesita autorización separada.

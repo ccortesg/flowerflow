@@ -1,5 +1,17 @@
 # Fuentes de investigación
 
+## Fuentes aplicadas en Fase 01
+
+| Fuente primaria | Uso aplicado |
+|---|---|
+| https://laravel.com/docs/12.x/starter-kits | Fortify como backend de autenticación, verificación, reset y 2FA. |
+| https://spatie.be/docs/laravel-permission/v8/prerequisites | Compatibilidad Laravel 12/13 y PHP 8.3+ de v8. |
+| https://symfony.com/doc/7.4/html_sanitizer.html | Configuración de allowlist, esquemas y hosts del sanitizer. |
+| https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html | Allowlist, firma/MIME, nombres generados, storage privado, tamaño y expansión. |
+| https://getcomposer.org/download/ | Instalación/verificación de Composer 2.10.2 para el usuario del proyecto. |
+
+Las versiones exactas también se verificaron contra metadata de Composer/Packagist y `composer.lock`; las fuentes no sustituyen pruebas del código local.
+
 Fecha de consulta: 2026-07-15  
 Política: sólo documentación oficial o repositorios oficiales de los proyectos
 

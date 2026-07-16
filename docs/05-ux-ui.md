@@ -1,5 +1,23 @@
 # UX/UI, accesibilidad e identidad — Flower Flow 2026
 
+## Sistema visual Fase 01
+
+Tokens derivados del poster/logos: carbón `#17352f`, verde `#167c5b`, verde oscuro `#0b5c42`, lima `#d9ed55`, coral `#ff765f` y crema `#fffdf5`. Carbón/blanco y verde oscuro/blanco superan 7:1 aproximadamente; verde principal/blanco supera 4.5:1 para texto normal. Lima y coral se usan como superficies/acento con texto carbón, no como texto claro. Se requiere confirmar con auditoría browser antes de declarar WCAG.
+
+Radio principal 1.25–1.5rem, sombras suaves, jerarquía system-ui y CTA verde. El poster es la pieza hero principal, pero título, fecha, categorías y premio se repiten en HTML. No se usa logo/imagen de Apple.
+
+## Activos autorizados
+
+| Fuente | SHA-256 | MIME/dimensiones | Alpha | Uso y alt | Derivación/impacto |
+|---|---|---|---|---|---|
+| `imagen/logo_florecehermosillo.png` | `ae7262…68b37` | PNG 320×320 RGB | No | Marca sobre fondo complejo; alt de identidad cuando aplique | Copia idéntica; pequeña. |
+| `imagen/logo_florecehermosillo_transparente.png` | `306ccc…e82e0` | PNG 320×320 RGBA | Sí | Marca sobre superficie clara/oscura con contraste | Copia idéntica. |
+| `imagen/logo_flowerflow.png` | `fa4892…aca5` | PNG 320×320 RGB | No | Alternativa de marca | Copia idéntica. |
+| `imagen/logo_flowerflow_transparente.png` | `472f0f…baf5` | PNG 320×320 RGBA | Sí | Navbar; `alt="Logo FlowerFlow"` o vacío cuando decorativo | Copia idéntica; 52×52 CSS sin deformar. |
+| `imagen/poster_evento.png` | `6fb16d…ebd9` | PNG 1122×1402 RGB | No | Hero; alt resume cartel, fecha/categorías viven en HTML | Copia idéntica; `width/height` evita layout shift; es el mayor LCP. |
+
+`scripts/publish_authorized_assets.sh` verifica y copia; originales nunca se sobrescriben. La landing, auth, perfil, propuesta y panel deben probarse a 360/768/1440 px, teclado, zoom 200/400 %, foco, errores y reduced motion.
+
 **Fecha de corte:** 2026-07-15  
 **Estado:** diseño de experiencia para revisión; no representa pantallas implementadas  
 **Etiquetas:** `DECISION` = confirmado; `ASSUMPTION` = dirección recomendada; `PENDING` = requiere insumo o aprobación.
@@ -384,12 +402,12 @@ No usar skeleton indefinido. Los errores deben incluir qué ocurrió, qué se pr
 
 ## Preguntas UX pendientes
 
-- **PENDING:** ¿qué campos y pasos definitivos contienen los módulos 1–6 omitidos?
-- **PENDING:** ¿cuál es la hora de cierre y habrá contador?
-- **PENDING:** ¿individual, equipos o ambos; cuántos integrantes y qué acciones puede realizar cada uno?
+- **RESOLVED Fase 01:** campos y flujo definidos por prompt v2; ver perfil/propuesta y docs 01/14.
+- **RESOLVED/PENDING:** cierre 23:59:59 Hermosillo; no se implementa contador hasta tener apertura aprobada.
+- **RESOLVED Fase 01:** individual o equipo de hasta cinco, representante incluida; una cuenta opera el envío.
 - **PENDING:** ¿evaluación ciega y qué metadatos deben anonimizarse?
 - **PENDING:** ¿qué datos del ganador tienen consentimiento para publicación?
-- **PENDING:** ¿existe manual de marca y assets licenciados?
+- **PARTIAL:** cinco PNG autorizados recibidos y documentados; manual de marca y licencia Pixinvent siguen pendientes.
 - **PENDING:** ¿contenido administrable o por despliegue?
 - **PENDING:** ¿CAPTCHA y proveedor?
 - **PENDING:** navegadores/dispositivos de UAT y necesidades de accesibilidad conocidas.
@@ -406,4 +424,3 @@ No usar skeleton indefinido. Los errores deben incluir qué ocurrió, qué se pr
 - [ ] Pruebas WCAG 2.2 AA y browser están trazadas.
 - [ ] Assets/licencias y textos legales aprobados.
 - [ ] No se implementó ni desplegó como parte de esta fase documental.
-

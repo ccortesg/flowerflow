@@ -1,5 +1,20 @@
 # Inventario de overrides de Materialize
 
+> **Actualización Fase 01:** la sección baseline siguiente se conserva históricamente. Sí existen ahora adaptaciones FlowerFlow, concentradas fuera del core vendorizado.
+
+## Overrides/adaptaciones reales 2026-07-15
+
+| Ruta | Cambio | Motivo | Prueba/reaplicación |
+|---|---|---|---|
+| `config/variables.php`, `config/custom.php` | Branding/canonical y customizer apagado | Retirar metadatos demo | Config test/browser; reaplicar tras upgrade. |
+| `resources/css/app.css`, `resources/js/app.js` | Tokens, shell, Bootstrap/Quill mínimo | Marca y flujo aprobado | build + responsive/XSS. |
+| `resources/views/layouts/flowerflow.blade.php` | Layout propio público/autenticado | Separar SEO/noindex, roles y navegación | browser público/participante/admin. |
+| `resources/views/{public,auth,participant,submissions,panel}` | Vistas propias sin datos demo | Dominio FlowerFlow | Feature + browser. |
+| `vite.config.js` | Sin cambio Fase 01 | Evitar poda riesgosa antes de baseline visual | Deuda: entradas globales grandes. |
+| `resources/assets/vendor/**` | Sin edición manual | Frontera vendorizada | `git diff` y build. |
+
+`_referencia/` permaneció intacta, ignorada y fuera del build. Ver docs 13/14 para decisiones ADOPT/ADAPT/REJECT/FUTURE.
+
 Fecha de corte: 2026-07-15  
 Template declarado localmente: Materialize 3.0.0, Pixinvent, Commercial
 

@@ -1,5 +1,7 @@
 # Arquitectura propuesta
 
+> **Implementación Fase 01:** monolito modular Laravel 12.64.0 con controllers delgados, Form Requests, `FinalizeSubmission`, servicios de sanitización/archivo, Policies, Fortify y Spatie Permission. MySQL es el datastore local; timestamps se persisten UTC y el concurso conserva `America/Hermosillo`. Uploads usan `storage/app/private` y sólo salen por Policy. Ver ADR 0005 y ADR 0006. AWS sigue como arquitectura objetivo no ejecutada.
+
 **Estado:** propuesta para aprobación  
 **Corte de información:** 2026-07-15  
 **Destino decidido:** una instancia AWS EC2 con Ubuntu donde ya opera Administratec, con aislamiento lógico y operativo.  

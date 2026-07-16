@@ -1,7 +1,21 @@
 # Desarrollo local Flower Flow sobre WSL2 y MySQL
 
+> **Actualización Fase 01 — 2026-07-15:** el ExecPlan ya autorizó dependencias, `.env`, migraciones y pruebas locales. Se creó `.env` ignorado con MySQL `flowerflow`/`flowerflow_user`, pero la contraseña debe colocarse localmente por captura segura antes de ejecutar migraciones; nunca se documenta ni pasa como argumento. Laravel 12.64.0, PHP 8.3.31, Composer 2.10.2 y Yarn 1.22.22 están verificados. Las prohibiciones “fase 0” de las secciones históricas quedan sustituidas dentro de esta rama sólo para el alcance Fase 01.
+
+## Secuencia vigente de arranque
+
+1. Confirmar `git check-ignore -v .env _referencia/`.
+2. Editar `.env` localmente y completar sólo `DB_PASSWORD` mediante un editor que no registre historial.
+3. Confirmar sin imprimir secretos: `php artisan about`.
+4. Ejecutar `php artisan migrate --seed`; no usar `migrate:fresh` si la base contiene trabajo ajeno.
+5. Crear admin con `php artisan flowerflow:admin` y captura oculta; no usar `--password` en un shell compartido.
+6. Ejecutar `php artisan test`, `./vendor/bin/pint --test` y el build Yarn congelado.
+7. Para browser local: `php artisan serve --host=127.0.0.1 --port=8000` con flags seguros; correo permanece en `log`.
+
+La base de pruebas oficial de esta fase es MySQL en Ubuntu/WSL2. No se usa SQLite porque el PHP WSL observado no trae `pdo_sqlite` y porque se deben validar enums, índices, transacciones y collation reales. El password suministrado por el propietario no se repite en este documento.
+
 Fecha de evidencia: `2026-07-15`  
-Estado: `BASELINE VERIFICADO — FASE 0 SIN MIGRACIONES`
+Estado histórico de esta sección: `BASELINE VERIFICADO — FASE 0 SIN MIGRACIONES`; estado vigente arriba: `FASE 01 AUTORIZADA`.
 
 ## 1. Nombre correcto del ambiente
 
@@ -103,7 +117,7 @@ MAIL_MAILER=log
 
 Mientras la base siga vacía, `file/sync/file` evita depender de tablas de sesión, jobs y cache que todavía no existen. Después de aprobar y ejecutar las migraciones correspondientes, cada driver debe reevaluarse y documentarse.
 
-`config/app.php` mantiene la aplicación en UTC. Las fechas de negocio se presentan con `America/Hermosillo` y se convierten de forma explícita; ver [ADR 0003](adr/0003-mysql-environments-and-time.md).
+`config/app.php` mantiene la aplicación y la persistencia en UTC. La interfaz, los correos y las validaciones usan español de México (`APP_LOCALE=es_MX`, HTML `lang="es-MX"`). Las fechas de negocio se presentan con `FLOWERFLOW_TIMEZONE=America/Hermosillo` y se convierten de forma explícita; ver [ADR 0003](adr/0003-mysql-environments-and-time.md).
 
 ## 6. Comprobaciones seguras de WSL y MySQL
 
@@ -261,7 +275,7 @@ El servidor MySQL local reportó `SYSTEM`; esto depende del sistema y no constit
 Contrato propuesto:
 
 - aplicación y timestamps persistidos: UTC;
-- sesión MySQL: `+00:00` cuando se implemente `DB_TIMEZONE`;
+- sesión MySQL: `+00:00` mediante `DB_TIMEZONE`;
 - zona de negocio predeterminada: `America/Hermosillo`;
 - cada convocatoria conserva su identificador IANA de zona;
 - entradas administrativas se interpretan en la zona de la convocatoria y se convierten a UTC;
