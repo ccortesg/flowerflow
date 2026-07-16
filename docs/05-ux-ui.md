@@ -50,6 +50,24 @@ Pruebas automatizadas: `tests/Feature/PublicLandingTest.php` cubre contenido, as
 
 Pruebas automatizadas: `tests/Feature/ParticipantExperienceRedesignTest.php` cubre variantes de acceso, datos/completitud de perfil, aislamiento de propuestas, zona horaria, acciones, vacío, límite y feature flag. La validación visual comparativa queda registrada en `design-qa.md`.
 
+## Asistente de nueva propuesta implementado
+
+**Corte:** 2026-07-16. **Alcance:** creación, edición y revisión del borrador con las rutas ya existentes; sin migraciones, dependencias ni activos nuevos.
+
+- La creación y edición usan un asistente server-rendered de cuatro pasos: (1) modalidad, categoría y datos básicos; (2) descripción; (3) archivos y enlaces; (4) revisión y envío. El progreso es un `nav`/`ol`, anuncia “Paso n de 4”, identifica el paso actual y sólo enlaza pasos anteriores disponibles.
+- `wizard_step` y `wizard_action` hacen explícito el contrato. Cada solicitud valida y modifica únicamente su sección; “Guardar borrador” permanece en el paso y “Continuar” avanza. Un parámetro `step` inválido vuelve al paso 1.
+- No se simula autoguardado. La interfaz informa “Cambios sin guardar”, advierte antes de abandonar el paso y comunica el guardado después de la respuesta del servidor. Sin JavaScript, los formularios y botones continúan siendo funcionales.
+- La modalidad y categoría usan radios nativos dentro de tarjetas. Equipo muestra hasta cuatro personas adicionales porque la cuenta representante integra el máximo de cinco; la declaración de elegibilidad sigue siendo obligatoria sólo para equipo.
+- Título, resumen y descripción obtienen sus límites de `config/flowerflow.php`; los contadores son ayuda visual y los Form Requests mantienen la autoridad. Quill sincroniza Delta, HTML y texto; el servidor sanitiza antes de persistir y vuelve a sanitizar al presentar.
+- Documentos e imágenes conservan inputs `multiple` nativos. Arrastrar/soltar, listar, quitar y previsualizar imágenes son mejoras progresivas. Todos los archivos permanecen privados, con nombre interno aleatorio, firma/MIME/allowlist y descarga/eliminación autorizadas.
+- La cuota configurada de 10 MiB se calcula sobre documentos e imágenes existentes más los recién seleccionados. El borrador admite paso 3 vacío, pero la revisión y la acción final exigen al menos un archivo con `kind=document`.
+- YouTube acepta sólo HTTPS y hosts exactos configurados, rechaza credenciales embebidas y genera la vista previa cliente con `youtube-nocookie.com`, `loading=lazy` y sin autoplay. La aplicación no consulta URLs externas. La carpeta pública conserva su allowlist y una advertencia contra PII.
+- La CSP conserva `default-src 'self'`, permite `blob:` únicamente en `img-src` para miniaturas locales y limita `frame-src` exclusivamente a `https://www.youtube-nocookie.com`; no se añadieron CDN, trackers ni `connect-src` externos.
+- La revisión reutiliza `FinalizeSubmission`: aceptaciones jurídicas separadas, folio, snapshot inmutable, idempotencia, evento y correo post-commit no cambiaron. Enviar sigue siendo irreversible y una propuesta enviada no se puede editar.
+- En móvil, el encabezado usa ambos logotipos y la cuenta real; el stepper adopta etiquetas cortas, tarjetas/ayuda se apilan y acciones/archivos se reorganizan sin alterar el orden semántico. No se incorporaron campana, usuario ficticio ni estado de autoguardado de las referencias.
+
+Pruebas automatizadas: `tests/Feature/SubmissionWizardTest.php` cubre renderizado/pasos, perfil, equipo, categoría ajena, preservación por sección, sanitización, guardado parcial, hosts, credenciales, cuota compartida, requisito documental, propietario y estado inmutable. `tests/Feature/SubmissionFlowTest.php` recorre creación, contenido, archivo y finalización mediante el nuevo contrato.
+
 **Fecha de corte:** 2026-07-16
 **Estado:** baseline histórica más landing pública V2 y experiencia participante implementadas; los módulos futuros permanecen como diseño de experiencia
 **Etiquetas:** `DECISION` = confirmado; `ASSUMPTION` = dirección recomendada; `PENDING` = requiere insumo o aprobación.
@@ -210,21 +228,18 @@ La navegación se genera según permiso, no sólo rol. Debe agrupar operación, 
 
 ### 3. Wizard de proyecto
 
-**ASSUMPTION:** pasos recomendados:
+**DECISION Fase 01:** cuatro pasos implementados:
 
-1. Categoría y datos básicos.
-2. Participación/equipo.
-3. Descripción y contenido.
-4. Anexos.
-5. Revisión de elegibilidad.
-6. Resumen y aceptaciones.
-7. Envío.
+1. Modalidad, categoría y datos básicos.
+2. Descripción y contenido.
+3. Archivos y enlaces.
+4. Revisión, aceptaciones y envío.
 
 Patrones:
 
 - Título de paso, propósito, progreso textual “Paso n de total” y lista accesible.
-- Guardado automático más acción manual secundaria.
-- Estado “Guardando / Guardado / No se pudo guardar”.
+- Guardado explícito con acción secundaria “Guardar borrador”; no afirmar autoguardado sin endpoint/versionado aprobado.
+- Estado “Cambios sin guardar / Guardando / Borrador guardado”, respaldado por respuesta real.
 - Navegar hacia atrás sin pérdida.
 - Resumen de errores al inicio y error asociado a campo.
 - Campos condicionales anunciados y con foco razonable.
@@ -427,7 +442,7 @@ No usar skeleton indefinido. Los errores deben incluir qué ocurrió, qué se pr
 | --- | --- | --- | --- | --- |
 | Registro/verificación | móvil y escritorio | obligatorio | correo existente neutral, rate limit | Completable sin asistencia. |
 | Perfil/residencia | móvil y escritorio | obligatorio | archivo inválido, reintento | Privacidad y estado comprensibles. |
-| Wizard/envío | móvil y escritorio | obligatorio | autosave, reconexión, cierre | Sin pérdida y versión confirmada. |
+| Wizard/envío | móvil y escritorio | obligatorio | guardado explícito, error, cierre | Sin pérdida entre pasos y versión confirmada. |
 | Revisión | escritorio/tablet | obligatorio | sin permiso, transición inválida | Datos separados y decisión auditada. |
 | Evaluación | escritorio/tablet/móvil razonable | obligatorio | conflicto, cierre, reapertura | Sólo asignación propia; cálculo accesible. |
 | Publicación | escritorio | obligatorio | apagado, preview, doble confirmación | Sin PII y sin publicación automática. |

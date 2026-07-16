@@ -7,9 +7,9 @@ Fecha: 2026-07-15
 | Landing | Front landing, hero, cards | ADAPT | Poster propio, contenido semántico, CTA por flags | Bootstrap; sin Swiper/noUiSlider | Responsive, contenido crítico sin imagen, contraste. |
 | Login/reset/verify/2FA | Auth basic y two steps | ADAPT | Vistas propias conectadas a Fortify; sin social login | Fortify, Bootstrap | Rate limit, enumeración, correo, teclado. |
 | Perfil | Basic inputs + Account | ADAPT | Nombres separados, E.164, checkbox WhatsApp reversible, declaraciones | HTML nativo/Bootstrap | Validación servidor, 18+, privacidad y móvil. |
-| Borrador de propuesta | Wizard numbered | FUTURE | Formulario seccionado en una página, guardado explícito | Sin bs-stepper | Recuperación de errores/foco y guardado. |
+| Borrador de propuesta | Wizard numbered | ADAPT | Cuatro pasos server-rendered sobre rutas existentes, guardado explícito por sección y revisión real | Sin bs-stepper | `SubmissionWizardTest`, recuperación de errores/foco, móvil y guardado. |
 | Descripción | Quill Snow | ADAPT | Toolbar mínima, Delta+HTML+texto, sanitizer Symfony | Quill 2.0.3, HTML Sanitizer | XSS almacenado, Base64/hotlink, output re-sanitizado. |
-| Adjuntos | Dropzone multiple | REJECT | Input file nativo multiple, ruta privada, hash, MIME, cuota | Sin Dropzone en la página | IDOR, macro/ZIP bomb, 10 MiB y no `storage:link`. |
+| Adjuntos | Dropzone multiple | REJECT dependencia / ADAPT interacción | Input file nativo multiple con arrastrar/soltar, lista/remoción y preview progresivos; ruta privada, hash, MIME y cuota compartida | Sin Dropzone en la página | IDOR, macro/ZIP bomb, existentes+nuevos ≤10 MiB y no `storage:link`. |
 | Confirmación de envío | SweetAlert/modal | REJECT | Checkboxes separados y confirmación progresiva nativa | JS mínimo | Doble clic/idempotencia, sin depender de JS. |
 | Dashboard participante | Cards | ADOPT | Conteos y tabla de propuestas | Bootstrap | Móvil, estados y acceso propietario. |
 | Panel | Dashboard/cards | ADAPT | Conteos, distribución textual y recientes | Sin gráficas | Consultas/roles, PII sólo admin, rendimiento. |
