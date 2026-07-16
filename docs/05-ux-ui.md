@@ -461,6 +461,20 @@ No usar skeleton indefinido. Los errores deben incluir qué ocurrió, qué se pr
 | Evaluación | escritorio/tablet/móvil razonable | obligatorio | conflicto, cierre, reapertura | Sólo asignación propia; cálculo accesible. |
 | Publicación | escritorio | obligatorio | apagado, preview, doble confirmación | Sin PII y sin publicación automática. |
 
+### Cierre visual del área participante — 2026-07-16
+
+El usuario responsable confirmó la ejecución y aceptación del QA visual y responsive de acceso, inicio, perfil, listado de propuestas y asistente de cuatro pasos. El cierre comprende móvil, tablet y escritorio, así como estados representativos, teclado, foco, zoom al 200 %, reflow, overflow horizontal, `prefers-reduced-motion`, consola y controles interactivos.
+
+- [x] Referencias y vistas completas comparadas.
+- [x] Menú lateral y offcanvas participante revisados.
+- [x] Matriz responsive y estados del área participante cubierta.
+- [x] Flujo de propuesta revisado por teclado y en pantallas táctiles.
+- [x] Foco, zoom, reflow, reduced motion y ausencia de overflow revisados.
+- [x] Consola, assets, enlaces y acciones principales revisados.
+- [x] Sin hallazgos P0, P1 o P2 reportados al cierre.
+
+La aceptación se registra como UAT manual confirmada por el usuario. No se incorporaron capturas al repositorio; el detalle, las referencias y el historial de bloqueos previos se conservan en `design-qa.md`. Este cierre aplica al área participante y no sustituye las revisiones WCAG o UAT todavía pendientes para módulos futuros fuera de la Fase 01.
+
 ## Preguntas UX pendientes
 
 - **RESOLVED Fase 01:** campos y flujo definidos por prompt v2; ver perfil/propuesta y docs 01/14.

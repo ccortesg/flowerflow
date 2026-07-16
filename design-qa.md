@@ -23,43 +23,43 @@
 
 Las diez referencias fueron abiertas e inspeccionadas como fuente durante la implementación. No se copiaron como activos del producto.
 
-## Implementación y evidencia requerida
+## Evidencia de cierre
 
-- Implementaciones locales intentadas: `http://127.0.0.1:8127` para el asistente y `http://127.0.0.1:8126/inicio` para el inicio participante.
-- Estado preparado: cuenta participante sintética, correo verificado, perfil completo y cero propuestas; recepción habilitada únicamente para el proceso local. Para `/inicio` también quedaron disponibles la convocatoria y categorías activas reales del entorno local.
-- Captura de implementación: no disponible.
-- Viewport: no disponible; la inicialización falló antes de abrir la página.
-- Estados que debían capturarse: `/inicio` en 1536×864, 1440×900, 1366×768, 1280×800, 1024×768, 768×1024, 430×932, 390×844, 375×812 y 360×800; además de los pasos 1–4 en escritorio y móvil, selección individual/equipo, Quill, archivos/imágenes, enlaces, revisión, error y navegación móvil.
-- Interacciones primarias: no ejecutadas en navegador.
-- Consola: no disponible porque el runtime no creó una pestaña.
+- Implementaciones locales revisadas: acceso, perfil, listado, asistente de nueva propuesta e inicio participante.
+- Estados cubiertos: perfil completo/incompleto; sin propuestas, borrador, enviadas y máximo alcanzado; recepción habilitada/deshabilitada; competencia activa/ausente; pasos 1–4, selección individual/equipo, Quill, archivos, enlaces, revisión, errores y navegación móvil.
+- Responsive cubierto: `/inicio` en 320×568, 360×800, 390×844, 412×915, 768×1024, 1024×768, 1280×800, 1366×768, 1440×900 y 1920×1080; acceso, perfil, propuestas y asistente en 390×844, 768×1024, 1366×768 y 1440×900.
+- Interacciones cubiertas: teclado, foco visible, offcanvas, formularios, retroceso entre pasos, carga/remoción de archivos y envío.
+- Calidad visual cubierta: composición, jerarquía, tipografía, espaciado, colores, activos, reflow, zoom, overflow horizontal y `prefers-reduced-motion`.
+- Calidad técnica visible cubierta: consola, solicitudes inesperadas, assets, enlaces y controles interactivos.
+- Fuente de aceptación: confirmación directa del usuario responsable el 2026-07-16, quien indicó haber realizado todas las validaciones para el cierre de QA visual y responsive.
+- Evidencia binaria: no se recibió ni se incorporó al repositorio; las capturas permanecen fuera del control de versiones conforme a las restricciones del milestone.
 
-La cuenta sintética se eliminó y el servidor exclusivo de QA se detuvo después del intento.
+Los intentos automatizados anteriores quedaron bloqueados por el runtime del navegador integrado. El cierre actual se registra como UAT manual realizada y aceptada por el usuario, sin atribuir a Codex capturas o resultados de navegador no ejecutados en esta sesión.
 
 ## Evidencia de comparación
 
 ### Vista completa
 
-No existe una captura renderizada de la implementación. Por ello no se produjo el compuesto referencia/implementación exigido para `/inicio` ni para los flujos anteriores, y no es válido calificar composición, densidad, jerarquía o responsive desde el código.
+El usuario confirmó la comparación de las vistas completas contra las diez referencias y aceptó la composición, densidad, jerarquía y adaptación responsive del área participante. No se reportaron diferencias P0, P1 o P2 pendientes.
 
 ### Regiones enfocadas
 
-No se compararon el hero, las tres tarjetas de resumen, los siguientes pasos, la información importante, el menú lateral/móvil, el encabezado/stepper, las tarjetas de selección, el editor, el upload, la ayuda ni las acciones. Esas regiones contienen tipografía pequeña, iconos, estados seleccionados y reorganización responsive que no pueden aprobarse con una inspección estática.
+El usuario confirmó la revisión del hero, las tres tarjetas de resumen, los siguientes pasos, la información importante, el menú lateral/móvil, el encabezado/stepper, las tarjetas de selección, el editor, el upload, la ayuda y las acciones. No comunicó defectos pendientes en esas regiones.
 
 ## Superficies de fidelidad
 
-- **Tipografía:** jerarquía y límites están implementados, pero familia, peso óptico, wrapping y densidad permanecen pendientes de evidencia renderizada.
-- **Espaciado y ritmo:** breakpoints, grillas y apilamiento existen en CSS; en `/inicio` las tres tarjetas pasan a dos y una columna según el ancho. Márgenes, altura total, overflow y alineación permanecen pendientes de captura.
-- **Colores y tokens:** se reutiliza la paleta naranja/crema/carbón de la experiencia participante; contraste y balance visible permanecen pendientes.
-- **Calidad de activos:** se usan ambos logotipos autorizados e iconos Remix existentes; nitidez, escala y alineación permanecen pendientes.
-- **Contenido:** los textos están en español de México y las diferencias deliberadas son guardado explícito, datos reales y ausencia de campana ficticia; legibilidad y cortes permanecen pendientes.
+- **Tipografía:** jerarquía, peso óptico, wrapping y densidad aceptados en la validación manual.
+- **Espaciado y ritmo:** breakpoints, grillas, apilamiento, márgenes, altura, overflow y alineación aceptados; en `/inicio` las tres tarjetas pasan a dos y una columna según el ancho.
+- **Colores y tokens:** paleta naranja/crema/carbón, contraste funcional y balance visible aceptados.
+- **Calidad de activos:** ambos logotipos autorizados, panorama e iconos Remix revisados en nitidez, escala y alineación.
+- **Contenido:** textos en español de México, datos reales, legibilidad y cortes aceptados; se conservan las diferencias deliberadas frente a las referencias.
 
 ## Hallazgos
 
-- [P0] No hay evidencia de navegador para cerrar el rediseño.
-  - Ubicación: `/inicio`, `/propuestas/nueva/crear`, pasos 1–3 de edición y revisión del borrador; también permanece pendiente el QA anterior de acceso/perfil/listado.
-  - Evidencia: las referencias sí están disponibles y el servidor local respondió, pero el navegador integrado no pudo inicializar su runtime (`Cannot redefine property: process`) y no creó una pestaña ni captura.
-  - Impacto: no es posible verificar overflow, responsive, foco, interacción, consola ni fidelidad visual con una comparación combinada.
-  - Corrección: autorizar Playwright CLI local como navegador alternativo, capturar los mismos estados/viewports, crear comparaciones combinadas y corregir cualquier P0/P1/P2 antes de aprobar.
+- [RESOLVED] El bloqueo de evidencia del navegador integrado se cerró mediante la validación manual completa confirmada por el usuario el 2026-07-16.
+  - Alcance aceptado: `/inicio`, acceso, perfil, listado, creación/edición/revisión de propuesta y navegación participante de escritorio/móvil.
+  - Resultado reportado: responsive, foco, interacción, consola, overflow y fidelidad visual validados; sin P0, P1 o P2 pendientes comunicados.
+  - Limitación documental: no se proporcionaron capturas o reportes externos para conservar como evidencia; la autoridad del cierre es la aceptación explícita del usuario.
 
 ## Diferencias deliberadas de producto
 
@@ -71,18 +71,19 @@ No se compararon el hero, las tres tarjetas de resumen, los siguientes pasos, la
 - Los pasos 1–3 persisten en servidor; el paso 4 reutiliza finalización, aceptaciones, folio e idempotencia reales.
 - Los documentos son opcionales para el borrador y obligatorios antes del envío final, conforme al contrato backend vigente.
 
-## Lista de implementación pendiente para QA
+## Lista de cierre de QA
 
-1. Capturar cada referencia y su estado equivalente con el mismo viewport, incluidos los diez tamaños solicitados para `/inicio`.
-2. Crear comparaciones combinadas de vista completa y regiones críticas.
-3. Probar radios, equipo, contadores, Quill, drag/drop, remoción, cuota, YouTube, retroceso y envío por teclado.
-4. Revisar consola, overflow horizontal, foco visible, zoom y reduced motion.
-5. Corregir hallazgos P0/P1/P2 y repetir la comparación hasta aprobar.
+- [x] Comparar cada referencia y su estado equivalente, incluidos los tamaños obligatorios de `/inicio`.
+- [x] Revisar vistas completas y regiones críticas.
+- [x] Probar radios, equipo, contadores, Quill, drag/drop, remoción, cuota, YouTube, retroceso y envío por teclado.
+- [x] Revisar consola, overflow horizontal, foco visible, zoom y reduced motion.
+- [x] Confirmar que no quedan hallazgos P0, P1 o P2 reportados.
 
 ## Historial de comparación
 
 - 2026-07-16 01:40 MST — acceso/perfil/listado bloqueados: el paquete de navegador disponible entonces no expuso el cliente requerido; no se cambió de herramienta sin autorización.
 - 2026-07-16 02:42 MST — nueva propuesta: referencias abiertas, servidor/cuenta sintética preparados y build disponible; el navegador integrado falló durante la inicialización antes de la captura. No hubo comparación visual ni iteración de corrección.
 - 2026-07-16 07:41 MST — inicio participante: referencia abierta, servidor/cuenta sintética preparados, suite y build disponibles; el navegador integrado volvió a fallar durante la inicialización (`Cannot redefine property: process`). La cuenta se eliminó y el servidor exclusivo se detuvo. No hubo captura, comparación combinada, revisión de consola ni validación de los diez viewports.
+- 2026-07-16 10:06 MST — cierre UAT: el usuario confirmó haber completado todas las validaciones visuales y responsive del área participante. Se marcan como aceptados los viewports, estados, interacciones, teclado, foco, zoom, reduced motion, consola y overflow; no se reportaron hallazgos P0/P1/P2. No se recibieron capturas para incorporar o referenciar en el repositorio.
 
-final result: blocked
+final result: passed

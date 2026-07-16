@@ -1,6 +1,6 @@
 # ExecPlan: rediseño de acceso y experiencia participante
 
-**Estado:** In progress
+**Estado:** Complete
 
 **Creado:** 2026-07-16 America/Hermosillo  
 **Milestone:** rediseño local de inicio de sesión, inicio participante, perfil, propuestas y asistente de nueva propuesta
@@ -115,6 +115,8 @@ No se desplegará en este milestone. Un despliegue futuro requerirá el flujo pr
 - [x] 2026-07-16 07:33 MST — Dashboard dinámico y menú participante reducido implementados sin migraciones, dependencias ni activos nuevos; prueba enfocada verde: 9 pruebas/170 aserciones.
 - [x] 2026-07-16 07:39 MST — Gates automatizados finales verdes: 50 pruebas/500 aserciones, Pint PHP acotado, Composer, caché de vistas y build Vite con Yarn 1.22.22.
 - [!] 2026-07-16 07:41 MST — QA visual de `/inicio` bloqueado: el navegador integrado falló durante la inicialización (`Cannot redefine property: process`) antes de abrir una pestaña. La cuenta sintética fue eliminada y el servidor exclusivo se detuvo; `design-qa.md` conserva `final result: blocked` y Playwright CLI requiere autorización expresa.
+- [x] 2026-07-16 10:06 MST — El usuario confirmó haber realizado todas las validaciones para el cierre visual y responsive del área participante. Se acepta el UAT manual de acceso, inicio, perfil, propuestas y asistente en móvil/tablet/escritorio, incluidos teclado, foco, zoom, reduced motion, consola y overflow; no se reportaron P0/P1/P2. `design-qa.md` queda en `final result: passed`.
+- [x] 2026-07-16 10:06 MST — Milestone local cerrado: implementación, 50 pruebas/500 aserciones, Pint PHP acotado, Composer, Vite, documentación y aceptación visual completados. No hubo migraciones, dependencias, despliegue ni cambios productivos.
 
 ## Hallazgos y pendientes
 
