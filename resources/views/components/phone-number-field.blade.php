@@ -12,7 +12,7 @@
     <label class="form-label" for="mobile_national">Número de celular</label>
     <div class="input-group">
         <span class="input-group-text ff-phone-prefix" id="mobile-country-code">
-            <span aria-hidden="true">🇲🇽</span>
+            <span class="ri ri-phone-line" aria-hidden="true"></span>
             <span>México (+52)</span>
         </span>
         <input

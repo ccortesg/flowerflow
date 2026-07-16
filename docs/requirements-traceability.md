@@ -26,6 +26,7 @@
 | F1-016 | Correo post-commit, sin adjuntos | queued Mailable y config central | Mail fake | VERIFIED local; SMTP pendiente |
 | F1-017 | AWS sólo documentación | docs 07, ADR 0002; cero acceso EC2 | revisión de diff/operación | VERIFIED |
 | F1-018 | Flags productivos seguros | config/env: registro/recepción/resultados false | flags test + config review | VERIFIED |
+| F1-019 | Acceso, perfil y propuestas con sistema visual participante responsive y datos reales | `layouts/flowerflow`, vistas `auth/login`, `participant/profile`, `submissions/index`, navegación compartida y CSS/JS encapsulados | `ParticipantExperienceRedesignTest`, suite, build, teclado/móvil y `design-qa.md` | IMPLEMENTED local; QA visual en curso |
 
 ## Cobertura y limitación
 

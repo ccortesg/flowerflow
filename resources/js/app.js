@@ -131,11 +131,17 @@ document.querySelectorAll('[data-password-toggle]').forEach(button => {
     if (!input) return;
     const shouldShow = input.type === 'password';
     input.type = shouldShow ? 'text' : 'password';
-    button.textContent = shouldShow ? 'Ocultar' : 'Mostrar';
+    const label = button.querySelector('[data-password-toggle-label]');
+    const icon = button.querySelector('[data-password-toggle-icon]');
+    if (label) label.textContent = shouldShow ? 'Ocultar' : 'Mostrar';
+    else button.textContent = shouldShow ? 'Ocultar' : 'Mostrar';
+    icon?.classList.toggle('ri-eye-line', !shouldShow);
+    icon?.classList.toggle('ri-eye-off-line', shouldShow);
     const fieldLabel = input.id === 'password_confirmation'
       ? 'confirmación de contraseña'
       : (input.id === 'current_password' ? 'contraseña actual' : 'contraseña');
     button.setAttribute('aria-label', `${shouldShow ? 'Ocultar' : 'Mostrar'} ${fieldLabel}`);
+    button.setAttribute('aria-pressed', shouldShow ? 'true' : 'false');
   });
 });
 
@@ -213,6 +219,76 @@ document.querySelectorAll('[data-public-header]').forEach(header => {
   window.addEventListener('resize', () => {
     if (window.matchMedia('(min-width: 62rem)').matches) closeMenu();
   });
+});
+
+document.querySelectorAll('[data-profile-form]').forEach(form => {
+  const editButtons = [...form.querySelectorAll('[data-profile-edit]')];
+  const cancelButton = form.querySelector('[data-profile-cancel]');
+  let lastEditButton = editButtons[0];
+
+  const startEditing = button => {
+    lastEditButton = button;
+    form.classList.add('is-editing');
+    const input = document.getElementById(button.dataset.profileFocus);
+    window.requestAnimationFrame(() => input?.focus());
+  };
+
+  editButtons.forEach(button => {
+    button.addEventListener('click', () => startEditing(button));
+  });
+
+  cancelButton?.addEventListener('click', () => {
+    form.reset();
+    form.classList.remove('is-editing');
+    window.requestAnimationFrame(() => lastEditButton?.focus());
+  });
+});
+
+document.querySelectorAll('[data-submissions-browser]').forEach(browser => {
+  const search = browser.querySelector('[data-submissions-search]');
+  const status = browser.querySelector('[data-submissions-status]');
+  const clear = browser.querySelector('[data-submissions-clear]');
+  const count = browser.querySelector('[data-submissions-count]');
+  const empty = browser.querySelector('[data-submissions-empty-filter]');
+  const items = [...browser.querySelectorAll('[data-submission-item]')];
+
+  const normalize = value => value
+    .toLocaleLowerCase('es-MX')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+
+  const update = () => {
+    const query = normalize(search?.value ?? '');
+    const selectedStatus = status?.value ?? '';
+    let visible = 0;
+
+    items.forEach(item => {
+      const matchesText = !query || normalize(item.textContent).includes(query);
+      const matchesStatus = !selectedStatus || item.dataset.submissionStatus === selectedStatus;
+      const shouldShow = matchesText && matchesStatus;
+      item.hidden = !shouldShow;
+      if (shouldShow) visible += 1;
+    });
+
+    if (count) count.textContent = String(visible);
+    if (empty) empty.hidden = visible !== 0;
+  };
+
+  search?.addEventListener('input', update);
+  status?.addEventListener('change', update);
+  clear?.addEventListener('click', () => {
+    if (search) search.value = '';
+    if (status) status.value = '';
+    update();
+    search?.focus();
+  });
+});
+
+document.querySelectorAll('.ff-login-menu-toggle').forEach(toggle => {
+  const target = document.querySelector(toggle.dataset.bsTarget);
+  target?.addEventListener('shown.bs.collapse', () => toggle.setAttribute('aria-label', 'Cerrar navegación'));
+  target?.addEventListener('hidden.bs.collapse', () => toggle.setAttribute('aria-label', 'Abrir navegación'));
 });
 
 import.meta.glob([
