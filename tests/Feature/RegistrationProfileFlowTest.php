@@ -74,11 +74,14 @@ class RegistrationProfileFlowTest extends TestCase
     public function test_registration_view_contains_mexico_phone_and_downloadable_consents(): void
     {
         if (! Route::has('register')) {
-            Route::post('/registro-prueba', fn () => null)->name('register');
+            Route::get('/registro-prueba', fn () => view('auth.register'))
+                ->middleware('web')
+                ->name('register');
             Route::getRoutes()->refreshNameLookups();
         }
 
-        $this->view('auth.register')
+        $this->get(route('register'))
+            ->assertOk()
             ->assertSee('México (+52)')
             ->assertSee('data-phone-number', false)
             ->assertSee('Declaro que soy mayor de 18 años')

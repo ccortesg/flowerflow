@@ -2,7 +2,7 @@
 
 ## Suite Fase 01
 
-Unit cubre sanitización. Feature preparado cubre landing/legales, perfil 18+/E.164/WhatsApp reversible, flags seguros, límite de panel, IDOR, deadline inclusivo, allowlist, cuota, XSS, privacidad de archivos, una propuesta/categoría, máximo total, snapshot/idempotencia, legales separados y mail en cola. Debe ejecutarse sobre MySQL local, no SQLite, después de configurar `.env` ignorado.
+Unit cubre sanitización. Feature preparado cubre landing/legales, registro con perfil mínimo, teléfono México `+52`, perfil 18+/E.164/WhatsApp reversible, flags seguros, límite de panel, IDOR, deadline inclusivo, allowlist, cuota, XSS, privacidad de archivos, una propuesta/categoría, máximo total, snapshot/idempotencia, legales separados y mail en cola. Debe ejecutarse sobre MySQL local, no SQLite, después de configurar `.env` ignorado.
 
 Comandos de gate: `php artisan migrate --seed`, `php artisan test`, `./vendor/bin/pint --test`, `composer validate --strict`, `composer audit --locked`, `scripts/build_frontend_production.sh`, hashes y browser QA. No usar datos reales ni enviar correo real.
 
@@ -47,13 +47,13 @@ La contraseña local se entrega fuera del repositorio y vive sólo en .env ignor
 
 | Área | Casos positivos | Casos negativos/límite | Nivel |
 |---|---|---|---|
-| Registro/login | alta, verificación, login, logout | duplicado, credenciales, rate limit, enumeración | Feature/browser |
+| Registro/login | alta con perfil mínimo, teléfono `+52`, aceptaciones, verificación, login, logout | duplicado, menor de edad, teléfono incompleto, faltan documentos legales, credenciales, rate limit, enumeración | Feature/browser |
 | Reset/2FA | reset de uso único, enrolamiento y recuperación | expirado/reutilizado, rol privilegiado sin 2FA | Feature/browser |
 | RBAC | acción permitida por rol | cada rol contra cada permiso crítico | Feature |
 | Ownership | participante opera recurso propio | ULID de otro usuario, recurso archivado | Feature |
 | Convocatoria | abre/cierra en fecha | antes/después, borde exacto, excepción sin permiso | Unit/feature |
 | Legal | acepta versión vigente | falta aceptación, versión sustituida, hash distinto | Unit/feature |
-| Perfil/elegibilidad | datos mínimos y decisión | menor/no elegible según regla PENDING, campos hostiles | Request/feature |
+| Perfil/elegibilidad | datos mínimos capturados desde registro, edición y decisión | menor/no elegible según regla PENDING, campos hostiles | Request/feature |
 | Residencia | upload/revisión/descarga | juez, participante ajeno, MIME falso, sobrecuota | Feature/security |
 | Borrador | create/update/autosave | stale version, conflicto, campos largos | Feature/browser |
 | Equipo | invite/accept/remove según regla | duplicado, máximo, email no autorizado | Unit/feature |
@@ -141,7 +141,8 @@ Para el gate local de Fase 01 se usó Playwright CLI mediante la herramienta de 
 
 Evidencia del 2026-07-15:
 
-- `php artisan test`: 15 pruebas, 67 aserciones, verde sobre MySQL `flowerflow`;
+- `php artisan test`: 28 pruebas, 161 aserciones, verde sobre MySQL `flowerflow`;
+- foco posterior de registro completo: 18 pruebas/124 aserciones en `RegistrationProfileFlowTest`, `AuthMailHardeningTest`, `ProfileEligibilityTest` y `SubmissionFlowTest`;
 - frontera inclusiva de cierre y conversión UTC -> `America/Hermosillo` cubiertas por Feature tests;
 - locale `es_MX`, HTML `es-MX`, validaciones en español y zona de negocio cubiertos por prueba de regresión;
 - browser QA detectó y cerró el defecto de interpretación horaria antes del cierre;
@@ -151,8 +152,8 @@ Evidencia del 2026-07-15:
 
 Recorridos:
 
-1. Visitante -> registro -> verificación -> login.
-2. Participante -> perfil/elegibilidad -> borrador -> archivos -> preview -> submit.
+1. Visitante -> registro con perfil mínimo -> verificación amigable -> login.
+2. Participante -> revisión de perfil/elegibilidad -> borrador -> archivos -> preview -> submit.
 3. Revisor -> documento privado -> corrección -> decisión.
 4. Admin -> convocatoria -> asignación -> excepción auditada.
 5. Juez -> asignado -> conflicto o evaluación -> confirmación.

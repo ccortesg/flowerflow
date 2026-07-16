@@ -142,6 +142,8 @@ Nada de esta lista fue ejecutado durante la fase documental:
 
 Toda modificación futura al core vendorizado debe añadir una fila. Los cambios en componentes propios no son overrides del proveedor, pero deben quedar trazables en Git y en el ExecPlan.
 
+Nota 2026-07-15: el campo de teléfono de registro/perfil usa un componente propio (`resources/views/components/phone-number-field.blade.php`) inspirado en el patrón visual de grupo de entrada de Pixinvent. No copia assets, no modifica archivos core del template y no añade dependencia de máscara o selector internacional.
+
 ## 7. Regla de actualización
 
 Antes de actualizar Materialize:

@@ -12,15 +12,15 @@
 | F1-002 | Base reproducible Laravel/MySQL/Yarn | `composer.lock`, `yarn.lock`, `.env.example`, docs 11 | Composer validate/audit, Yarn frozen/build y migración/seed MySQL | VERIFIED local |
 | F1-003 | Activos autorizados/hashes | `formatos/`, `imagen/`, script y `public/documentos/2026` | SHA-256 exacto y revisión 14 páginas | VERIFIED |
 | F1-004 | Landing con contenido crítico/CTA por estado | landing Blade, flags/config, assets propios | `PublicLandingTest` + browser desktop/móvil | VERIFIED local |
-| F1-005 | Auth, correo verificado, reset y 2FA | Fortify 1.37.2 y vistas propias | rutas, login/logout browser y mail fake | VERIFIED local; UAT correo pendiente |
+| F1-005 | Auth, correo verificado, reset y 2FA | Fortify 1.37.2, vistas propias y página `/correo-verificado` | rutas, login/logout browser, signed verify y mail fake | VERIFIED local; UAT correo pendiente |
 | F1-006 | RBAC/panel sólo admin | Permission 8.3.0, middleware y Policy | `PanelAuthorizationTest`, IDOR y browser admin | VERIFIED local |
-| F1-007 | Perfil 18+/residencia/E.164/WhatsApp | profile model/request/controller/view | `ProfileEligibilityTest` | VERIFIED local |
+| F1-007 | Registro/perfil 18+/residencia/E.164/WhatsApp | `CreateNewUser`, profile model/request/controller/view y teléfono México `+52` | `RegistrationProfileFlowTest`, `ProfileEligibilityTest` | VERIFIED local |
 | F1-008 | 3 categorías exactas/cierre Hermosillo | `FlowerFlowSeeder`, config/middleware | seed, frontera y regresión UTC/Hermosillo | VERIFIED local |
 | F1-009 | Equipo ≤5, una/categoría, máximo 3 | request, constraints, controller/action | Feature positivo/negativo | VERIFIED local |
 | F1-010 | Rich text seguro | Quill + Delta/HTML/texto + Symfony sanitizer | Unit XSS + Feature stored XSS + browser | VERIFIED local |
 | F1-011 | Upload privado/10 MiB/formatos/hash | inspector/store/Policy, disk `serve=false` | MIME/signature/quota/IDOR + PDF browser | VERIFIED local; antivirus pendiente |
 | F1-012 | Links allowlist sin SSRF | Form Request host exacto, no cliente HTTP | hosts internos/prohibidos | VERIFIED local |
-| F1-013 | Legales versionados/consentimientos separados | tablas, seeder, UI y `legal-change-log.md` | hashes + acceptance rows | IMPLEMENTED local; v1.1 pendiente |
+| F1-013 | Legales versionados/consentimientos separados | tablas, seeder, registro/perfil UI y `legal-change-log.md` | hashes + acceptance rows | IMPLEMENTED local; v1.1 pendiente |
 | F1-014 | Envío transaccional/idempotente | `FinalizeSubmission`, lock, snapshot, folio, event | doble POST, una versión/mail + envío browser | VERIFIED local |
 | F1-015 | Panel mínimo sin evaluación | counts/distribución/lista/detalle/cuenta | admin/participant/browser desktop/móvil | VERIFIED local |
 | F1-016 | Correo post-commit, sin adjuntos | queued Mailable y config central | Mail fake | VERIFIED local; SMTP pendiente |
@@ -65,13 +65,13 @@
 | PUB-002 | DECISION | Resultados públicos desactivados por defecto. | `/resultados`; admin ganadores | Sin activación autorizada no se expone resultado. | F + B + SEC | MVP-R |
 | PUB-003 | DECISION | Publicar sólo campos autorizados tras confirmación. | Resultados/archivo 2026 | Preview y salida pública omiten PII/documentos no consentidos. | F + B + SEC + UAT | MVP-R |
 | PUB-004 | DECISION | Galería pública no pertenece al MVP. | `/proyectos` | No consume ruta crítica; requiere consentimiento/moderación posterior. | Revisión de alcance | F2 |
-| IAM-001 | DECISION | Registro, login, logout y restablecimiento; contraseña mínima de 8 con mayúscula, minúscula, número, símbolo y confirmación. | Fortify, vistas auth y componente `password-fields` | Backend aplica regla única; UI muestra requisitos/confirmación; recuperación no enumera correo. | `AuthMailHardeningTest` + browser | MVP |
+| IAM-001 | DECISION | Registro completo, login, logout y restablecimiento; contraseña mínima de 8 con mayúscula, minúscula, número, símbolo y confirmación. | Fortify, `CreateNewUser`, vistas auth, `phone-number-field` y componente `password-fields` | Backend aplica regla única; UI muestra requisitos/confirmación; registro crea perfil completo y recuperación no enumera correo. | `AuthMailHardeningTest`, `RegistrationProfileFlowTest` + browser | MVP |
 | IAM-002 | DECISION | Verificación de correo antes de enviar. | Verificación; wizard | Usuario no verificado puede guardar borrador pero no enviar. | F + B | MVP |
 | IAM-003 | DECISION | Roles/permisos de mínimo privilegio y Policies por recurso. | Todas las rutas autenticadas | Cada rol sólo accede a recursos autorizados incluso por URL directa. | F matriz RBAC + SEC IDOR | MVP |
 | IAM-004 | DECISION | 2FA y confirmación de contraseña en acciones privilegiadas. | Cuenta/admin | Rol privilegiado no accede/ejecuta acción crítica sin controles. | F + B + SEC | MVP |
 | IAM-005 | DECISION | Rate limit, sesión revocable y respuestas no enumerables. | Auth/contacto/uploads | Abuso se limita y suspensión revoca sesiones. | F + SEC | MVP |
 | IAM-006 | ASSUMPTION | Invitaciones firmadas, expirables y de un uso. | Equipo/jueces | Token alterado, vencido o reutilizado se rechaza. | U + F + SEC | MVP si equipos |
-| ELG-001 | DECISION | Perfil mínimo y declaración de elegibilidad. | `/participante/perfil` | Participante conoce finalidad de cada dato y completa mínimos. | F + B + A11Y + UAT | MVP |
+| ELG-001 | DECISION | Perfil mínimo y declaración de elegibilidad. | `/registro` y `/participante/perfil` | Participante captura los mínimos desde el alta, conoce finalidad de cada dato y puede revisar preferencias después. | F + B + A11Y + UAT | MVP |
 | ELG-002 | DECISION | Comprobante de residencia separado y privado. | Perfil/residencia; admin elegibilidad | Sólo revisor autorizado accede; juez nunca lo ve. | F descarga + SEC + B por roles | MVP |
 | ELG-003 | PENDING | Allowlist, vigencia y retención de comprobantes. | Upload/política de datos | Sólo formatos aprobados; retención ejecutable y documentada. | U + F archivos + OPS eliminación | MVP |
 | ELG-004 | DECISION | Revisión registra decisión, razones, actor, fecha y versión. | `/admin/elegibilidad/{id}` | Revisor decide sobre snapshot fijo y deja historial. | F + UAT | MVP |
@@ -130,7 +130,7 @@
 | SEC-004 | DECISION | Secretos fuera de JS, HTML, repo, docs y logs. | Configuración/CI/runbook | Escaneo no encuentra valores reales; ejemplos usan placeholders. | Secret scan + revisión diff | MVP |
 | SEC-005 | DECISION | Minimización, masking y separación de PII/evaluación. | Datos, vistas, exports | Cada rol recibe sólo campos necesarios. | F serialización/export + SEC | MVP |
 | SEC-006 | PENDING | CSP con nonces/hashes compatible con scripts de plantilla. | Layouts/headers | Política report-only se valida antes de enforcement sin romper flujos. | Browser console + SEC | MVP-R |
-| LEG-001 | DECISION | Documentos y aceptaciones versionadas. | Legal/cuenta/envío | Se conserva documento/hash/version aceptada en el contexto correcto. | U + F + auditoría | MVP |
+| LEG-001 | DECISION | Documentos y aceptaciones versionadas. | Legal/registro/perfil/envío | Se conserva documento/hash/version aceptada en el contexto correcto; términos, privacidad, WhatsApp y futuras actividades son propósitos independientes. | U + F + auditoría | MVP |
 | LEG-002 | PENDING | Textos legales finales y política de retención. | Público/legal/privacidad | Sólo versiones aprobadas se publican/aceptan. | Revisión legal + UAT | MVP |
 | DATA-001 | DECISION | MySQL, InnoDB, `utf8mb4`, FKs e índices intencionales. | Modelo/migraciones futuras | Esquema soporta integridad y filtros; no usa JSON central injustificado. | Revisión migraciones + EXPLAIN | MVP |
 | DATA-002 | DECISION | UTC persistido y `America/Hermosillo` presentado. | Fechas/estados/reportes | Tests cubren frontera de apertura/cierre y conversiones. | U + F | MVP |

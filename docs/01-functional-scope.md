@@ -10,7 +10,7 @@
 - Propuesta: una por categoría, máximo tres, español, resumen, contenido rico, al menos un archivo.
 - Archivos: PDF, Office y ODF permitidos, más JPEG/PNG/WebP del editor; 10 MiB acumulados.
 - Enlaces: YouTube y carpeta pública en proveedores allowlist; nunca fetch server-side.
-- Finalización: correo verificado, perfil completo, legales separados, snapshot/folio/idempotencia.
+- Finalización: correo verificado, perfil mínimo capturado desde registro, legales separados, snapshot/folio/idempotencia.
 - Flags default: público/panel `true`; registro/recepción/resultados `false`.
 
 **Fecha de corte:** 2026-07-15  
@@ -29,7 +29,7 @@
 
 La ruta crítica funcional es:
 
-`convocatoria y legales → identidad → perfil/elegibilidad → proyecto y archivos → envío versionado → panel mínimo`
+`convocatoria y legales → registro con perfil mínimo → verificación de correo → proyecto y archivos → envío versionado → panel mínimo`
 
 Resultados públicos, reportes ampliados y comunicaciones no críticas no pueden retrasar esa ruta.
 
@@ -72,8 +72,9 @@ Resultados públicos, reportes ampliados y comunicaciones no críticas no pueden
 
 ### Incluido en MVP
 
-- Registro, verificación de correo, login, logout y restablecimiento.
-- Perfil mínimo y aceptación de documentos versionados.
+- Registro con nombres, correo, celular México `+52`, fecha de nacimiento, colonia, residencia y preferencias de comunicación.
+- Verificación de correo con confirmación amigable, login, logout y restablecimiento.
+- Aceptación obligatoria de documentos versionados y consentimiento opcional de futuras actividades desde el alta.
 - Invitaciones firmadas/expirables para jueces e integrantes, si equipos se aprueban.
 - Roles/permisos y Policies por recurso.
 - 2FA para roles privilegiados.
@@ -92,7 +93,7 @@ Resultados públicos, reportes ampliados y comunicaciones no críticas no pueden
 
 ### Incluido en MVP
 
-- Perfil mínimo necesario para la convocatoria.
+- Perfil mínimo necesario para la convocatoria capturado en el registro y editable después.
 - Captura de elegibilidad declarativa.
 - Carga privada de comprobante de residencia.
 - Revisión separada con decisión, razones, actor, fecha y versión.

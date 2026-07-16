@@ -1,6 +1,6 @@
 # ExecPlan: registro completo, teléfono México y verificación amigable
 
-**Estado:** In progress
+**Estado:** Complete
 
 **Creado:** 2026-07-15 America/Hermosillo
 
@@ -79,7 +79,12 @@ No requiere migración ni dependencia. Despliegue: publicar código/assets compi
 
 - [x] 2026-07-15 21:20 MST — Demo Pixinvent revisada: prefijo estático `US (+1)` más máscara; se decide equivalente propio `México (+52)` sin dependencia.
 - [x] 2026-07-15 21:25 MST — Baseline verde: 22 pruebas/117 aserciones sobre MySQL.
-- [ ] 2026-07-15 21:30 MST — Implementación del registro y auditoría de mensajes en curso.
+- [x] 2026-07-15 21:30 MST — Implementación del registro, teléfono México, legales y verificación amigable completada.
+- [x] 2026-07-15 21:45 MST — Pruebas focales verdes: 18 pruebas/124 aserciones en registro, correo, perfil y envío.
+- [x] 2026-07-15 21:50 MST — Suite completa verde: 28 pruebas/161 aserciones; Pint acotado y `git diff --check` verdes.
+- [x] 2026-07-15 21:55 MST — Build Vite verificado con Node 22.23.1/Yarn 1.22.22; `scripts/build_frontend_production.sh` no completó en WSL/NTFS por timeout en `yarn install` linking, pero `corepack yarn build` generó manifest correcto.
+- [x] 2026-07-15 22:05 MST — Browser real con Playwright: registro desktop/móvil, teléfono, checklist de contraseña, PDFs/consentimientos y página `/correo-verificado`; consola 0 errores/0 advertencias.
+- [x] 2026-07-15 22:10 MST — Diff final revisado y commit local creado.
 
 ## Hallazgos
 

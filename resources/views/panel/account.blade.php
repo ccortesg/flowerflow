@@ -9,11 +9,18 @@
         <form method="POST" action="{{ route('user-profile-information.update') }}" class="card ff-card p-4">
             @csrf
             @method('PUT')
+            @php($profileErrors = $errors->getBag('updateProfileInformation'))
             <h2 class="h4">Perfil</h2>
             <label class="form-label" for="name">Nombre</label>
-            <input class="form-control mb-3" id="name" name="name" value="{{ auth()->user()->name }}" required>
+            <input class="form-control mb-3 @if($profileErrors->has('name')) is-invalid @endif" id="name" name="name" value="{{ old('name', auth()->user()->name) }}" required autocomplete="name">
+            @foreach($profileErrors->get('name') as $message)
+                <div class="invalid-feedback d-block mb-3">{{ $message }}</div>
+            @endforeach
             <label class="form-label" for="email">Correo electrónico</label>
-            <input class="form-control mb-3" id="email" name="email" type="email" value="{{ auth()->user()->email }}" required>
+            <input class="form-control mb-3 @if($profileErrors->has('email')) is-invalid @endif" id="email" name="email" type="email" value="{{ old('email', auth()->user()->email) }}" required autocomplete="email">
+            @foreach($profileErrors->get('email') as $message)
+                <div class="invalid-feedback d-block mb-3">{{ $message }}</div>
+            @endforeach
             <button class="btn btn-flower align-self-start">Actualizar perfil</button>
         </form>
     </div>
@@ -45,7 +52,7 @@
     <div class="col-12">
         <div class="card ff-card p-4">
             <h2 class="h4">Autenticación en dos pasos</h2>
-            <p>Fortify protege el panel con TOTP y códigos de recuperación.</p>
+            <p>Agrega una segunda verificación con una aplicación de autenticación y conserva tus códigos de recuperación en un lugar seguro.</p>
             @if(auth()->user()->two_factor_secret)
                 <form method="POST" action="{{ url('/user/two-factor-authentication') }}">
                     @csrf
