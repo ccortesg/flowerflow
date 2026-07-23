@@ -254,3 +254,19 @@ Para MySQL local, cargar la contraseña desde .env o un prompt/archivo protegido
 ## Evidencia
 
 Cada ejecución registra commit/release, ambiente, comandos, salida resumida, fixtures, capturas sin PII, defectos y aprobación. La evidencia sensible se almacena con acceso limitado y retención definida.
+
+## Cobertura obligatoria Fase 02A
+
+La suite usa exclusivamente MySQL desechable confirmado, storage fake, mail fake y personas sintéticas. Cubre:
+
+- creación/backfill y doble clic idempotentes;
+- transiciones, snapshot inmutable, aclaración abierta/contestada/cerrada y separación de notas;
+- aislamiento owner/otro participante/reviewer/admin/sin rol/juez futuro;
+- sujetos de equipo, archivo válido y fallas de nombre/firma/MIME/cifrado/activo/tamaño/cuota;
+- descarga y auditoría; equivalente con justificación; ausencia de antigüedad automática;
+- UTC/Hermosillo, fecha límite opcional, SMTP fallido, filtros/paginación/sin lazy loading y flag on/off;
+- migración hacia adelante, rollback, `migrate:fresh --seed`, vistas, rutas, Pint acotado, Composer y Vite.
+
+El QA de navegador sólo incluye superficies nuevas y se documenta en `docs/design-qa-phase-02-admissibility.md`. No se usan PII, documentos reales ni pruebas contra producción.
+
+Gate final local del 2026-07-16: 72 pruebas y 696 aserciones verdes; Pint sobre cambios, `composer validate --strict`, `composer audit`, build Vite, vistas, rutas y diff sin errores. El recorrido real de navegador cerró las superficies autorizadas con consola limpia y eliminó todos los artefactos temporales.

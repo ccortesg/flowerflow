@@ -155,6 +155,8 @@ Nota 2026-07-16 — asistente de nueva propuesta: se añadió un stepper Blade s
 
 Nota 2026-07-16 — inicio participante: `/inicio` reutiliza el shell, tokens, Remix/Iconify y la franja panorámica autorizada de la landing. El menú se redujo en el único parcial compartido para escritorio/offcanvas, sin ocultamiento CSS. No se editó core del proveedor, `public/build`, panel administrativo, landing, PDF ni rutas públicas; la captura de referencia no se copió ni incorporó al build.
 
+Nota 2026-07-16 — admisibilidad Fase 02A: el listado, detalle y sección participante reutilizan `layouts/flowerflow.blade.php`, Bootstrap/Materialize ya disponible, controles HTML nativos y Remix/Iconify. Los estilos están encapsulados en `resources/css/pages/admissibility-review.css`. No se editó `resources/assets/vendor/**`, `_referencia/`, `public/build` manualmente ni se agregó dependencia.
+
 ## 7. Regla de actualización
 
 Antes de actualizar Materialize:

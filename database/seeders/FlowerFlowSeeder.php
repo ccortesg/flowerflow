@@ -54,12 +54,33 @@ class FlowerFlowSeeder extends Seeder
             ]);
         }
 
-        foreach (['view panel', 'view submissions', 'download private files'] as $name) {
+        foreach ([
+            'view panel',
+            'view submissions',
+            'download private files',
+            'view admissibility reviews',
+            'review admissibility',
+            'request clarification',
+            'decide admissibility',
+            'view residency documents',
+            'download residency documents',
+            'manage admissibility reviews',
+        ] as $name) {
             Permission::findOrCreate($name, 'web');
         }
 
         Role::findOrCreate('participant', 'web');
-        Role::findOrCreate('reviewer', 'web')->syncPermissions(['view panel', 'view submissions', 'download private files']);
+        Role::findOrCreate('reviewer', 'web')->syncPermissions([
+            'view panel',
+            'view submissions',
+            'download private files',
+            'view admissibility reviews',
+            'review admissibility',
+            'request clarification',
+            'decide admissibility',
+            'view residency documents',
+            'download residency documents',
+        ]);
         Role::findOrCreate('admin', 'web')->syncPermissions(Permission::all());
     }
 }

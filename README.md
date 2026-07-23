@@ -29,7 +29,7 @@ php artisan migrate --seed
 php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-Antes de migrar, copia `.env.example` a `.env`, cambia `APP_URL` para local y captura `DB_PASSWORD` en un editor seguro. Registro y recepción vienen deshabilitados; actívalos sólo en local/test para UAT aprobada.
+Antes de migrar, copia `.env.example` a `.env`, cambia `APP_URL` para local y captura `DB_PASSWORD` en un editor seguro. Registro, recepción y revisión de admisibilidad vienen deshabilitados; actívalos sólo en local/test para UAT aprobada.
 
 Crear una cuenta administradora sin exponer la contraseña:
 
@@ -49,7 +49,25 @@ scripts/build_frontend_production.sh
 
 Los PDFs jurídicos y PNG autorizados se publican únicamente mediante `scripts/publish_authorized_assets.sh`, que verifica hashes antes de copiar.
 
-Gate local actualizado el 2026-07-15: 28 pruebas/161 aserciones sobre MySQL, build reproducible y browser QA en escritorio y 390×844. Ver `docs/12-project-status-2026-07-15.md`.
+La cifra de 28 pruebas/161 aserciones corresponde al cierre histórico de Fase 01. El gate vigente de Fase 02A cerró con 72 pruebas y 696 aserciones; la evidencia completa se registra en `.agent/execplans/flowerflow-phase-02-admissibility-review.md` y `docs/12-project-status-2026-07-15.md`.
+
+## Fase 02A: admisibilidad
+
+La rama local de Fase 02A agrega expedientes separados del estado de propuesta, aclaraciones append-only, residencia privada por persona, resolución motivada, auditoría y correos resilientes. La función está apagada por defecto:
+
+```dotenv
+FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED=false
+```
+
+Comandos operativos locales, siempre sobre una base de pruebas desechable confirmada:
+
+```bash
+php artisan flowerflow:admissibility-backfill --dry-run
+php artisan flowerflow:admissibility-backfill
+php artisan flowerflow:residency-retention-report
+```
+
+El reporte de retención nunca elimina archivos. El borrado sigue bloqueado hasta integrar la futura determinación de ganadores y obtener la autorización correspondiente.
 
 ## Despliegue
 

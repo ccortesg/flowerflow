@@ -1,6 +1,6 @@
 # ExecPlan: rediseño UX/UI de la landing pública V2
 
-**Estado:** Active
+**Estado:** Completed
 
 **Creado:** 2026-07-15 America/Hermosillo
 
@@ -84,7 +84,9 @@ Este plan no despliega. En un despliegue posterior se publican código y assets 
 - [x] 2026-07-15 22:42 MST — Suite completa verde: 33 pruebas/211 aserciones; Composer validate/audit, Pint acotado, vistas, rutas y `git diff --check` verdes.
 - [x] 2026-07-15 22:49 MST — Build final verde en 3m 2s; manifest contiene los entrypoints CSS/JS. Se conserva la advertencia baseline de chunks demo mayores de 500 kB.
 - [!] 2026-07-15 22:49 MST — `yarn audit` no está disponible: el endpoint oficial de Yarn Classic responde HTTP 410. No se crea `package-lock.json`; Composer audit queda verde y el límite se documenta.
-- [!] 2026-07-15 22:49 MST — QA visual comparativa pendiente: Browser integrado no inicializa por colisión global `process`; se solicitó autorización para Playwright/Chromium local antes de usar fallback.
+- [!] 2026-07-15 22:49 MST — El intento automatizado de QA visual quedó bloqueado porque el navegador integrado no inicializó por una colisión global `process`.
+- [x] 2026-07-16 10:06 MST — El usuario responsable confirmó la ejecución y aceptación manual del QA visual y responsive del área participante. La aceptación posterior reconcilia el pendiente histórico sin atribuir a Codex capturas ni comandos no ejecutados.
+- [x] 2026-07-16 MST — Milestone cerrado documentalmente con base en la aceptación registrada en `design-qa.md` y `docs/12-project-status-2026-07-15.md`; no se repite el QA ya aceptado.
 
 ## Decisiones
 

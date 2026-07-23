@@ -54,6 +54,11 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return $this->hasMany(LegalAcceptance::class);
     }
 
+    public function eligibilityReviews(): HasMany
+    {
+        return $this->hasMany(EligibilityReview::class, 'reviewer_user_id');
+    }
+
     public function sendEmailVerificationNotification(): void
     {
         app(ResilientMailDispatcher::class)->notify(

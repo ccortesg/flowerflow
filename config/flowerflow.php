@@ -10,6 +10,7 @@ return [
         'submissions' => env('FLOWERFLOW_SUBMISSIONS_ENABLED', false),
         'results' => env('FLOWERFLOW_RESULTS_ENABLED', false),
         'panel' => env('FLOWERFLOW_PANEL_ENABLED', true),
+        'admissibility_review' => env('FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED', false),
     ],
     'limits' => [
         'team_members' => (int) env('FLOWERFLOW_MAX_TEAM_MEMBERS', 5),
@@ -29,6 +30,15 @@ return [
         'pdf', 'doc', 'docx', 'odt', 'ppt', 'pptx', 'odp', 'xls', 'xlsx', 'ods',
     ],
     'allowed_editor_image_extensions' => ['jpg', 'jpeg', 'png', 'webp'],
+    'admissibility' => [
+        'clarification_response_characters' => 2000,
+        'files_per_person_request' => 3,
+        'files_total_kib_per_person_request' => 10240,
+        'file_extensions' => ['pdf', 'jpg', 'jpeg', 'png', 'webp'],
+        'residency_disk' => 'residency',
+        'clarification_disk' => 'clarifications',
+        'retention_days' => 90,
+    ],
     'external_links' => [
         'video_hosts' => ['youtube.com', 'www.youtube.com', 'youtu.be'],
         'folder_hosts' => ['drive.google.com', 'www.dropbox.com', 'dropbox.com', 'onedrive.live.com'],

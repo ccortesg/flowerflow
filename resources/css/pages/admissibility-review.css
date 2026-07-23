@@ -1,0 +1,45 @@
+.ff-review-status {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #edf3f0;
+  color: #27453c;
+  padding: .42rem .8rem;
+  font-size: .875rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.ff-review-status-admitted { background: #d9f2e7; color: #075d3e; }
+.ff-review-status-not_admitted { background: #fde4df; color: #8d2818; }
+.ff-review-status-clarification_requested { background: #fff0c7; color: #745300; }
+.ff-review-status-in_review { background: #dfeafa; color: #174f84; }
+
+.ff-review-request {
+  border: 1px solid #dce6e1;
+  border-radius: 1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+}
+
+.ff-review-response {
+  border-left: .3rem solid var(--ff-green);
+  background: #f3f7f4;
+  margin-top: .8rem;
+  padding: .85rem 1rem;
+}
+
+.ff-review-resolution {
+  border-left: .35rem solid var(--ff-lime);
+  background: #f7fae9;
+  border-radius: .65rem;
+  padding: 1rem 1.15rem;
+}
+
+.ff-audit-list { display: grid; gap: .8rem; padding-left: 1.2rem; }
+.ff-audit-list li small { display: block; color: #5e716b; }
+
+@media (max-width: 575.98px) {
+  .ff-admissibility-card { padding: 1rem !important; }
+  .ff-review-request { padding: .85rem; }
+}

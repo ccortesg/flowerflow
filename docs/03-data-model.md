@@ -274,3 +274,22 @@ Los plazos requieren aprobación legal; son defaults operativos, no afirmaciones
 - Ejecutar tests de acceso cruzado antes de aceptar storage o Policies.
 
 Ninguna tabla de dominio fue creada en esta fase.
+
+## Adenda implementada — Fase 02A, 2026-07-16
+
+La frase histórica anterior describe la fase documental original y queda sustituida para el código actual por la migración aditiva `2026_07_16_120000_create_admissibility_review_tables.php`.
+
+| Tabla | Propósito e invariantes principales |
+|---|---|
+| `eligibility_reviews` | una por propuesta y versión enviada; reviewer/resolutor opcionales; estado, motivo público, nota interna cifrada y fechas UTC |
+| `eligibility_review_events` | transiciones y actor append-only; registra versión y contexto redactado |
+| `clarification_requests` | mensaje, estado, fecha límite opcional, respuesta/cierre |
+| `clarification_responses` | texto append-only, máximo 2,000 caracteres en aplicación |
+| `clarification_response_files` | adjuntos privados con ULID, nombre interno aleatorio, MIME, tamaño y SHA-256 |
+| `residency_document_requests` | sujeto representante o integrante, estado, revisión y fechas/base candidata de retención |
+| `residency_documents` | tipo jurídico, explicación de equivalente y metadatos privados; sin URL pública |
+| `audit_logs` | actor, acción, entidad, hashes de IP/agente, metadata mínima y fecha UTC; append-only |
+
+Los estados respaldados viven en `app/Enums`. `Submission.status` no cambió. El snapshot de `submission_versions` rechaza actualización y borrado mediante el modelo. Las migraciones no hacen backfill: `flowerflow:admissibility-backfill` lo realiza idempotentemente.
+
+Retención: al verificar se calcula `retention_due_at` 90 días después de la fecha base; si existe aclaración relacionada cerrada, se usa la base aplicable más reciente. El comando de reporte es dry-run y la eliminación permanece bloqueada hasta conocer ganadores.

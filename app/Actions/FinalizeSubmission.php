@@ -13,11 +13,14 @@ use Illuminate\Validation\ValidationException;
 
 class FinalizeSubmission
 {
-    public function __construct(private ResilientMailDispatcher $mailDispatcher) {}
+    public function __construct(
+        private ResilientMailDispatcher $mailDispatcher,
+        private EnsureEligibilityReview $ensureEligibilityReview
+    ) {}
 
     public function execute(Submission $submission, User $actor, array $acceptances, ?string $idempotencyKey): Submission
     {
-        $result = DB::transaction(function () use ($submission, $actor, $acceptances, $idempotencyKey): Submission {
+        $result = DB::transaction(function () use ($submission, $actor, $idempotencyKey): Submission {
             $locked = Submission::query()->lockForUpdate()->findOrFail($submission->id);
 
             if ($locked->status === 'submitted') {
@@ -57,7 +60,7 @@ class FinalizeSubmission
                 'external_links' => $locked->externalLinks->map->only(['kind', 'url', 'normalized_host'])->all(),
             ];
 
-            $locked->versions()->create(['version' => 1, 'snapshot' => $snapshot, 'created_at' => now('UTC')]);
+            $version = $locked->versions()->create(['version' => 1, 'snapshot' => $snapshot, 'created_at' => now('UTC')]);
             $locked->events()->create([
                 'actor_user_id' => $actor->id,
                 'event' => 'submitted',
@@ -84,6 +87,10 @@ class FinalizeSubmission
                     'user_agent' => request()->userAgent(),
                     'context' => ['submission_public_id' => $locked->public_id],
                 ]);
+            }
+
+            if (config('flowerflow.flags.admissibility_review')) {
+                $this->ensureEligibilityReview->execute($locked, $version, $actor);
             }
 
             DB::afterCommit(fn () => $this->mailDispatcher->queue(

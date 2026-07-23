@@ -84,7 +84,17 @@ class SubmissionController extends Controller
     public function show(Submission $submission, SubmissionContentSanitizer $sanitizer): View
     {
         $this->authorize('view', $submission);
-        $submission->load(['category', 'competition', 'team.members', 'files', 'externalLinks']);
+        $submission->load([
+            'category',
+            'competition',
+            'team.members',
+            'files',
+            'externalLinks',
+            'eligibilityReview.clarifications.responses.files',
+            'eligibilityReview.residencyRequests.subjectUser',
+            'eligibilityReview.residencyRequests.subjectTeamMember',
+            'eligibilityReview.residencyRequests.documents',
+        ]);
 
         $safeHtml = $sanitizer->sanitize($submission->description_html ?? '');
 

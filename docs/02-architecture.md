@@ -247,3 +247,14 @@ Estos objetivos son de aplicación; disponibilidad y recuperación requieren con
 7. RPO/RTO y propietario de operación.
 
 No se autoriza implementación hasta aprobar esas decisiones o aceptar los supuestos explícitos del ExecPlan.
+
+## Adenda arquitectónica — Fase 02A, 2026-07-16
+
+- Se conserva el monolito Laravel 12 con Blade, servicios/acciones y transacciones; no se agrega API, SPA, Redis ni dependencia productiva.
+- `EligibilityReview` es un agregado separado de `Submission`, ligado uno a uno a `SubmissionVersion`.
+- Los eventos de revisión, respuestas de aclaración y logs de auditoría son inmutables en aplicación.
+- `residency` y `clarifications` son discos privados dedicados con `serve=false`; ningún binario se expone por `public` o `storage:link`.
+- Policies y permisos granulares autorizan recursos y descargas; el filtrado no depende de botones ocultos.
+- `AdmissibilityUpdate` reutiliza el dispatcher, cola cifrada, `ShouldQueueAfterCommit`, timeout, reintentos y backoff existentes.
+- `FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED=false` oculta rutas y menús sin eliminar datos.
+- No se modifica el core de Pixinvent/Materialize ni `public/build` manualmente.

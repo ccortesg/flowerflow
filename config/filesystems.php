@@ -39,6 +39,22 @@ return [
             'report' => false,
         ],
 
+        'residency' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/residency'),
+            'serve' => false,
+            'throw' => true,
+            'report' => true,
+        ],
+
+        'clarifications' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/clarifications'),
+            'serve' => false,
+            'throw' => true,
+            'report' => true,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

@@ -10,8 +10,10 @@
 ## Autorización actual y límites
 
 - La Fase 01 `public-submissions` fue aprobada expresamente el 2026-07-15 mediante `Prompt_Optimo_Codex_FlowerFlow_Fase_01_v2.md` y se ejecuta en `codex/phase-01-public-submissions`.
+- La Fase 02A `admissibility-review` fue aprobada expresamente el 2026-07-16 y se ejecuta localmente en `codex/phase-02-admissibility-review`, sin stage, commit, push ni despliegue.
 - Están autorizados en local/test: dependencias compatibles, migraciones revisadas, datos sintéticos, sitio público, auth/perfil participante, propuestas, archivos privados, aceptaciones, envío idempotente y panel privilegiado mínimo.
-- Quedan fuera de esta fase: residencia documental ordinaria, revisión administrativa completa, jueces, rúbrica, evaluación, selección/publicación de ganadores, comunicaciones masivas, ARCO completo y reportes avanzados.
+- En Fase 02A también están autorizados la revisión administrativa, aclaraciones, verificación privada de residencia, resolución de admisibilidad, auditoría, notificaciones transaccionales y sus interfaces/pruebas locales.
+- Quedan fuera de esta fase: jueces, asignación, rúbrica, evaluación, selección/publicación de ganadores, comunicaciones masivas, ARCO completo, borrado automático de residencia y reportes avanzados.
 - No desplegar ni modificar EC2, DNS, TLS, SMTP real o `administratec`; AWS sólo se documenta y prepara mediante preflight de solo lectura para una tarea posterior.
 - `formatos/` conserva los PDF jurídicos v1.0 exactos y versionables; `imagen/` conserva originales autorizados; `_referencia/` es sólo lectura, local, ignorada y nunca forma parte del build o release.
 

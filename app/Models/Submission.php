@@ -6,6 +6,7 @@ use App\Models\Concerns\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Submission extends Model
 {
@@ -56,6 +57,11 @@ class Submission extends Model
     public function events(): HasMany
     {
         return $this->hasMany(SubmissionEvent::class);
+    }
+
+    public function eligibilityReview(): HasOne
+    {
+        return $this->hasOne(EligibilityReview::class);
     }
 
     public function isDraft(): bool

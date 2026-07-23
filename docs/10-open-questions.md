@@ -179,3 +179,26 @@ Siguen abiertas y no bloquean código local detrás de flags: hora exacta de ape
 - Aislamiento con `administratec` verificado.
 - Monitoreo/guardia activos.
 - Aprobación expresa de producto, legal y responsable técnico.
+
+## Adenda de decisiones Fase 02A — 2026-07-16
+
+### Confirmado por PDF canónico
+
+- 18 años o más; residencia en Hermosillo; individual o equipo de hasta cinco.
+- revisión de plazo, categoría, información mínima, archivo abrible y reglas de participación.
+- aclaración formal que no sustituye ni mejora materialmente el proyecto.
+- identificación con domicilio, comprobante reciente, constancia, arrendamiento o equivalente; se pueden ocultar datos innecesarios.
+- motivos de incumplimiento descritos en mecánica/términos se registran como explicación humana, no resolución automática.
+
+### Decisión técnica autorizada
+
+- estados, límites de tres archivos/10 MiB, formatos, feature flag, permisos, backfill, correo resiliente y reporte dry-run.
+- revisión separada de `Submission.status` y ligada al snapshot.
+
+### PENDING
+
+- `Q-F2A-001`: ¿cuántos meses, si alguno, definen “comprobante reciente”? Hasta resolver, no rechazar automáticamente.
+- `Q-F2A-002`: ¿existe un catálogo/criterio legal para “documento equivalente”? Hasta resolver, justificación manual obligatoria.
+- `Q-F2A-003`: ¿qué responsable autoriza la eliminación después de determinar ganadores? Sin esa integración no existe delete/scheduler.
+- `Q-F2A-004`: ¿catálogo cerrado/códigos de motivos o texto libre controlado? Fase 02A conserva motivo público obligatorio y notas separadas.
+- `Q-F2A-005`: antivirus, cuarentena y procedimiento ante malware para producción.

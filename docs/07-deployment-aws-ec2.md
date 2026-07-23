@@ -887,3 +887,17 @@ Después del periodo de observación:
 8. crear health check, worker config, cron, vhost y CloudWatch como cambios revisables;
 9. ejecutar restore drill y UAT;
 10. obtener aprobación expresa de despliegue.
+
+## Adenda operativa futura para Fase 02A
+
+No ejecutar esta adenda sin un despliegue expresamente autorizado, backup verificado, UAT y rollback ensayado.
+
+- mantener `FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED=false` durante migración y backfill;
+- migrar primero las tablas aditivas, reiniciar workers y ejecutar `flowerflow:admissibility-backfill --dry-run`;
+- revisar el conteo y después ejecutar el backfill idempotente;
+- verificar permisos de `storage/app/private/residency` y `storage/app/private/clarifications` para Apache/worker, sin symlink público;
+- probar cola/correo, descarga autorizada y 403/404 cruzado con datos sintéticos;
+- activar el flag sólo tras smoke test y autorización operativa;
+- `flowerflow:residency-retention-report` es sólo reporte: nunca elimina documentos.
+
+Rollback: apagar el flag primero. Si no existen datos operativos que deban conservarse y se autorizó rollback de esquema, revertir sólo la migración de Fase 02A; en cualquier otro caso conservar tablas y revertir código/flag. No borrar archivos para “limpiar” un rollback.
