@@ -64,3 +64,13 @@ R01, R02, R03, R04, R06, R12, R17, R26 y R27 deben tener decisión o recorte exp
 - Cada riesgo cambia estado, owner, fecha objetivo y evidencia en el ExecPlan.
 - Un riesgo materializado se convierte en incidente o tarea y conserva vínculo al ID.
 - Riesgo aceptado requiere quién, hasta cuándo y por qué; no se cierra por silencio.
+
+## Adenda de riesgos Fase 02A — 2026-07-16
+
+| ID | Riesgo | Prob. | Impacto | Mitigación actual | Pendiente/rollback | Estado |
+|---|---|---|---|---|---|---|
+| R37 | “Reciente” se interpreta con meses inventados | Medio | Alto | no existe regla automática ni campo de rechazo por antigüedad | decisión jurídica antes de automatizar | Mitigado en código; PENDING jurídico |
+| R38 | Documento equivalente aceptado sin criterio | Medio | Alto | resolución verificada exige justificación manual | revisión de catálogo por legal | Mitigado |
+| R39 | Retención elimina antes de conocer ganadores | Medio | Crítico | sólo cálculo/reporte dry-run; sin scheduler ni delete | integrar módulo de resultados y autorización | Bloqueado por diseño |
+| R40 | Nota/residencia se filtra a futuros jueces | Bajo | Crítico | discos/tablas/Policies separados, permisos granulares y tests de rol juez sin permisos | repetir matriz al crear rol juez real | Mitigado local |
+| R41 | Correo falla después de decisión | Medio | Medio | commit previo, mail cifrado en cola, reintentos y aviso sin 500 | SMTP/worker/failed_jobs operativos | Mitigado local; OPS pendiente |

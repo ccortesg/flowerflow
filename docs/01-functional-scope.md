@@ -436,3 +436,18 @@ El MVP operativo exige aislamiento de vhost, ruta, usuario de sistema, `.env`, b
 7. Variante/licencia Materialize.
 8. Inventario y aislamiento AWS EC2 con `administratec`.
 9. ExecPlan y capacidad real del equipo para la ruta crítica.
+
+## Adenda de alcance ejecutable — Fase 02A, 2026-07-16
+
+La aprobación específica de Fase 02A sustituye, sólo para este milestone, los bloqueos históricos que impedían diseñar revisión y residencia. Están incluidos:
+
+- expediente idempotente por propuesta enviada y snapshot;
+- revisión, aclaración formal y resolución de admisibilidad;
+- solicitud privada de residencia para representante o integrantes;
+- controles de archivo, descarga autorizada, auditoría y cálculo dry-run de retención;
+- listado/filtros y detalle para reviewer/admin, más seguimiento participante;
+- correos transaccionales resilientes y feature flag apagada por defecto.
+
+Los límites técnicos de archivos provienen del prompt autorizado. Edad, residencia, tipos de comprobante, alcance de aclaración y motivos de resolución provienen de los PDF canónicos. Continúan `PENDING` la antigüedad numérica de “reciente”, el catálogo cerrado de documentos equivalentes y el borrado posterior a ganadores.
+
+No se implementan jueces, asignación, evaluación, rúbrica, ganadores, publicación, campañas, ARCO completo, reportes avanzados ni producción.

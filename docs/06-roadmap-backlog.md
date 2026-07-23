@@ -303,3 +303,15 @@ Contratos de modelos, enums, rutas y componentes se acuerdan antes del paralelo.
 - Backup restaurado.
 - Documentación/traceability/ExecPlan actualizados.
 - UAT y aprobación de producción explícitas.
+
+## Actualización de roadmap — 2026-07-16
+
+| Milestone | Estado | Alcance |
+|---|---|---|
+| Fase 01 recepción pública/participante | Cerrado local; QA manual aceptado | auth, perfil, propuestas, archivos, envío y panel mínimo |
+| Fase 02A admisibilidad | En ejecución local | expediente, aclaraciones, residencia privada, resolución, auditoría y correos |
+| Fase 02B evaluación | No autorizado | jueces, asignación, anonimización, rúbrica y calificaciones |
+| Resultados/retención ejecutable | No autorizado | ganadores, publicación y borrado condicionado |
+| Producción | No autorizado en esta rama | preflight, backup, UAT, despliegue y rollback |
+
+La siguiente puerta después de Fase 02A es revisión técnica/UAT de este módulo. No debe mezclarse con jueces ni con borrado de documentos.

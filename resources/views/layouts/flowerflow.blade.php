@@ -8,7 +8,6 @@
   <meta name="description" content="@yield('description', 'Registra tu propuesta para Hermosillo Florece 2026.')">
   <link rel="canonical" href="{{ config('flowerflow.canonical_url').request()->getPathInfo() }}">
   @if(request()->is('panel*') || auth()->check())<meta name="robots" content="noindex,nofollow">@endif
-  <script>document.documentElement.classList.add('ff-js');</script>
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   @stack('head')
 </head>
@@ -126,6 +125,9 @@
         </a>
         <a href="{{ route('panel.dashboard') }}" @if(request()->routeIs('panel.dashboard')) aria-current="page" @endif>Resumen</a>
         <a href="{{ route('panel.submissions.index') }}" @if(request()->routeIs('panel.submissions.*')) aria-current="page" @endif>Propuestas</a>
+        @if(config('flowerflow.flags.admissibility_review') && auth()->user()->can('view admissibility reviews'))
+          <a href="{{ route('panel.admissibility.index') }}" @if(request()->routeIs('panel.admissibility.*')) aria-current="page" @endif>Admisibilidad</a>
+        @endif
         <a href="{{ route('panel.account') }}" @if(request()->routeIs('panel.account')) aria-current="page" @endif>Cuenta y seguridad</a>
         <form method="POST" action="{{ route('logout') }}" class="mt-4">@csrf<button class="btn btn-sm btn-outline-light w-100">Cerrar sesión</button></form>
       </aside>

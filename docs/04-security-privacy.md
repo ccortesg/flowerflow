@@ -248,3 +248,18 @@ Cada paso conserva fecha, actor, razón y evidencia mínima. Plazos, identidad a
 - Logs sin PII/secreto y rotación/alertas activas.
 - Resultados públicos apagados.
 - Revisión legal de textos, retención, premio y consentimientos.
+
+## Adenda de seguridad y privacidad — Fase 02A, 2026-07-16
+
+- Los comprobantes usan el disco `residency`, separado de anexos y de adjuntos de aclaración; todos están fuera del web root.
+- Se validan extensión, MIME detectado, firma PDF/JPEG/PNG/WebP, nombre hostil, tamaño, cuota, PDF cifrado y elementos PDF activos.
+- Máximo tres archivos y 10 MiB acumulados por persona/solicitud. No se automatiza rechazo por antigüedad.
+- Nombres internos ULID, SHA-256 y descarga exclusivamente por controlador/Policy.
+- La carga, consulta privilegiada, descarga y resolución de residencia generan auditoría sin cuerpo, documento, IP ni agente en claro.
+- Reviewer necesita permisos de vista y descarga; participante sólo accede a su propuesta; usuario sin rol y futuro juez quedan denegados.
+- Notas internas se cifran con el cast de Laravel y nunca se incluyen en vista/correo participante.
+- Los correos sólo contienen folio, título y llamada a entrar al sistema; no adjuntan ni describen documentos.
+- Una falla de enqueue/SMTP no revierte aclaraciones ni decisiones y produce aviso seguro en interfaz.
+- No existe eliminación automática: el reporte de retención preserva archivos hasta integrar resultados/ganadores.
+
+Riesgo residual: no hay antimalware aprobado. Los controles de firma/contenido reducen superficie, pero producción debe mantener uploads apagados hasta resolver capacidad, monitoreo y escaneo conforme al riesgo R24.

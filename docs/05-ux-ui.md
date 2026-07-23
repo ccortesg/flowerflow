@@ -499,3 +499,15 @@ La aceptación se registra como UAT manual confirmada por el usuario. No se inco
 - [ ] Pruebas WCAG 2.2 AA y browser están trazadas.
 - [ ] Assets/licencias y textos legales aprobados.
 - [ ] No se implementó ni desplegó como parte de esta fase documental.
+
+## Adenda UX — admisibilidad Fase 02A, 2026-07-16
+
+Pantallas nuevas:
+
+- participante: sección “Revisión de participación” dentro del detalle de propuesta enviada;
+- panel: listado `/panel/admisibilidad` con filtros server-side y detalle de expediente;
+- formularios para aclaración, carga privada, solicitud/resolución de residencia y decisión final.
+
+La interfaz separa snapshot, identidad, residencia, notas internas y eventos. Fechas visibles llevan contexto Hermosillo; motivo público y notas internas se muestran en superficies diferentes. Estados y errores están en español de México. CSS propio vive en `resources/css/pages/admissibility-review.css` y conserva foco/controles nativos, tabla responsive y apilamiento móvil.
+
+El QA visual del milestone anterior no se repite. El QA de estas superficies se registra por separado en `docs/design-qa-phase-02-admissibility.md`.

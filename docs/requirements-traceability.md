@@ -30,6 +30,27 @@
 | F1-020 | Nueva propuesta como asistente real de cuatro pasos, persistencia por sección y revisión final | `SubmissionController`, `SubmissionDraftRequest`, vistas `submissions/form`/`show`, stepper, CSS/JS progresivo y config central | `SubmissionWizardTest`, `SubmissionFlowTest`, suite/build, permisos negativos y UAT manual registrada en `design-qa.md` | VERIFIED local; QA visual aceptado por usuario |
 | F1-021 | Inicio participante dinámico y menú global reducido sin perder contenido público | `DashboardController`, `participant/dashboard`, `participant-navigation`, layout y CSS participante | `ParticipantExperienceRedesignTest`: conteos/aislamiento, perfil, convocatoria/zona, CTA, preservación pública/admin y UAT manual | VERIFIED local; QA visual aceptado por usuario |
 
+## Trazabilidad Fase 02A autorizada
+
+| ID | Fuente/regla | Implementación | Prueba/evidencia | Estado |
+|---|---|---|---|---|
+| F2A-001 | Expediente separado y snapshot inmutable | migración, enums, `EligibilityReview`, `EnsureEligibilityReview` | creación/doble POST/snapshot inmutable | IMPLEMENTED local |
+| F2A-002 | Backfill sin migración de datos | `flowerflow:admissibility-backfill` | dry-run y dos ejecuciones idempotentes | VERIFIED local |
+| F2A-003 | Estados/transiciones motivadas | `EligibilityReviewWorkflow`, eventos y transacciones | válidas, inválidas y doble resolución | VERIFIED local |
+| F2A-004 | Aclaración formal sin editar proyecto | requests/responses/files y sección participante | 2,000 caracteres, append-only, bloqueo abierto, fecha opcional | VERIFIED local |
+| F2A-005 | Residencia por persona/equipo | requests separados por user/team_member | representante e integrante aislados | VERIFIED local |
+| F2A-006 | Archivo privado seguro | inspector/store, discos `residency`/`clarifications` | firma/MIME/nombre/PDF cifrado/activo/tamaño/cuota | VERIFIED local |
+| F2A-007 | Equivalente manual; sin antigüedad inventada | enum/tipo y precondición de resolución | equivalente exige justificación; archivo antiguo no se rechaza solo | VERIFIED local |
+| F2A-008 | Admisión con aclaraciones/residencia resueltas | workflow transaccional | bloqueos y resolución humana posterior a rechazo | VERIFIED local |
+| F2A-009 | RBAC/Policies y juez excluido | permisos, middleware, cinco Policies | owner/otro/reviewer/admin/sin rol/judge/descarga limitada | VERIFIED local |
+| F2A-010 | Auditoría sensible | eventos inmutables + `audit_logs` con hashes | carga/vista/descarga/validación/rechazo/decisión | IMPLEMENTED local |
+| F2A-011 | Correo resiliente en español | `AdmissibilityUpdate`, dispatcher y plantillas dual-brand | cinco variantes + falla sintética sin 500/rollback | VERIFIED local |
+| F2A-012 | UTC/Hermosillo | casts, conversiones y UI | vencimiento Hermosillo→UTC y render de resolución | VERIFIED local |
+| F2A-013 | Listado server-side | panel/admisibilidad, filtros/eager loading/paginación | filtros, 25 por página y lazy loading bloqueado | VERIFIED local |
+| F2A-014 | Feature flag seguro | env/config/middleware/menús | apagado 404/oculto y encendido visible | VERIFIED local |
+| F2A-015 | Retención sin borrado prematuro | campos y `flowerflow:residency-retention-report` | fecha +90 días, dry-run y archivo preservado | VERIFIED local; integración ganadores PENDING |
+| F2A-016 | UI responsive/accesible nueva | Blade + `admissibility-review.css` | Feature/views y QA real en `docs/design-qa-phase-02-admissibility.md` | VERIFIED local en escritorio, tableta, móvil, teclado y zoom 200% |
+
 ## Cobertura y limitación
 
 **PENDING:** el input comienza truncado y faltan la introducción y los módulos 1–6. Los requisitos de esos módulos fueron reconstruidos para poder planificar y se identifican como `ASSUMPTION` cuando el detalle no está confirmado. La matriz debe actualizarse al recibir la fuente completa; ninguna fila reconstruida debe considerarse evidencia de aprobación.

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureAdmissibilityReviewEnabled;
 use App\Http\Middleware\EnsurePanelEnabled;
 use App\Http\Middleware\EnsureSubmissionsOpen;
 use App\Http\Middleware\LocaleMiddleware;
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'submissions.open' => EnsureSubmissionsOpen::class,
             'panel.enabled' => EnsurePanelEnabled::class,
+            'admissibility.enabled' => EnsureAdmissibilityReviewEnabled::class,
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,

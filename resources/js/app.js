@@ -4,6 +4,8 @@ import 'bootstrap';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 
+document.documentElement.classList.add('ff-js');
+
 document.querySelectorAll('[data-flowerflow-editor]').forEach(editor => {
   const quill = new Quill(editor, {
     theme: 'snow',

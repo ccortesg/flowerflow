@@ -3,7 +3,7 @@
 **Fecha:** 2026-07-15 (`America/Hermosillo`)  
 **Rama:** `codex/ui-public-landing-v2`  
 **Ruta:** `/`  
-**Estado:** en progreso; gates automatizados verdes, captura de navegador pendiente por indisponibilidad del runtime integrado.
+**Estado:** cerrado por aceptación manual del usuario responsable; gates automatizados verdes. No se recibió evidencia binaria para versionar.
 
 ## Referencias y estados
 
@@ -33,8 +33,10 @@
 - Recursos: ambos WebP son locales, tienen dimensiones declaradas y hashes registrados; no hay URL remota ni asset Apple descargado.
 - Regresión: `/login` conserva `ff-navbar` y no recibe el nuevo header/CTA.
 
-## Gate visual pendiente
+## Reconciliación del gate visual
 
-El runtime de navegador integrado de Codex no pudo inicializarse (`setupAtlasRuntime` encontró una colisión no recuperable en su global `process`) después del bootstrap y reinicio prescritos. No se sustituyó silenciosamente por Playwright externo porque requiere autorización expresa del usuario conforme al flujo de Product Design.
+El runtime de navegador integrado de Codex no pudo inicializarse (`setupAtlasRuntime` encontró una colisión no recuperable en su global `process`) después del bootstrap y reinicio prescritos. Este bloqueo histórico se conserva como evidencia de lo ocurrido.
 
-Pendiente capturar y comparar: 1366×768, 1280×800, 1440×900, 390×844 y 360×800; revisar también menú, accordion, anchors, consola, red y `scrollWidth <= innerWidth`. Este documento debe cambiar a `PASSED` sólo después de esa evidencia.
+El 2026-07-16 el usuario responsable confirmó que realizó y aceptó las validaciones visuales y responsive del área participante. Esa aceptación posterior cerró el milestone previo, incluidos los estados y tamaños documentados en `design-qa.md`, sin inventar capturas, resultados de consola ni comandos ejecutados por Codex. No se reportaron defectos P0, P1 o P2 pendientes.
+
+Resultado final: `PASSED` por UAT manual aceptada.

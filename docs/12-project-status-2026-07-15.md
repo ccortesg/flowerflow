@@ -1,9 +1,10 @@
 # Estado del proyecto — Fase 01
 
-Fecha: 2026-07-15
+Fecha base: 2026-07-15
+Adenda de cierre: 2026-07-16 (`America/Hermosillo`)
 Rama: `codex/phase-01-public-submissions`
 Commit base verificado: `403656dce350709d066aaab0576175036a9f339c`
-Estado: Fase 01 local completada y verificada; sin despliegue y con recepción deshabilitada por defecto.
+Estado: Fase 01 local completada, verificada y con QA visual/responsive aceptado por el usuario; sin despliegue y con recepción deshabilitada por defecto.
 
 ## Resultado real
 
@@ -69,4 +70,20 @@ Las afirmaciones históricas “fase 0”, “sin Git”, “sin lock”, “dep
 
 ## Próximo milestone
 
-El gate local está cerrado. El siguiente milestone es preparar UAT y resolver sus puertas jurídicas, de licencia y operación; no se despliega a EC2 en esta fase.
+El gate y QA visual/responsive de Fase 01 quedaron cerrados por aceptación manual. La Fase 02A quedó implementada y validada localmente para revisión, sin stage, commit, push ni despliegue. El siguiente milestone funcional deberá autorizarse por separado y no debe mezclar publicación con jueces, evaluación, ganadores o cambios de producción.
+
+## Adenda de evidencia del 2026-07-16
+
+- La suite inmediatamente anterior a Fase 02A contiene 50 pruebas y 500 aserciones verdes sobre una base MySQL de pruebas desechable.
+- La cifra histórica de 28 pruebas y 161 aserciones se conserva arriba como evidencia del cierre original de Fase 01; no representa la línea base más reciente.
+- `design-qa.md` registra la aceptación expresa del usuario para el cierre visual y responsive. No se agregaron capturas ni se atribuyeron ejecuciones de navegador a Codex.
+
+## Adenda de implementación Fase 02A — 2026-07-16
+
+Estado actual local: implementación funcional en `codex/phase-02-admissibility-review`, todavía sin stage, commit, push ni despliegue.
+
+Se agregaron expediente de admisibilidad, eventos, aclaraciones/respuestas, archivos privados, residencia por sujeto, auditoría, backfill y reporte dry-run; interfaces participante/panel; permisos reviewer/admin; feature flag apagada; cinco correos transaccionales. `Submission.status` no cambió.
+
+El gate final local quedó en 72 pruebas y 696 aserciones, con Pint, validación/auditoría de Composer y build Vite verdes. El QA real nuevo cubrió participante individual, representante de equipo, reviewer, admin y cuenta sin permisos en escritorio, tableta y móvil; corrigió un conflicto CSP, etiquetas técnicas en inglés y la vista 403 predeterminada. Las pantallas autorizadas cerraron con consola limpia y todos los artefactos temporales fueron eliminados.
+
+Las decisiones jurídicas confirmadas y los `PENDING` se registran en `docs/10-open-questions.md`. La evidencia técnica y de navegador se mantiene en el ExecPlan activo y `docs/design-qa-phase-02-admissibility.md` para no reescribir el cierre histórico de Fase 01.

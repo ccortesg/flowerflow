@@ -118,6 +118,9 @@
     <div class="col-lg-4"><aside class="card ff-card p-4"><h2 class="h4">Detalles</h2><dl><dt>Modalidad</dt><dd>{{ $submission->participation_type === 'team' ? 'Equipo' : 'Individual' }}</dd><dt>Archivos</dt><dd>{{ $submission->files->count() }}</dd>@if($submission->submitted_at)<dt>Enviada</dt><dd>{{ $submission->submitted_at->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i') }} (Hermosillo)</dd>@endif</dl><ul class="list-unstyled">@foreach($submission->files as $file)<li class="mb-2"><a href="{{ route('submissions.files.download', [$submission, $file]) }}">{{ $file->original_name }}</a></li>@endforeach</ul></aside></div>
   </div>
   @if($submission->status === 'submitted')
+    @if(config('flowerflow.flags.admissibility_review'))
+      @include('submissions.partials.admissibility-review', ['review' => $submission->eligibilityReview])
+    @endif
     <div class="card ff-card p-4 mt-4">
       <h2 class="h4">Correo de confirmación</h2>
       <p class="mb-3">Tu folio en pantalla confirma el registro aunque el correo tarde. Si no recibiste el mensaje, puedes programarlo nuevamente.</p>

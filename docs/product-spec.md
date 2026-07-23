@@ -356,3 +356,22 @@ No se desplegará hasta contar con backup probado, staging/UAT, smoke tests y ap
 - `docs/05-ux-ui.md`
 - `docs/10-open-questions.md`
 - `docs/requirements-traceability.md`
+
+## Adenda aprobada — Fase 02A, 2026-07-16
+
+Esta adenda conserva el historial anterior y registra el alcance autorizado para revisión administrativa:
+
+- la propuesta conserva `draft/submitted/withdrawn`; la admisibilidad usa expediente propio con `pending/in_review/clarification_requested/admitted/not_admitted`;
+- cada expediente referencia la propuesta y la versión inmutable enviada;
+- las aclaraciones permiten respuestas append-only de hasta 2,000 caracteres y nunca habilitan edición del proyecto enviado;
+- residencia se solicita por representante o integrante y usa almacenamiento privado separado de anexos evaluables;
+- PDF, JPEG, PNG y WebP; máximo tres archivos y 10 MiB por persona/solicitud son controles técnicos autorizados, no reglas jurídicas;
+- “reciente” no tiene antigüedad automática porque los PDF no fijan meses;
+- un documento equivalente exige justificación humana y una residencia rechazada no produce por sí sola no admisión;
+- admitir requiere resolver/cerrar aclaraciones abiertas y verificar las solicitudes activas de residencia;
+- `admitted` sólo habilita una futura fase de evaluación y no equivale a ganador;
+- roles `reviewer` y `admin` operan por permisos granulares; jueces y usuarios sin permiso no acceden a identidad, residencia, notas ni auditoría;
+- las notificaciones de aclaración, residencia, respuesta y resolución se encolan después del commit y una falla temporal no revierte datos;
+- el cálculo de retención registra una fecha candidata a 90 días, pero no borra mientras falte determinar ganadores.
+
+Jueces, evaluación, rúbricas, ganadores, comunicaciones masivas, ARCO completo, reportes avanzados y producción siguen fuera de alcance.
