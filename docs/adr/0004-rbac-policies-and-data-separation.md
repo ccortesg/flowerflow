@@ -21,3 +21,17 @@ Usar permisos granulares para capacidad general y Policies para ownership, asign
 ## Criterio para aceptar
 
 Aprobar matriz RBAC, evaluación ciega, responsables de elegibilidad y quién puede declarar/publicar ganadores.
+
+## Adenda de análisis — Fase 02B, 2026-08-04
+
+La matriz de `docs/15-phase-02b-judge-evaluation-definition.md` confirma la dirección del ADR, pero no permite cambiar su estado a `Accepted`.
+
+Determinaciones técnicas:
+
+- crear una proyección allowlist de snapshot/anexos evaluables; no conceder al juez la Policy administrativa de `Submission`;
+- negar en todas las capas identidad, residencia, aclaraciones, notas y auditoría sensible;
+- separar permisos de evaluación, conflicto, reapertura, consolidación, declaración y publicación;
+- cerrar acceso de inmediato al declarar conflicto;
+- probar juez asignado/no asignado/conflictuado y canarios de PII en payloads, archivos, correo y logs.
+
+Persisten como criterios de aceptación pendientes: protocolo de anonimización de contenido/metadatos, proceso y autoridad de conflicto/recusación, autoridad/quórum de resultados y visibilidad al participante. Por ello el ADR continúa `Proposed`.

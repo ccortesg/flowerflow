@@ -10,10 +10,11 @@
 ## Autorización actual y límites
 
 - La Fase 01 `public-submissions` fue aprobada expresamente el 2026-07-15 mediante `Prompt_Optimo_Codex_FlowerFlow_Fase_01_v2.md` y se ejecuta en `codex/phase-01-public-submissions`.
-- La Fase 02A `admissibility-review` fue aprobada expresamente el 2026-07-16 y se ejecuta localmente en `codex/phase-02-admissibility-review`, sin stage, commit, push ni despliegue.
+- La Fase 02A `admissibility-review` fue aprobada expresamente el 2026-07-16 y quedó registrada en `codex/phase-02-admissibility-review`; esto no autoriza despliegue.
+- La Fase 02B está autorizada únicamente como definición documental en esa misma rama desde el commit base `5007b11a6c157898228ec027a387c86c270a33da`. Su implementación permanece bloqueada por decisiones `PENDING` y por falta de autorización expresa.
 - Están autorizados en local/test: dependencias compatibles, migraciones revisadas, datos sintéticos, sitio público, auth/perfil participante, propuestas, archivos privados, aceptaciones, envío idempotente y panel privilegiado mínimo.
 - En Fase 02A también están autorizados la revisión administrativa, aclaraciones, verificación privada de residencia, resolución de admisibilidad, auditoría, notificaciones transaccionales y sus interfaces/pruebas locales.
-- Quedan fuera de esta fase: jueces, asignación, rúbrica, evaluación, selección/publicación de ganadores, comunicaciones masivas, ARCO completo, borrado automático de residencia y reportes avanzados.
+- Quedan fuera de la autorización actual: implementación de jueces, asignación, rúbrica, evaluación, selección/publicación de ganadores, comunicaciones masivas, ARCO completo, borrado automático de residencia y reportes avanzados.
 - No desplegar ni modificar EC2, DNS, TLS, SMTP real o `administratec`; AWS sólo se documenta y prepara mediante preflight de solo lectura para una tarea posterior.
 - `formatos/` conserva los PDF jurídicos v1.0 exactos y versionables; `imagen/` conserva originales autorizados; `_referencia/` es sólo lectura, local, ignorada y nunca forma parte del build o release.
 

@@ -270,3 +270,17 @@ La suite usa exclusivamente MySQL desechable confirmado, storage fake, mail fake
 El QA de navegador sólo incluye superficies nuevas y se documenta en `docs/design-qa-phase-02-admissibility.md`. No se usan PII, documentos reales ni pruebas contra producción.
 
 Gate final local del 2026-07-16: 72 pruebas y 696 aserciones verdes; Pint sobre cambios, `composer validate --strict`, `composer audit`, build Vite, vistas, rutas y diff sin errores. El recorrido real de navegador cerró las superficies autorizadas con consola limpia y eliminó todos los artefactos temporales.
+
+## Estrategia propuesta — Fase 02B, 2026-08-04
+
+No se ejecutaron pruebas de aplicación ni QA de navegador porque esta fase es exclusivamente documental. La implementación futura deberá cubrir:
+
+- snapshot admitido, asignación única/idempotente, estados y evaluación enviada inmutable;
+- cálculo exacto aprobado, promedio reproducible, cobertura mínima y ausencia de selección automática;
+- anónimo, participante, reviewer, juez A/B, juez conflictuado, admin con/sin permiso, auditor y usuario sin rol;
+- ausencia de PII, residencia, aclaraciones y notas en HTML, consultas, descargas, exports, correo, logs y excepciones;
+- concurrencia/doble clic, auditoría, correo after-commit con falla SMTP, flag off/on y UTC/Hermosillo;
+- migración/rollback sólo en MySQL desechable y regresión completa de Fases 01/02A;
+- QA real de pantallas nuevas en escritorio, tableta y móvil, teclado, foco, zoom y consola.
+
+Escala, pesos, redondeo, asignación/cobertura, empate y calendario deben estar aprobados antes de escribir expectativas numéricas o temporales.

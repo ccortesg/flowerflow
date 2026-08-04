@@ -69,6 +69,12 @@ php artisan flowerflow:residency-retention-report
 
 El reporte de retención nunca elimina archivos. El borrado sigue bloqueado hasta integrar la futura determinación de ganadores y obtener la autorización correspondiente.
 
+## Fase 02B: definición de jueces y evaluación
+
+La definición funcional/técnica y el ExecPlan propuesto están documentados en [`docs/15-phase-02b-judge-evaluation-definition.md`](docs/15-phase-02b-judge-evaluation-definition.md) y [`.agent/execplans/flowerflow-phase-02b-judge-evaluation.md`](.agent/execplans/flowerflow-phase-02b-judge-evaluation.md).
+
+No existe implementación de esta fase. Los PDF confirman un panel de al menos tres jueces, cuatro criterios y el promedio de calificaciones, pero escala, pesos, umbral, asignación por propuesta y desempate siguen `PENDING`. El prompt condicionado no debe ejecutarse hasta resolverlos y aprobar un nuevo baseline.
+
 ## Despliegue
 
 El destino es AWS EC2 Ubuntu donde ya opera Administratec, con host canónico `app.flowerflow.com.mx`. Node se instala por usuario con NVM para no reemplazar el runtime global de Administratec; nunca uses `sudo npm install -g corepack`. Ver [runbook EC2](docs/07-deployment-aws-ec2.md).

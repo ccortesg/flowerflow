@@ -263,3 +263,15 @@ Cada paso conserva fecha, actor, razón y evidencia mínima. Plazos, identidad a
 - No existe eliminación automática: el reporte de retención preserva archivos hasta integrar resultados/ganadores.
 
 Riesgo residual: no hay antimalware aprobado. Los controles de firma/contenido reducen superficie, pero producción debe mantener uploads apagados hasta resolver capacidad, monitoreo y escaneo conforme al riesgo R24.
+
+## Adenda de seguridad — definición Fase 02B, 2026-08-04
+
+- La minimización del Aviso de Privacidad se implementará mediante una proyección allowlist específica; no se añadirá `judge` a la Policy/vista administrativa vigente.
+- Juez asignado sólo podrá consultar el snapshot evaluable y anexos autorizados. Identidad, perfil/equipo, residencia, aclaraciones, notas y auditoría sensible se deniegan en queries, relaciones, vistas, descargas, exports, correo, logs y excepciones.
+- Juez no asignado o conflictuado queda fail-closed. La declaración de conflicto debe revocar lectura y escritura de inmediato, sin esperar resolución administrativa.
+- Permisos de asignación, evaluación, conflicto, reapertura, consolidación, declaración y publicación permanecen separados.
+- Rúbrica/evaluación enviada serán versionadas e inmutables; cálculo, transiciones y auditoría se ejecutarán transaccional e idempotentemente.
+- Autoría incrustada en texto, archivos o metadatos es un riesgo abierto: el protocolo de anonimización debe aprobarse antes de implementar.
+- Ganadores/publicación no habilitan borrado automático; residencia conserva el bloqueo vigente hasta recibir una señal autorizada de resultado.
+
+La matriz completa y los casos de prueba negativos están en `docs/15-phase-02b-judge-evaluation-definition.md`.

@@ -315,3 +315,15 @@ Contratos de modelos, enums, rutas y componentes se acuerdan antes del paralelo.
 | Producción | No autorizado en esta rama | preflight, backup, UAT, despliegue y rollback |
 
 La siguiente puerta después de Fase 02A es revisión técnica/UAT de este módulo. No debe mezclarse con jueces ni con borrado de documentos.
+
+## Actualización de roadmap — 2026-08-04
+
+| Milestone | Estado | Puerta siguiente |
+|---|---|---|
+| Fase 01 | Cerrado; QA manual aceptado | conservar regresión |
+| Fase 02A | Cerrado técnicamente en `5007b11a6c157898228ec027a387c86c270a33da` | despliegue requiere autorización separada |
+| Fase 02B definición | Documentación lista local, sin stage | aprobar decisiones de `docs/15-phase-02b-judge-evaluation-definition.md` |
+| M7 implementación | Bloqueado/no autorizado | adenda de desempate + asignación, escala, pesos, umbral, conflictos y autoridades aprobados |
+| M8 resultados/retención | No autorizado | Fase 02B cerrada y gobernanza de resultados aprobada |
+
+El hito M7 conserva su objetivo, pero no puede usar valores provisionales para calcular resultados. La referencia de los Términos a un desempate ausente en la Mecánica es un bloqueo jurídico, no una tarea técnica. El ExecPlan propuesto es `.agent/execplans/flowerflow-phase-02b-judge-evaluation.md`.

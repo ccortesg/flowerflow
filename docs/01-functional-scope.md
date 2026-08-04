@@ -451,3 +451,17 @@ La aprobación específica de Fase 02A sustituye, sólo para este milestone, los
 Los límites técnicos de archivos provienen del prompt autorizado. Edad, residencia, tipos de comprobante, alcance de aclaración y motivos de resolución provienen de los PDF canónicos. Continúan `PENDING` la antigüedad numérica de “reciente”, el catálogo cerrado de documentos equivalentes y el borrado posterior a ganadores.
 
 No se implementan jueces, asignación, evaluación, rúbrica, ganadores, publicación, campañas, ARCO completo, reportes avanzados ni producción.
+
+## Adenda de definición — Fase 02B, 2026-08-04
+
+Esta adenda autoriza documentación, no implementación. Los PDF canónicos confirman:
+
+- panel de al menos tres jueces ciudadanos expertos, seleccionados por experiencia relacionada;
+- independencia, confidencialidad e imparcialidad;
+- evaluación exclusiva de proyectos admitidos;
+- cuatro criterios de la Mecánica y promedio de calificaciones individuales;
+- máximo un ganador por categoría, categoría desierta posible y selección no automática.
+
+La separación técnica ya aprobada impide que jueces accedan a identidad, residencia, aclaraciones, notas internas o auditoría sensible. El detalle se conserva en `docs/15-phase-02b-judge-evaluation-definition.md`.
+
+Permanecen fuera de alcance ejecutable y bloquean la implementación: asignación/cobertura por propuesta, protocolo ciego, conflicto/recusación, escala, pesos, fórmula, redondeo, calidad mínima, desempate, calendario, comentarios, reapertura, autoridad de resultados, visibilidad participante, notificaciones y contrato de retención. Los Términos remiten a reglas de desempate que no existen en la Mecánica v1.0; se requiere una adenda jurídica canónica.

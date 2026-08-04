@@ -87,3 +87,11 @@ Se agregaron expediente de admisibilidad, eventos, aclaraciones/respuestas, arch
 El gate final local quedó en 72 pruebas y 696 aserciones, con Pint, validación/auditoría de Composer y build Vite verdes. El QA real nuevo cubrió participante individual, representante de equipo, reviewer, admin y cuenta sin permisos en escritorio, tableta y móvil; corrigió un conflicto CSP, etiquetas técnicas en inglés y la vista 403 predeterminada. Las pantallas autorizadas cerraron con consola limpia y todos los artefactos temporales fueron eliminados.
 
 Las decisiones jurídicas confirmadas y los `PENDING` se registran en `docs/10-open-questions.md`. La evidencia técnica y de navegador se mantiene en el ExecPlan activo y `docs/design-qa-phase-02-admissibility.md` para no reescribir el cierre histórico de Fase 01.
+
+## Adenda de estado — definición Fase 02B, 2026-08-04
+
+La rama analizada es `codex/phase-02-admissibility-review` en `5007b11a6c157898228ec027a387c86c270a33da`, con árbol e índice limpios al inicio. La Fase 02A está registrada en ese commit; no se verificó ni modificó producción.
+
+La Fase 02B avanzó únicamente como definición documental. Se verificaron los 14 folios de los tres PDF canónicos y se prepararon matriz de decisiones, RBAC/datos, estados propuestos, flujos, amenazas, pruebas, ExecPlan y prompt condicionado. No se implementaron código, migraciones, dependencias, rutas, permisos ni UI; tampoco se repitió QA visual.
+
+La implementación está bloqueada. Los PDF confirman panel mínimo, cuatro criterios y promedio, pero no escala, pesos, fórmula individual, umbral, asignación por propuesta ni desempate. Los Términos remiten a una regla de desempate ausente en la Mecánica v1.0. Véanse `docs/15-phase-02b-judge-evaluation-definition.md` y `.agent/execplans/flowerflow-phase-02b-judge-evaluation.md`.

@@ -511,3 +511,13 @@ Pantallas nuevas:
 La interfaz separa snapshot, identidad, residencia, notas internas y eventos. Fechas visibles llevan contexto Hermosillo; motivo público y notas internas se muestran en superficies diferentes. Estados y errores están en español de México. CSS propio vive en `resources/css/pages/admissibility-review.css` y conserva foco/controles nativos, tabla responsive y apilamiento móvil.
 
 El QA visual del milestone anterior no se repite. El QA de estas superficies se registra por separado en `docs/design-qa-phase-02-admissibility.md`.
+
+## Adenda UX propuesta — Fase 02B, 2026-08-04
+
+No se diseñaron ni implementaron pantallas. La definición propone, condicionada a resolver decisiones:
+
+- juez: dashboard de asignaciones propias, declaración previa de conflicto, proyección evaluable sin identidad, borrador, resumen y confirmación de envío;
+- administración: perfiles, asignaciones, conflictos, cobertura, rúbrica versionada, evaluaciones y excepciones auditadas;
+- participante: sin detalle de jueces, asignaciones, comentarios, calificaciones o promedios hasta que exista una política de visibilidad aprobada.
+
+Todas las superficies futuras deben permanecer detrás de `FLOWERFLOW_JUDGING_ENABLED=false`, usar español de México, mostrar fechas en Hermosillo y cubrir escritorio, tableta, móvil, teclado, foco y zoom. No debe iniciarse wireframe/implementación definitiva sin aprobar protocolo ciego, escala/pesos, conflicto, calendario y comentarios.

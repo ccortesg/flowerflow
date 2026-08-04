@@ -74,3 +74,17 @@ R01, R02, R03, R04, R06, R12, R17, R26 y R27 deben tener decisión o recorte exp
 | R39 | Retención elimina antes de conocer ganadores | Medio | Crítico | sólo cálculo/reporte dry-run; sin scheduler ni delete | integrar módulo de resultados y autorización | Bloqueado por diseño |
 | R40 | Nota/residencia se filtra a futuros jueces | Bajo | Crítico | discos/tablas/Policies separados, permisos granulares y tests de rol juez sin permisos | repetir matriz al crear rol juez real | Mitigado local |
 | R41 | Correo falla después de decisión | Medio | Medio | commit previo, mail cifrado en cola, reintentos y aviso sin 500 | SMTP/worker/failed_jobs operativos | Mitigado local; OPS pendiente |
+
+## Adenda de riesgos Fase 02B — 2026-08-04
+
+| ID | Riesgo | Prob. | Impacto | Mitigación actual | Pendiente/rollback | Estado |
+|---|---|---|---|---|---|---|
+| R42 | Términos remiten a desempate inexistente en Mecánica v1.0 | Alto | Crítico | no implementar desempate ni selección; registrar contradicción | adenda jurídica canónica versionada | Abierto P0; bloquea resultados |
+| R43 | Escala, pesos, fórmula, redondeo o umbral se inventan | Alto | Crítico | no existe valor por defecto; prompt condicionado | aprobación trazable antes de esquema/cálculo | Abierto P0; bloquea evaluación |
+| R44 | “Al menos tres jueces” se interpreta como tres evaluaciones por propuesta | Medio | Crítico | separar tamaño del panel de política de cobertura | definir asignación y mínimo por propuesta | Abierto P0 |
+| R45 | Identidad se filtra por contenido o metadatos de anexos | Alto | Crítico | proyección allowlist y acceso fail-closed | protocolo de anonimización y pruebas canario | Abierto P0 |
+| R46 | Conflicto/reapertura se resuelve sin autoridad ni evidencia | Medio | Crítico | transición bloqueante; no habilitar excepciones | catálogo, autoridad, reasignación y versionado aprobados | Abierto P0 |
+| R47 | Promedio se confunde con ganador o habilita borrado de residencia | Medio | Crítico | cálculo, declaración, publicación y retención separados | contrato autorizado de ganador/no ganador | Bloqueado por diseño |
+| R48 | Participante o juez recibe comentarios/ranking no autorizados | Medio | Alto | sin exposición por defecto; permisos/DTO separados | aprobar visibilidad y textos de notificación | Abierto |
+
+R27 queda parcialmente acotado: panel mínimo, criterios y promedio están confirmados; sus componentes de asignación, escala, pesos, umbral y empate continúan abiertos mediante R42–R44.

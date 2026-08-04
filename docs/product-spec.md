@@ -375,3 +375,17 @@ Esta adenda conserva el historial anterior y registra el alcance autorizado para
 - el cálculo de retención registra una fecha candidata a 90 días, pero no borra mientras falte determinar ganadores.
 
 Jueces, evaluación, rúbricas, ganadores, comunicaciones masivas, ARCO completo, reportes avanzados y producción siguen fuera de alcance.
+
+## Adenda de definición — Fase 02B, 2026-08-04
+
+Se definió documentalmente jueces/evaluación sin autorizar implementación. Reglas jurídicas confirmadas:
+
+- grupo de al menos tres jueces expertos, independientes, confidenciales e imparciales;
+- propuestas admitidas y cuatro criterios exactos de la Mecánica;
+- calificación por juez y promedio como resultado;
+- máximo un ganador por categoría, categoría desierta posible y decisión no automática;
+- acceso de jueces limitado a información necesaria.
+
+La arquitectura conserva separación completa de identidad, residencia, aclaraciones y notas. Se propone asignación al snapshot, rúbrica versionada, borrador/envío inmutable, conflicto bloqueante, promedio de servidor y auditoría, siempre detrás de un feature flag apagado.
+
+La especificación ejecutable no está aprobada porque faltan asignación/cobertura, protocolo ciego, conflictos/recusación, escala, pesos, fórmula/redondeo, umbral, desempate, calendario, comentarios, reapertura, autoridad, visibilidad participante y notificaciones. El contrato normativo y técnico está en `docs/15-phase-02b-judge-evaluation-definition.md`.

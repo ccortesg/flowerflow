@@ -262,3 +262,30 @@ La matriz se actualiza cuando:
 6. cambia la topología AWS o la coexistencia con `administratec`.
 
 Cada cambio debe mantener el vínculo requisito → historia → módulo/página → criterio → prueba y registrar la decisión en `docs/10-open-questions.md` o un ADR.
+
+## Trazabilidad de definición Fase 02B — 2026-08-04
+
+No existen módulos, rutas ni pruebas implementadas; `DOC-VERIFIED` significa únicamente trazabilidad documental contra fuente canónica.
+
+| ID | Requisito/decisión | Fuente | Evidencia futura | Estado |
+|---|---|---|---|---|
+| F2B-001 | panel de al menos tres jueces expertos | Mecánica §8 | configuración/perfiles + prueba mínimo | DOC-VERIFIED; implementación bloqueada |
+| F2B-002 | independencia, confidencialidad e imparcialidad | Mecánica §8; Aviso §8 | aceptación versionada + conflicto + auditoría | DOC-VERIFIED; proceso PENDING |
+| F2B-003 | sólo snapshot admitido es evaluable | Mecánica §§7–8 | Policy/Action + prueba negativa | DOC-VERIFIED |
+| F2B-004 | cuatro criterios canónicos | Mecánica §8 | rúbrica versionada exacta | DOC-VERIFIED; escala/pesos PENDING |
+| F2B-005 | promedio de calificaciones de jueces | Mecánica §8 | cálculo servidor reproducible | DOC-VERIFIED; fórmula individual PENDING |
+| F2B-006 | máximo un ganador/categoría y categoría desierta posible | Mecánica §§8–9; Términos §7 | módulo futuro resultados | DOC-VERIFIED; umbral PENDING |
+| F2B-007 | cálculo no selecciona automáticamente | Términos §7 | separación permisos/eventos | DOC-VERIFIED |
+| F2B-008 | juez recibe sólo información necesaria y nunca residencia | Aviso §8; AGENTS; ADR-0004 | payload/download/export canarios | DOC-VERIFIED técnico |
+| F2B-009 | asignación y mínimo por propuesta | no definido | algoritmo/cobertura | PENDING |
+| F2B-010 | evaluación ciega de texto/archivos/metadatos | minimización parcial | protocolo y pruebas de autoría | PENDING parcial |
+| F2B-011 | conflicto/recusación/reasignación | deber general, sin procedimiento | estados/Policies/pruebas | PENDING parcial |
+| F2B-012 | escala, pesos, fórmula, precisión y redondeo | no definido | Unit de cálculo | PENDING |
+| F2B-013 | calidad mínima | mencionada sin umbral | prueba de frontera | PENDING |
+| F2B-014 | desempate | referencia ausente en Mecánica | adenda jurídica + pruebas | PENDING crítico |
+| F2B-015 | reapertura/anulación | no definido | permiso/motivo/versionado | PENDING |
+| F2B-016 | autoridad de resultados/publicación | no identificada operativamente | RBAC/quórum/auditoría | PENDING |
+| F2B-017 | integración retención ganador/no ganador | Aviso §11, señal aún inexistente | contrato y dry-run | PENDING; sin delete |
+| F2B-018 | notificaciones de evaluación/resultados | Términos §10, eventos no definidos | mail fake/falla SMTP | PENDING parcial |
+
+La matriz completa y el prompt condicionado se encuentran en `docs/15-phase-02b-judge-evaluation-definition.md`.

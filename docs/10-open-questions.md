@@ -202,3 +202,46 @@ Siguen abiertas y no bloquean código local detrás de flags: hora exacta de ape
 - `Q-F2A-003`: ¿qué responsable autoriza la eliminación después de determinar ganadores? Sin esa integración no existe delete/scheduler.
 - `Q-F2A-004`: ¿catálogo cerrado/códigos de motivos o texto libre controlado? Fase 02A conserva motivo público obligatorio y notas separadas.
 - `Q-F2A-005`: antivirus, cuarentena y procedimiento ante malware para producción.
+
+## Adenda de decisiones Fase 02B — 2026-08-04
+
+Esta adenda conserva las filas históricas Q-026–Q-032 y precisa su estado con evidencia de los PDF v1.0.
+
+### Confirmado por PDF canónico
+
+- `Q-F2B-001`: el panel se integra por **al menos tres** jueces ciudadanos expertos; se seleccionan por experiencia relacionada y actúan con independencia, confidencialidad e imparcialidad.
+- `Q-F2B-002`: sólo proyectos admitidos pasan a evaluación.
+- `Q-F2B-003`: los cuatro criterios son relevancia/diagnóstico; calidad, claridad y originalidad; participación ciudadana/coordinación municipal; impacto, sostenibilidad y medición.
+- `Q-F2B-004`: cada juez asigna su calificación y el resultado se obtiene por promedio.
+- `Q-F2B-005`: máximo un ganador por categoría; una categoría puede quedar sin ganador; la plataforma no selecciona automáticamente.
+- `Q-F2B-006`: juez sólo recibe información necesaria; publicación mínima posible de ganador se limita a nombre/persona o equipo, categoría, título y síntesis no confidencial.
+
+### Reconciliación de preguntas históricas
+
+| Referencia | Resultado 2026-08-04 |
+|---|---|
+| Q-026 | Criterios confirmados; escala, pesos, fórmula, redondeo y calidad mínima siguen `PENDING`. |
+| Q-027 | Panel mínimo de tres confirmado; cantidad de evaluaciones por propuesta y política de asignación siguen `PENDING`. |
+| Q-028 | Exclusión de identidad/residencia es obligatoria por minimización y decisión técnica; anonimización de texto, archivos y metadatos sigue `PENDING`. |
+| Q-029 | Imparcialidad del juez y exclusión como concursantes de jueces/personas con conflicto directo están confirmadas; conflicto de un juez asignado, recusación, resolución, reasignación y empate siguen `PENDING`. |
+| Q-030 | Categoría sin ganador está confirmada; umbral de calidad mínima sigue `PENDING`. |
+| Q-031 | Reapertura, autoridad, plazo y versionado siguen `PENDING`; no se implementa por defecto. |
+| Q-032 | Deber de imparcialidad confirmado; formulario, catálogo y tratamiento del conflicto de un juez asignado siguen `PENDING`. |
+
+### Bloqueos nuevos o precisados
+
+- `Q-F2B-007`: política de asignación, capacidad/categorías y mínimo de evaluaciones por propuesta.
+- `Q-F2B-008`: escala, pesos, fórmula, precisión y redondeo de la calificación individual.
+- `Q-F2B-009`: umbral verificable de “calidad mínima”.
+- `Q-F2B-010`: regla de desempate. Los Términos afirman que está en la Mecánica, pero la Mecánica v1.0 no la contiene; se requiere adenda jurídica.
+- `Q-F2B-011`: protocolo ciego para cuerpo del proyecto, archivos y metadatos.
+- `Q-F2B-012`: conflictos/recusación, autoridad resolutora, reasignación y efecto sobre trabajo previo.
+- `Q-F2B-013`: calendario de evaluación y excepciones en `America/Hermosillo`.
+- `Q-F2B-014`: comentarios obligatorios/opcionales y su visibilidad.
+- `Q-F2B-015`: reapertura/anulación, autoridad, motivo, ventana y conservación de versiones.
+- `Q-F2B-016`: autoridad/quórum para consolidar, declarar y publicar resultados.
+- `Q-F2B-017`: visibilidad de avance, calificaciones, comentarios y promedio al participante.
+- `Q-F2B-018`: eventos, destinatarios, plantillas y acuses de notificación.
+- `Q-F2B-019`: señal autorizada ganador/no ganador para retención; no habilita borrado automático en Fase 02B.
+
+La implementación permanece bloqueada hasta resolver estos puntos en `docs/15-phase-02b-judge-evaluation-definition.md`.

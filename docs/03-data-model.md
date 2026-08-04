@@ -293,3 +293,16 @@ La frase histórica anterior describe la fase documental original y queda sustit
 Los estados respaldados viven en `app/Enums`. `Submission.status` no cambió. El snapshot de `submission_versions` rechaza actualización y borrado mediante el modelo. Las migraciones no hacen backfill: `flowerflow:admissibility-backfill` lo realiza idempotentemente.
 
 Retención: al verificar se calcula `retention_due_at` 90 días después de la fecha base; si existe aclaración relacionada cerrada, se usa la base aplicable más reciente. El comando de reporte es dry-run y la eliminación permanece bloqueada hasta conocer ganadores.
+
+## Adenda propuesta — Fase 02B, 2026-08-04
+
+No se crearon migraciones ni tablas. El modelo candidato, condicionado a decisiones aprobadas, contempla `judge_profiles`, `judge_assignments`, `conflict_declarations`, `rubrics`, `rubric_criteria`, `evaluations`, `evaluation_scores` y `evaluation_events`. `result_snapshots` sería una consolidación reproducible; `winner_decisions` pertenece a un módulo posterior.
+
+La asignación referencia `submission_version_id` de un expediente `admitted`. No se modifica `Submission.status` y no se replica PII/residencia en evaluación. Estados propuestos:
+
+- asignación: `assigned`, `in_progress`, `conflict_declared`, `submitted`, `reopened`, `voided`;
+- evaluación: `draft`, `submitted`, `reopened`, `voided`;
+- conflicto: `declared`, `confirmed`, `dismissed`;
+- rúbrica: `draft`, `active`, `retired`.
+
+Los estados excepcionales y sus actores siguen `PENDING`. Escala, pesos, fórmula, precisión, redondeo, mínimo de evaluaciones, umbral y empate bloquean el esquema definitivo. Véase `docs/15-phase-02b-judge-evaluation-definition.md`.
