@@ -1,5 +1,18 @@
 # Registro de riesgos
 
+## Adenda de auditoría — 2026-08-04
+
+| ID | Riesgo comprobado o pendiente | Impacto | Tratamiento requerido | Estado |
+|---|---|---|---|---|
+| R49 | La suite usa `RefreshDatabase`. | Pérdida o alteración de datos locales si se elimina el aislamiento. | `phpunit.xml` fuerza `flowerflow_testing` y un guard valida ambiente/driver/host/base antes de traits; conservar pruebas negativas. | MITIGADO LOCAL 2026-08-05 |
+| R50 | Composer audit reporta 5 advisories de Guzzle; Yarn reporta 7 bajos, 37 moderados, 38 altos y 4 críticos. | Vulnerabilidades en dependencias directas o transitivas. | Triage, actualización autorizada, revisión de locks y regresión completa. | ABIERTO |
+| R51 | Migración de Fase 02A pendiente en la base local principal. | Error de tablas si se activa el flag. | Mantener flag apagado; validar migración y rollback en DB desechable. | ABIERTO |
+| R52 | Metadata de worktree enlazado apunta a `/mnt/c/temp/flowerflow_ui_public_landing_v2`. | Portabilidad Git parcial fuera de la raíz. | No limpiar; inventariar o retirar mediante tarea Git explícita. | ABIERTO |
+| R53 | Build transforma 2,218 módulos, conserva demos y advierte chunks grandes. | Tiempo de build, superficie de dependencias y rendimiento. | Mapa de imports, smoke visual y poda por página en milestone separado. | ABIERTO |
+| R54 | Producción, worker, SMTP y permisos fueron reportados históricamente, no verificados ahora. | Diferencia entre documentación y estado real. | Preflight productivo de sólo lectura antes del siguiente despliegue. | ABIERTO |
+| R55 | 2FA no obligatoria para privilegiados; CSP permite inline style; decisiones sin rate limit específico. | Mayor exposición de cuentas y acciones administrativas. | Diseñar hardening y pruebas negativas sin mezclarlo con Fase 02B. | ABIERTO |
+| R56 | El usuario MySQL local conserva acceso tanto a `flowerflow` como a `flowerflow_testing`. | Mayor radio de impacto si se elude la configuración PHPUnit. | Mantener el guard fail-closed; preferir usuario exclusivo de test en un milestone posterior. | MITIGADO PARCIAL |
+
 ## Altas/abiertas de Fase 01
 
 | Riesgo | Estado/mitigación | Gate |
@@ -8,7 +21,7 @@
 | Licencia Pixinvent no comprobada | `_referencia` sólo local; adaptación puntual | Evidencia comercial antes de producción. |
 | Upload Office/ODF complejo | Firma, macros OOXML, ZIP bomb y ausencia temporal de antimalware; privado | Riesgo aceptado temporalmente por el owner el 2026-07-15; conservar allowlist, validación de firma, cuota, storage privado y monitoreo. ClamAV/cuarentena y pruebas corpus siguen pendientes. |
 | Bundle demo excesivo | Build verde pero chunks grandes | Racionalizar entradas tras browser baseline. |
-| MySQL Feature aún no ejecutado | Suite lista, secreto no expuesto | Configurar `.env`, migrar y correr. |
+| MySQL Feature | 78 pruebas/702 aserciones verdes sobre `flowerflow_testing`; secreto no expuesto | Conservar guard y pruebas negativas. |
 | EC2 compartida con Administratec desconocida | Cero cambios AWS; preflight read-only | Inventario/capacidad/aislamiento aprobados. |
 | SMTP/DNS desconocidos | local `log`, mail en cola | Proveedor, SPF/DKIM/DMARC y captura staging. |
 | WhatsApp preseleccionado | sólo UI nueva; no persiste hasta submit y es reversible | Validación jurídica/UAT. |

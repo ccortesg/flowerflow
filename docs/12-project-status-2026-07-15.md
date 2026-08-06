@@ -1,5 +1,19 @@
 # Estado del proyecto — Fase 01
 
+## Adenda de hardening local/test — 2026-08-05
+
+La base MySQL desechable `flowerflow_testing` está autorizada, accesible y aislada mediante valores no secretos forzados en PHPUnit y un guard previo a `RefreshDatabase`. El gate funcional actual pasó con 78 pruebas/702 aserciones; Pint quedó verde tras acotar la plantilla de sólo lectura/cache en `pint.json`, Composer validate/platform pasaron y el build produjo un manifest de 874 entradas. La base principal conservó exactamente su huella de tablas/filas durante la prueba de control y la suite completa.
+
+Las auditorías de dependencias siguen rojas: Composer 5 advisories en Guzzle (1 alto, 4 medios) y Yarn 7 bajos, 37 moderados, 38 altos y 4 críticos. No se modificaron dependencias ni lockfiles. La preparación local para desarrollar/probar queda habilitada; release, producción y un gate de seguridad verde siguen bloqueados por los riesgos abiertos.
+
+## Adenda de auditoría y continuidad — 2026-08-04
+
+El estado Git verificado es rama `codex/phase-02-admissibility-review`, HEAD `d293fee63843beb64899498ca169e114e7695d6e`, sin cambios al inicio y con tracking local de la rama homónima de `origin`. Ese commit ya contiene la definición documental de Fase 02B; la descripción previa “cambios locales sin stage ni commit” es histórica.
+
+La auditoría actual no repitió la suite completa ni QA: se preservan como evidencia previa las 72 pruebas y 696 aserciones y la aceptación visual del usuario. En esta ejecución pasaron sintaxis, JSON, Composer validate y platform requirements, rutas, una prueba unitaria segura y el build aislado; fallaron Pint en 10 archivos y las auditorías de dependencias. La migración Fase 02A aparece pendiente en la base local principal. No se inspeccionó ni modificó producción.
+
+El handoff vigente está en [`CODEX_PROJECT_HANDOFF.md`](CODEX_PROJECT_HANDOFF.md). El siguiente gate recomendado es hardening local de aislamiento de pruebas y dependencias, seguido de resolución formal de los PENDING de Fase 02B.
+
 Fecha base: 2026-07-15
 Adenda de cierre: 2026-07-16 (`America/Hermosillo`)
 Rama: `codex/phase-01-public-submissions`

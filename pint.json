@@ -1,0 +1,7 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "_referencia",
+        "bootstrap/cache"
+    ]
+}

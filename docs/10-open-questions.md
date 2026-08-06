@@ -1,5 +1,15 @@
 # Preguntas abiertas y decisiones — Flower Flow 2026
 
+## Pendientes técnicos agregados por auditoría — 2026-08-04
+
+- `RESOLVED-TECH-TEST-DB` (2026-08-05): `flowerflow_testing` autorizada y verificada; PHPUnit fuerza la conexión local y un guard falla cerrado antes de `RefreshDatabase`. Como defensa adicional futura, considerar un usuario exclusivo de test.
+- `PENDING-TECH-DEPS`: aprobar el triage y la actualización controlada por los advisories actuales de Composer y Yarn, incluida la política de aceptación temporal de riesgo.
+- `PENDING-TECH-LOCAL-MIGRATION`: decidir cuándo aplicar y retroceder la migración Fase 02A en una base desechable y repetir el gate antes de habilitar el flag.
+- `PENDING-OPS-PRODUCTION`: verificar mediante preflight de sólo lectura el estado real de Apache, Supervisor, worker, SMTP, permisos y schema productivo antes de otro despliegue.
+- `PENDING-SEC-PRIVILEGED`: decidir obligatoriedad de 2FA, endurecimiento CSP y límites de tasa para decisiones administrativas.
+
+Estos pendientes no sustituyen ni resuelven los PENDING jurídicos y de negocio de Fase 02B.
+
 ## Resoluciones Fase 01 — 2026-07-15
 
 Resueltas: destino AWS EC2 Ubuntu (no GoDaddy), host/panel, MySQL local, cierre y zona, categorías, límites de equipo/propuestas/archivos, Fortify, Spatie, Quill+sanitizer, flags y formato de folio/snapshot.

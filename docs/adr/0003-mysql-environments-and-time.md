@@ -26,6 +26,12 @@ La contraseña local fue provista fuera del repositorio y no forma parte de esta
 
 La producción se ubicará en AWS, pero aún no se ha confirmado si MySQL estará en RDS, en la EC2 o en otro servicio administrado.
 
+### Adenda local/test — 2026-08-05
+
+El propietario creó y autorizó `flowerflow_testing` como esquema desechable. La conexión y grant se verificaron sin imprimir secretos; PHPUnit fuerza MySQL en loopback y el nombre exacto del esquema. Un guard ejecutado durante `createApplication()` aborta antes de `RefreshDatabase` si ambiente, driver, host, base o `DB_URL` no cumplen el contrato. La suite pasó con 78 pruebas/702 aserciones y la huella de la base principal permaneció igual.
+
+La credencial local actual tiene acceso tanto a `flowerflow` como a `flowerflow_testing`. Es una excepción acotada al sandbox WSL y queda mitigada por el guard; no satisface todavía la separación de credenciales recomendada para CI, staging o producción. Crear un usuario exclusivo de test reduciría adicionalmente el radio de impacto.
+
 ## Decisión propuesta
 
 ### 1. Aislamiento estricto por ambiente

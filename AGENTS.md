@@ -1,5 +1,37 @@
 # Reglas de trabajo para Flower Flow
 
+Flower Flow es un monolito Laravel 12/Blade para la convocatoria Hermosillo Florece 2026. Implementa registro, perfil, propuestas y revisión de admisibilidad; jueces/evaluación permanece sólo como definición documental. Para el inventario, riesgos, estado Git y continuidad, lee primero [`docs/CODEX_PROJECT_HANDOFF.md`](docs/CODEX_PROJECT_HANDOFF.md).
+
+## Entorno y comandos canónicos
+
+- Entorno esperado: Ubuntu en WSL2, ruta `/home/ccortesg/workspace/flowerflow`.
+- Stack observado el 2026-08-04: PHP 8.3.31, Composer 2.10.2, Laravel 12.64.0, Node 22.23.1, Corepack 0.34.6, Yarn 1.22.22, Vite 6.3.5 y MySQL 8.
+- `/mnt/c/wamp64/www/flowerflow` es la procedencia Windows/WampServer; no mantengas dos checkouts activos con cambios divergentes.
+
+```bash
+composer install
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+nvm use 22.23.1
+corepack yarn install --frozen-lockfile
+php artisan serve --host=127.0.0.1 --port=8000
+scripts/build_frontend_production.sh
+```
+
+Gate aplicable, siempre con una base de pruebas MySQL desechable confirmada:
+
+```bash
+php artisan test
+vendor/bin/pint --test
+composer validate --strict
+composer audit --locked
+corepack yarn audit --groups dependencies --level moderate
+scripts/build_frontend_production.sh
+git diff --check
+```
+
+Desde el 2026-08-05, `phpunit.xml` fuerza MySQL local y la base desechable `flowerflow_testing`; `Tests\TestCase` aborta antes de `RefreshDatabase` si ambiente, driver, host, base o `DB_URL` rompen ese contrato. Usuario y contraseña permanecen únicamente en `.env`. No ejecutes `migrate:fresh`, `db:wipe` o migraciones manuales contra la base principal. Pint quedó verde con `pint.json`, que excluye `_referencia/` y `bootstrap/cache`; las auditorías de dependencias continúan en rojo y no autorizan cambios de lockfiles por inferencia.
+
 ## Autoridad y alcance
 
 - Antes de editar, leer este archivo, `.agent/PLANS.md`, el ExecPlan activo y los ADR aplicables.
@@ -36,6 +68,8 @@
 - No añadir dependencias de producción sin actualizar `docs/dependency-register.md` y crear/actualizar un ADR.
 - No editar `public/build` manualmente. Importar JS/CSS por página mediante Vite y retirar demos sólo después de verificar el build.
 - No sobrescribir originales de `imagen/` ni `formatos/`; publicar copias o derivaciones reproducibles y verificar hashes.
+- Mantener nombres de clases, métodos, variables, tablas y archivos de código en inglés; interfaz y documentación operativa en español de México.
+- Usar nombres de migración y enums respaldados consistentes con el dominio; no cambiar estados históricos sin una migración aditiva y reversible.
 
 ## Calidad
 
@@ -44,9 +78,13 @@
 - Regla de detener y reparar: no marcar un milestone completo mientras falle una validación requerida.
 - Verificar flujos críticos en navegador real, móvil y teclado antes de UAT.
 - Mantener trazabilidad requisito -> historia -> implementación -> prueba en `docs/requirements-traceability.md`.
+- La definición de terminado exige código o revisión documental en alcance, pruebas aplicables, autorización negativa, build, formato, auditorías y documentación actualizada. Un fallo o bloqueo debe reportarse; no maquillarse como éxito.
 
 ## Cambios y evidencia
 
 - Preservar cambios ajenos y evitar ediciones solapadas. Dividir trabajo paralelo por archivos/módulos con propietario explícito.
 - Actualizar el ExecPlan vivo: progreso, decisiones, hallazgos inesperados, evidencia y próximos pasos.
 - Entregar lista exacta de archivos, comandos ejecutados, resultados, riesgos residuales y rollback.
+- No cambiar de rama, hacer push, reescribir historial, limpiar el árbol ni borrar cambios locales sin solicitud expresa. Nunca usar force-push por inferencia.
+- No instalar o actualizar dependencias ni tocar lockfiles sin autorización; toda dependencia de producción nueva requiere registro y ADR.
+- No modificar `.env`, `vendor`, `node_modules`, `public/build`, `storage` o `bootstrap/cache` salvo que la tarea lo requiera expresamente. Nunca versionar secretos, PII, documentos reales, logs ni artefactos QA.

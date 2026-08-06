@@ -1,5 +1,15 @@
 # Roadmap y backlog
 
+## Estado vigente — auditoría 2026-08-04
+
+- Fase 01: implementada y QA visual y responsive aceptado por el usuario.
+- Fase 02A: implementada y publicada en la rama actual; validación completa documentada históricamente, no repetida en esta auditoría.
+- Fase 02B: sólo definición documental en HEAD `d293fee`; implementación bloqueada por decisiones PENDING.
+- Gate técnico previo recomendado: aislar la base de pruebas, resolver advisories de Composer y Yarn, validar migración Fase 02A en DB desechable y repetir regresión, build y auditorías.
+- Producción: estado actual no verificado; cualquier despliegue requiere autorización y preflight separados.
+
+Véase [`CODEX_PROJECT_HANDOFF.md`](CODEX_PROJECT_HANDOFF.md). Las cronologías conservadas abajo son evidencia histórica y no sustituyen este corte.
+
 ## Estado Fase 01 — 2026-07-15
 
 Completado en código: locks/runtime, assets legales/branding, configuración/flags, auth/RBAC, modelo/migraciones/seed, perfil, borradores/equipos, sanitización, uploads/enlaces, finalización/snapshot/correo, panel mínimo y pruebas preparadas.

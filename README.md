@@ -1,12 +1,14 @@
 # FlowerFlow — Hermosillo Florece 2026
 
+> **Estado auditado el 2026-08-04:** el contexto técnico vigente está en [`docs/CODEX_PROJECT_HANDOFF.md`](docs/CODEX_PROJECT_HANDOFF.md). La Fase 02A existe en código y la Fase 02B sólo en documentación. La ruta WSL canónica después de la réplica integral es `/home/ccortesg/workspace/flowerflow`.
+
 Aplicación Laravel 12 para la convocatoria Hermosillo Florece 2026. La Fase 01 implementa sitio público, autenticación, registro con perfil mínimo, recepción versionada detrás de flags y panel administrador mínimo. No incluye evaluación, resultados ni despliegue productivo.
 
 ## Entorno local soportado
 
 - Ubuntu sobre WSL2
 - PHP 8.3 con `pdo_mysql`
-- MySQL 8, base `flowerflow`, usuario `flowerflow_user`
+- MySQL 8, base local `flowerflow`, base desechable `flowerflow_testing`, credencial local ignorada
 - Composer 2.10+
 - Node 22.23.1 mediante NVM y Yarn Classic 1.22.22
 
@@ -44,12 +46,15 @@ php artisan test
 ./vendor/bin/pint --test
 composer validate --strict
 composer audit --locked
+corepack yarn audit --groups dependencies --level moderate
 scripts/build_frontend_production.sh
 ```
 
+`php artisan test` está aislado en MySQL local sobre `flowerflow_testing`: `phpunit.xml` fuerza los valores no secretos y un guard aborta antes de `RefreshDatabase` si la conexión intenta usar otro ambiente, driver, host o base. Las credenciales se heredan únicamente de `.env`. El 2026-08-05 pasaron 78 pruebas/702 aserciones, Pint y el build; Composer/Yarn continúan reportando advisories, por lo que no debe declararse un gate de seguridad verde ni actualizar locks sin un milestone autorizado.
+
 Los PDFs jurídicos y PNG autorizados se publican únicamente mediante `scripts/publish_authorized_assets.sh`, que verifica hashes antes de copiar.
 
-La cifra de 28 pruebas/161 aserciones corresponde al cierre histórico de Fase 01. El gate vigente de Fase 02A cerró con 72 pruebas y 696 aserciones; la evidencia completa se registra en `.agent/execplans/flowerflow-phase-02-admissibility-review.md` y `docs/12-project-status-2026-07-15.md`.
+La cifra de 28 pruebas/161 aserciones corresponde al cierre histórico de Fase 01 y 72/696 al cierre histórico de Fase 02A. El gate local actual contiene 78 pruebas/702 aserciones al incluir seis controles fail-closed de base. La evidencia completa se registra en `.agent/execplans/flowerflow-mysql-testing-hardening.md` y `docs/12-project-status-2026-07-15.md`.
 
 ## Fase 02A: admisibilidad
 

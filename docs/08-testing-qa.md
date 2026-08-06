@@ -1,5 +1,17 @@
 # Estrategia de pruebas y calidad
 
+## Adenda de aislamiento MySQL — 2026-08-05
+
+El propietario autorizó la base desechable `flowerflow_testing` y se comprobó el grant real con las credenciales ignoradas de `.env`, sin imprimirlas. `phpunit.xml` fuerza `APP_ENV=testing`, driver MySQL, loopback y el nombre exacto de la base; `Tests\TestCase::createApplication()` valida ese contrato antes de que Laravel inicialice `RefreshDatabase`. También rechaza `DB_URL` para impedir un override remoto.
+
+Resultado actual: 78 pruebas/702 aserciones verdes en 10.70 s, incluidas seis pruebas positivas/negativas del guard. Una Feature de control y la suite completa conservaron la misma huella de la base principal antes/después. Pint general pasó mediante `pint.json`, que excluye únicamente `_referencia/` y `bootstrap/cache`; Composer validate/platform y el build Vite también pasaron. Las auditorías de Composer/Yarn siguen fallando con los conteos documentados y requieren un milestone de dependencias separado.
+
+## Adenda de auditoría no destructiva — 2026-08-04
+
+Esta ejecución confirmó 72 métodos de prueba existentes, pero **no ejecutó la suite completa**: `phpunit.xml` deja comentada la conexión y base, y las pruebas usan `RefreshDatabase`, por lo que podría afectarse la base local principal configurada en `.env`. El gate histórico de Fase 02A (72 pruebas, 696 aserciones) y el QA aceptado por el usuario se conservan como evidencia previa, no como ejecución actual.
+
+Resultado actual: sintaxis PHP 141/141, JSON 4/4, Composer validate y platform requirements, 59 rutas, test unitario seguro (1 prueba, 5 aserciones) y build aislado de 2,218 módulos pasaron. Pint falló en 10 archivos rastreados; Composer audit reportó 5 advisories y Yarn audit reportó 7 bajos, 37 moderados, 38 altos y 4 críticos. El detalle y los comandos están en [`CODEX_PROJECT_HANDOFF.md`](CODEX_PROJECT_HANDOFF.md).
+
 ## Suite Fase 01
 
 Unit cubre sanitización. Feature preparado cubre landing/legales, registro con perfil mínimo, teléfono México `+52`, perfil 18+/E.164/WhatsApp reversible, flags seguros, límite de panel, IDOR, deadline inclusivo, allowlist, cuota, XSS, privacidad de archivos, una propuesta/categoría, máximo total, snapshot/idempotencia, legales separados y mail en cola. Debe ejecutarse sobre MySQL local, no SQLite, después de configurar `.env` ignorado.

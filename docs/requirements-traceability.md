@@ -168,9 +168,9 @@
 | ID | Estado | Requisito | Artefacto / ambiente | Aceptación resumida | Verificación planeada | Fase |
 | --- | --- | --- | --- | --- | --- | --- |
 | ENV-001 | DECISION | MySQL local en `127.0.0.1:3306`. | `.env` local no versionado; docs | Conectividad usa host/puerto definidos sin publicar secretos. | Diagnóstico de conexión redactado | PLAN |
-| ENV-002 | DECISION | Base `flowerflow` y usuario `flowerflow_user`. | Ambiente local/pruebas | Aplicación de prueba usa esquema/usuario indicados. | Consulta `SELECT DATABASE(), CURRENT_USER()` con salida segura | PLAN |
+| ENV-002 | DECISION | Base local `flowerflow`, base test `flowerflow_testing` y credencial local ignorada. | Ambiente local/pruebas | Desarrollo y suite usan esquemas separados sin publicar secretos. | Diagnóstico redactado + guard PHPUnit | VERIFIED local |
 | ENV-003 | DECISION | Contraseña provista fuera del repo sólo en `.env` local. | Gestión de secretos | Valor literal ausente de docs, ejemplos, git, logs y fixtures. | Secret scan + revisión manual | PLAN |
-| ENV-004 | DECISION local | La base local vacía se autorizó como ambiente de pruebas. | MySQL local | Migraciones/seeders y suite se ejecutan sólo en `flowerflow`; datos QA sintéticos se retiran al cerrar. | Confirmación del propietario + inventario vacío + gate verde | F1 |
+| ENV-004 | DECISION local | `flowerflow_testing` es la base desechable autorizada. | PHPUnit + `Tests\TestCase` | `RefreshDatabase` sólo opera con ambiente testing, MySQL local y nombre exacto; rechaza base principal, host remoto y `DB_URL`. | 78 pruebas/702 aserciones + huella principal sin cambios | VERIFIED local |
 | DEP-001 | DECISION | Producción en AWS EC2 Ubuntu coexistente con `administratec`. | Runbook/ADR AWS | Arquitectura y riesgos reflejan el destino real. | Revisión documental | PLAN |
 | DEP-002 | DECISION | Aislar vhost, ruta, usuario, env, DB, storage, cache/sesión, procesos y logs. | EC2 | Flower Flow no comparte secretos ni namespace operativo; fallos no colisionan por configuración. | OPS preflight + smoke cruzado | MVP |
 | DEP-003 | PENDING | Inventariar Ubuntu, CPU/RAM/disco, web server, PHP-FPM y extensiones. | EC2 | Laravel 12/PHP 8.2+ y carga prevista son compatibles. | Comandos read-only + matriz de versiones | PLAN |

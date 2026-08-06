@@ -1,5 +1,15 @@
 # Desarrollo local Flower Flow sobre WSL2 y MySQL
 
+## Adenda vigente de entorno — 2026-08-04
+
+La ruta canónica para continuar en Ubuntu/WSL2 es `/home/ccortesg/workspace/flowerflow`; `/mnt/c/wamp64/www/flowerflow` queda como origen Windows de la réplica integral. Abrir el proyecto en Windows/Codex mediante `\\wsl.localhost\Ubuntu\home\ccortesg\workspace\flowerflow` evita la penalización de I/O y las limitaciones POSIX de `/mnt/c`.
+
+Versiones observadas: PHP 8.3.31, Composer 2.10.2, Laravel 12.64.0, Node 22.23.1, Corepack 0.34.6, Yarn 1.22.22, Vite 6.3.5 y cliente MySQL 8.0.46. Docker no está integrado en esta distribución.
+
+La base local principal conserva su estado de trabajo y no debe usarse para tests destructivos. Desde el 2026-08-05 la suite opera exclusivamente sobre `flowerflow_testing`: PHPUnit fuerza MySQL en loopback y el nombre de base, mientras un guard aborta antes de `RefreshDatabase` si la configuración no coincide. Usuario y contraseña se heredan de `.env` ignorado; nunca se documenta `DB_PASSWORD`. No ejecutar manualmente `migrate:fresh`, `db:wipe` o `migrate:reset` sobre `flowerflow`.
+
+Las secciones históricas de este documento conservan evidencia de etapas anteriores; si contradicen esta adenda o [`CODEX_PROJECT_HANDOFF.md`](CODEX_PROJECT_HANDOFF.md), prevalecen los dos textos fechados el 2026-08-04.
+
 > **Actualización Fase 01 — 2026-07-15:** el ExecPlan ya autorizó dependencias, `.env`, migraciones y pruebas locales. Se creó `.env` ignorado con MySQL `flowerflow`/`flowerflow_user`, pero la contraseña debe colocarse localmente por captura segura antes de ejecutar migraciones; nunca se documenta ni pasa como argumento. Laravel 12.64.0, PHP 8.3.31, Composer 2.10.2 y Yarn 1.22.22 están verificados. Las prohibiciones “fase 0” de las secciones históricas quedan sustituidas dentro de esta rama sólo para el alcance Fase 01.
 
 ## Secuencia vigente de arranque
@@ -9,7 +19,7 @@
 3. Confirmar sin imprimir secretos: `php artisan about`.
 4. Ejecutar `php artisan migrate --seed`; no usar `migrate:fresh` si la base contiene trabajo ajeno.
 5. Crear admin con `php artisan flowerflow:admin` y captura oculta; no usar `--password` en un shell compartido.
-6. Ejecutar `php artisan test`, `./vendor/bin/pint --test` y el build Yarn congelado.
+6. Confirmar que existe `flowerflow_testing` y ejecutar `php artisan test`, `./vendor/bin/pint --test` y el build Yarn congelado; el guard debe rechazar cualquier otra base.
 7. Para browser local: `php artisan serve --host=127.0.0.1 --port=8000` con flags seguros; correo permanece en `log`.
 
 La base de pruebas oficial de esta fase es MySQL en Ubuntu/WSL2. No se usa SQLite porque el PHP WSL observado no trae `pdo_sqlite` y porque se deben validar enums, índices, transacciones y collation reales. El password suministrado por el propietario no se repite en este documento.

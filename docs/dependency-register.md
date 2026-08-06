@@ -1,5 +1,22 @@
 # Registro de dependencias
 
+## Revalidación sin cambios — 2026-08-05
+
+Después de aislar la suite en `flowerflow_testing`, `composer validate --strict --no-check-publish`, platform requirements y el build Vite pasaron. Las auditorías reprodujeron exactamente el riesgo previo: Composer mantiene 5 advisories en un paquete (1 alto, 4 medios) y Yarn 7 bajos, 37 moderados, 38 altos y 4 críticos. No se actualizaron paquetes, manifiestos ni lockfiles; el triage/remediación requiere un milestone autorizado separado.
+
+## Adenda de auditoría instalada — 2026-08-04
+
+La afirmación histórica “sin advisories” del cierre de Fase 01 ya no representa el resultado actual. Sin instalar ni actualizar paquetes:
+
+| Comando | Resultado actual | Estado |
+|---|---|---|
+| `composer validate --strict --no-check-publish` | Manifiesto y lock válidos | PASS |
+| `composer check-platform-reqs --no-dev` | Requisitos de plataforma satisfechos | PASS |
+| `composer audit --locked --no-interaction --format=plain` | 5 advisories en `guzzlehttp/guzzle` 7.14.2: 1 alto y 4 medios | FAIL |
+| `corepack yarn audit --groups dependencies --level moderate --json` | 7 bajos, 37 moderados, 38 altos y 4 críticos | FAIL |
+
+Los críticos de Yarn incluyen rutas asociadas con `tar`, `swiper` y `form-data`; el lock también emite una incompatibilidad de resolución de Algolia. Estos conteos son salida del auditor y no demuestran por sí solos explotabilidad en Flower Flow. Debe hacerse triage por ruta y uso, actualizar dentro de un milestone autorizado, revisar el diff de locks y repetir pruebas, build y auditoría. No se modificó ninguna dependencia en esta revisión.
+
 ## Snapshot instalado Fase 01 — 2026-07-15
 
 | Dependencia | Versión lock | Motivo | Licencia | Alternativa considerada | Estado |
