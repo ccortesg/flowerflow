@@ -73,7 +73,10 @@
     </div>
     <div class="ff-category-grid">
       @foreach($categories as $category)
-        <article @class(['ff-category-card', 'is-featured' => $category->slug === 'hermosillo-florece'])>
+        <article @class([
+          'ff-category-card',
+          'is-featured' => in_array($category->slug, ['hermosillo-florece', 'hermosillo-sin-barreras'], true),
+        ])>
           <span class="ff-category-icon ff-landing-icon {{ config('flowerflow.category_icons.'.$category->slug, 'ri-lightbulb-flash-line') }}" aria-hidden="true"></span>
           <div>
             <h3>{{ $category->name }}</h3>

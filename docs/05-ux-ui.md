@@ -2,7 +2,7 @@
 
 ## Adenda Hermosillo sin Barreras — 2026-08-06
 
-- La landing obtiene sólo categorías activas de la convocatoria activa y conserva un fallback exacto de cuatro. Usa cuatro tarjetas en escritorio, dos en tablet y una en móvil; “Hermosillo Florece” se destaca por slug mediante `.is-featured`, sin depender de posición.
+- La landing obtiene sólo categorías activas de la convocatoria activa y conserva un fallback exacto de cuatro. Usa cuatro tarjetas en escritorio, dos en tablet y una en móvil; “Hermosillo Florece” y “Hermosillo sin Barreras” comparten el formato `.is-featured` por slug, alternados con las otras dos categorías y sin depender de posición.
 - Los textos públicos indican cuatro formas de transformar la ciudad, hasta cuatro propuestas y cuatro ganadores máximos. El icono `ri-accessibility-line` se resuelve desde `config/flowerflow.php`, igual que los demás iconos por slug.
 - El dashboard participante enumera las cuatro categorías activas. Creación y edición de borradores usan una cuadrícula de dos columnas que baja a una; listado, detalle y revisión conservan el nombre y el icono configurado. Una propuesta enviada permanece inmutable.
 - El dashboard administrativo limita “Enviadas por categoría” a categorías activas de la convocatoria activa e incluye conteo cero. El filtro/listado/detalle histórico conserva relaciones existentes y acepta `?category=hermosillo-sin-barreras`.

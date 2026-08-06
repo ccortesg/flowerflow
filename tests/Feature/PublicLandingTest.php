@@ -104,7 +104,7 @@ class PublicLandingTest extends TestCase
             ->assertSee('ri-accessibility-line', false);
     }
 
-    public function test_landing_lists_only_active_categories_and_features_hermosillo_florece_by_slug(): void
+    public function test_landing_lists_only_active_categories_and_features_alternating_categories_by_slug(): void
     {
         $this->seedFlowerFlow();
         $competition = Competition::query()->where('slug', 'hermosillo-florece-2026')->firstOrFail();
@@ -124,6 +124,11 @@ class PublicLandingTest extends TestCase
             '/<article class="ff-category-card is-featured">\s*<span[^>]+>\s*<\/span>\s*<div>\s*<h3>Hermosillo Florece<\/h3>/s',
             $html
         );
+        $this->assertMatchesRegularExpression(
+            '/<article class="ff-category-card is-featured">\s*<span[^>]+>\s*<\/span>\s*<div>\s*<h3>Hermosillo sin Barreras<\/h3>/s',
+            $html
+        );
+        $this->assertSame(2, substr_count($html, 'ff-category-card is-featured'));
         $this->assertStringNotContainsString('nth-child', $html);
     }
 
