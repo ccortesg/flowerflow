@@ -1,5 +1,23 @@
 # Registro de riesgos
 
+## Recalificación posterior al hardening local — 2026-08-06
+
+| ID | Riesgo residual | Nivel actual | Evidencia/mitigación | Próxima puerta |
+|---|---|---:|---|---|
+| R42 | Suite autenticada aún no ejecutada en la rama de hardening | Alto bloqueante para release | Guard fail-closed y `.env.testing` sin secreto; conexión rechazada antes de migrar | Propietario carga el password local y ejecuta el gate completo |
+| R43 | Producción sin staging y checkout vivo | Crítico operativo | Tres commits sin migraciones y runbook de releases inmutables | Preflight, conversión a symlink, smoke y rollback del propietario |
+| R44 | EC2 compartida con otras seis aplicaciones | Crítico operativo | Prohibidos paquetes globales; sólo vhost Flower Flow, `configtest` y reload graceful | Baseline/smoke de las siete aplicaciones antes y después |
+| R45 | Consistencia archivo/SQL | Medio tras mitigación | Compensación de uploads, borrado post-commit y auditor read-only | Suite MySQL y prueba operativa de storage |
+| R46 | Estados/abuso de mutaciones administrativas | Bajo tras mitigación | Matriz `pending/in_review`, rechazo de demás estados y throttle por actor/ruta | Suite MySQL y QA de doble clic |
+| R47 | Dependencias PHP vulnerables | Bajo | Guzzle 7.15.3; Composer sin advisories | Repetir audit por release |
+| R48 | Grafo JS heredado | Bajo/Medio | Grafo mínimo y cero avisos moderados/altos/críticos | Vigilar advisory bajo de Quill; actualizar cuando exista fix compatible |
+| R49 | CSP/HSTS pueden romper superficie productiva | Medio | CSP estricta Report-Only y HSTS de un día, ambos promovibles por flags | Consola/smoke limpios y soak de siete días |
+| R50 | Antimalware ausente | Alto aceptado | Allowlist, firma, cuota, storage privado y capacidad de cierre permanecen | Decisión posterior; cerrar uploads ante señal |
+| R51 | IP/user-agent crudos y fallback legal | Medio aceptado | Acceso restringido; sin cambio por instrucción del propietario | Revisión jurídica/privacidad posterior |
+| R52 | Restore no ensayado | Crítico externo | Fuera del alcance técnico de esta rama | Evidencia externa antes de autorizar despliegue |
+
+Esta adenda prevalece para el estado actual; las tablas históricas siguientes se conservan para trazabilidad y no deben interpretarse como verificación vigente.
+
 ## Altas/abiertas de Fase 01
 
 | Riesgo | Estado/mitigación | Gate |

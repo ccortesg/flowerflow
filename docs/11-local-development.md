@@ -1,5 +1,25 @@
 # Desarrollo local Flower Flow sobre WSL2 y MySQL
 
+## Contrato vigente de pruebas destructivas — 2026-08-06
+
+La base automatizada permitida ya no es la base principal descrita en secciones históricas. Es exclusivamente:
+
+- driver `mysql`;
+- host loopback `127.0.0.1` o `localhost`;
+- base `flowerflow_testing`;
+- usuario `flowerflow_testing_user`;
+- `DB_URL` ausente.
+
+`phpunit.xml` fija todos esos valores excepto el secreto. Crear `.env.testing` ignorado y escribir allí únicamente el valor local de `DB_PASSWORD`; no pasarlo como argumento, no copiarlo a `.env.example` y no mostrar el archivo. El guard de `Tests\Support\EnsuresDisposableDatabase` falla antes de cualquier `RefreshDatabase` si una condición no coincide.
+
+Después de colocar el secreto directamente en el archivo local, ejecutar:
+
+```bash
+scripts/quality_gate_local.sh
+```
+
+El script se detiene en el primer fallo y ejecuta suite, Pint, Composer validate/platform/audit, Yarn audit con umbral moderado, build reproducible, rutas y `git diff --check`. No ejecuta `migrate:fresh`, `db:wipe` ni migraciones manuales. El comando `php artisan flowerflow:storage-audit --disk=<disk> --json` es de sólo lectura y nunca borra huérfanos.
+
 > **Actualización Fase 01 — 2026-07-15:** el ExecPlan ya autorizó dependencias, `.env`, migraciones y pruebas locales. Se creó `.env` ignorado con MySQL `flowerflow`/`flowerflow_user`, pero la contraseña debe colocarse localmente por captura segura antes de ejecutar migraciones; nunca se documenta ni pasa como argumento. Laravel 12.64.0, PHP 8.3.31, Composer 2.10.2 y Yarn 1.22.22 están verificados. Las prohibiciones “fase 0” de las secciones históricas quedan sustituidas dentro de esta rama sólo para el alcance Fase 01.
 
 ## Secuencia vigente de arranque

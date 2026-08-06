@@ -26,11 +26,12 @@ El éxito observable local exige conservar los nueve flujos productivos protegid
 - [x] (2026-08-06) Confirmada la base remota exacta `baff7892…` y creada la rama local sin merge.
 - [x] (2026-08-06) Confirmado checkpoint limpio del trabajo anterior en `f0e9f28`; no se reescribió.
 - [x] (2026-08-06) Preservado y retirado el worktree `codex/ui-public-landing-v2` mediante patch binario, tar de untracked y bundle verificado.
-- [ ] Portar únicamente el hardening MySQL/test revisado y crear el gate local.
-- [ ] Ejecutar y consolidar Release 1 con Guzzle 7.15.3.
-- [ ] Implementar y consolidar Release 2.
-- [ ] Implementar y consolidar Release 3.
-- [ ] Ejecutar gate completo, QA real y actualizar documentación/evidencia.
+- [x] (2026-08-06) Portado únicamente el hardening MySQL/test revisado y creado el gate local en `2d18f99`/`723bc71`.
+- [x] (2026-08-06) Release 1 consolidada en `84e34d1` con Guzzle 7.15.3 y sólo dos transitivas indispensables.
+- [x] (2026-08-06) Release 2 consolidada en `f530e6a` con integridad de archivos, auditor read-only, estados, throttle, contratos y 2FA opcional.
+- [x] (2026-08-06) Release 3 consolidada en `7f660b0` con grafo Vite mínimo, iconos deterministas, CSP Report-Only/HSTS y nonces completos.
+- [x] (2026-08-06) Gate estático/dependencias/build y QA pública real ejecutados; documentación actualizada.
+- [ ] Propietario: cargar directamente el secreto en `.env.testing`, ejecutar suite Feature/MySQL y completar QA autenticada. Este punto permanece bloqueante para liberar, no para conservar la implementación local.
 
 ## Surprises & Discoveries
 
@@ -41,6 +42,24 @@ El éxito observable local exige conservar los nueve flujos productivos protegid
 - Observation: el árbol que antes se había observado sucio ya estaba consolidado en `f0e9f28` al iniciar esta ejecución.
   Evidence: `git status --porcelain=v2` vacío y `git show --stat f0e9f28` contiene el hardening/auditoría.
   Resolution: se usa como checkpoint recuperable, sin cherry-pick completo porque incluye documentación de Fase 02B y cambios mecánicos ajenos al hardening.
+
+- Observation: el wrapper Playwright tenía finales CRLF y la distribución Chrome del sistema no estaba instalada.
+  Evidence: el wrapper falló inicialmente al ejecutar y Playwright buscó `/opt/google/chrome/chrome`.
+  Resolution: se ejecutó una copia efímera normalizada por stream y Chrome for Testing desde el caché del usuario; no se añadió dependencia al repositorio ni se alteró Chrome del sistema.
+
+- Observation: la primera propuesta de resolución global de `picomatch` era incompatible con el rango de Vite.
+  Evidence: Vite requiere la línea 4.x y `vite-plugin-full-reload` admite 2.3.2.
+  Resolution: se fijaron resoluciones anidadas compatibles: 4.0.5 para Vite/tinyglobby y 2.3.2 para full-reload.
+
+- Observation: Yarn desaconseja `lodash-es` 4.18.0 y publica 4.18.1 como corrección posterior.
+  Resolution: se fijó 4.18.1, sin cambiar majors de runtime.
+
+- Observation: cuatro scripts/estilos inline heredados y un `onclick` no habrían cumplido la CSP estricta.
+  Evidence: inventario de tags Blade antes de promover la política.
+  Resolution: se añadieron nonces a todos los bloques inline y el logout se convirtió en formulario POST sin handler inline. Playwright confirmó cero bloques inline sin nonce y cero mensajes de consola en login.
+
+- Observation: `/documentos` devuelve 404 bajo `php artisan serve` porque existe el directorio físico `public/documentos/`.
+  Resolution: se documentó como limitación del servidor incorporado; la descarga debe validarse en Apache mediante smoke y no se infiere un defecto productivo.
 
 ## Decision Log
 
@@ -131,4 +150,10 @@ Incluye `tracked-changes.patch`, `untracked-files.tar.gz`, `ui-public-landing-v2
 
 ## Outcomes & Retrospective
 
-Pendiente hasta completar los milestones y registrar comandos, resultados, commits, limitaciones y riesgos residuales reales.
+La implementación local quedó separada en tres releases sin migraciones: `84e34d1`, `f530e6a` y `7f660b0`. Composer quedó sin advisories. Yarn audita diez dependencias de producción con cero vulnerabilidades moderadas, altas o críticas y un advisory bajo de Quill 2.0.3 sin fix. El manifest pasó de 874 entradas y aproximadamente 19.1 MB a dos entradas y 678,955 bytes; el único JS consolidado crece frente al entrypoint anterior porque ahora contiene Bootstrap/Popper/Quill, pero el grafo total y los assets demo se reducen de forma material. El CSS de 96 iconos conservó el mismo SHA-256 antes y después del build.
+
+Pasaron 8 pruebas unitarias del guard (y el sanitizador dentro de la suite completa), Pint, Composer validate/platform/audit, Yarn audit bajo el umbral aprobado, build Vite, rutas y `git diff --check`. La ejecución canónica terminó con 9 pruebas unitarias verdes y 81 Feature fallidas antes de probar lógica, todas por la misma denegación de MySQL sin password. La QA Playwright comparó landing, registro y login local/productivo en 360, 768 y 1440 px; validó reflow, foco, teclado, skip link, zoom 200 %, nonces y consola limpia. Sólo se realizaron GET públicos contra producción.
+
+La suite Feature no se declara verde: MySQL rechazó de forma segura al usuario dedicado porque `.env.testing` mantiene el password vacío. No hubo migraciones ni acceso a la base principal. Hasta que el propietario cargue el secreto local y ejecute `scripts/quality_gate_local.sh`, permanecen pendientes la regresión autenticada, los contratos de archivos/transacciones/IDOR/2FA y ambos estados de Fase 02A.
+
+No hubo push, PR, acceso a EC2, despliegue o modificación productiva. El runbook posterior al cierre está en `docs/15-risk-reduction-release-runbook.md`; backup/restore, preflight y smoke de las siete aplicaciones siguen siendo responsabilidad y evidencia externa del propietario.

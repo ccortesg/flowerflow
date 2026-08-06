@@ -1,5 +1,22 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+## Trazabilidad del plan de reducción de riesgos — 2026-08-06
+
+| ID | Requisito aprobado | Implementación | Evidencia actual | Estado |
+|---|---|---|---|---|
+| RR-001 | Partir del SHA productivo sin Fase 02B | rama `codex/f01-f02a-risk-reduction` desde `baff789…` | historial Git y checkpoint/bundle externo | VERIFIED local |
+| RR-002 | Aislar MySQL destructivo por base y cuenta | `phpunit.xml`, `EnsuresDisposableDatabase`, `.env.testing` ignorado | 8 pruebas de guard verdes; Feature bloqueado hasta secreto local | IMPLEMENTED; gate pendiente |
+| RR-003 | Remediar advisories PHP aisladamente | `composer.lock` con Guzzle 7.15.3 | audit Composer sin advisories; diff de tres paquetes | VERIFIED local |
+| RR-004 | Atomicidad de archivos | `SubmissionFileStore`, transacciones y `DB::afterCommit` | sintaxis/Pint verdes; casos Feature preparados | IMPLEMENTED; MySQL pendiente |
+| RR-005 | Auditor de storage no destructivo | `flowerflow:storage-audit --disk --json` | firma de comando y ausencia de opción delete | IMPLEMENTED; ejecución DB pendiente |
+| RR-006 | Transiciones y throttle administrativo | workflow y `panel-mutations` | rutas/middleware y casos Feature preparados | IMPLEMENTED; MySQL pendiente |
+| RR-007 | Contratos admin/reviewer/IDOR | Policies y `PanelSubmissionContractTest` | casos positivos/negativos preparados | IMPLEMENTED; MySQL pendiente |
+| RR-008 | 2FA opcional completo | `/panel/cuenta/2fa/*`, UI y Fortify trait | rutas y pruebas preparadas | IMPLEMENTED; MySQL/browser pendiente |
+| RR-009 | Reducir grafo frontend | dos entrypoints, poda y generador de iconos | build/manifest/audit verdes | VERIFIED local |
+| RR-010 | CSP con nonce y HSTS gradual | `SecurityHeaders`, flags de config | headers/nonce verificados localmente; tests preparados | IMPLEMENTED; suite MySQL pendiente |
+| RR-011 | Preservar nueve flujos productivos | QA pública y suites de regresión | público comparado en 3 viewports; autenticado pendiente | PARTIAL/BLOCKED |
+| RR-012 | Releases post-cierre, inmutables y reversibles | `docs/15-risk-reduction-release-runbook.md` | revisión documental local | READY FOR OWNER REVIEW |
+
 **Fecha de corte:** 2026-07-16
 **Estado histórico:** baseline de planificación. La tabla Fase 01 siguiente registra implementación actual.
 **Convenciones:** `DECISION` confirmado; `ASSUMPTION` supuesto de trabajo; `PENDING` requiere información/aprobación.
