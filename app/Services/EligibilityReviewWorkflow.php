@@ -39,6 +39,12 @@ final class EligibilityReviewWorkflow
                 return $locked;
             }
 
+            if ($locked->status !== EligibilityReviewStatus::Pending) {
+                throw ValidationException::withMessages([
+                    'status' => 'La revisión sólo puede iniciarse desde el estado pendiente.',
+                ]);
+            }
+
             $from = $locked->status;
             $locked->update([
                 'status' => EligibilityReviewStatus::InReview,

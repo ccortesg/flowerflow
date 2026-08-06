@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use App\Support\MailDispatchStatus;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -23,6 +26,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Password::defaults(fn () => Password::min(8)->mixedCase()->numbers()->symbols());
+
+        RateLimiter::for('panel-mutations', function (Request $request) {
+            $user = $request->user()?->getAuthIdentifier() ?? 'guest';
+            $route = $request->route()?->getName() ?? 'unnamed';
+
+            return Limit::perMinute(10)->by($user.'|'.$route);
+        });
 
         Vite::useStyleTagAttributes(function (?string $src, string $url, ?array $chunk, ?array $manifest) {
             if ($src !== null) {

@@ -13,6 +13,7 @@ use App\Models\Submission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use LogicException;
 use Tests\TestCase;
@@ -92,6 +93,33 @@ class AdmissibilityWorkflowTest extends TestCase
         $this->artisan('flowerflow:admissibility-backfill')->assertSuccessful();
         $this->assertDatabaseCount('eligibility_reviews', 1);
         $this->assertSame($submission->id, EligibilityReview::query()->value('submission_id'));
+    }
+
+    public function test_start_transition_is_explicit_idempotent_and_rate_limited_per_user_and_route(): void
+    {
+        [, , $review] = $this->submittedReview();
+        $reviewer = $this->reviewer();
+        $limiterKey = $reviewer->id.'|panel.admissibility.start';
+        RateLimiter::clear($limiterKey);
+
+        $this->actingAs($reviewer)->post(route('panel.admissibility.start', $review))->assertRedirect();
+        $this->actingAs($reviewer)->post(route('panel.admissibility.start', $review))->assertRedirect();
+        $this->assertSame(EligibilityReviewStatus::InReview, $review->fresh()->status);
+        $this->assertSame(1, $review->events()->where('event', 'review_started')->count());
+
+        for ($attempt = 3; $attempt <= 10; $attempt++) {
+            $this->actingAs($reviewer)->post(route('panel.admissibility.start', $review))->assertRedirect();
+        }
+        $this->actingAs($reviewer)->post(route('panel.admissibility.start', $review))->assertTooManyRequests();
+
+        RateLimiter::clear($limiterKey);
+        $review->update(['status' => EligibilityReviewStatus::ClarificationRequested]);
+        $this->actingAs($reviewer)->post(route('panel.admissibility.start', $review))
+            ->assertSessionHasErrors('status');
+
+        $review->update(['status' => EligibilityReviewStatus::Admitted]);
+        $this->actingAs($reviewer)->post(route('panel.admissibility.start', $review))
+            ->assertSessionHasErrors('status');
     }
 
     public function test_clarification_is_append_only_blocks_decision_and_preserves_snapshot(): void

@@ -9,7 +9,7 @@ class SubmissionPolicy
 {
     public function view(User $user, Submission $submission): bool
     {
-        return $user->id === $submission->user_id || $user->hasAnyRole(['admin', 'reviewer']);
+        return $user->id === $submission->user_id || $user->can('view submissions');
     }
 
     public function update(User $user, Submission $submission): bool

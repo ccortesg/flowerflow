@@ -13,12 +13,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmailContract
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -85,6 +86,8 @@ class User extends Authenticatable implements MustVerifyEmailContract
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
     ];
 
     /**
@@ -97,6 +100,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'two_factor_confirmed_at' => 'datetime',
         ];
     }
 }

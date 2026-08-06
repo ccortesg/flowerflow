@@ -17,11 +17,14 @@ use App\Services\SubmissionFileStore;
 use App\Support\MailDispatchStatus;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Throwable;
 
 class SubmissionController extends Controller
 {
@@ -136,33 +139,39 @@ class SubmissionController extends Controller
             }
         }
 
-        DB::transaction(function () use ($request, $submission, $category, $sanitizer, $fileStore, $step): void {
-            $submission = Submission::query()->lockForUpdate()->findOrFail($submission->id);
+        $storedFiles = collect();
+        try {
+            DB::transaction(function () use ($request, $submission, $category, $sanitizer, $fileStore, $step, $storedFiles): void {
+                $submission = Submission::query()->lockForUpdate()->findOrFail($submission->id);
 
-            if ($step === 1) {
-                $team = $this->syncTeam($request, $submission->team);
-                $submission->update([
-                    'category_id' => $category->id,
-                    'team_id' => $team?->id,
-                    ...$this->stepOneAttributes($request),
+                if ($step === 1) {
+                    $team = $this->syncTeam($request, $submission->team);
+                    $submission->update([
+                        'category_id' => $category->id,
+                        'team_id' => $team?->id,
+                        ...$this->stepOneAttributes($request),
+                    ]);
+                }
+
+                if ($step === 2) {
+                    $submission->update($this->stepTwoAttributes($request, $sanitizer));
+                }
+
+                if ($step === 3) {
+                    $this->storeStepThree($request, $submission, $fileStore, $storedFiles);
+                }
+
+                $submission->events()->create([
+                    'actor_user_id' => $request->user()->id,
+                    'event' => 'draft_updated',
+                    'metadata' => ['wizard_step' => $step, 'wizard_action' => $request->wizardAction()],
+                    'created_at' => now('UTC'),
                 ]);
-            }
-
-            if ($step === 2) {
-                $submission->update($this->stepTwoAttributes($request, $sanitizer));
-            }
-
-            if ($step === 3) {
-                $this->storeStepThree($request, $submission, $fileStore);
-            }
-
-            $submission->events()->create([
-                'actor_user_id' => $request->user()->id,
-                'event' => 'draft_updated',
-                'metadata' => ['wizard_step' => $step, 'wizard_action' => $request->wizardAction()],
-                'created_at' => now('UTC'),
-            ]);
-        });
+            });
+        } catch (Throwable $exception) {
+            $this->removeRolledBackFiles($storedFiles);
+            throw $exception;
+        }
 
         if ($request->wizardAction() === 'continue' && $step === 3) {
             return redirect()->route('submissions.show', $submission)->with('status', 'Borrador guardado. Revisa todo antes de enviarlo.');
@@ -223,14 +232,23 @@ class SubmissionController extends Controller
     {
         $this->authorize('update', $submission);
         abort_unless($file->submission_id === $submission->id, 404);
-        Storage::disk($file->disk)->delete($file->path);
-        $submission->events()->create([
-            'actor_user_id' => request()->user()->id,
-            'event' => 'file_deleted',
-            'metadata' => ['public_id' => $file->public_id, 'sha256' => $file->sha256, 'size_bytes' => $file->size_bytes],
-            'created_at' => now('UTC'),
-        ]);
-        $file->delete();
+        $fileReference = $file->only(['public_id', 'disk', 'path', 'sha256', 'size_bytes']);
+
+        DB::transaction(function () use ($submission, $file, $fileReference): void {
+            $submission->events()->create([
+                'actor_user_id' => request()->user()->id,
+                'event' => 'file_deleted',
+                'metadata' => [
+                    'public_id' => $fileReference['public_id'],
+                    'sha256' => $fileReference['sha256'],
+                    'size_bytes' => $fileReference['size_bytes'],
+                ],
+                'created_at' => now('UTC'),
+            ]);
+            $file->delete();
+
+            DB::afterCommit(fn () => $this->deleteCommittedFile($submission, $fileReference));
+        }, 3);
 
         return back()->with('status', 'Archivo eliminado.');
     }
@@ -267,7 +285,8 @@ class SubmissionController extends Controller
     private function storeStepThree(
         SubmissionDraftRequest $request,
         Submission $submission,
-        SubmissionFileStore $fileStore
+        SubmissionFileStore $fileStore,
+        Collection $storedFiles
     ): void {
         $incomingBytes = collect([...$request->file('documents', []), ...$request->file('editor_images', [])])
             ->sum(fn ($file) => $file->getSize());
@@ -280,10 +299,53 @@ class SubmissionController extends Controller
 
         $this->syncLinks($submission, $request);
         foreach ($request->file('documents', []) as $file) {
-            $fileStore->store($submission, $file);
+            $storedFiles->push($fileStore->store($submission, $file));
         }
         foreach ($request->file('editor_images', []) as $file) {
-            $fileStore->store($submission, $file, 'editor_image');
+            $storedFiles->push($fileStore->store($submission, $file, 'editor_image'));
+        }
+    }
+
+    /** @param Collection<int, SubmissionFile> $storedFiles */
+    private function removeRolledBackFiles(Collection $storedFiles): void
+    {
+        $storedFiles->unique(fn (SubmissionFile $file) => $file->disk.'|'.$file->path)
+            ->each(function (SubmissionFile $file): void {
+                try {
+                    Storage::disk($file->disk)->delete($file->path);
+                } catch (Throwable $cleanupException) {
+                    Log::error('No fue posible compensar un archivo de propuesta tras rollback.', [
+                        'disk' => $file->disk,
+                        'path' => $file->path,
+                        'exception' => $cleanupException::class,
+                    ]);
+                }
+            });
+    }
+
+    /** @param array{public_id: string, disk: string, path: string, sha256: string, size_bytes: int} $fileReference */
+    private function deleteCommittedFile(Submission $submission, array $fileReference): void
+    {
+        try {
+            $disk = Storage::disk($fileReference['disk']);
+            $deleted = $disk->delete($fileReference['path']);
+
+            if ($deleted === false && $disk->exists($fileReference['path'])) {
+                Log::warning('Archivo huérfano de propuesta pendiente de conciliación.', [
+                    'submission_public_id' => $submission->public_id,
+                    'file_public_id' => $fileReference['public_id'],
+                    'disk' => $fileReference['disk'],
+                    'path' => $fileReference['path'],
+                ]);
+            }
+        } catch (Throwable $exception) {
+            Log::warning('Archivo huérfano de propuesta pendiente de conciliación.', [
+                'submission_public_id' => $submission->public_id,
+                'file_public_id' => $fileReference['public_id'],
+                'disk' => $fileReference['disk'],
+                'path' => $fileReference['path'],
+                'exception' => $exception::class,
+            ]);
         }
     }
 
