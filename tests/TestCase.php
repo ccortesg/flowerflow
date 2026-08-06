@@ -9,10 +9,21 @@ use App\Models\Submission;
 use App\Models\Team;
 use App\Models\User;
 use Database\Seeders\FlowerFlowSeeder;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Tests\Support\EnsuresDisposableDatabase;
 
 abstract class TestCase extends BaseTestCase
 {
+    public function createApplication(): Application
+    {
+        $app = parent::createApplication();
+
+        EnsuresDisposableDatabase::assertApplicationIsSafe($app);
+
+        return $app;
+    }
+
     protected function seedFlowerFlow(): void
     {
         $this->seed(FlowerFlowSeeder::class);
