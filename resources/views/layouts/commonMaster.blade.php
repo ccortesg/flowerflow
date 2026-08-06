@@ -78,7 +78,7 @@ content="{{ config('variables.templateKeyword') ? config('variables.templateKeyw
               isset($_COOKIE['admin-primaryColor']) ||
               isset($_COOKIE['front-primaryColor'])))
     <!-- Primary Color Style -->
-    <style id="primary-color-style">
+    <style id="primary-color-style" nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
       {!! $primaryColorCSS !!}
     </style>
   @endif

@@ -1,5 +1,24 @@
 # Registro de dependencias
 
+## Snapshot de reducción de riesgos — 2026-08-06
+
+Este snapshot sustituye las afirmaciones de estado de las baselines históricas que siguen debajo. No cambia el framework ni incorpora una dependencia de producción nueva.
+
+| Dependencia | Versión lock | Alcance | Resultado actual |
+|---|---:|---|---|
+| guzzlehttp/guzzle | 7.15.3 | Runtime PHP transitivo | Actualizado aisladamente desde 7.14.2; `composer audit --locked` sin advisories. |
+| guzzlehttp/promises | 2.5.2 | Transitiva de Guzzle | Único cambio transitivo indispensable. |
+| guzzlehttp/psr7 | 2.13.0 | Transitiva de Guzzle | Único cambio transitivo indispensable. |
+| bootstrap | 5.3.6 | Runtime web | Conservado. |
+| @popperjs/core | 2.11.8 | Runtime web | Conservado. |
+| quill | 2.0.3 | Runtime web | Conservado; Yarn reporta un advisory **bajo** sin versión corregida disponible. No hay avisos moderados, altos o críticos. |
+| @iconify/json / @iconify/utils | 2.2.348 / 2.3.0 | Build | Conservados para generar de forma determinista los 96 iconos `ri-*` alcanzables. |
+| laravel-vite-plugin / vite | 1.3.0 / 6.3.5 | Build | Conservados sin cambio major. |
+
+Se retiraron del grafo instalado las dependencias demo no alcanzables, entre ellas Algolia, Bloodhound, jKanban, Mapbox, Swiper, DataTables y `@iconify/tools`. También se retiraron Axios y `resources/js/bootstrap.js` después de comprobar que el código activo no realiza llamadas AJAX. `lodash-es` queda resuelto a 4.18.1 y las instancias de `picomatch` a 4.0.5 o 2.3.2 según el rango compatible de su consumidor.
+
+El manifest resultante tiene exactamente dos entradas (`resources/css/app.css` y `resources/js/app.js`) y el árbol instalado auditado tiene cero vulnerabilidades moderadas, altas o críticas. El advisory bajo de Quill permanece como riesgo residual documentado, no como gate fallido bajo el umbral aprobado.
+
 ## Snapshot instalado Fase 01 — 2026-07-15
 
 | Dependencia | Versión lock | Motivo | Licencia | Alternativa considerada | Estado |

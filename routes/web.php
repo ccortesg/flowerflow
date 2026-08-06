@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdmissibilityParticipantController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\Panel\AccountSecurityController;
 use App\Http\Controllers\Panel\DashboardController as PanelDashboardController;
 use App\Http\Controllers\Panel\EligibilityReviewController as PanelEligibilityReviewController;
 use App\Http\Controllers\Panel\SubmissionController as PanelSubmissionController;
@@ -27,9 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware('admissibility.enabled')->group(function () {
         Route::post('/revision/aclaraciones/{clarification}/respuestas', [AdmissibilityParticipantController::class, 'respond'])
-            ->middleware('throttle:10,1')->name('admissibility.clarifications.respond');
+            ->middleware('throttle:panel-mutations')->name('admissibility.clarifications.respond');
         Route::post('/revision/residencia/{residencyRequest}/documentos', [AdmissibilityParticipantController::class, 'uploadResidency'])
-            ->middleware('throttle:10,1')->name('admissibility.residency.upload');
+            ->middleware('throttle:panel-mutations')->name('admissibility.residency.upload');
         Route::get('/revision/aclaraciones/archivos/{file}', [AdmissibilityParticipantController::class, 'downloadClarificationFile'])
             ->name('admissibility.clarification-files.download');
         Route::get('/revision/residencia/documentos/{document}', [AdmissibilityParticipantController::class, 'downloadResidencyDocument'])
@@ -59,13 +60,21 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
     Route::prefix('admisibilidad')->name('admissibility.')->middleware('admissibility.enabled')->group(function () {
         Route::get('/', [PanelEligibilityReviewController::class, 'index'])->name('index');
         Route::get('/{review}', [PanelEligibilityReviewController::class, 'show'])->name('show');
-        Route::post('/{review}/iniciar', [PanelEligibilityReviewController::class, 'start'])->name('start');
-        Route::post('/{review}/aclaraciones', [PanelEligibilityReviewController::class, 'requestClarification'])->name('clarifications.store');
-        Route::post('/{review}/aclaraciones/{clarification}/cerrar', [PanelEligibilityReviewController::class, 'closeClarification'])->name('clarifications.close');
-        Route::post('/{review}/residencia', [PanelEligibilityReviewController::class, 'requestResidency'])->name('residency.store');
-        Route::post('/{review}/residencia/{residencyRequest}/revisar', [PanelEligibilityReviewController::class, 'markResidencyUnderReview'])->name('residency.review');
-        Route::post('/{review}/residencia/{residencyRequest}/resolver', [PanelEligibilityReviewController::class, 'resolveResidency'])->name('residency.resolve');
-        Route::post('/{review}/resolver', [PanelEligibilityReviewController::class, 'decide'])->name('decide');
+        Route::middleware('throttle:panel-mutations')->group(function () {
+            Route::post('/{review}/iniciar', [PanelEligibilityReviewController::class, 'start'])->name('start');
+            Route::post('/{review}/aclaraciones', [PanelEligibilityReviewController::class, 'requestClarification'])->name('clarifications.store');
+            Route::post('/{review}/aclaraciones/{clarification}/cerrar', [PanelEligibilityReviewController::class, 'closeClarification'])->name('clarifications.close');
+            Route::post('/{review}/residencia', [PanelEligibilityReviewController::class, 'requestResidency'])->name('residency.store');
+            Route::post('/{review}/residencia/{residencyRequest}/revisar', [PanelEligibilityReviewController::class, 'markResidencyUnderReview'])->name('residency.review');
+            Route::post('/{review}/residencia/{residencyRequest}/resolver', [PanelEligibilityReviewController::class, 'resolveResidency'])->name('residency.resolve');
+            Route::post('/{review}/resolver', [PanelEligibilityReviewController::class, 'decide'])->name('decide');
+        });
     });
-    Route::view('/cuenta', 'panel.account')->name('account');
+    Route::get('/cuenta', [AccountSecurityController::class, 'show'])->name('account');
+    Route::prefix('cuenta/2fa')->name('account.two-factor.')->middleware('throttle:account-security')->group(function () {
+        Route::post('/activar', [AccountSecurityController::class, 'enableTwoFactor'])->name('enable');
+        Route::post('/confirmar', [AccountSecurityController::class, 'confirmTwoFactor'])->name('confirm');
+        Route::post('/recuperacion', [AccountSecurityController::class, 'regenerateRecoveryCodes'])->name('recovery-codes');
+        Route::delete('/', [AccountSecurityController::class, 'disableTwoFactor'])->name('disable');
+    });
 });

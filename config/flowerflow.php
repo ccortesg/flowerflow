@@ -12,6 +12,10 @@ return [
         'panel' => env('FLOWERFLOW_PANEL_ENABLED', true),
         'admissibility_review' => env('FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED', false),
     ],
+    'security' => [
+        'enforce_strict_csp' => env('FLOWERFLOW_CSP_ENFORCE_STRICT', false),
+        'hsts_max_age' => (int) env('FLOWERFLOW_HSTS_MAX_AGE', 86400),
+    ],
     'limits' => [
         'team_members' => (int) env('FLOWERFLOW_MAX_TEAM_MEMBERS', 5),
         'submissions_per_user' => (int) env('FLOWERFLOW_MAX_SUBMISSIONS_PER_USER', 3),

@@ -1,5 +1,16 @@
 # Seguridad y privacidad desde el diseño
 
+## Adenda de hardening Fases 01/02A — 2026-08-06
+
+- Cada respuesta genera un nonce criptográfico independiente y Laravel Vite lo aplica a los tags de scripts y estilos.
+- La CSP estricta se entrega primero en `Content-Security-Policy-Report-Only`: `script-src 'self' 'nonce-…'`, `style-src-elem 'self' 'nonce-…'` y `style-src-attr 'unsafe-inline'`. La política heredada sigue en enforcement mientras `FLOWERFLOW_CSP_ENFORCE_STRICT=false`.
+- La promoción a enforcement requiere QA local, smoke productivo del propietario y consola limpia. No debe activarse por inferencia.
+- HSTS sólo se emite cuando `APP_ENV=production` y la solicitud es HTTPS. Su valor inicial es `max-age=86400`, sin `includeSubDomains` ni `preload`; elevarlo a `15552000` requiere siete días sin incidencias y aprobación explícita.
+- El flujo 2FA de `/panel/cuenta` permite alta pendiente, confirmación TOTP, visualización/regeneración de códigos y desactivación con contraseña. Continúa siendo opcional.
+- Las mutaciones de admisibilidad usan un límite de 10 solicitudes/minuto por actor y ruta; iniciar revisión sólo admite `pending -> in_review`, con repetición idempotente en `in_review`.
+- Las descargas continúan protegidas por Policy y ahora tienen contratos positivos de admin/reviewer y negativos de ownership, permiso, propuesta y URL directa.
+- No se añadió antimalware ni se alteró la retención de IP/user-agent o el fallback legal. Son aceptaciones explícitas, no controles implementados.
+
 ## Controles Fase 01 ejecutados
 
 - Fortify: hashing Laravel, rate limit de login/2FA, reset, verificación, password confirmation y TOTP.

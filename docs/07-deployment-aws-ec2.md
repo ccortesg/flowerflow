@@ -1,5 +1,7 @@
 # Despliegue en AWS EC2 con Ubuntu
 
+> **Actualización 2026-08-06:** la topología real informada es una EC2 compartida con Flower Flow, administratec, biru, festypass, pulso, sguniformes y sinc. El plan aprobado no permite cambios durante la recepción ni cambios globales de Ubuntu, Apache, PHP, MySQL, Node o Composer. La secuencia exacta posterior al cierre, conversión desde checkout vivo, smoke cruzado y rollback está en [`15-risk-reduction-release-runbook.md`](15-risk-reduction-release-runbook.md). Esa guía es preparación local y no autoriza acceso o despliegue.
+
 > **Adenda Fase 01:** host canónico `app.flowerflow.com.mx`, `DocumentRoot=/var/www/flowerflow/current/public` (ruta final sujeta a inventario), panel `/panel`, SMTP externo con remitente `notificaciones@flowerflow.com.mx`. No se accedió ni modificó la EC2. El preflight de sólo lectura de este runbook sigue siendo el siguiente paso autorizado por separado; debe identificar Ubuntu, Apache/Nginx, PHP-FPM/extensiones, capacidad, aislamiento de Administratec, MySQL vs RDS, EBS vs S3 privado, secretos, worker/scheduler, staging, backup/restore, RPO/RTO, monitoreo, TLS/DNS y salida SMTP.
 
 Fecha de evidencia: `2026-07-15`  

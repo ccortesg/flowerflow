@@ -16,6 +16,16 @@
 | `vite.config.js` | Sin cambio Fase 01 | Evitar poda riesgosa antes de baseline visual | Deuda: entradas globales grandes. |
 | `resources/assets/vendor/**` | Sin edición manual | Frontera vendorizada | `git diff` y build. |
 
+## Adenda de hardening 2026-08-06
+
+| Ruta | Cambio | Motivo | Prueba/reaplicación |
+|---|---|---|---|
+| `vite.config.js`, `package.json` | Dos entrypoints y retiro del grafo demo no alcanzable | Reducir supply chain y superficie compilada | audit Yarn, manifest de dos entradas y browser QA. |
+| `resources/assets/vendor/fonts/iconify/iconify.css` | Derivado reproducible de 96 iconos Remix usados | Evitar distribuir el set completo; excepción controlada a la frontera vendorizada | `node scripts/generate_icon_css.mjs --check`; el build nunca escribe. Regenerar sólo con `--write` y revisar el diff. |
+| `resources/views/layouts/{commonMaster,sections/**}` | Nonce en bloques inline y logout POST sin `onclick` | Hacer promovible CSP estricta sin handlers inline | inventario de tags, Playwright y consola Report-Only. Reaplicar tras upgrade del template. |
+
+No se modificaron las fuentes de librerías bajo `resources/assets/vendor/js`, `scss` o `libs`. El único archivo generado dentro de `vendor/fonts` tiene fuente y comando deterministas versionados.
+
 `_referencia/` permaneció intacta, ignorada y fuera del build. Ver docs 13/14 para decisiones ADOPT/ADAPT/REJECT/FUTURE.
 
 Fecha de corte: 2026-07-15  
