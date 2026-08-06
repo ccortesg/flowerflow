@@ -26,6 +26,10 @@ Las capturas locales se conservaron como artefactos ignorados en `output/playwri
 
 La primera verificación detectó que el selector genérico `.ff-category-grid` permitía que la regla de dos columnas del formulario sobrescribiera las cuatro columnas de la landing. La regla del formulario se acotó al contexto `.ff-participant-submission-wizard-page`; la repetición del QA confirmó 4/2/1 en landing y 2/1 en el formulario. No quedó defecto visual abierto.
 
+### Ajuste de alternancia visual — 2026-08-06
+
+“Hermosillo sin Barreras” reutiliza el mismo formato `.is-featured` de “Hermosillo Florece”. La asignación se realiza por los dos slugs autorizados, no por posición, y produce la secuencia visual normal/destacada/normal/destacada sin modificar el CSS ni las demás superficies. Playwright confirmó ambos slugs destacados, cero overflow y cero mensajes de consola en 1440, 768 y 360 px; la inspección visual de las tres capturas no mostró colisiones o recortes.
+
 ## Baseline landing pública Flower Flow V2 — 2026-07-15
 
 **Fecha:** 2026-07-15 (`America/Hermosillo`)  

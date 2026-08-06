@@ -77,6 +77,7 @@ Antes de existir propuestas de la nueva categoría, una compensación puede desa
 - [x] 2026-08-06 07:10 MST — Completadas pruebas MySQL de datos, concurrencia, participante y administrador; actualizados alcance, producto, UX, trazabilidad, riesgos, legal y runbook.
 - [x] 2026-08-06 07:17 MST — QA real local concluido en 360/768/1440 px, teclado, reflow 200 %, participante y administrador; cero errores o advertencias de consola finales.
 - [x] 2026-08-06 07:21 MST — Gate final repetido y verde: 95 pruebas/896 aserciones, Pint, Composer, auditorías, 96 iconos, Vite, 63 rutas y `git diff --check`.
+- [x] 2026-08-06 07:38 MST — Ajuste visual solicitado: “Hermosillo sin Barreras” reutiliza `.is-featured` por slug para alternar las cuatro tarjetas; 7 pruebas/77 aserciones, Pint, build y QA Playwright 1440/768/360 px verdes, sin cambios de CSS, datos o superficies autenticadas.
 
 ## Surprises & Discoveries
 
@@ -103,6 +104,10 @@ Antes de existir propuestas de la nueva categoría, una compensación puede desa
   Rationale: la verificación pública del commit `26256e32…` no equivale a UAT de participante/administrador ni autoriza desplegar esta rama.
   Date/Author: 2026-08-06 / Codex.
 
+- Decision: reutilizar `.is-featured` para los slugs `hermosillo-florece` y `hermosillo-sin-barreras`.
+  Rationale: reproduce exactamente el formato solicitado y mantiene la alternancia sin introducir selectores posicionales ni cambiar el CSS compartido.
+  Date/Author: 2026-08-06 / propietario y Codex.
+
 ## Outcomes & Retrospective
 
 La cuarta categoría quedó implementada de forma aditiva y compatible con los datos existentes. Las superficies públicas, del participante y administrativas consumen la misma relación de categorías; no se añadieron rutas, tablas o APIs. La creación revalida el máximo cuatro dentro de una transacción con bloqueo de la cuenta, y una prueba concurrente real sobre MySQL confirmó que dos solicitudes desde el límite no producen una quinta propuesta.
@@ -110,3 +115,5 @@ La cuarta categoría quedó implementada de forma aditiva y compatible con los d
 El gate final terminó con 95 pruebas y 896 aserciones, Pint aprobado, `composer.json` válido, requisitos de plataforma satisfechos, Composer sin advisories, Yarn sin vulnerabilidades moderadas/altas/críticas, 96 iconos verificados, build Vite de tres assets, 63 rutas y diff sin errores. El QA real local cubrió landing, participante y administrador en los viewports aprobados, con foco visible, reflow, ausencia de overflow y consola limpia.
 
 Permanece un riesgo residual alto expresamente aceptado: la Mecánica v1.0 sigue describiendo tres categorías, tres propuestas y una asignación diferente de accesibilidad. También siguen pendientes UAT del propietario, backup productivo verificado, checkout productivo limpio y autorización explícita. No se hizo commit, push ni despliegue durante este ExecPlan.
+
+Una solicitud visual posterior reutilizó el formato destacado de “Hermosillo Florece” en “Hermosillo sin Barreras”. El cambio quedó limitado a la asignación semántica de clase en la landing y su prueba/documentación; no alteró CSS, datos, reglas o módulos autenticados. La validación incremental terminó con 7 pruebas/77 aserciones, Pint y build verdes, y alternancia visual sin overflow ni consola en 1440/768/360 px.
