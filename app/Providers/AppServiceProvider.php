@@ -34,6 +34,13 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(10)->by($user.'|'.$route);
         });
 
+        RateLimiter::for('account-security', function (Request $request) {
+            $user = $request->user()?->getAuthIdentifier() ?? 'guest';
+            $route = $request->route()?->getName() ?? 'unnamed';
+
+            return Limit::perMinute(6)->by($user.'|'.$route);
+        });
+
         Vite::useStyleTagAttributes(function (?string $src, string $url, ?array $chunk, ?array $manifest) {
             if ($src !== null) {
                 return [

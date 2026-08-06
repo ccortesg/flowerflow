@@ -70,8 +70,8 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
             Route::post('/{review}/resolver', [PanelEligibilityReviewController::class, 'decide'])->name('decide');
         });
     });
-    Route::view('/cuenta', 'panel.account')->name('account');
-    Route::prefix('cuenta/2fa')->name('account.two-factor.')->middleware('throttle:6,1')->group(function () {
+    Route::get('/cuenta', [AccountSecurityController::class, 'show'])->name('account');
+    Route::prefix('cuenta/2fa')->name('account.two-factor.')->middleware('throttle:account-security')->group(function () {
         Route::post('/activar', [AccountSecurityController::class, 'enableTwoFactor'])->name('enable');
         Route::post('/confirmar', [AccountSecurityController::class, 'confirmTwoFactor'])->name('confirm');
         Route::post('/recuperacion', [AccountSecurityController::class, 'regenerateRecoveryCodes'])->name('recovery-codes');

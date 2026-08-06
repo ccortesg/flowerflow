@@ -93,8 +93,7 @@ class SecurityAndFlagsTest extends TestCase
 
         try {
             $this->get('/')->assertHeaderMissing('Strict-Transport-Security');
-            $response = $this->withServerVariables(['HTTPS' => 'on', 'SERVER_PORT' => 443])
-                ->get('/')
+            $response = $this->get('https://localhost/')
                 ->assertHeader('Strict-Transport-Security', 'max-age=86400');
             $header = (string) $response->headers->get('Strict-Transport-Security');
             $this->assertStringNotContainsString('includeSubDomains', $header);

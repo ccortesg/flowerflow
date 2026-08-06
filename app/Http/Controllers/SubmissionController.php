@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class SubmissionController extends Controller
@@ -220,7 +220,7 @@ class SubmissionController extends Controller
             : back()->with('status', 'Programamos nuevamente el correo de confirmación. Revisa también el correo no deseado.');
     }
 
-    public function download(Submission $submission, SubmissionFile $file): BinaryFileResponse
+    public function download(Submission $submission, SubmissionFile $file): StreamedResponse
     {
         $this->authorize('view', $submission);
         abort_unless($file->submission_id === $submission->id, 404);

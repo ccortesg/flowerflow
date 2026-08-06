@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Laravel\Fortify\Actions\ConfirmTwoFactorAuthentication;
 use Laravel\Fortify\Actions\DisableTwoFactorAuthentication;
 use Laravel\Fortify\Actions\EnableTwoFactorAuthentication;
@@ -14,6 +15,17 @@ use Laravel\Fortify\Fortify;
 
 class AccountSecurityController extends Controller
 {
+    public function show(Request $request): View
+    {
+        $accountUser = $request->user();
+
+        return view('panel.account', [
+            'accountUser' => $accountUser,
+            'twoFactorPending' => filled($accountUser->two_factor_secret) && blank($accountUser->two_factor_confirmed_at),
+            'twoFactorConfirmed' => filled($accountUser->two_factor_secret) && filled($accountUser->two_factor_confirmed_at),
+        ]);
+    }
+
     public function enableTwoFactor(Request $request, EnableTwoFactorAuthentication $enable): RedirectResponse
     {
         $this->validateCurrentPassword($request);

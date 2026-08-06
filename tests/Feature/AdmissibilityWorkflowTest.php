@@ -99,7 +99,7 @@ class AdmissibilityWorkflowTest extends TestCase
     {
         [, , $review] = $this->submittedReview();
         $reviewer = $this->reviewer();
-        $limiterKey = $reviewer->id.'|panel.admissibility.start';
+        $limiterKey = md5('panel-mutations'.$reviewer->id.'|panel.admissibility.start');
         RateLimiter::clear($limiterKey);
 
         $this->actingAs($reviewer)->post(route('panel.admissibility.start', $review))->assertRedirect();
