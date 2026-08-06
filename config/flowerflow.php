@@ -18,7 +18,7 @@ return [
     ],
     'limits' => [
         'team_members' => (int) env('FLOWERFLOW_MAX_TEAM_MEMBERS', 5),
-        'submissions_per_user' => (int) env('FLOWERFLOW_MAX_SUBMISSIONS_PER_USER', 3),
+        'submissions_per_user' => (int) env('FLOWERFLOW_MAX_SUBMISSIONS_PER_USER', 4),
         'upload_kib' => (int) env('FLOWERFLOW_MAX_UPLOAD_KIB', 10240),
         'submission_title_characters' => 180,
         'submission_summary_characters' => 500,
@@ -29,6 +29,7 @@ return [
         'movilidad-con-flow' => 'ri-bus-line',
         'hermosillo-florece' => 'ri-seedling-line',
         'mi-familia-mi-mascota' => 'ri-bear-smile-line',
+        'hermosillo-sin-barreras' => 'ri-accessibility-line',
     ],
     'allowed_document_extensions' => [
         'pdf', 'doc', 'docx', 'odt', 'ppt', 'pptx', 'odp', 'xls', 'xlsx', 'ods',

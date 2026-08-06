@@ -13,6 +13,7 @@ Publicación de v1.1: pendiente de aprobación expresa.
 | LEGAL-UPLOAD-001 | v1.0 no cubre con precisión múltiples archivos, Office/ODF ni imágenes del editor. | Privados, 10 MiB, allowlist, hash, firma/MIME, sin enlaces públicos. | Listar formatos, límites, controles, retención, contenido prohibido y tratamiento de metadata. |
 | LEGAL-EXTERNAL-LINKS-001 | Se añade video y carpeta pública de terceros. | Allowlist HTTPS; no fetch, descarga ni indexación del servidor. | Advertir responsabilidad de permisos/contenido, proveedores y transferencias/avisos de terceros. |
 | LEGAL-ACCEPTANCE-001 | UI solicita “He leído y acepto” mientras v1.0 distingue reconocimiento/consentimientos. | Se registran finalidades por separado con versión, fecha UTC, IP, agente y contexto; no se reutiliza una aceptación para otra finalidad. | Definir wording exacto, cuáles actos son reconocimiento, aceptación obligatoria o consentimiento opcional. |
+| LEGAL-CATEGORY-BARRIERS-001 | La Mecánica v1.0 enumera tres categorías, incluye accesibilidad en “Movilidad con Flow”, limita a tres propuestas y ordena elegir una de tres. La plataforma incorpora “Hermosillo sin Barreras”, delimita Movilidad, permite cuatro propuestas y muestra cuatro premios máximos. | Cambio autorizado por el propietario el 2026-08-06 sin alterar PDF, hash ni registros de aceptación v1.0. La migración preserva datos y la aplicación registra el documento v1.0 realmente aceptado. Riesgo residual alto aceptado; no se considera resuelto técnicamente. | Publicar adenda o nueva versión que nombre y describa las cuatro categorías, delimite Movilidad/accesibilidad, autorice máximo cuatro propuestas y establezca un Apple iPad Pro y máximo un ganador por cada categoría. Definir vigencia y tratamiento de aceptaciones previas con asesoría jurídica. |
 
 ## Contradicciones de insumos editables
 
@@ -21,3 +22,5 @@ Publicación de v1.1: pendiente de aprobación expresa.
 ## Gate de activación
 
 No activar `FLOWERFLOW_REGISTRATION_ENABLED` ni `FLOWERFLOW_SUBMISSIONS_ENABLED` en producción hasta que producto/jurídico apruebe el texto, se publiquen archivos con versión/hash/vigencia nuevos, se actualice el seeder sin reemplazar v1.0 y UAT valide el wording.
+
+**Excepción/riesgo aceptado del 2026-08-06:** el propietario decidió integrar y activar técnicamente la cuarta categoría manteniendo la Mecánica v1.0. Esta decisión no deroga el gate jurídico ni convierte la contradicción en cumplimiento; exige conservar la versión realmente aceptada, impedir cambios silenciosos de hashes y obtener una regularización posterior.

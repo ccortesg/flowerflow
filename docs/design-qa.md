@@ -1,4 +1,32 @@
-# QA de diseño — landing pública Flower Flow V2
+# QA de diseño — Flower Flow
+
+## Adenda Hermosillo sin Barreras — 2026-08-06
+
+**Rama:** `codex/category-hermosillo-sin-barreras`
+**Base productiva:** `26256e32cb7dcc38e94d8d46737a4c3b81e5c8a9`
+**Entorno:** servidor Laravel local con MySQL desechable `flowerflow_testing`; datos exclusivamente sintéticos.
+**Estado:** `PASSED` local; UAT del propietario y despliegue permanecen pendientes.
+
+### Cobertura visual y funcional
+
+| Superficie | Evidencia local | Resultado |
+|---|---|---|
+| Landing pública | 1440 px: cuatro columnas; 768 px: dos; 360 px: una | Cuatro categorías ordenadas, icono de accesibilidad, destaque por slug y sin overflow |
+| Participante: dashboard | 1440 px | Máximo cuatro, cuatro categorías y premio visibles sin colisiones |
+| Participante: crear propuesta | 1440 px: dos columnas; 360 px: una | Nueva categoría seleccionable, icono correcto y sin overflow |
+| Participante: listado y detalle | 360 px | Borrador sintético de la nueva categoría visible, buscable y consultable |
+| Administrador: dashboard | 1440 px | Distribución con las cuatro categorías, incluida la nueva con conteo cero |
+| Administrador: filtro y detalle | 1440 px | `?category=hermosillo-sin-barreras` filtra y el detalle conserva la relación |
+
+La navegación por teclado mostró foco visible de 3 px en el enlace de salto y `Enter` desplazó correctamente a `#contenido`. La comprobación de reflow al 200 % se ejecutó mediante zoom CSS controlado como aproximación automatizable; no apareció desplazamiento horizontal. Las dos sesiones finales, participante y administrador, terminaron con cero errores y cero advertencias de consola. La descarga administrativa y los estados crear/editar/enviar se validaron además mediante pruebas Feature.
+
+Las capturas locales se conservaron como artefactos ignorados en `output/playwright/hermosillo-sin-barreras/`; no contienen datos reales ni forman parte del release.
+
+### Hallazgo corregido durante QA
+
+La primera verificación detectó que el selector genérico `.ff-category-grid` permitía que la regla de dos columnas del formulario sobrescribiera las cuatro columnas de la landing. La regla del formulario se acotó al contexto `.ff-participant-submission-wizard-page`; la repetición del QA confirmó 4/2/1 en landing y 2/1 en el formulario. No quedó defecto visual abierto.
+
+## Baseline landing pública Flower Flow V2 — 2026-07-15
 
 **Fecha:** 2026-07-15 (`America/Hermosillo`)  
 **Rama:** `codex/ui-public-landing-v2`  

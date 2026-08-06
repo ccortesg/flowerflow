@@ -1,5 +1,7 @@
 # Especificación de producto — Flower Flow 2026
 
+> **Adenda autoritativa “Hermosillo sin Barreras” — 2026-08-06:** para la plataforma, las categorías exactas son Movilidad con Flow, Hermosillo Florece, Mi familia, mi mascota y Hermosillo sin Barreras; máximo cuatro propuestas por cuenta, una por categoría; un Apple iPad Pro y máximo un ganador por categoría, cuatro en total. “Movilidad con Flow” ya no incluye accesibilidad en su descripción. Los PDF y aceptaciones de Mecánica v1.0 permanecen sin cambios por decisión del propietario, con contradicción jurídica alta aceptada y pendiente de adenda aprobada. Esta adenda sustituye las cantidades de la adenda Fase 01 siguiente.
+
 > **Adenda autoritativa Fase 01 — 2026-07-15:** el alcance aprobado es recepción local/test, no el MVP completo histórico. Cierre inclusivo: 15 de agosto de 2026 a las 23:59:59 en `America/Hermosillo`; categorías exactas: Movilidad con Flow, Hermosillo Florece y Mi familia, mi mascota; participación individual/equipo hasta cinco; una propuesta por categoría y tres totales. Registro/recepción/resultados están apagados por defecto. Evaluación, jueces, ganadores y publicación permanecen fuera. Ver `docs/01-functional-scope.md` y `docs/legal-change-log.md`.
 
 **Fecha de corte:** 2026-07-15  
@@ -40,6 +42,10 @@ La primera fase es documental. No incluye cambios de aplicación, dependencias, 
 | DEC-010 | DECISION | Producción se planifica en una instancia AWS EC2 con Ubuntu, coexistente con el proyecto `administratec`. |
 | DEC-011 | DECISION | La coexistencia en EC2 exige aislamiento por virtual host, ruta, usuario de sistema, variables, base de datos, storage, procesos, logs y backups. |
 | DEC-012 | DECISION | En esta primera fase no se implementa código ni se despliega. |
+| DEC-013 | DECISION | `hermosillo-florece-2026` tiene cuatro categorías activas; `hermosillo-sin-barreras` ocupa el orden 4 y concentra accesibilidad e inclusión. |
+| DEC-014 | DECISION | Cada cuenta puede registrar máximo cuatro propuestas y máximo una por categoría; la creación revalida el límite bajo bloqueo transaccional. |
+| DEC-015 | DECISION | El premio de la cuarta categoría es un Apple iPad Pro; existe máximo un ganador por categoría y cuatro en total. |
+| DEC-016 | DECISION/RISK ACCEPTED | La plataforma adopta la cuarta categoría sin modificar Mecánica v1.0, sus hashes o aceptaciones; requiere regularización jurídica posterior. |
 
 ## Evidencia actual del repositorio
 
@@ -103,6 +109,7 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 - **CAL-003 — DECISION:** mostrar categorías, calendario, preguntas frecuentes y documentos legales vigentes.
 - **CAL-004 — DECISION/PENDING:** cierre inclusivo aprobado `2026-08-15 23:59:59 America/Hermosillo`; fecha/hora de apertura pendiente y configurable.
 - **CAL-005 — DECISION:** cerrar automáticamente nuevos envíos al vencer el plazo; una excepción requiere actor autorizado, justificación y auditoría.
+- **CAL-006 — DECISION:** consultar sólo categorías activas de la convocatoria vigente en landing, dashboard participante y distribución administrativa; los listados históricos conservan las relaciones originales.
 
 ### Identidad y acceso
 
@@ -128,7 +135,7 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 - **SUB-004 — DECISION:** el envío genera folio, versión inmutable y acuse transaccional.
 - **SUB-005 — DECISION:** una corrección posterior crea una nueva versión; no sobrescribe la enviada.
 - **SUB-006 — DECISION:** archivos privados se almacenan fuera del web root, con nombres aleatorios, allowlist, límites, validación MIME/firma y descarga autorizada.
-- **SUB-007 — PENDING:** participación individual/equipo, máximo de integrantes, límites de proyectos, texto, cantidad/tipo/tamaño de anexos.
+- **SUB-007 — DECISION/PENDING:** participación individual o equipo de máximo cinco; máximo cuatro propuestas por cuenta y una por categoría; límites de texto, tipos y cuota de anexos están configurados. Invitaciones de equipo y cualquier cambio jurídico posterior siguen pendientes.
 
 ### Elegibilidad administrativa
 

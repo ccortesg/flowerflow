@@ -1655,7 +1655,7 @@
 }
 
 .ff-choice-grid,
-.ff-category-grid {
+.ff-participant-submission-wizard-page .ff-category-grid {
   display: grid;
   gap: .9rem;
 }
@@ -1664,8 +1664,8 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.ff-category-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.ff-participant-submission-wizard-page .ff-category-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .ff-choice-card {
@@ -3309,7 +3309,7 @@
   }
 
   .ff-choice-grid,
-  .ff-category-grid,
+  .ff-participant-submission-wizard-page .ff-category-grid,
   .ff-form-grid {
     grid-template-columns: 1fr;
   }

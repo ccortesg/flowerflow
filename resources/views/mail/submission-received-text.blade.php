@@ -6,6 +6,7 @@ Tu envío para Hermosillo Florece 2026 quedó registrado correctamente.
 
 Folio: {{ $submission->folio }}
 Título: {{ $submission->title }}
+Categoría: {{ $submission->category->name }}
 Fecha: {{ $submission->submitted_at?->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i') }} (Hermosillo)
 
 Consulta tu propuesta:

@@ -11,7 +11,10 @@ class LandingController extends Controller
     {
         abort_unless(config('flowerflow.flags.public'), 404);
 
-        $competition = Competition::query()->with('categories')->where('active', true)->first();
+        $competition = Competition::query()
+            ->with(['categories' => fn ($query) => $query->where('active', true)->orderBy('sort_order')])
+            ->where('active', true)
+            ->first();
 
         return view('public.landing', compact('competition'));
     }

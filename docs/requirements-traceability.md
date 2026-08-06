@@ -1,5 +1,17 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+## Trazabilidad Hermosillo sin Barreras — 2026-08-06
+
+| ID | Requisito aprobado | Implementación | Evidencia prevista/actual | Estado |
+|---|---|---|---|---|
+| HSB-001 | Cuarta categoría exacta, activa, orden 4 y `public_id` estable | migración de datos + `FlowerFlowSeeder` | `HermosilloSinBarrerasCategoryTest` idempotencia, descripciones y orden | VERIFIED local |
+| HSB-002 | Máximo cuatro y una por categoría, sin quinta concurrente | config, unique existente y bloqueo de cuenta en `SubmissionController::store` | `SubmissionFlowTest` + `SubmissionCreationConcurrencyTest` con dos procesos MySQL | VERIFIED local |
+| HSB-003 | Landing sólo activa, fallback de cuatro, iconos por slug y 4/2/1 | `LandingController`, Blade, CSS, catálogo/generador Iconify | `PublicLandingTest`, `icons:check`, build y QA 360/768/1440 sin overflow ni consola | VERIFIED local |
+| HSB-004 | Superficies participante y snapshot/correo | vistas dinámicas, config iconos y mail de acuse | dashboard, crear/editar/listar/ver/enviar e inmutabilidad en `HermosilloSinBarrerasCategoryTest` | VERIFIED local automatizado |
+| HSB-005 | Dashboard/filtro/listado/detalle/descarga admin | scope de dashboard y contratos existentes | cero/uno, filtro slug, detalle y descarga en `HermosilloSinBarrerasCategoryTest` | VERIFIED local automatizado |
+| HSB-006 | Conservar Mecánica v1.0 y evidenciar contradicción | `legal-change-log.md`, risk register y ExecPlan | diff sin cambios en PDF/hash; revisión jurídica posterior | RISK ACCEPTED alto |
+| HSB-007 | Despliegue reversible según existencia de datos | migración aditiva con `down` no destructivo y ExecPlan | UAT, backup y smoke son puertas externas | READY FOR OWNER REVIEW |
+
 ## Trazabilidad del plan de reducción de riesgos — 2026-08-06
 
 | ID | Requisito aprobado | Implementación | Evidencia actual | Estado |
@@ -32,8 +44,8 @@
 | F1-005 | Auth, correo verificado, reset y 2FA | Fortify 1.37.2, vistas propias y página `/correo-verificado` | rutas, login/logout browser, signed verify y mail fake | VERIFIED local; UAT correo pendiente |
 | F1-006 | RBAC/panel sólo admin | Permission 8.3.0, middleware y Policy | `PanelAuthorizationTest`, IDOR y browser admin | VERIFIED local |
 | F1-007 | Registro/perfil 18+/residencia/E.164/WhatsApp | `CreateNewUser`, profile model/request/controller/view y teléfono México `+52` | `RegistrationProfileFlowTest`, `ProfileEligibilityTest` | VERIFIED local |
-| F1-008 | 3 categorías exactas/cierre Hermosillo | `FlowerFlowSeeder`, config/middleware | seed, frontera y regresión UTC/Hermosillo | VERIFIED local |
-| F1-009 | Equipo ≤5, una/categoría, máximo 3 | request, constraints, controller/action | Feature positivo/negativo | VERIFIED local |
+| F1-008 | 4 categorías exactas/cierre Hermosillo | migración de datos, `FlowerFlowSeeder`, config/middleware | seed/idempotencia, frontera y regresión UTC/Hermosillo | VERIFIED local |
+| F1-009 | Equipo ≤5, una/categoría, máximo 4 | request, unique, bloqueo transaccional y controller | Feature positivo/negativo/concurrente | VERIFIED local |
 | F1-010 | Rich text seguro | Quill + Delta/HTML/texto + Symfony sanitizer | Unit XSS + Feature stored XSS + browser | VERIFIED local |
 | F1-011 | Upload privado/10 MiB/formatos/hash | inspector/store/Policy, disk `serve=false` | MIME/signature/quota/IDOR + PDF browser | VERIFIED local; antivirus pendiente |
 | F1-012 | Links allowlist sin SSRF | Form Request host exacto, no cliente HTTP | hosts internos/prohibidos | VERIFIED local |
@@ -120,7 +132,7 @@
 | SUB-001 | DECISION Fase 01 | Borrador recuperable mediante guardado explícito; autoguardado queda pendiente de endpoint y control de concurrencia. | Mis propuestas/wizard | Edición persiste sin envío, advierte cambios locales y sólo confirma guardado tras respuesta real. | F por paso + B abandono/error | MVP |
 | SUB-002 | DECISION Fase 01 | Wizard de cuatro pasos con revisión final sobre rutas existentes. | `/propuestas/nueva/crear`, `/propuestas/{id}/editar?step=1|2|3`, detalle borrador | Usuario completa pasos, vuelve atrás, preserva otras secciones y corrige desde revisión. | `SubmissionWizardTest` + B móvil/escritorio + A11Y | MVP |
 | SUB-003 | DECISION Fase 01 / PENDING invitaciones | Participación individual o equipo de máximo cinco, representante incluida; invitaciones quedan fuera. | Equipo/wizard | Campos condicionales, declaración y límite se validan en servidor; sólo propietario edita. | F positivo/negativo + SEC | MVP recortable |
-| SUB-004 | DECISION Fase 01 | Máximo tres propuestas, una por categoría, límites de texto y cuota compartida de anexos centralizados. | Wizard/configuración | Servidor y UI usan configuración; archivos existentes y nuevos cuentan en la misma cuota. | `SubmissionWizardTest` límites/hosts/cuota + B | MVP |
+| SUB-004 | DECISION 2026-08-06 | Máximo cuatro propuestas, una por categoría, límites de texto y cuota compartida de anexos centralizados. | Wizard/configuración/transacción | Servidor y UI usan configuración; la cuenta se bloquea al revalidar el límite; archivos existentes y nuevos cuentan en la misma cuota. | `SubmissionWizardTest`, `SubmissionFlowTest`, `SubmissionCreationConcurrencyTest` + B | MVP |
 | SUB-005 | DECISION | Envío exige correo verificado, elegibilidad mínima y legal vigente. | Acción de envío | Cada precondición bloquea con mensaje accionable; todas juntas permiten. | U + F matriz + B | MVP |
 | SUB-006 | DECISION | Envío idempotente genera folio y versión inmutable. | Envío/acuse | Doble clic/reintento produce un envío y un folio; snapshot no cambia. | U + F concurrencia/idempotencia + B | MVP |
 | SUB-007 | DECISION | Corrección crea nueva versión, no sobrescribe enviada. | Versiones/seguimiento | Auditor puede reconstruir cada envío y versión revisada. | U + F + UAT | MVP |

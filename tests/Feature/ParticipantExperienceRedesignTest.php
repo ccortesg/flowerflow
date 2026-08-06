@@ -129,7 +129,7 @@ class ParticipantExperienceRedesignTest extends TestCase
 
         $this->actingAs($user)->get(route('submissions.index'))
             ->assertOk()
-            ->assertSee('Ya alcanzaste el máximo de 3 propuestas.')
+            ->assertSee('Ya alcanzaste el máximo de 4 propuestas.')
             ->assertDontSee('href="'.route('submissions.create').'"', false);
 
         config(['flowerflow.flags.submissions' => false]);
@@ -166,7 +166,7 @@ class ParticipantExperienceRedesignTest extends TestCase
             ->assertSee('data-testid="dashboard-submitted-submissions">1', false)
             ->assertSee('data-testid="dashboard-profile-state">', false)
             ->assertSee('Completo')
-            ->assertSee('Máximo 3 por participante')
+            ->assertSee('Máximo 4 por participante')
             ->assertSee('href="'.route('submissions.create').'"', false)
             ->assertSee('15 de agosto de 2026')
             ->assertSee('23:59 horas · Tiempo de Hermosillo')
