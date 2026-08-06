@@ -7,15 +7,16 @@ Fecha de corte: 2026-08-06.
 - Checkout: `/home/ccortesg/workspace/flowerflow`.
 - Rama de trabajo: `codex/f01-f02a-risk-reduction`.
 - Base productiva: `baff7892f886af3fd4e42132c686620f1ae76d91`.
-- Releases locales cerradas: Composer `84e34d1`, backend `f530e6a` y frontend/headers `7f660b0`.
-- Producción está fuera de alcance: no hubo acceso, push, PR, despliegue, migraciones ni cambios de servicios.
+- Releases locales cerradas: Composer `84e34d1`, backend `f530e6a`, frontend/headers `7f660b0` y cierre de regresiones `9338eb5`.
+- El propietario autorizó expresamente publicar la rama actual en GitHub. Esto no autoriza PR ni despliegue.
+- Producción está fuera de alcance: no hubo acceso, despliegue, migraciones ni cambios de servicios.
 - Fase 02B, jueces, evaluación, resultados y ganadores permanecen fuera de alcance.
 
-## Siguiente evidencia obligatoria
+## Evidencia vigente y siguiente puerta
 
-El propietario debe introducir la contraseña sólo en `.env.testing`, ya ignorado, y ejecutar `scripts/quality_gate_local.sh`. El contrato exige MySQL `flowerflow_testing`, loopback, usuario `flowerflow_testing_user` y ausencia de `DB_URL`. La última ejecución fue rechazada de forma segura porque no se proporcionó contraseña; por tanto, no debe calificarse todavía como regresión funcional verde.
+El secreto quedó únicamente en `.env.testing`, ignorado y no rastreado. `scripts/quality_gate_local.sh` pasó con 90 pruebas y 800 aserciones, Pint, Composer validate/platform/audit, Yarn sin avisos moderados/altos/críticos, build de dos entrypoints, 63 rutas y `git diff --check`.
 
-Después de un gate completo exitoso se requiere QA autenticada local de participante, administrador, archivos, estados, rate limit, 2FA y flag Fase 02A. Producción sólo puede tratarse mediante autorización separada y el runbook `docs/15-risk-reduction-release-runbook.md`.
+La siguiente puerta previa a UAT/release es QA autenticada local en navegador de participante, administrador, archivos, estados, rate limit, 2FA y flag Fase 02A. Producción sólo puede tratarse mediante autorización separada y el runbook `docs/15-risk-reduction-release-runbook.md`.
 
 ## Evidencia y continuidad
 

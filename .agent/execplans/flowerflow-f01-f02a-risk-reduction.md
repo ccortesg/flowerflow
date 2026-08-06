@@ -31,7 +31,9 @@ El éxito observable local exige conservar los nueve flujos productivos protegid
 - [x] (2026-08-06) Release 2 consolidada en `f530e6a` con integridad de archivos, auditor read-only, estados, throttle, contratos y 2FA opcional.
 - [x] (2026-08-06) Release 3 consolidada en `7f660b0` con grafo Vite mínimo, iconos deterministas, CSP Report-Only/HSTS y nonces completos.
 - [x] (2026-08-06) Gate estático/dependencias/build y QA pública real ejecutados; documentación actualizada.
-- [ ] Propietario: cargar directamente el secreto en `.env.testing`, ejecutar suite Feature/MySQL y completar QA autenticada. Este punto permanece bloqueante para liberar, no para conservar la implementación local.
+- [x] (2026-08-06) Secreto cargado por autorización expresa sólo en `.env.testing` ignorado; gate completo verde con 90 pruebas/800 aserciones.
+- [x] (2026-08-06) Cerradas en `9338eb5` seis regresiones descubiertas por la primera ejecución MySQL: estados/throttle, descarga, vista/flujo 2FA, HSTS y locale de prueba.
+- [ ] Completar QA autenticada en navegador antes de UAT/release; no bloquea el push de la rama expresamente autorizado por el propietario.
 
 ## Surprises & Discoveries
 
@@ -61,6 +63,10 @@ El éxito observable local exige conservar los nueve flujos productivos protegid
 - Observation: `/documentos` devuelve 404 bajo `php artisan serve` porque existe el directorio físico `public/documentos/`.
   Resolution: se documentó como limitación del servidor incorporado; la descarga debe validarse en Apache mediante smoke y no se infiere un defecto productivo.
 
+- Observation: la primera suite MySQL ejecutable encontró seis fallos que la revisión estática no detectó.
+  Evidence: 84 pruebas pasaron y fallaron estado después del throttle, descarga Storage, dos recorridos de cuenta/2FA y dos casos de headers/locale.
+  Resolution: se limpió la clave real hasheada en la prueba de throttle; la descarga declara `StreamedResponse`; la cuenta prepara estado 2FA en controller; el límite 2FA se separa por usuario/ruta; HTTPS se prueba con URL segura y `.env.testing` usa `es_MX`. El gate posterior quedó en 90/90 y 800 aserciones.
+
 ## Decision Log
 
 - Decision: implementar desde el commit productivo, no desde el HEAD de Fase 02A.
@@ -82,6 +88,10 @@ El éxito observable local exige conservar los nueve flujos productivos protegid
 - Decision: CSP estricta se publica primero sólo como Report-Only y HSTS inicia en 86400 segundos únicamente bajo HTTPS productivo.
   Rationale: reduce el riesgo de romper assets/dinámica antes de enforcement.
   Date/Author: 2026-08-06 / propietario y Codex.
+
+- Decision: publicar la rama actual en `origin` sin abrir PR ni desplegar.
+  Rationale: el propietario autorizó expresamente el push después de configurar la credencial local; esta autorización sustituye sólo la prohibición de push del alcance original.
+  Date/Author: 2026-08-06 / propietario.
 
 ## Context and Orientation
 
@@ -152,8 +162,8 @@ Incluye `tracked-changes.patch`, `untracked-files.tar.gz`, `ui-public-landing-v2
 
 La implementación local quedó separada en tres releases sin migraciones: `84e34d1`, `f530e6a` y `7f660b0`. Composer quedó sin advisories. Yarn audita diez dependencias de producción con cero vulnerabilidades moderadas, altas o críticas y un advisory bajo de Quill 2.0.3 sin fix. El manifest pasó de 874 entradas y aproximadamente 19.1 MB a dos entradas y 678,955 bytes; el único JS consolidado crece frente al entrypoint anterior porque ahora contiene Bootstrap/Popper/Quill, pero el grafo total y los assets demo se reducen de forma material. El CSS de 96 iconos conservó el mismo SHA-256 antes y después del build.
 
-Pasaron 8 pruebas unitarias del guard (y el sanitizador dentro de la suite completa), Pint, Composer validate/platform/audit, Yarn audit bajo el umbral aprobado, build Vite, rutas y `git diff --check`. La ejecución canónica terminó con 9 pruebas unitarias verdes y 81 Feature fallidas antes de probar lógica, todas por la misma denegación de MySQL sin password. La QA Playwright comparó landing, registro y login local/productivo en 360, 768 y 1440 px; validó reflow, foco, teclado, skip link, zoom 200 %, nonces y consola limpia. Sólo se realizaron GET públicos contra producción.
+El gate canónico final pasó con 90 pruebas y 800 aserciones, Pint, Composer validate/platform/audit, Yarn audit bajo el umbral aprobado, build Vite, 63 rutas y `git diff --check`. La QA Playwright comparó landing, registro y login local/productivo en 360, 768 y 1440 px; validó reflow, foco, teclado, skip link, zoom 200 %, nonces y consola limpia. Sólo se realizaron GET públicos contra producción.
 
-La suite Feature no se declara verde: MySQL rechazó de forma segura al usuario dedicado porque `.env.testing` mantiene el password vacío. No hubo migraciones ni acceso a la base principal. Hasta que el propietario cargue el secreto local y ejecute `scripts/quality_gate_local.sh`, permanecen pendientes la regresión autenticada, los contratos de archivos/transacciones/IDOR/2FA y ambos estados de Fase 02A.
+La primera ejecución con credencial válida detectó seis regresiones reales; se corrigieron en `9338eb5` y la repetición completa quedó verde. `.env.testing` permanece ignorado y ningún secreto aparece en Git. No hubo acceso a la base principal. La QA autenticada en navegador continúa pendiente antes de UAT/release.
 
-No hubo push, PR, acceso a EC2, despliegue o modificación productiva. El runbook posterior al cierre está en `docs/15-risk-reduction-release-runbook.md`; backup/restore, preflight y smoke de las siete aplicaciones siguen siendo responsabilidad y evidencia externa del propietario.
+No hubo PR, acceso a EC2, despliegue o modificación productiva. El propietario autorizó el push de esta rama a GitHub; el runbook posterior al cierre está en `docs/15-risk-reduction-release-runbook.md`. Backup/restore, preflight y smoke de las siete aplicaciones siguen siendo responsabilidad y evidencia externa del propietario.

@@ -15,11 +15,11 @@ Estado de la ejecución actual:
 | Iconos `--check` y build Vite | Verde; el build no reescribe el CSS rastreado |
 | Manifest | Dos entradas; sin chunks demo/Mapbox/DataTables/Swiper |
 | Rutas y `git diff --check` | Verde |
-| Suite completa | 9 pruebas unitarias pasaron; 81 Feature fallaron antes de probar lógica por la misma denegación de acceso MySQL. `.env.testing` conserva `DB_PASSWORD` vacío. No se ejecutó ninguna migración. |
+| Suite completa | Verde: 90 pruebas y 800 aserciones sobre MySQL `flowerflow_testing` con la cuenta exclusiva. |
 
 La QA real de las páginas públicas comparó local contra producción en 360, 768 y 1440 px. Landing, registro y login conservaron composición y comportamiento; no hubo overflow horizontal, la navegación por teclado y el skip link funcionaron, el foco fue visible, el zoom 200 % no rompió el flujo y la consola terminó sin errores ni advertencias. Las capturas son locales e ignoradas en `output/playwright/`.
 
-La descarga `/documentos` no se puede validar con `php artisan serve`: el directorio físico `public/documentos/` hace que el servidor incorporado resuelva la URL antes que Laravel. Esta limitación local no demuestra un defecto en Apache ni reemplaza el smoke productivo. Los recorridos autenticados, archivos, transacciones, 2FA y flag Fase 02A quedan pendientes hasta que el propietario introduzca la contraseña directamente en `.env.testing` y ejecute `scripts/quality_gate_local.sh`.
+La descarga `/documentos` no se puede validar con `php artisan serve`: el directorio físico `public/documentos/` hace que el servidor incorporado resuelva la URL antes que Laravel. Esta limitación local no demuestra un defecto en Apache ni reemplaza el smoke productivo. Los contratos automatizados de archivos, transacciones, descargas/IDOR, estados, rate limit, 2FA, fecha y flag Fase 02A quedaron verdes. La QA autenticada en navegador real continúa como puerta previa a UAT/release, no como bloqueo para publicar esta rama de trabajo.
 
 ## Suite Fase 01
 

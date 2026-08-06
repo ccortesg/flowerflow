@@ -4,11 +4,11 @@
 
 | ID | Riesgo residual | Nivel actual | Evidencia/mitigación | Próxima puerta |
 |---|---|---:|---|---|
-| R42 | Suite autenticada aún no ejecutada en la rama de hardening | Alto bloqueante para release | Guard fail-closed y `.env.testing` sin secreto; conexión rechazada antes de migrar | Propietario carga el password local y ejecuta el gate completo |
+| R42 | Regresión automatizada MySQL | Bajo controlado | Gate verde: 90 pruebas/800 aserciones con base y cuenta exclusivas; secreto ignorado | Repetir en cada SHA candidato |
 | R43 | Producción sin staging y checkout vivo | Crítico operativo | Tres commits sin migraciones y runbook de releases inmutables | Preflight, conversión a symlink, smoke y rollback del propietario |
 | R44 | EC2 compartida con otras seis aplicaciones | Crítico operativo | Prohibidos paquetes globales; sólo vhost Flower Flow, `configtest` y reload graceful | Baseline/smoke de las siete aplicaciones antes y después |
-| R45 | Consistencia archivo/SQL | Medio tras mitigación | Compensación de uploads, borrado post-commit y auditor read-only | Suite MySQL y prueba operativa de storage |
-| R46 | Estados/abuso de mutaciones administrativas | Bajo tras mitigación | Matriz `pending/in_review`, rechazo de demás estados y throttle por actor/ruta | Suite MySQL y QA de doble clic |
+| R45 | Consistencia archivo/SQL | Bajo tras mitigación | Compensación, borrado post-commit y auditor read-only verificados en MySQL, incluso fallos sintéticos | Repetir prueba operativa con el storage del ambiente candidato |
+| R46 | Estados/abuso de mutaciones administrativas | Bajo tras mitigación | Matriz `pending/in_review`, rechazo de demás estados y throttle por actor/ruta verificados | QA real de doble clic antes de UAT |
 | R47 | Dependencias PHP vulnerables | Bajo | Guzzle 7.15.3; Composer sin advisories | Repetir audit por release |
 | R48 | Grafo JS heredado | Bajo/Medio | Grafo mínimo y cero avisos moderados/altos/críticos | Vigilar advisory bajo de Quill; actualizar cuando exista fix compatible |
 | R49 | CSP/HSTS pueden romper superficie productiva | Medio | CSP estricta Report-Only y HSTS de un día, ambos promovibles por flags | Consola/smoke limpios y soak de siete días |

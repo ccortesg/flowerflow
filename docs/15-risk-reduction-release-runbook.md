@@ -19,8 +19,9 @@ Fecha: 2026-08-06. Estado: **preparación local; no autoriza acceso, push, PR ni
 | 1 | `84e34d1` | Guzzle 7.15.3 y transitivas indispensables | 24 h |
 | 2 | `f530e6a` | Integridad de archivos, auditor read-only, estados, throttle, contratos y 2FA | 48 h antes de Release 3 |
 | 3 | `7f660b0` | Grafo Vite mínimo, iconos, CSP Report-Only y HSTS gradual | CSP sólo se promueve tras smoke adicional |
+| Cierre de validación 2/3 | `9338eb5` | Corrige contrato de descarga, render 2FA, throttle por ruta y pruebas HSTS/estados | Obligatorio en los candidatos 2 y 3 |
 
-Cada SHA debe pasar de forma independiente `scripts/quality_gate_local.sh`. No combinar releases para recuperar tiempo.
+Los tres primeros SHA son fronteras de revisión, no candidatos desplegables aislados después del hallazgo de regresiones. Al preparar los candidatos 2 y 3 se deben integrar las correcciones aplicables de `9338eb5` y obtener un SHA inmutable nuevo; cada candidato debe pasar de forma independiente `scripts/quality_gate_local.sh`. El árbol integral en `9338eb5` pasó con 90 pruebas/800 aserciones. No combinar ventanas para recuperar tiempo.
 
 ## Preflight redactado del propietario
 

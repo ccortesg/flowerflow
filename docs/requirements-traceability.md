@@ -5,16 +5,16 @@
 | ID | Requisito aprobado | Implementación | Evidencia actual | Estado |
 |---|---|---|---|---|
 | RR-001 | Partir del SHA productivo sin Fase 02B | rama `codex/f01-f02a-risk-reduction` desde `baff789…` | historial Git y checkpoint/bundle externo | VERIFIED local |
-| RR-002 | Aislar MySQL destructivo por base y cuenta | `phpunit.xml`, `EnsuresDisposableDatabase`, `.env.testing` ignorado | 8 pruebas de guard verdes; Feature bloqueado hasta secreto local | IMPLEMENTED; gate pendiente |
+| RR-002 | Aislar MySQL destructivo por base y cuenta | `phpunit.xml`, `EnsuresDisposableDatabase`, `.env.testing` ignorado | 8 pruebas de guard y suite completa verdes en la base/cuenta exclusivas | VERIFIED local |
 | RR-003 | Remediar advisories PHP aisladamente | `composer.lock` con Guzzle 7.15.3 | audit Composer sin advisories; diff de tres paquetes | VERIFIED local |
-| RR-004 | Atomicidad de archivos | `SubmissionFileStore`, transacciones y `DB::afterCommit` | sintaxis/Pint verdes; casos Feature preparados | IMPLEMENTED; MySQL pendiente |
-| RR-005 | Auditor de storage no destructivo | `flowerflow:storage-audit --disk --json` | firma de comando y ausencia de opción delete | IMPLEMENTED; ejecución DB pendiente |
-| RR-006 | Transiciones y throttle administrativo | workflow y `panel-mutations` | rutas/middleware y casos Feature preparados | IMPLEMENTED; MySQL pendiente |
-| RR-007 | Contratos admin/reviewer/IDOR | Policies y `PanelSubmissionContractTest` | casos positivos/negativos preparados | IMPLEMENTED; MySQL pendiente |
-| RR-008 | 2FA opcional completo | `/panel/cuenta/2fa/*`, UI y Fortify trait | rutas y pruebas preparadas | IMPLEMENTED; MySQL/browser pendiente |
+| RR-004 | Atomicidad de archivos | `SubmissionFileStore`, transacciones y `DB::afterCommit` | rollback múltiple, persistencia fallida y orphan post-commit verdes | VERIFIED local |
+| RR-005 | Auditor de storage no destructivo | `flowerflow:storage-audit --disk --json` | missing/orphan determinista sin mutación, verde | VERIFIED local |
+| RR-006 | Transiciones y throttle administrativo | workflow y `panel-mutations` | estados inválidos, idempotencia y 10/min por actor/ruta verdes | VERIFIED local |
+| RR-007 | Contratos admin/reviewer/IDOR | Policies y `PanelSubmissionContractTest` | descarga positiva y rechazos cruzados/directos verdes | VERIFIED local |
+| RR-008 | 2FA opcional completo | `/panel/cuenta/2fa/*`, UI y Fortify trait | flujo TOTP/recovery/desactivación y throttle por ruta verdes | VERIFIED automatizado; browser pendiente |
 | RR-009 | Reducir grafo frontend | dos entrypoints, poda y generador de iconos | build/manifest/audit verdes | VERIFIED local |
-| RR-010 | CSP con nonce y HSTS gradual | `SecurityHeaders`, flags de config | headers/nonce verificados localmente; tests preparados | IMPLEMENTED; suite MySQL pendiente |
-| RR-011 | Preservar nueve flujos productivos | QA pública y suites de regresión | público comparado en 3 viewports; autenticado pendiente | PARTIAL/BLOCKED |
+| RR-010 | CSP con nonce y HSTS gradual | `SecurityHeaders`, flags de config | tests de promoción/HTTPS y navegador público con nonces/consola limpia | VERIFIED local |
+| RR-011 | Preservar nueve flujos productivos | QA pública y suites de regresión | 90 pruebas/800 aserciones y público comparado en 3 viewports | VERIFIED automatizado/público; browser autenticado pendiente |
 | RR-012 | Releases post-cierre, inmutables y reversibles | `docs/15-risk-reduction-release-runbook.md` | revisión documental local | READY FOR OWNER REVIEW |
 
 **Fecha de corte:** 2026-07-16
