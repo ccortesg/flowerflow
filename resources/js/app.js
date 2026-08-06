@@ -1,4 +1,3 @@
-import './bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import Quill from 'quill';
@@ -557,9 +556,3 @@ document.querySelectorAll('.ff-login-menu-toggle').forEach(toggle => {
   target?.addEventListener('shown.bs.collapse', () => toggle.setAttribute('aria-label', 'Cerrar navegación'));
   target?.addEventListener('hidden.bs.collapse', () => toggle.setAttribute('aria-label', 'Abrir navegación'));
 });
-
-import.meta.glob([
-  '../assets/img/**',
-  // '../assets/json/**',
-  '../assets/vendor/fonts/**'
-]);

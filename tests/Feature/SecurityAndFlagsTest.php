@@ -61,9 +61,47 @@ class SecurityAndFlagsTest extends TestCase
     {
         $contentSecurityPolicy = "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; frame-src https://www.youtube-nocookie.com";
 
-        $this->get('/')->assertHeader('X-Content-Type-Options', 'nosniff')
+        $response = $this->get('/')->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertHeader('X-Frame-Options', 'DENY')
-            ->assertHeader('Content-Security-Policy', $contentSecurityPolicy);
+            ->assertHeader('Content-Security-Policy', $contentSecurityPolicy)
+            ->assertHeaderMissing('Strict-Transport-Security');
+
+        $reportOnly = (string) $response->headers->get('Content-Security-Policy-Report-Only');
+        $this->assertMatchesRegularExpression("/script-src 'self' 'nonce-[A-Za-z0-9+\/=]+';/", $reportOnly);
+        $this->assertStringContainsString("style-src-elem 'self' 'nonce-", $reportOnly);
+        $this->assertStringContainsString("style-src-attr 'unsafe-inline'", $reportOnly);
+        preg_match("/'nonce-([^']+)'/", $reportOnly, $matches);
+        $this->assertNotEmpty($matches[1] ?? null);
+        $response->assertSee('nonce="'.$matches[1].'"', false);
+    }
+
+    public function test_strict_csp_can_be_promoted_without_code_change(): void
+    {
+        config(['flowerflow.security.enforce_strict_csp' => true]);
+
+        $response = $this->get('/')->assertHeaderMissing('Content-Security-Policy-Report-Only');
+        $policy = (string) $response->headers->get('Content-Security-Policy');
+        $this->assertStringContainsString("script-src 'self' 'nonce-", $policy);
+        $this->assertStringContainsString("style-src-elem 'self' 'nonce-", $policy);
+        $this->assertStringContainsString("style-src-attr 'unsafe-inline'", $policy);
+        $this->assertStringNotContainsString("style-src 'self' 'unsafe-inline'", $policy);
+    }
+
+    public function test_hsts_is_limited_to_production_https_and_has_no_shared_domain_directives(): void
+    {
+        $this->app->detectEnvironment(fn () => 'production');
+
+        try {
+            $this->get('/')->assertHeaderMissing('Strict-Transport-Security');
+            $response = $this->withServerVariables(['HTTPS' => 'on', 'SERVER_PORT' => 443])
+                ->get('/')
+                ->assertHeader('Strict-Transport-Security', 'max-age=86400');
+            $header = (string) $response->headers->get('Strict-Transport-Security');
+            $this->assertStringNotContainsString('includeSubDomains', $header);
+            $this->assertStringNotContainsString('preload', $header);
+        } finally {
+            $this->app->detectEnvironment(fn () => 'testing');
+        }
     }
 
     public function test_utc_submission_time_is_presented_in_hermosillo(): void

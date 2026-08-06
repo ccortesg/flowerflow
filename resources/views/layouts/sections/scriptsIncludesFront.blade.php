@@ -17,7 +17,7 @@
 @vite(['resources/assets/js/front-config.js'])
 
 @if ($configData['hasCustomizer'])
-<script type="module">
+<script type="module" nonce="{{ Vite::cspNonce() }}">
   document.addEventListener('DOMContentLoaded', function() {
     // Initialize template customizer after DOM is loaded
     if (window.TemplateCustomizer) {
