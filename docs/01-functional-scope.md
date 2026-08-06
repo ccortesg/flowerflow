@@ -1,5 +1,7 @@
 # Alcance funcional — Flower Flow 2026
 
+> **Adenda autoritativa de categoría, 2026-08-06:** la convocatoria `hermosillo-florece-2026` opera con cuatro categorías activas y ordenadas: Movilidad con Flow, Hermosillo Florece, Mi familia, mi mascota y Hermosillo sin Barreras. La última usa el slug `hermosillo-sin-barreras` y la descripción “Ideas para mejorar la accesibilidad y la inclusión para todas y todos.” Cada cuenta puede registrar hasta cuatro propuestas, máximo una por categoría. Se mantiene un Apple iPad Pro y máximo un ganador por categoría, para un máximo total de cuatro. Esta adenda sustituye sólo las referencias funcionales a tres categorías/propuestas/ganadores; no modifica los PDF jurídicos v1.0.
+
 > **Sustitución parcial aprobada, 2026-07-15:** la fuente ya no está truncada; el prompt Fase 01 v2 resolvió identidad, categorías, fecha/hora y alcance. En esta fase sí se implementan sitio público, auth, perfil, borradores/envío, archivos y panel mínimo. No se implementan revisión de elegibilidad, jueces, rúbrica, ganadores ni resultados. El objetivo no es “recibir, revisar y evaluar”; es dejar recepción local/test preparada detrás de flags, sin activarla en producción.
 
 ## Contrato Fase 01 vigente
@@ -7,11 +9,13 @@
 - Responsable: FLORECE HERMOSILLO; agrupación: FLOWER FLOW.
 - Participante: persona física 18+, residente de Hermosillo; cuenta representa al equipo.
 - Equipo: máximo cinco incluyendo representante; declaración de elegibilidad de todos.
-- Propuesta: una por categoría, máximo tres, español, resumen, contenido rico, al menos un archivo.
+- Propuesta: una por categoría, máximo cuatro, español, resumen, contenido rico, al menos un archivo.
 - Archivos: PDF, Office y ODF permitidos, más JPEG/PNG/WebP del editor; 10 MiB acumulados.
 - Enlaces: YouTube y carpeta pública en proveedores allowlist; nunca fetch server-side.
 - Finalización: correo verificado, perfil mínimo capturado desde registro, legales separados, snapshot/folio/idempotencia.
 - Flags default: público/panel `true`; registro/recepción/resultados `false`.
+
+La descripción vigente de “Movilidad con Flow” es “Ideas para mejorar la movilidad, la vialidad y la seguridad de los desplazamientos en la ciudad.” Accesibilidad e inclusión se delimitan en “Hermosillo sin Barreras”. La Mecánica v1.0 no refleja esa delimitación ni la cuarta categoría; el riesgo jurídico alto aceptado se documenta en `docs/legal-change-log.md` y `docs/09-risk-register.md`.
 
 **Fecha de corte:** 2026-07-15  
 **Estado:** propuesta de planificación  

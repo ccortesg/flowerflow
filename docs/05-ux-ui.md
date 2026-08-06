@@ -1,5 +1,14 @@
 # UX/UI, accesibilidad e identidad — Flower Flow 2026
 
+## Adenda Hermosillo sin Barreras — 2026-08-06
+
+- La landing obtiene sólo categorías activas de la convocatoria activa y conserva un fallback exacto de cuatro. Usa cuatro tarjetas en escritorio, dos en tablet y una en móvil; “Hermosillo Florece” se destaca por slug mediante `.is-featured`, sin depender de posición.
+- Los textos públicos indican cuatro formas de transformar la ciudad, hasta cuatro propuestas y cuatro ganadores máximos. El icono `ri-accessibility-line` se resuelve desde `config/flowerflow.php`, igual que los demás iconos por slug.
+- El dashboard participante enumera las cuatro categorías activas. Creación y edición de borradores usan una cuadrícula de dos columnas que baja a una; listado, detalle y revisión conservan el nombre y el icono configurado. Una propuesta enviada permanece inmutable.
+- El dashboard administrativo limita “Enviadas por categoría” a categorías activas de la convocatoria activa e incluye conteo cero. El filtro/listado/detalle histórico conserva relaciones existentes y acepta `?category=hermosillo-sin-barreras`.
+- El correo de confirmación incluye la categoría, además de folio, título y fecha. El snapshot inmutable conserva `public_id`, slug y nombre de la nueva categoría.
+- La plataforma muestra estos cambios aunque la Mecánica v1.0 siga indicando tres categorías/propuestas; la interfaz no presenta esa contradicción como jurídicamente resuelta.
+
 ## Sistema visual Fase 01
 
 La primera implementación usó carbón `#17352f`, verde `#167c5b`, verde oscuro `#0b5c42`, lima `#d9ed55`, coral `#ff765f` y crema `#fffdf5`. La landing V2 encapsula en `.ff-public-landing` un sistema cálido derivado de las referencias aprobadas: naranja `#ed5b21`, naranja oscuro `#bd3f12`, crema `#fffaf4`, carbón `#2b221f` y superficies blancas. El acceso y la experiencia participante adoptan la misma dirección mediante contextos separados `.ff-auth-login-page` y `.ff-participant-*`, sin sustituir estilos del panel administrativo. El naranja se usa como fondo con texto carbón o como botón con blanco sólo en su variante oscura/medida; el foco visible nunca depende sólo del color de marca.
@@ -27,7 +36,7 @@ La V2 usa radio de 0.7–1.75rem según jerarquía, sombras suaves, tipografía 
 - Contenedor central de máximo `73.75rem` (1180 px), flujo vertical natural y secciones con espacio consistente.
 - Header sticky con ambos logotipos, anchors reales, login, CTA condicionado por registro y menú móvil con Escape, cierre por selección y `aria-expanded`.
 - Hero con título HTML, cierre oficial en `America/Hermosillo`, estados de recepción/registro controlados por flags, CTAs y composición local del premio.
-- Categorías servidas por base de datos y fallback seguro de tres categorías cuando no hay competencia activa.
+- Categorías servidas por base de datos y fallback seguro de cuatro categorías cuando no hay competencia activa.
 - Proceso 2×2, requisitos 3×2, premio, documentos PDF descargables, FAQ Bootstrap con relaciones ARIA y CTA final.
 - Breakpoints por contenido: navegación/hero a 992 px, grillas principales a 768 px y ajuste extremo a 375 px. Se cubre el intervalo 320–1920 px sin ancho fijo de página.
 - Íconos: subconjunto de Remix/Iconify ya presente, incrustado como máscaras de datos locales; decorativos con `aria-hidden="true"`. No hay emojis ni dependencia nueva.
@@ -45,7 +54,7 @@ Pruebas automatizadas: `tests/Feature/PublicLandingTest.php` cubre contenido, as
 - `/perfil` muestra `100%` únicamente cuando `ParticipantProfile::isComplete()` es verdadero. La mejora progresiva inicia en resumen con JavaScript y habilita edición real por sección; sin JavaScript el formulario completo permanece disponible. Correo readonly, teléfono E.164, edad, residencia y consentimientos conservan sus contratos backend.
 - Las preferencias opcionales se separan visualmente de las declaraciones obligatorias. El teléfono se identifica como registrado, nunca verificado, y la franja de privacidad enlaza al PDF vigente sin modificarlo.
 - `/propuestas` presenta sólo la relación del usuario autenticado, máximo configurable, estados `Borrador`/`Enviada`, folio real, última actualización convertida a `America/Hermosillo` y acciones reales. Nueva/editar respetan flag, límite y estado.
-- Búsqueda por título/categoría y filtro por estado funcionan completamente en cliente para un máximo de tres registros. Sin JavaScript todos permanecen visibles; el contador usa `aria-live` y el listado se transforma en tarjetas en tablet/móvil.
+- Búsqueda por título/categoría y filtro por estado funcionan completamente en cliente para un máximo de cuatro registros. Sin JavaScript todos permanecen visibles; el contador usa `aria-live` y el listado se transforma en tarjetas en tablet/móvil.
 - Remix/Iconify existente aporta iconografía local. Los únicos recursos de imagen son logotipos autorizados con dimensiones reservadas; no se añadieron emojis, imágenes remotas ni activos simulados.
 
 Pruebas automatizadas: `tests/Feature/ParticipantExperienceRedesignTest.php` cubre variantes de acceso, datos/completitud de perfil, aislamiento de propuestas, zona horaria, acciones, vacío, límite y feature flag. La validación visual comparativa queda registrada en `design-qa.md`.

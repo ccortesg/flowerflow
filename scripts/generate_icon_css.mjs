@@ -30,7 +30,8 @@ async function sourceFiles(directory) {
 }
 
 const icons = new Set();
-for (const file of await sourceFiles(resourcesRoot)) {
+const configuredSources = [path.join(projectRoot, 'config/flowerflow.php')];
+for (const file of [...await sourceFiles(resourcesRoot), ...configuredSources]) {
   const source = await fs.readFile(file, 'utf8');
   for (const match of source.matchAll(/\bri-([a-z0-9-]+)\b/g)) {
     icons.add(match[1]);

@@ -110,11 +110,11 @@ class SubmissionFlowTest extends TestCase
         $this->assertDatabaseCount('submission_external_links', 0);
     }
 
-    public function test_one_submission_per_category_and_three_total(): void
+    public function test_one_submission_per_category_and_four_total(): void
     {
         $user = $this->participant();
-        $categories = Category::all();
-        foreach ($categories as $category) {
+        $categories = Category::query()->orderBy('sort_order')->get();
+        foreach ($categories->take(3) as $category) {
             Submission::create([
                 'competition_id' => $category->competition_id, 'category_id' => $category->id, 'user_id' => $user->id,
                 'participation_type' => 'individual', 'title' => 'P '.$category->id, 'summary' => 'Resumen',
@@ -122,17 +122,52 @@ class SubmissionFlowTest extends TestCase
             ]);
         }
 
+        $fourthCategory = $categories->last();
+        $this->actingAs($user)->post('/propuestas', [
+            'wizard_step' => 1,
+            'wizard_action' => 'continue',
+            'category_public_id' => $fourthCategory->public_id,
+            'participation_type' => 'individual',
+            'title' => 'Una cuarta propuesta accesible',
+            'summary' => 'Debe guardarse en la nueva categoría',
+        ])->assertRedirect();
+
+        $this->assertSame(4, $user->submissions()->count());
+        $this->assertDatabaseHas('submissions', [
+            'user_id' => $user->id,
+            'category_id' => $fourthCategory->id,
+        ]);
+
         $this->actingAs($user)->post('/propuestas', [
             'wizard_step' => 1,
             'wizard_action' => 'continue',
             'category_public_id' => $categories->first()->public_id,
             'participation_type' => 'individual',
-            'title' => 'Una cuarta',
+            'title' => 'Una quinta',
             'summary' => 'No debe guardarse',
-            'description_delta' => '{}',
-            'description_html' => '<p>Detalle</p>',
-            'description_text' => 'Detalle',
         ])->assertSessionHasErrors(['category_public_id']);
-        $this->assertSame(3, $user->submissions()->count());
+
+        $this->assertSame(4, $user->submissions()->count());
+
+        $other = $this->participant();
+        Submission::query()->create([
+            'competition_id' => $categories->first()->competition_id,
+            'category_id' => $categories->first()->id,
+            'user_id' => $other->id,
+            'participation_type' => 'individual',
+            'title' => 'Primera en la categoría',
+            'summary' => 'Resumen',
+        ]);
+
+        $this->actingAs($other)->post('/propuestas', [
+            'wizard_step' => 1,
+            'wizard_action' => 'continue',
+            'category_public_id' => $categories->first()->public_id,
+            'participation_type' => 'individual',
+            'title' => 'Categoría duplicada',
+            'summary' => 'No debe guardarse',
+        ])->assertSessionHasErrors(['category_public_id']);
+
+        $this->assertSame(1, $other->submissions()->count());
     }
 }

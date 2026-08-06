@@ -87,3 +87,13 @@ Se agregaron expediente de admisibilidad, eventos, aclaraciones/respuestas, arch
 El gate final local quedó en 72 pruebas y 696 aserciones, con Pint, validación/auditoría de Composer y build Vite verdes. El QA real nuevo cubrió participante individual, representante de equipo, reviewer, admin y cuenta sin permisos en escritorio, tableta y móvil; corrigió un conflicto CSP, etiquetas técnicas en inglés y la vista 403 predeterminada. Las pantallas autorizadas cerraron con consola limpia y todos los artefactos temporales fueron eliminados.
 
 Las decisiones jurídicas confirmadas y los `PENDING` se registran en `docs/10-open-questions.md`. La evidencia técnica y de navegador se mantiene en el ExecPlan activo y `docs/design-qa-phase-02-admissibility.md` para no reescribir el cierre histórico de Fase 01.
+
+## Adenda de evidencia productiva — 2026-08-06
+
+Esta adenda sustituye únicamente las afirmaciones históricas de que no existía despliegue. El propietario informó y la superficie pública permitió verificar que el commit `26256e32cb7dcc38e94d8d46737a4c3b81e5c8a9` quedó implementado en `https://app.flowerflow.com.mx/` antes de iniciar la rama de “Hermosillo sin Barreras”. La compilación productiva terminó correctamente con tres assets Vite:
+
+- `build/assets/app-CVuqOP4l.css`;
+- `build/assets/app-DsUDUNO0.css`;
+- `build/assets/app-DO0C1thY.js`.
+
+Los GET públicos `/`, `/register`, `/login`, `/panel/login` y `/up` respondieron `200`. La CSP estricta estaba en `Content-Security-Policy-Report-Only` y HSTS en `max-age=86400`. Esta evidencia es pública y operativa, no equivale a UAT autenticada de participante/administrador ni autoriza el despliegue de la nueva categoría.

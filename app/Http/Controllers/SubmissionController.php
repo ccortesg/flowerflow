@@ -11,6 +11,7 @@ use App\Models\Competition;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\Team;
+use App\Models\User;
 use App\Services\ResilientMailDispatcher;
 use App\Services\SubmissionContentSanitizer;
 use App\Services\SubmissionFileStore;
@@ -54,18 +55,25 @@ class SubmissionController extends Controller
     {
         $this->assertProfileReady();
         $user = $request->user();
-        if ($user->submissions()->count() >= config('flowerflow.limits.submissions_per_user')) {
-            throw ValidationException::withMessages(['category_public_id' => 'Ya alcanzaste el máximo de tres propuestas.']);
-        }
-
         $competition = Competition::query()->where('active', true)->firstOrFail();
         $category = $this->categoryForCompetition($competition->id, $request->string('category_public_id')->toString());
 
-        if ($user->submissions()->whereBelongsTo($competition)->whereBelongsTo($category)->exists()) {
-            throw ValidationException::withMessages(['category_public_id' => 'Sólo puedes registrar una propuesta por categoría.']);
-        }
-
         $submission = DB::transaction(function () use ($request, $user, $competition, $category): Submission {
+            User::query()->whereKey($user->getKey())->lockForUpdate()->firstOrFail();
+
+            $submissionLimit = (int) config('flowerflow.limits.submissions_per_user');
+            if ($user->submissions()->count() >= $submissionLimit) {
+                throw ValidationException::withMessages([
+                    'category_public_id' => "Ya alcanzaste el máximo de {$submissionLimit} propuestas.",
+                ]);
+            }
+
+            if ($user->submissions()->whereBelongsTo($competition)->whereBelongsTo($category)->exists()) {
+                throw ValidationException::withMessages([
+                    'category_public_id' => 'Sólo puedes registrar una propuesta por categoría.',
+                ]);
+            }
+
             $team = $this->syncTeam($request, null);
             $submission = $user->submissions()->create([
                 'competition_id' => $competition->id,

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Competition;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -20,6 +21,13 @@ class PublicLandingTest extends TestCase
             ->assertSee('Movilidad con Flow')
             ->assertSee('Hermosillo Florece')
             ->assertSee('Mi familia, mi mascota')
+            ->assertSee('Hermosillo sin Barreras')
+            ->assertSee('Ideas para mejorar la accesibilidad y la inclusión para todas y todos.')
+            ->assertSee('Cuatro formas de transformar la ciudad')
+            ->assertSee('Hasta cuatro propuestas')
+            ->assertSee('un máximo de cuatro por cuenta')
+            ->assertSeeInOrder(['<strong>4</strong>', '<span>ganadores máximos en total</span>'], false)
+            ->assertSee('ri-accessibility-line', false)
             ->assertSee('Apple')
             ->assertSee('iPad Pro')
             ->assertSee('1 ganador por categoría')
@@ -88,9 +96,35 @@ class PublicLandingTest extends TestCase
             ->assertSee('Movilidad con Flow')
             ->assertSee('Hermosillo Florece')
             ->assertSee('Mi familia, mi mascota')
+            ->assertSee('Hermosillo sin Barreras')
             ->assertSee('Ideas para mejorar la movilidad')
-            ->assertSee('Propuestas para una ciudad más verde')
-            ->assertSee('Soluciones para el bienestar animal');
+            ->assertSee('Ideas para una ciudad más verde y sostenible')
+            ->assertSee('Ideas para bienestar animal')
+            ->assertSee('Ideas para mejorar la accesibilidad y la inclusión para todas y todos.')
+            ->assertSee('ri-accessibility-line', false);
+    }
+
+    public function test_landing_lists_only_active_categories_and_features_hermosillo_florece_by_slug(): void
+    {
+        $this->seedFlowerFlow();
+        $competition = Competition::query()->where('slug', 'hermosillo-florece-2026')->firstOrFail();
+        $competition->categories()->create([
+            'slug' => 'categoria-inactiva',
+            'name' => 'Categoría inactiva de prueba',
+            'description' => 'No debe publicarse.',
+            'sort_order' => 0,
+            'active' => false,
+        ]);
+
+        $response = $this->get('/')->assertOk()
+            ->assertDontSee('Categoría inactiva de prueba');
+
+        $html = $response->getContent();
+        $this->assertMatchesRegularExpression(
+            '/<article class="ff-category-card is-featured">\s*<span[^>]+>\s*<\/span>\s*<div>\s*<h3>Hermosillo Florece<\/h3>/s',
+            $html
+        );
+        $this->assertStringNotContainsString('nth-child', $html);
     }
 
     public function test_navigation_anchors_and_faq_relationships_are_accessible(): void

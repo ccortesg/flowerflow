@@ -27,9 +27,10 @@ class FlowerFlowSeeder extends Seeder
         );
 
         foreach ([
-            ['movilidad-con-flow', 'Movilidad con Flow', 'Ideas para mejorar movilidad, vialidad, accesibilidad y seguridad de desplazamientos.'],
+            ['movilidad-con-flow', 'Movilidad con Flow', 'Ideas para mejorar la movilidad, la vialidad y la seguridad de los desplazamientos en la ciudad.'],
             ['hermosillo-florece', 'Hermosillo Florece', 'Ideas para una ciudad más verde y sostenible: arbolado, espacios públicos, agua, sombra y cuidado ambiental.'],
             ['mi-familia-mi-mascota', 'Mi familia, mi mascota', 'Ideas para bienestar animal, tenencia responsable y convivencia de familias con mascotas.'],
+            ['hermosillo-sin-barreras', 'Hermosillo sin Barreras', 'Ideas para mejorar la accesibilidad y la inclusión para todas y todos.'],
         ] as $order => [$slug, $name, $description]) {
             $competition->categories()->updateOrCreate(['slug' => $slug], [
                 'name' => $name,

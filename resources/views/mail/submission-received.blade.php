@@ -9,6 +9,7 @@
         <tr><td style="padding:18px 20px;line-height:1.7;">
             <strong>Folio:</strong> {{ $submission->folio }}<br>
             <strong>Título:</strong> {{ $submission->title }}<br>
+            <strong>Categoría:</strong> {{ $submission->category->name }}<br>
             <strong>Fecha:</strong> {{ $submission->submitted_at?->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i') }} (Hermosillo)
         </td></tr>
     </table>

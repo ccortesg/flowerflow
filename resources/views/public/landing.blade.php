@@ -4,11 +4,11 @@
 @section('content')
 @php
   $categories = $competition?->categories ?? collect([
-    (object) ['name' => 'Movilidad con Flow', 'description' => 'Ideas para mejorar la movilidad, vialidad, accesibilidad y seguridad en nuestros traslados.'],
-    (object) ['name' => 'Hermosillo Florece', 'description' => 'Propuestas para una ciudad más verde, sostenible, fresca y responsable con el agua.'],
-    (object) ['name' => 'Mi familia, mi mascota', 'description' => 'Soluciones para el bienestar animal, la tenencia responsable y una mejor convivencia.'],
+    (object) ['slug' => 'movilidad-con-flow', 'name' => 'Movilidad con Flow', 'description' => 'Ideas para mejorar la movilidad, la vialidad y la seguridad de los desplazamientos en la ciudad.'],
+    (object) ['slug' => 'hermosillo-florece', 'name' => 'Hermosillo Florece', 'description' => 'Ideas para una ciudad más verde y sostenible: arbolado, espacios públicos, agua, sombra y cuidado ambiental.'],
+    (object) ['slug' => 'mi-familia-mi-mascota', 'name' => 'Mi familia, mi mascota', 'description' => 'Ideas para bienestar animal, tenencia responsable y convivencia de familias con mascotas.'],
+    (object) ['slug' => 'hermosillo-sin-barreras', 'name' => 'Hermosillo sin Barreras', 'description' => 'Ideas para mejorar la accesibilidad y la inclusión para todas y todos.'],
   ]);
-  $categoryIcons = ['ri-bus-line', 'ri-seedling-line', 'ri-heart-3-line'];
   $registrationOpen = config('flowerflow.flags.registration');
   $submissionsOpen = config('flowerflow.flags.submissions');
 @endphp
@@ -67,14 +67,14 @@
 <section id="categorias" class="ff-landing-section ff-section-tinted" aria-labelledby="categorias-title">
   <div class="ff-landing-container">
     <div class="ff-section-heading">
-      <p class="ff-eyebrow">Tres formas de transformar la ciudad</p>
+      <p class="ff-eyebrow">Cuatro formas de transformar la ciudad</p>
       <h2 id="categorias-title">Elige tu categoría</h2>
       <p>Identifica el reto que más te mueve y presenta una propuesta concreta.</p>
     </div>
     <div class="ff-category-grid">
       @foreach($categories as $category)
-        <article class="ff-category-card">
-          <span class="ff-category-icon ff-landing-icon {{ $categoryIcons[$loop->index % count($categoryIcons)] }}" aria-hidden="true"></span>
+        <article @class(['ff-category-card', 'is-featured' => $category->slug === 'hermosillo-florece'])>
+          <span class="ff-category-icon ff-landing-icon {{ config('flowerflow.category_icons.'.$category->slug, 'ri-lightbulb-flash-line') }}" aria-hidden="true"></span>
           <div>
             <h3>{{ $category->name }}</h3>
             <p>{{ $category->description }}</p>
@@ -133,7 +133,7 @@
       <article class="ff-requirement-card"><span class="ff-landing-icon ri-user-line" aria-hidden="true"></span><div><h3>Ser mayor de edad</h3><p>Tener 18 años cumplidos al momento de registrarte.</p></div></article>
       <article class="ff-requirement-card"><span class="ff-landing-icon ri-map-pin-line" aria-hidden="true"></span><div><h3>Vivir en Hermosillo</h3><p>Contar con residencia comprobable en el municipio.</p></div></article>
       <article class="ff-requirement-card"><span class="ff-landing-icon ri-team-line" aria-hidden="true"></span><div><h3>Participar solo o en equipo</h3><p>Integra un equipo de hasta cinco personas, incluida la representante.</p></div></article>
-      <article class="ff-requirement-card"><span class="ff-landing-icon ri-draft-line" aria-hidden="true"></span><div><h3>Hasta tres propuestas</h3><p>Registra una propuesta por categoría y un máximo de tres por cuenta.</p></div></article>
+      <article class="ff-requirement-card"><span class="ff-landing-icon ri-draft-line" aria-hidden="true"></span><div><h3>Hasta cuatro propuestas</h3><p>Registra una propuesta por categoría y un máximo de cuatro por cuenta.</p></div></article>
       <article class="ff-requirement-card"><span class="ff-landing-icon ri-translate-2" aria-hidden="true"></span><div><h3>Presentar en español</h3><p>La propuesta debe ser clara, original y realizable. Participar es gratuito.</p></div></article>
       <article class="ff-requirement-card"><span class="ff-landing-icon ri-calendar-check-line" aria-hidden="true"></span><div><h3>Enviar a tiempo</h3><p>Finaliza tu propuesta antes del 15 de agosto de 2026 a las 23:59.</p></div></article>
     </div>
@@ -152,7 +152,7 @@
         <p>Se entregará un premio por categoría. Si una propuesta de equipo resulta ganadora, se entregará un solo premio al equipo.</p>
         <div class="ff-prize-facts">
           <p><strong>1</strong><span>ganador máximo por categoría</span></p>
-          <p><strong>3</strong><span>ganadores máximos en total</span></p>
+          <p><strong>4</strong><span>ganadores máximos en total</span></p>
         </div>
         <p class="ff-prize-note">Una categoría puede declararse desierta conforme a la convocatoria.</p>
       </div>

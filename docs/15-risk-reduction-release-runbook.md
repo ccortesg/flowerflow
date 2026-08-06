@@ -1,10 +1,11 @@
 # Runbook de releases de reducción de riesgos Fases 01/02A
 
-Fecha: 2026-08-06. Estado: **preparación local; no autoriza acceso, push, PR ni despliegue**.
+Fecha: 2026-08-06. Estado: **referencia y evidencia de la release ya integrada; no autoriza un nuevo acceso, push, PR ni despliegue**.
 
 ## Invariantes
 
-- Línea base productiva: `baff7892f886af3fd4e42132c686620f1ae76d91`.
+- Commit productivo observado después de integrar la serie: `26256e32cb7dcc38e94d8d46737a4c3b81e5c8a9`.
+- Base original desde la cual se construyó la serie: `baff7892f886af3fd4e42132c686620f1ae76d91`.
 - No desplegar durante la recepción, cuyo cierre configurado es 2026-08-15 23:59:59 `America/Hermosillo`.
 - Fase 02A permanece apagada en producción.
 - Ninguna release contiene migraciones, seeders o cambios de datos.
@@ -74,3 +75,7 @@ Activar rollback inmediato ante cualquier fallo en los nueve flujos protegidos, 
 5. Repetir el smoke de las siete aplicaciones y registrar la incidencia.
 
 No revertir datos: estas releases son compatibles hacia atrás y no tienen migraciones. Si el rollback de código no restaura el servicio, detener la ventana y escalar al procedimiento externo de recuperación del propietario.
+
+## Evidencia posterior a la ejecución productiva
+
+El propietario informó que el build del commit productivo `26256e32…` terminó correctamente. Se observaron los tres assets Vite `app-CVuqOP4l.css`, `app-DsUDUNO0.css` y `app-DO0C1thY.js`; `/`, `/register`, `/login`, `/panel/login` y `/up` respondieron `200`; la CSP estricta quedó en Report-Only y HSTS en `86400`. No se dispone en esta evidencia de UAT autenticada completa ni de prueba de restore. La categoría “Hermosillo sin Barreras” pertenece a una release posterior, con migración aditiva y rollback propio en `.agent/execplans/flowerflow-hermosillo-sin-barreras-category.md`.

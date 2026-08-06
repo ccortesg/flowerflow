@@ -79,10 +79,7 @@
     <div class="ff-submissions-list" data-submissions-list>
       @foreach($submissions as $item)
         @php
-          $categoryName = \Illuminate\Support\Str::lower($item->category->name);
-          $categoryIcon = \Illuminate\Support\Str::contains($categoryName, ['movilidad', 'transporte', 'vialidad'])
-              ? 'ri-bike-line'
-              : (\Illuminate\Support\Str::contains($categoryName, ['ambiente', 'verde', 'ecolog']) ? 'ri-seedling-line' : 'ri-government-line');
+          $categoryIcon = config('flowerflow.category_icons.'.$item->category->slug, 'ri-lightbulb-flash-line');
           $updatedAt = $item->updated_at?->copy()->timezone(config('flowerflow.timezone'));
         @endphp
         <article class="ff-submission-row" data-submission-item data-submission-status="{{ $item->status }}">
