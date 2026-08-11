@@ -12,6 +12,7 @@ use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\AuditLogger;
 use App\Services\ResilientMailDispatcher;
 use App\Services\SubmissionContentSanitizer;
 use App\Services\SubmissionFileStore;
@@ -228,10 +229,18 @@ class SubmissionController extends Controller
             : back()->with('status', 'Programamos nuevamente el correo de confirmación. Revisa también el correo no deseado.');
     }
 
-    public function download(Submission $submission, SubmissionFile $file): StreamedResponse
+    public function download(Submission $submission, SubmissionFile $file, AuditLogger $auditLogger): StreamedResponse
     {
-        $this->authorize('view', $submission);
+        $this->authorize('downloadFile', $submission);
         abort_unless($file->submission_id === $submission->id, 404);
+        abort_unless(Storage::disk($file->disk)->exists($file->path), 404);
+
+        $auditLogger->record('submission.file_downloaded', $file, request()->user(), [
+            'submission_public_id' => $submission->public_id,
+            'file_public_id' => $file->public_id,
+            'kind' => $file->kind,
+            'size_bytes' => $file->size_bytes,
+        ]);
 
         return Storage::disk($file->disk)->download($file->path, $file->original_name);
     }

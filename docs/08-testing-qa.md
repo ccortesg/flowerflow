@@ -159,6 +159,8 @@ Usar Storage fake para lógica y storage real en una suite de integración.
 - Verificación/reset/acuse son jobs cifrados, post-commit y prueban conexión `database`, cola `default`, cuatro intentos, timeout 30 y backoff 60/300/900.
 - Falla al programar devuelve aviso/reintento sin 500; falla de transporte termina en `failed_jobs` después de los reintentos.
 - Worker escucha `default`; SMTP usa timeout de 10 segundos.
+- Worker escucha también `exports`; el job XLSX cifrado/post-commit usa timeout 120, tres intentos y backoff 60/300.
+- Exportación prueba borrador versus snapshot enviado, cinco hojas, fórmula hostil como texto, permisos/ownership, links autenticados, expiración y purga.
 - Scheduler no se superpone en tareas críticas y usa zona explícita.
 - Smoke staging valida entrega real a buzones de prueba, SPF/DKIM/DMARC y bounce.
 

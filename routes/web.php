@@ -7,6 +7,7 @@ use App\Http\Controllers\Panel\AccountSecurityController;
 use App\Http\Controllers\Panel\DashboardController as PanelDashboardController;
 use App\Http\Controllers\Panel\EligibilityReviewController as PanelEligibilityReviewController;
 use App\Http\Controllers\Panel\SubmissionController as PanelSubmissionController;
+use App\Http\Controllers\Panel\SubmissionExportController as PanelSubmissionExportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubmissionController;
 use Illuminate\Support\Facades\Route;
@@ -54,6 +55,14 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
     Route::get('/', PanelDashboardController::class)->name('dashboard');
     Route::middleware('permission:view submissions')->group(function () {
         Route::get('/propuestas', [PanelSubmissionController::class, 'index'])->name('submissions.index');
+        Route::middleware('permission:export submissions')->group(function () {
+            Route::get('/propuestas/exportaciones/nueva', [PanelSubmissionExportController::class, 'create'])
+                ->middleware('password.confirm')->name('submissions.exports.create');
+            Route::post('/propuestas/exportaciones', [PanelSubmissionExportController::class, 'store'])
+                ->middleware('throttle:panel-mutations')->name('submissions.exports.store');
+            Route::get('/propuestas/exportaciones/{submissionExport}/descargar', [PanelSubmissionExportController::class, 'download'])
+                ->middleware('password.confirm')->name('submissions.exports.download');
+        });
         Route::get('/propuestas/{submission}', [PanelSubmissionController::class, 'show'])->name('submissions.show');
     });
 

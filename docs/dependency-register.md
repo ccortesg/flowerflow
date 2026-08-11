@@ -1,5 +1,14 @@
 # Registro de dependencias
 
+## Exportación XLSX privada — 2026-08-11
+
+| Dependencia | Versión lock | Alcance | Licencia | Motivo y controles |
+|---|---:|---|---|---|
+| openspout/openspout | 4.32.0 en lock (`^4.32`) | Runtime PHP directo | MIT | Escritura XLSX en streaming para exportaciones backend. Requiere PHP 8.3 y `dom`, `fileinfo`, `filter`, `libxml`, `xmlreader`, `zip`; el archivo vive en storage privado, se genera por job y toda entrada de usuario se fuerza a texto literal. |
+| league/commonmark | 2.10.0 | Runtime PHP transitivo de Laravel | BSD-3-Clause | Actualización mínima desde 2.8.3 para cerrar seis advisories detectados en el baseline; no cambió ninguna otra dependencia durante esa actualización. |
+
+`composer validate --strict`, `composer check-platform-reqs --no-dev` y `composer audit --locked` son gates obligatorios. OpenSpout no autoriza exportación cliente, URLs públicas ni manejo de comprobantes de residencia.
+
 ## Snapshot de reducción de riesgos — 2026-08-06
 
 Este snapshot sustituye las afirmaciones de estado de las baselines históricas que siguen debajo. No cambia el framework ni incorpora una dependencia de producción nueva.

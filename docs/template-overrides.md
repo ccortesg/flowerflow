@@ -23,6 +23,7 @@
 | `vite.config.js`, `package.json` | Dos entrypoints y retiro del grafo demo no alcanzable | Reducir supply chain y superficie compilada | audit Yarn, manifest de dos entradas y browser QA. |
 | `resources/assets/vendor/fonts/iconify/iconify.css` | Derivado reproducible de 96 iconos Remix usados | Evitar distribuir el set completo; excepción controlada a la frontera vendorizada | `node scripts/generate_icon_css.mjs --check`; el build nunca escribe. Regenerar sólo con `--write` y revisar el diff. |
 | `resources/views/layouts/{commonMaster,sections/**}` | Nonce en bloques inline y logout POST sin `onclick` | Hacer promovible CSP estricta sin handlers inline | inventario de tags, Playwright y consola Report-Only. Reaplicar tras upgrade del template. |
+| `app/Providers/AppServiceProvider.php`, `resources/views/panel/submissions/**` | Renderer Bootstrap 5 para paginación Laravel e interfaz de exportación privada | Evitar SVG Tailwind sin dimensiones y ofrecer descarga XLSX coherente con el panel | `PanelPaginationRenderingTest`, `SubmissionExportTest`, build y QA responsive/teclado. |
 
 No se modificaron las fuentes de librerías bajo `resources/assets/vendor/js`, `scss` o `libs`. El único archivo generado dentro de `vendor/fonts` tiene fuente y comando deterministas versionados.
 

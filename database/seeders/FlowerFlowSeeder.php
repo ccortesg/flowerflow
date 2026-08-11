@@ -58,6 +58,7 @@ class FlowerFlowSeeder extends Seeder
         foreach ([
             'view panel',
             'view submissions',
+            'export submissions',
             'download private files',
             'view admissibility reviews',
             'review admissibility',

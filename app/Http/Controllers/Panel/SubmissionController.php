@@ -18,8 +18,11 @@ class SubmissionController extends Controller
             ->latest()->paginate(25)->withQueryString();
 
         $categories = Category::query()->orderBy('sort_order')->get();
+        $exports = request()->user()->can('export submissions')
+            ? request()->user()->submissionExports()->latest()->limit(5)->get()
+            : collect();
 
-        return view('panel.submissions.index', compact('submissions', 'categories'));
+        return view('panel.submissions.index', compact('submissions', 'categories', 'exports'));
     }
 
     public function show(Submission $submission, SubmissionContentSanitizer $sanitizer): View
