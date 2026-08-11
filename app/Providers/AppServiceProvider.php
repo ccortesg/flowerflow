@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Support\MailDispatchStatus;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::useBootstrapFive();
+
         Password::defaults(fn () => Password::min(8)->mixedCase()->numbers()->symbols());
 
         RateLimiter::for('panel-mutations', function (Request $request) {

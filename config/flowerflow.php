@@ -48,6 +48,15 @@ return [
         'video_hosts' => ['youtube.com', 'www.youtube.com', 'youtu.be'],
         'folder_hosts' => ['drive.google.com', 'www.dropbox.com', 'dropbox.com', 'onedrive.live.com'],
     ],
+    'exports' => [
+        'disk' => env('FLOWERFLOW_EXPORT_DISK', 'exports'),
+        'retention_hours' => (int) env('FLOWERFLOW_EXPORT_RETENTION_HOURS', 24),
+        'queue_connection' => env('FLOWERFLOW_EXPORT_QUEUE_CONNECTION', 'database'),
+        'queue' => env('FLOWERFLOW_EXPORT_QUEUE', 'exports'),
+        'tries' => (int) env('FLOWERFLOW_EXPORT_TRIES', 3),
+        'timeout' => (int) env('FLOWERFLOW_EXPORT_JOB_TIMEOUT', 120),
+        'backoff' => [60, 300],
+    ],
     'mail' => [
         'from' => env('MAIL_FROM_ADDRESS', 'notificaciones@flowerflow.com.mx'),
         'reply_to' => env('MAIL_REPLY_TO_ADDRESS', 'convocatoria@flowerflow.com.mx'),

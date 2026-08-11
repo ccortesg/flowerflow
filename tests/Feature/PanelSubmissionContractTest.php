@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\AuditLog;
 use App\Models\Category;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
@@ -29,6 +30,10 @@ class PanelSubmissionContractTest extends TestCase
         $file = $this->fileFor($submission, $owner, 'contrato.pdf');
         Storage::disk('local')->put($file->path, '%PDF-1.4');
 
+        $this->actingAs($owner)->get(route('submissions.files.download', [$submission, $file]))
+            ->assertOk()
+            ->assertDownload($file->original_name);
+
         foreach ([$this->admin(), $this->reviewer()] as $staff) {
             $this->actingAs($staff)->get(route('panel.submissions.index'))
                 ->assertOk()
@@ -40,6 +45,8 @@ class PanelSubmissionContractTest extends TestCase
                 ->assertOk()
                 ->assertDownload($file->original_name);
         }
+
+        $this->assertSame(3, AuditLog::query()->where('action', 'submission.file_downloaded')->count());
     }
 
     public function test_cross_owner_permission_and_direct_url_downloads_are_rejected(): void
@@ -55,12 +62,16 @@ class PanelSubmissionContractTest extends TestCase
 
         $limited = User::factory()->create();
         $limited->givePermissionTo('view panel');
+        $viewOnly = User::factory()->create();
+        $viewOnly->givePermissionTo(['view panel', 'view submissions']);
 
         $this->actingAs($other)->get(route('submissions.files.download', [$submission, $file]))
             ->assertForbidden();
         $this->actingAs($limited)->get(route('submissions.files.download', [$submission, $file]))
             ->assertForbidden();
         $this->actingAs($limited)->get(route('panel.submissions.index'))
+            ->assertForbidden();
+        $this->actingAs($viewOnly)->get(route('submissions.files.download', [$submission, $file]))
             ->assertForbidden();
         $this->actingAs($this->admin())->get(route('submissions.files.download', [$submission, $otherFile]))
             ->assertNotFound();

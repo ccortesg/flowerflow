@@ -1,5 +1,18 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+## Trazabilidad paginación y exportación privada — 2026-08-11
+
+| ID | Requisito aprobado | Implementación | Evidencia prevista/actual | Estado |
+|---|---|---|---|---|
+| EXP-001 | Corregir iconos Anterior/Siguiente sobredimensionados y revisar otras pantallas | `Paginator::useBootstrapFive()` global; cubre propuestas y admisibilidad | `PanelPaginationRenderingTest`, build y QA browser | VERIFIED automatizado; browser pendiente |
+| EXP-002 | Exportar todas las propuestas borrador y enviadas | consulta server-side por bloques; `withdrawn` excluida | `SubmissionExportTest` con ambos estados y negativo retirado | VERIFIED local |
+| EXP-003 | Incluir contacto y toda la información funcional del proyecto | hojas Propuestas, Contactos, Integrantes, Archivos y Enlaces externos | lectura independiente de cinco hojas, conteos y valores | VERIFIED local |
+| EXP-004 | Preservar la versión enviada | snapshot inmutable para `submitted`; estado actual para `draft` | título vivo distinto del título exportado de snapshot | VERIFIED local |
+| EXP-005 | Enlaces de imágenes/documentos descargables | fórmula `HYPERLINK` generada con ruta estable autenticada | enlace a cada `SubmissionFile`; archivo cruzado y permiso revocado rechazados | VERIFIED local |
+| EXP-006 | No permitir descarga anónima | auth, permiso separado, Policy, ownership y confirmación reciente de contraseña | anónimo, viewer, reviewer y otro admin negativos | VERIFIED local |
+| EXP-007 | Minimizar PII y bloquear fórmulas hostiles | excluye fecha de nacimiento, residencia y datos técnicos; strings literales | celda `=2+2` serializada como `inlineStr`; ausencia de fecha de nacimiento | VERIFIED local |
+| EXP-008 | Archivo temporal privado y auditable | disk `serve=false`, job cifrado post-commit, 24 h, purga horaria y eventos redactados | generación/descarga/expiración/auditoría y dry-run | VERIFIED local |
+
 ## Trazabilidad Hermosillo sin Barreras — 2026-08-06
 
 | ID | Requisito aprobado | Implementación | Evidencia prevista/actual | Estado |

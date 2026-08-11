@@ -50,6 +50,11 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return $this->hasMany(Submission::class);
     }
 
+    public function submissionExports(): HasMany
+    {
+        return $this->hasMany(SubmissionExport::class, 'requested_by_user_id');
+    }
+
     public function legalAcceptances(): HasMany
     {
         return $this->hasMany(LegalAcceptance::class);

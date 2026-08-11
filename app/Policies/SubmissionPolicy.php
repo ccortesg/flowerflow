@@ -12,6 +12,12 @@ class SubmissionPolicy
         return $user->id === $submission->user_id || $user->can('view submissions');
     }
 
+    public function downloadFile(User $user, Submission $submission): bool
+    {
+        return $user->id === $submission->user_id
+            || ($user->can('view submissions') && $user->can('download private files'));
+    }
+
     public function update(User $user, Submission $submission): bool
     {
         return $user->id === $submission->user_id && $submission->isDraft();

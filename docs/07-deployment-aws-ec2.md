@@ -567,9 +567,15 @@ FLOWERFLOW_MAIL_QUEUE_CONNECTION=database
 FLOWERFLOW_MAIL_QUEUE=default
 FLOWERFLOW_MAIL_TRIES=4
 FLOWERFLOW_MAIL_JOB_TIMEOUT=30
+FLOWERFLOW_EXPORT_DISK=exports
+FLOWERFLOW_EXPORT_RETENTION_HOURS=24
+FLOWERFLOW_EXPORT_QUEUE_CONNECTION=database
+FLOWERFLOW_EXPORT_QUEUE=exports
+FLOWERFLOW_EXPORT_TRIES=3
+FLOWERFLOW_EXPORT_JOB_TIMEOUT=120
 ```
 
-El worker debe escuchar `default`. Verificación, recuperación y acuse se cifran en la cola, se despachan post-commit y aplican backoff 60/300/900. No usar `QUEUE_CONNECTION=sync` en producción: volvería a acoplar SMTP a la respuesta HTTP.
+El worker debe escuchar `default` y `exports`. Verificación, recuperación, acuse y exportaciones se cifran en la cola y se despachan post-commit. No usar `QUEUE_CONNECTION=sync` en producción: volvería a acoplar SMTP y el procesamiento XLSX a la respuesta HTTP.
 
 Configuración conceptual:
 
@@ -577,7 +583,7 @@ Configuración conceptual:
 [program:flowerflow-worker]
 process_name=%(program_name)s_%(process_num)02d
 directory=/var/www/flowerflow/current
-command=/usr/bin/php /var/www/flowerflow/current/artisan queue:work --queue=high,default,low --sleep=3 --tries=3 --timeout=120 --max-time=3600
+command=/usr/bin/php /var/www/flowerflow/current/artisan queue:work --queue=high,exports,default,low --sleep=3 --tries=3 --timeout=120 --max-time=3600
 user=flowerflow
 numprocs=1
 autostart=true
@@ -592,7 +598,7 @@ stdout_logfile_backups=10
 environment=APP_ENV="production"
 ```
 
-`numprocs` y memoria siguen `PENDING` de pruebas de carga. Para correo, `default`, timeout 30 y cuatro intentos totales ya son contrato; los jobs deben conservar idempotencia y observabilidad en `failed_jobs`.
+`numprocs` y memoria siguen `PENDING` de pruebas de carga. Para correo, `default`, timeout 30 y cuatro intentos totales ya son contrato. Para XLSX, `exports`, timeout 120, tres intentos y backoff 60/300 requieren prueba de carga antes del despliegue; los jobs deben conservar idempotencia y observabilidad en `failed_jobs`.
 
 Activación propuesta:
 
