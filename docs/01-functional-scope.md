@@ -1,5 +1,7 @@
 # Alcance funcional — Flower Flow 2026
 
+> **Adenda autoritativa de plazo, 2026-08-17:** el cierre inclusivo de `hermosillo-florece-2026` se amplía a `2026-08-23 23:59:59 America/Hermosillo`, equivalente a `2026-08-24 06:59:59 UTC`. Esta adenda sustituye sólo la fecha de cierre operativa. Los PDF jurídicos quedan sin cambios por instrucción del propietario y la contradicción permanece documentada.
+
 > **Adenda autoritativa de categoría, 2026-08-06:** la convocatoria `hermosillo-florece-2026` opera con cuatro categorías activas y ordenadas: Movilidad con Flow, Hermosillo Florece, Mi familia, mi mascota y Hermosillo sin Barreras. La última usa el slug `hermosillo-sin-barreras` y la descripción “Ideas para mejorar la accesibilidad y la inclusión para todas y todos.” Cada cuenta puede registrar hasta cuatro propuestas, máximo una por categoría. Se mantiene un Apple iPad Pro y máximo un ganador por categoría, para un máximo total de cuatro. Esta adenda sustituye sólo las referencias funcionales a tres categorías/propuestas/ganadores; no modifica los PDF jurídicos v1.0.
 
 > **Sustitución parcial aprobada, 2026-07-15:** la fuente ya no está truncada; el prompt Fase 01 v2 resolvió identidad, categorías, fecha/hora y alcance. En esta fase sí se implementan sitio público, auth, perfil, borradores/envío, archivos y panel mínimo. No se implementan revisión de elegibilidad, jueces, rúbrica, ganadores ni resultados. El objetivo no es “recibir, revisar y evaluar”; es dejar recepción local/test preparada detrás de flags, sin activarla en producción.
@@ -29,7 +31,7 @@ La descripción vigente de “Movilidad con Flow” es “Ideas para mejorar la 
 
 **DECISION Fase 01:** entregar la capacidad local/test para informar, registrar cuenta/perfil, preparar y enviar propuestas y administrarlas mínimamente. Revisión/evaluación quedan para fases posteriores.
 
-**DECISION:** cierre `2026-08-15 23:59:59 America/Hermosillo`, inclusivo. **PENDING:** fecha/hora de apertura y fecha objetivo de salida.
+**DECISION:** cierre `2026-08-23 23:59:59 America/Hermosillo`, inclusivo. **PENDING:** fecha/hora de apertura y fecha objetivo de salida.
 
 La ruta crítica funcional es:
 

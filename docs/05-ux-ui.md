@@ -438,7 +438,7 @@ No usar skeleton indefinido. Los errores deben incluir qué ocurrió, qué se pr
 - Botones nombran acción: “Guardar borrador”, “Enviar proyecto”, “Declarar conflicto”.
 - Acciones irreversibles explican consecuencia y objeto.
 - No usar “Aprobado” cuando sólo se recibió un archivo.
-- Fechas: “15 de agosto de 2026, 23:59 (hora de Hermosillo)” una vez aprobada la hora.
+- Fechas: “23 de agosto de 2026, 23:59 (hora de Hermosillo)” una vez aprobada la hora.
 - Correos y pantallas no incluyen comprobantes ni PII sensible innecesaria.
 
 ## SEO y privacidad de navegación

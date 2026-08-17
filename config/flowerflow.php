@@ -3,7 +3,7 @@
 return [
     'canonical_url' => env('FLOWERFLOW_CANONICAL_URL', 'https://app.flowerflow.com.mx'),
     'timezone' => env('FLOWERFLOW_TIMEZONE', 'America/Hermosillo'),
-    'submissions_close_at' => env('FLOWERFLOW_SUBMISSIONS_CLOSE_AT', '2026-08-15 23:59:59'),
+    'submissions_close_at' => env('FLOWERFLOW_SUBMISSIONS_CLOSE_AT', '2026-08-23 23:59:59'),
     'flags' => [
         'public' => env('FLOWERFLOW_PUBLIC_ENABLED', true),
         'registration' => env('FLOWERFLOW_REGISTRATION_ENABLED', false),

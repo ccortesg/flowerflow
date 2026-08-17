@@ -6,7 +6,7 @@ Fecha: 2026-08-06. Estado: **referencia y evidencia de la release ya integrada; 
 
 - Commit productivo observado después de integrar la serie: `26256e32cb7dcc38e94d8d46737a4c3b81e5c8a9`.
 - Base original desde la cual se construyó la serie: `baff7892f886af3fd4e42132c686620f1ae76d91`.
-- No desplegar durante la recepción, cuyo cierre configurado es 2026-08-15 23:59:59 `America/Hermosillo`.
+- No desplegar durante la recepción, cuyo cierre ampliado es 2026-08-23 23:59:59 `America/Hermosillo`.
 - Fase 02A permanece apagada en producción.
 - Ninguna release contiene migraciones, seeders o cambios de datos.
 - No cambiar paquetes, módulos, MPM, PHP, MySQL, Node o Composer globales.

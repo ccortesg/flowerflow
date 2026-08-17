@@ -18,6 +18,7 @@
 | R53 | La plataforma usa cuatro categorías/propuestas/premios, pero Mecánica v1.0 declara tres e incluye accesibilidad en Movilidad | Alto aceptado | Contradicción exacta registrada; PDF, hash y aceptaciones preservados por decisión expresa del propietario | Adenda o nueva versión jurídica aprobada, publicada y aceptada; hasta entonces no declarar el riesgo resuelto |
 | R54 | La migración de categoría es deliberadamente no reversible después de recibir datos | Medio controlado | `down` no elimina ni recategoriza; código anterior conserva relaciones y la configuración debe permanecer en cuatro si existe cualquier propuesta asociada | Backup/UAT antes de desplegar; rollback sólo de presentación compatible tras existir datos |
 | R55 | Dos creaciones simultáneas pueden intentar superar el límite por cuenta | Bajo tras mitigación | Bloqueo de la fila de usuario, recuento y unicidad dentro de una transacción; prueba MySQL con dos procesos | Repetir prueba de carga en ambiente candidato si cambia el flujo de creación |
+| R56 | El cierre técnico se amplía al 23 de agosto, pero los PDF jurídicos mantienen el 15 de agosto | Alto aceptado por alcance | Configuración, base, UI, trazabilidad y pruebas alineadas; PDF y aceptaciones preservados por instrucción expresa del propietario | Adenda o nueva versión jurídica aprobada antes de declarar resuelta la contradicción |
 
 Esta adenda prevalece para el estado actual; las tablas históricas siguientes se conservan para trazabilidad y no deben interpretarse como verificación vigente.
 

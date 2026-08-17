@@ -168,7 +168,7 @@ class ParticipantExperienceRedesignTest extends TestCase
             ->assertSee('Completo')
             ->assertSee('Máximo 4 por participante')
             ->assertSee('href="'.route('submissions.create').'"', false)
-            ->assertSee('15 de agosto de 2026')
+            ->assertSee('23 de agosto de 2026')
             ->assertSee('23:59 horas · Tiempo de Hermosillo')
             ->assertSeeInOrder($categories->pluck('name')->all())
             ->assertSee('Un Apple iPad Pro por categoría')

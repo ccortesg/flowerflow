@@ -23,7 +23,7 @@
 
         <div class="ff-hero-deadline">
           <span class="ff-landing-icon ri-calendar-check-line" aria-hidden="true"></span>
-          <p><strong>Fecha límite</strong><br>15 de agosto de 2026, 23:59 horas <span>(tiempo de Hermosillo)</span></p>
+          <p><strong>Fecha límite</strong><br>23 de agosto de 2026, 23:59 horas <span>(tiempo de Hermosillo)</span></p>
         </div>
 
         <p @class(['ff-landing-status', 'is-open' => $submissionsOpen])>
@@ -138,7 +138,7 @@
       <article class="ff-requirement-card"><span class="ff-landing-icon ri-team-line" aria-hidden="true"></span><div><h3>Participar solo o en equipo</h3><p>Integra un equipo de hasta cinco personas, incluida la representante.</p></div></article>
       <article class="ff-requirement-card"><span class="ff-landing-icon ri-draft-line" aria-hidden="true"></span><div><h3>Hasta cuatro propuestas</h3><p>Registra una propuesta por categoría y un máximo de cuatro por cuenta.</p></div></article>
       <article class="ff-requirement-card"><span class="ff-landing-icon ri-translate-2" aria-hidden="true"></span><div><h3>Presentar en español</h3><p>La propuesta debe ser clara, original y realizable. Participar es gratuito.</p></div></article>
-      <article class="ff-requirement-card"><span class="ff-landing-icon ri-calendar-check-line" aria-hidden="true"></span><div><h3>Enviar a tiempo</h3><p>Finaliza tu propuesta antes del 15 de agosto de 2026 a las 23:59.</p></div></article>
+      <article class="ff-requirement-card"><span class="ff-landing-icon ri-calendar-check-line" aria-hidden="true"></span><div><h3>Enviar a tiempo</h3><p>Finaliza tu propuesta antes del 23 de agosto de 2026 a las 23:59.</p></div></article>
     </div>
   </div>
 </section>

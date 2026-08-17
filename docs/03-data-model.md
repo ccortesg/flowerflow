@@ -6,7 +6,7 @@ Tablas nuevas: `competitions`, `categories`, `participant_profiles`, `legal_docu
 
 Invariantes de base: `competition+user+category` único, folio e idempotency key únicos, snapshot `submission+version` único, links `submission+kind` únicos. Los perfiles no se duplican dentro de propuestas; el snapshot copia el estado de envío. Archivos conservan actor, disk/path privado, nombre original/servidor, tipo de formato, MIME, extensión, bytes y SHA-256. Legales conservan código, versión, vigencia, obligatoriedad, hash y path; aceptaciones conservan propósito independiente, valor, versión, UTC, IP, agente y contexto.
 
-El cierre sembrado es `2026-08-16 06:59:59 UTC`, equivalente a `2026-08-15 23:59:59 America/Hermosillo`. `opens_at` queda nullable/configurable porque no existe hora jurídica aprobada.
+El cierre sembrado es `2026-08-24 06:59:59 UTC`, equivalente a `2026-08-23 23:59:59 America/Hermosillo`. `opens_at` queda nullable/configurable porque no existe hora jurídica aprobada.
 
 **Estado:** hipótesis validable; no representa migraciones ejecutadas.  
 **Motor:** MySQL 8, InnoDB, utf8mb4.  

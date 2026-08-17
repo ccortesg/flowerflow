@@ -502,7 +502,7 @@ Después del build puede retirarse `node_modules` del artefacto runtime si no lo
 
 Preparación Laravel, sólo con `.env` y `shared/storage` enlazados:
 
-El archivo de entorno protegido debe conservar este contrato no secreto: `APP_LOCALE=es_MX`, `APP_FALLBACK_LOCALE=es_MX`, `APP_TIMEZONE=UTC`, `DB_TIMEZONE=+00:00` y `FLOWERFLOW_TIMEZONE=America/Hermosillo`. Así, la interfaz y las reglas de negocio usan español de México y horario de Hermosillo, mientras PHP/MySQL persisten instantes sin ambigüedad en UTC. El cierre `2026-08-15 23:59:59 America/Hermosillo` se conserva como `2026-08-16 06:59:59 UTC`.
+El archivo de entorno protegido debe conservar este contrato no secreto: `APP_LOCALE=es_MX`, `APP_FALLBACK_LOCALE=es_MX`, `APP_TIMEZONE=UTC`, `DB_TIMEZONE=+00:00` y `FLOWERFLOW_TIMEZONE=America/Hermosillo`. Así, la interfaz y las reglas de negocio usan español de México y horario de Hermosillo, mientras PHP/MySQL persisten instantes sin ambigüedad en UTC. El cierre `2026-08-23 23:59:59 America/Hermosillo` se conserva como `2026-08-24 06:59:59 UTC`.
 
 Verificación desde la conexión real de Laravel:
 
