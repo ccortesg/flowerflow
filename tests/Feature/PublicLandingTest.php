@@ -16,7 +16,7 @@ class PublicLandingTest extends TestCase
 
         $response = $this->get('/')->assertOk()
             ->assertSeeText('¡Para mejorar aún más Hermosillo, todos a participar!')
-            ->assertSee('15 de agosto de 2026, 23:59 horas')
+            ->assertSee('23 de agosto de 2026, 23:59 horas')
             ->assertSee('tiempo de Hermosillo')
             ->assertSee('Movilidad con Flow')
             ->assertSee('Hermosillo Florece')

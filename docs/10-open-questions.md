@@ -1,5 +1,7 @@
 # Preguntas abiertas y decisiones — Flower Flow 2026
 
+> **Actualización 2026-08-17:** el propietario amplió el cierre inclusivo al `2026-08-23 23:59:59 America/Hermosillo`. Los PDF jurídicos quedan fuera del cambio técnico y su regularización permanece pendiente.
+
 ## Resoluciones Fase 01 — 2026-07-15
 
 Resueltas: destino AWS EC2 Ubuntu (no GoDaddy), host/panel, MySQL local, cierre y zona, categorías, límites de equipo/propuestas/archivos, Fortify, Spatie, Quill+sanitizer, flags y formato de folio/snapshot.
@@ -36,6 +38,7 @@ Siguen abiertas y no bloquean código local detrás de flags: hora exacta de ape
 | D-012 | DECISION | API móvil/integraciones externas quedan fuera del MVP por defecto. | No diseñar contratos externos en la ruta crítica. |
 | D-013 | DECISION | Código en inglés e interfaz en español. | Nombres técnicos y contenidos se gestionan por separado. |
 | D-014 | DECISION | No usar datos reales en desarrollo/pruebas. | Factories/fixtures sintéticos y redactados. |
+| D-015 | DECISION/RISK ACCEPTED | El cierre se amplía al 2026-08-23 23:59:59 en Hermosillo sin modificar los PDF jurídicos en esta tarea. | Configuración, base, UI y pruebas se alinean; la regularización jurídica queda pendiente. |
 
 ## Preguntas prioritarias
 
@@ -47,7 +50,8 @@ Siguen abiertas y no bloquean código local detrás de flags: hora exacta de ape
 | Q-002 | PENDING | ¿Quién tiene autoridad final para aprobar alcance, UAT, textos legales y producción? | Nombrar una persona de producto y una legal; separar aprobación técnica de publicación. | **Crítico:** bloquea decisiones y salida. |
 | Q-003 | PENDING | ¿Cuál es la fecha deseada de lanzamiento público? | Salir con margen de al menos 7–10 días antes del cierre, sujeto a la ruta crítica real. | **Crítico:** determina calendario, recortes y soporte. |
 | Q-004 | PENDING | ¿Cuál es la fecha/hora de apertura? | No abrir hasta completar UAT, backup/restauración y smoke test. | Alto: afecta estados, scheduler y comunicación. |
-| Q-005 | RESOLVED 2026-07-15 | ¿Cuál es la hora exacta de cierre del 2026-08-15? | `23:59:59 America/Hermosillo`, inclusivo; persistir UTC. | Implementado y cubierto por prueba de frontera. |
+| Q-005 | SUPERSEDED 2026-08-17 | ¿Cuál era la hora exacta de cierre del 2026-08-15? | `23:59:59 America/Hermosillo`, inclusivo; sustituido por la ampliación siguiente. | Se conserva como decisión histórica. |
+| Q-005-EXT | RESOLVED 2026-08-17 | ¿Cuál es el nuevo cierre de la convocatoria? | `2026-08-23 23:59:59 America/Hermosillo`, inclusivo; persistir `2026-08-24 06:59:59 UTC`. | Implementar config/base/UI y prueba de frontera; PDF jurídicos pendientes. |
 | Q-006 | PENDING | ¿Habrá periodo de gracia o excepciones administrativas? | Sin gracia automática; sólo excepción individual, justificada, autorizada y auditada. | Alto: estados, permisos y legalidad operativa. |
 | Q-007 | PENDING | ¿Qué alcance puede recortarse si el calendario no es viable? | Recortar resultados públicos, CMS, dashboards, exports avanzados y colaboración compleja antes que seguridad/revisión/evaluación. | **Crítico:** viabilidad del MVP. |
 

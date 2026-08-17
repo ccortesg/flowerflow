@@ -8,6 +8,7 @@ use App\Models\EligibilityReview;
 use App\Models\Submission;
 use App\Models\Team;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Database\Seeders\FlowerFlowSeeder;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -15,6 +16,20 @@ use Tests\Support\EnsuresDisposableDatabase;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-01 12:00:00', 'America/Hermosillo'));
+    }
+
+    protected function tearDown(): void
+    {
+        CarbonImmutable::setTestNow();
+
+        parent::tearDown();
+    }
+
     public function createApplication(): Application
     {
         $app = parent::createApplication();

@@ -49,10 +49,10 @@ class SecurityAndFlagsTest extends TestCase
         config(['flowerflow.flags.submissions' => true]);
         $user = $this->participant();
 
-        Carbon::setTestNow(Carbon::parse('2026-08-15 23:59:59', 'America/Hermosillo'));
+        Carbon::setTestNow(Carbon::parse('2026-08-23 23:59:59', 'America/Hermosillo'));
         $this->actingAs($user)->get(route('submissions.create'))->assertOk();
 
-        Carbon::setTestNow(Carbon::parse('2026-08-16 00:00:00', 'America/Hermosillo'));
+        Carbon::setTestNow(Carbon::parse('2026-08-24 00:00:00', 'America/Hermosillo'));
         $this->actingAs($user)->get(route('submissions.create'))->assertStatus(503);
         Carbon::setTestNow();
     }

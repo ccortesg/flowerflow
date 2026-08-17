@@ -19,9 +19,11 @@ class FlowerFlowSeeder extends Seeder
                 'name' => 'Hermosillo Florece 2026',
                 'opens_at' => null,
                 'closes_at' => CarbonImmutable::createFromFormat(
-                    'Y-m-d H:i:s', '2026-08-15 23:59:59', 'America/Hermosillo'
+                    'Y-m-d H:i:s',
+                    config('flowerflow.submissions_close_at'),
+                    config('flowerflow.timezone')
                 )->utc(),
-                'source_timezone' => 'America/Hermosillo',
+                'source_timezone' => config('flowerflow.timezone'),
                 'active' => true,
             ]
         );

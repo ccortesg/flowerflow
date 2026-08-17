@@ -1,5 +1,7 @@
 # Especificación de producto — Flower Flow 2026
 
+> **Adenda autoritativa de plazo — 2026-08-17:** el cierre inclusivo de `hermosillo-florece-2026` se amplía al `2026-08-23 23:59:59 America/Hermosillo`, persistido como `2026-08-24 06:59:59 UTC`. Esta adenda sustituye únicamente las referencias operativas al cierre del 15 de agosto. Por instrucción del propietario, los PDF jurídicos no se modifican en este cambio; su regularización queda pendiente y registrada como riesgo.
+
 > **Adenda autoritativa “Hermosillo sin Barreras” — 2026-08-06:** para la plataforma, las categorías exactas son Movilidad con Flow, Hermosillo Florece, Mi familia, mi mascota y Hermosillo sin Barreras; máximo cuatro propuestas por cuenta, una por categoría; un Apple iPad Pro y máximo un ganador por categoría, cuatro en total. “Movilidad con Flow” ya no incluye accesibilidad en su descripción. Los PDF y aceptaciones de Mecánica v1.0 permanecen sin cambios por decisión del propietario, con contradicción jurídica alta aceptada y pendiente de adenda aprobada. Esta adenda sustituye las cantidades de la adenda Fase 01 siguiente.
 
 > **Adenda autoritativa Fase 01 — 2026-07-15:** el alcance aprobado es recepción local/test, no el MVP completo histórico. Cierre inclusivo: 15 de agosto de 2026 a las 23:59:59 en `America/Hermosillo`; categorías exactas: Movilidad con Flow, Hermosillo Florece y Mi familia, mi mascota; participación individual/equipo hasta cinco; una propuesta por categoría y tres totales. Registro/recepción/resultados están apagados por defecto. Evaluación, jueces, ganadores y publicación permanecen fuera. Ver `docs/01-functional-scope.md` y `docs/legal-change-log.md`.
@@ -46,6 +48,7 @@ La primera fase es documental. No incluye cambios de aplicación, dependencias, 
 | DEC-014 | DECISION | Cada cuenta puede registrar máximo cuatro propuestas y máximo una por categoría; la creación revalida el límite bajo bloqueo transaccional. |
 | DEC-015 | DECISION | El premio de la cuarta categoría es un Apple iPad Pro; existe máximo un ganador por categoría y cuatro en total. |
 | DEC-016 | DECISION/RISK ACCEPTED | La plataforma adopta la cuarta categoría sin modificar Mecánica v1.0, sus hashes o aceptaciones; requiere regularización jurídica posterior. |
+| DEC-017 | DECISION/RISK ACCEPTED | El cierre se amplía a `2026-08-23 23:59:59 America/Hermosillo`; los PDF jurídicos quedan fuera del cambio técnico y requieren regularización separada. |
 
 ## Evidencia actual del repositorio
 
@@ -107,7 +110,7 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 - **CAL-001 — DECISION:** modelar una convocatoria versionable con slug, estado, fechas y zona horaria.
 - **CAL-002 — ASSUMPTION:** el MVP tendrá una sola edición activa, pero el modelo no bloqueará ediciones posteriores.
 - **CAL-003 — DECISION:** mostrar categorías, calendario, preguntas frecuentes y documentos legales vigentes.
-- **CAL-004 — DECISION/PENDING:** cierre inclusivo aprobado `2026-08-15 23:59:59 America/Hermosillo`; fecha/hora de apertura pendiente y configurable.
+- **CAL-004 — DECISION/PENDING:** cierre inclusivo aprobado `2026-08-23 23:59:59 America/Hermosillo`; fecha/hora de apertura pendiente y configurable.
 - **CAL-005 — DECISION:** cerrar automáticamente nuevos envíos al vencer el plazo; una excepción requiere actor autorizado, justificación y auditoría.
 - **CAL-006 — DECISION:** consultar sólo categorías activas de la convocatoria vigente en landing, dashboard participante y distribución administrativa; los listados históricos conservan las relaciones originales.
 
