@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BusinessRole;
 use App\Models\Competition;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
@@ -12,9 +13,23 @@ class DashboardController extends Controller
     public function __invoke(): View|RedirectResponse
     {
         $user = request()->user();
+        $roleNames = $user->getRoleNames()->values();
+        $role = $roleNames->count() === 1
+            ? BusinessRole::tryFrom((string) $roleNames->first())
+            : null;
 
-        if ($user->hasAnyRole(['admin', 'reviewer'])) {
+        if (! $role) {
+            return redirect()->route('account.restricted');
+        }
+
+        if (in_array($role, [BusinessRole::Admin, BusinessRole::Reviewer], true)) {
             return redirect()->route('panel.dashboard');
+        }
+
+        if ($role === BusinessRole::Judge) {
+            return redirect()->route(
+                config('flowerflow.flags.evaluation') ? 'judge.dashboard' : 'account.restricted'
+            );
         }
 
         $counts = $user->submissions()

@@ -2,10 +2,13 @@
 
 use App\Http\Controllers\AdmissibilityParticipantController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Judge\AccessStatusController as JudgeAccessStatusController;
+use App\Http\Controllers\Judge\DashboardController as JudgeDashboardController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Panel\AccountSecurityController;
 use App\Http\Controllers\Panel\DashboardController as PanelDashboardController;
 use App\Http\Controllers\Panel\EligibilityReviewController as PanelEligibilityReviewController;
+use App\Http\Controllers\Panel\JudgeController as PanelJudgeController;
 use App\Http\Controllers\Panel\SubmissionController as PanelSubmissionController;
 use App\Http\Controllers\Panel\SubmissionExportController as PanelSubmissionExportController;
 use App\Http\Controllers\ProfileController;
@@ -18,40 +21,59 @@ Route::view('/correo-verificado', 'auth.email-verified')->name('verification.suc
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/inicio', DashboardController::class)->name('dashboard');
-    Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/perfil', [ProfileController::class, 'update'])->name('profile.update');
+    Route::view('/cuenta/acceso', 'account.restricted')->name('account.restricted');
 
-    Route::get('/propuestas', [SubmissionController::class, 'index'])->name('submissions.index');
-    Route::get('/propuestas/{submission}', [SubmissionController::class, 'show'])->name('submissions.show');
-    Route::get('/propuestas/{submission}/archivos/{file}', [SubmissionController::class, 'download'])->name('submissions.files.download');
-    Route::post('/propuestas/{submission}/reenviar-confirmacion', [SubmissionController::class, 'resendConfirmation'])
-        ->middleware('throttle:3,10')->name('submissions.confirmation.resend');
+    Route::middleware('business.role:participant')->group(function () {
+        Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/perfil', [ProfileController::class, 'update'])->name('profile.update');
 
-    Route::middleware('admissibility.enabled')->group(function () {
-        Route::post('/revision/aclaraciones/{clarification}/respuestas', [AdmissibilityParticipantController::class, 'respond'])
-            ->middleware('throttle:panel-mutations')->name('admissibility.clarifications.respond');
-        Route::post('/revision/residencia/{residencyRequest}/documentos', [AdmissibilityParticipantController::class, 'uploadResidency'])
-            ->middleware('throttle:panel-mutations')->name('admissibility.residency.upload');
-        Route::get('/revision/aclaraciones/archivos/{file}', [AdmissibilityParticipantController::class, 'downloadClarificationFile'])
-            ->name('admissibility.clarification-files.download');
-        Route::get('/revision/residencia/documentos/{document}', [AdmissibilityParticipantController::class, 'downloadResidencyDocument'])
-            ->name('admissibility.residency-documents.download');
+        Route::get('/propuestas', [SubmissionController::class, 'index'])->name('submissions.index');
+        Route::get('/propuestas/{submission}', [SubmissionController::class, 'show'])->name('submissions.show');
+        Route::post('/propuestas/{submission}/reenviar-confirmacion', [SubmissionController::class, 'resendConfirmation'])
+            ->middleware('throttle:3,10')->name('submissions.confirmation.resend');
+
+        Route::middleware('admissibility.enabled')->group(function () {
+            Route::post('/revision/aclaraciones/{clarification}/respuestas', [AdmissibilityParticipantController::class, 'respond'])
+                ->middleware('throttle:panel-mutations')->name('admissibility.clarifications.respond');
+            Route::post('/revision/residencia/{residencyRequest}/documentos', [AdmissibilityParticipantController::class, 'uploadResidency'])
+                ->middleware('throttle:panel-mutations')->name('admissibility.residency.upload');
+        });
+
+        Route::middleware('submissions.open')->group(function () {
+            Route::get('/propuestas/nueva/crear', [SubmissionController::class, 'create'])->name('submissions.create');
+            Route::post('/propuestas', [SubmissionController::class, 'store'])->name('submissions.store');
+            Route::get('/propuestas/{submission}/editar', [SubmissionController::class, 'edit'])->name('submissions.edit');
+            Route::put('/propuestas/{submission}', [SubmissionController::class, 'update'])->name('submissions.update');
+            Route::post('/propuestas/{submission}/enviar', [SubmissionController::class, 'submit'])->name('submissions.submit');
+            Route::delete('/propuestas/{submission}/archivos/{file}', [SubmissionController::class, 'destroyFile'])->name('submissions.files.destroy');
+        });
     });
 
-    Route::middleware('submissions.open')->group(function () {
-        Route::get('/propuestas/nueva/crear', [SubmissionController::class, 'create'])->name('submissions.create');
-        Route::post('/propuestas', [SubmissionController::class, 'store'])->name('submissions.store');
-        Route::get('/propuestas/{submission}/editar', [SubmissionController::class, 'edit'])->name('submissions.edit');
-        Route::put('/propuestas/{submission}', [SubmissionController::class, 'update'])->name('submissions.update');
-        Route::post('/propuestas/{submission}/enviar', [SubmissionController::class, 'submit'])->name('submissions.submit');
-        Route::delete('/propuestas/{submission}/archivos/{file}', [SubmissionController::class, 'destroyFile'])->name('submissions.files.destroy');
+    Route::middleware('business.role:participant,reviewer,admin')->group(function () {
+        Route::get('/propuestas/{submission}/archivos/{file}', [SubmissionController::class, 'download'])->name('submissions.files.download');
+        Route::middleware('admissibility.enabled')->group(function () {
+            Route::get('/revision/aclaraciones/archivos/{file}', [AdmissibilityParticipantController::class, 'downloadClarificationFile'])
+                ->name('admissibility.clarification-files.download');
+            Route::get('/revision/residencia/documentos/{document}', [AdmissibilityParticipantController::class, 'downloadResidencyDocument'])
+                ->name('admissibility.residency-documents.download');
+        });
     });
+});
+
+Route::prefix('juez')->name('judge.')->middleware([
+    'auth',
+    'business.role:judge',
+    'permission:access judge workspace',
+    'evaluation.enabled',
+])->group(function () {
+    Route::get('/estado', JudgeAccessStatusController::class)->name('status');
+    Route::get('/', JudgeDashboardController::class)->middleware(['verified', 'judge.active'])->name('dashboard');
 });
 
 Route::get('/panel/login', fn () => view('auth.login', ['panel' => true]))
     ->middleware('guest')->name('panel.login');
 
-Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 'verified', 'permission:view panel'])->group(function () {
+Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 'verified', 'business.role:reviewer,admin', 'permission:view panel'])->group(function () {
     Route::get('/', PanelDashboardController::class)->name('dashboard');
     Route::middleware('permission:view submissions')->group(function () {
         Route::get('/propuestas', [PanelSubmissionController::class, 'index'])->name('submissions.index');
@@ -77,6 +99,24 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
             Route::post('/{review}/residencia/{residencyRequest}/revisar', [PanelEligibilityReviewController::class, 'markResidencyUnderReview'])->name('residency.review');
             Route::post('/{review}/residencia/{residencyRequest}/resolver', [PanelEligibilityReviewController::class, 'resolveResidency'])->name('residency.resolve');
             Route::post('/{review}/resolver', [PanelEligibilityReviewController::class, 'decide'])->name('decide');
+        });
+    });
+    Route::prefix('jueces')->name('judges.')->middleware(['business.role:admin', 'permission:view judges'])->group(function () {
+        Route::get('/', [PanelJudgeController::class, 'index'])->name('index');
+        Route::get('/nuevo', [PanelJudgeController::class, 'create'])
+            ->middleware('permission:manage judges')->name('create');
+        Route::post('/', [PanelJudgeController::class, 'store'])
+            ->middleware(['permission:manage judges', 'throttle:panel-mutations'])->name('store');
+        Route::get('/{judgeProfile}', [PanelJudgeController::class, 'show'])->name('show');
+        Route::middleware('throttle:panel-mutations')->group(function () {
+            Route::post('/{judgeProfile}/reenviar-configuracion', [PanelJudgeController::class, 'resendSetup'])
+                ->middleware('permission:manage judges')->name('setup.resend');
+            Route::post('/{judgeProfile}/suspender', [PanelJudgeController::class, 'suspend'])
+                ->middleware('permission:manage judges')->name('suspend');
+            Route::post('/{judgeProfile}/reactivar', [PanelJudgeController::class, 'reactivate'])
+                ->middleware('permission:manage judges')->name('reactivate');
+            Route::post('/{judgeProfile}/recuperar-2fa', [PanelJudgeController::class, 'recoverTwoFactor'])
+                ->middleware('permission:recover judge two factor')->name('two-factor.recover');
         });
     });
     Route::get('/cuenta', [AccountSecurityController::class, 'show'])->name('account');

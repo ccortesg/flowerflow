@@ -2,13 +2,15 @@
 
 > **Decisiones del propietario — 2026-08-18:** se conserva sin cambios la superposición temática de accesibilidad de la Mecánica v1.1; las cuentas que aceptaron v1.0 se tratan operativamente como aceptantes de v1.1 sin forzar reaceptación ni alterar evidencia histórica; y el archivo físico v1.0 designado por el propietario es `public/documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf`. La discrepancia entre su SHA-256 actual `3bcf31…` y el hash histórico registrado `42bd5e…` se conserva documentada, no se oculta ni se corrige mediante backfill.
 
+> **Estado productivo y puerta actual — 2026-08-18:** el propietario registra `OWNER_CONFIRMED_DEPLOYED` y más de 50 propuestas reales. Sin evidencia externa en esta tarea, `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; M1/M2 se validaron sólo localmente y no se atribuyen a producción. Las decisiones 02B, incluida la corrección de capacidad/sustitución, están `OWNER_APPROVED`; M3 es la siguiente puerta. `P2B-BLOCK-001` está resuelto y M4 permanece no implementado/no autorizado.
+
 > **Auditoría integral 2026-08-17:** Fase 01/02A está implementada en repositorio, pero el runtime local primario no está alineado: límite tres frente a cuatro y cuatro migraciones funcionales pendientes. Jueces/evaluación y resultados siguen bloqueados por decisiones de negocio. Ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
 ## Resoluciones Fase 01 — 2026-07-15
 
 Resueltas: destino AWS EC2 Ubuntu (no GoDaddy), host/panel, MySQL local, cierre y zona, categorías, límites de equipo/propuestas/archivos, Fortify, Spatie, Quill+sanitizer, flags y formato de folio/snapshot.
 
-Siguen abiertas: hora exacta de apertura; fecha de salida; licencia Pixinvent; aceptación de integrantes y persona en varios equipos; WhatsApp; proveedores adicionales; cantidad máxima definitiva de archivos e imágenes; remediación antimalware; SMTP/DNS; EC2/PHP/web server/capacidad; DB productiva; EBS/S3; staging, RPO/RTO, monitoreo y responsables UAT/soporte. Rúbrica, desempate, conflictos y anonimización pertenecen a fase posterior. Los tres puntos jurídicos/evidenciales anteriores quedaron resueltos por decisión expresa del propietario y ya no bloquean por sí solos la continuidad operativa.
+Siguen abiertas: hora exacta de apertura; fecha de salida; licencia Pixinvent; aceptación de integrantes y persona en varios equipos; WhatsApp; proveedores adicionales; cantidad máxima definitiva de archivos e imágenes; remediación antimalware; SMTP/DNS; EC2/PHP/web server/capacidad; DB productiva; EBS/S3; staging, RPO/RTO, monitoreo y responsables UAT/soporte. Rúbrica, ceguera, conflicto, reapertura, consolidación, retención 02B, señal de empate y capacidad/sustitución quedaron definidos; la resolución de empate/ganadores sigue pendiente. Los puntos jurídicos/evidenciales anteriores quedaron resueltos por decisión expresa del propietario.
 
 **Fecha de corte:** 2026-07-15  
 **Uso:** registro de decisiones para planificación y aprobación.  
@@ -42,13 +44,21 @@ Siguen abiertas: hora exacta de apertura; fecha de salida; licencia Pixinvent; a
 | D-014 | DECISION | No usar datos reales en desarrollo/pruebas. | Factories/fixtures sintéticos y redactados. |
 | D-015 | RESOLVED POR v1.1 | El cierre se amplía al 2026-08-23 23:59:59 en Hermosillo. | Mecánica v1.1 p. 3 y Términos v1.1 p. 2 ya coinciden con configuración/base/UI; v1.0 queda histórico. |
 | D-016 | DECISION DE AUDITORÍA | Separar avance del producto maestro, código local verificado, runtime activado y producción demostrada. | Ningún porcentaje o handoff puede presentar una suite verde como despliegue o acceso habilitado. |
-| D-017 | DECISION DE SECUENCIA | La siguiente puerta es un release candidate/UAT local de lo ya implementado; Fase 02B no se mezcla. | Primero alinear ambiente autorizado y cerrar evidencia por rol; después aprobar reglas de jueces/rúbrica. |
+| D-017 | SUPERSEDED 2026-08-18 | La siguiente puerta era un release candidate/UAT local de lo ya implementado. | Se conserva como secuencia histórica; fue sustituida por D-024. |
 | D-018 | DECISION TÉCNICA LOCAL | Nuevas altas, cambios de consentimiento y envíos registran la versión jurídica activa v1.1; v1.0 y sus aceptaciones no se mutan. | Catálogo determinístico, migración reversible y tests de preservación. |
 | D-019 | RESOLVED / OWNER DECISION 2026-08-18 | No se fuerza reaceptación v1.1 a cuentas que aceptaron v1.0; se consideran operativamente aceptantes de v1.1 porque los cambios fueron comunicados. | No bloquear cuentas ni propuestas y no fabricar, duplicar o modificar filas históricas de `legal_acceptances`; las nuevas aceptaciones continúan registrando v1.1. |
 | D-020 | DECISION / RESOLVED LEGAL | La operación conserva cuatro categorías y máximo cuatro propuestas, una por categoría. | El propietario lo confirmó y la Mecánica v1.1 corregida lo respalda en pp. 2–3; no requiere rollback funcional. |
 | D-021 | RESOLVED / OWNER DECISION 2026-08-18 | La referencia a accesibilidad se conserva como está en las dos categorías. | No recategorizar propuestas, cambiar UI ni reinterpretar la Mecánica. |
 | D-022 | RESOLVED / OWNER DECISION 2026-08-18 | El PDF físico v1.0 que debe conservarse es `01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf`, SHA-256 actual `3bcf31…`. | Mantener la discrepancia histórica `42bd5e…` en registros/aceptaciones; no sustituir el archivo ni reescribir evidencia. |
 | D-023 | OWNER CONFIRMED 2026-08-18 | Producción usa un checkout Git directo en `/var/www/flowerflow`; no existen `releases/current/shared`. El propietario informa que el VirtualHost `app.sguniformes.com.mx` apunta a esa ruta. | El update actual trabaja en sitio por SHA exacto. La topología de symlinks queda futura; no se infiere un cambio del host canónico ni se modifica Apache. |
+| D-024 | `OWNER_CONFIRMED_DEPLOYED` 2026-08-18 | El propietario confirma que instaló los cambios actuales y que la plataforma conserva más de 50 propuestas reales. | Actualiza la puerta operativa, pero `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR` y no demuestra migraciones, flags, servicios, integridad o UAT productiva. |
+| D-025 | SUPERSEDED 2026-08-18 | La siguiente puerta era cerrar las 21 decisiones del paquete Fase 02B. | La respuesta del propietario la sustituyó por D-026. |
+| D-026 | OWNER_APPROVED / DESIGN BASELINE 2026-08-18 | Las 21 decisiones Fase 02B están cerradas conforme a ADR-0008. | Fue la base histórica para autorizar M1; el estado vigente se registra en D-028. |
+| D-027 | SUPERSEDED / RESOLVED 2026-08-18 | `P2B-BLOCK-001`: cobertura de cuatro evaluaciones, cuatro jueces disponibles, capacidad ocho y sustitución a otro juez eran incompatibles con más de 50 propuestas. | Sustituida por D-031; se conserva como hallazgo histórico. |
+| D-028 | VERIFIED LOCAL 2026-08-18 | M1 implementa rol `judge`, permiso exclusivo, gates exactos, flag fail-closed, redirección segura y shell vacío sin datos. | Se conserva como baseline de aislamiento; no demuestra despliegue productivo. |
+| D-029 | VERIFIED LOCAL 2026-08-18 | M2 implementa `judge_profiles`, alta directa admin, credencial propia, activación derivada, suspensión/reactivación, revocación de sesiones y recovery 2FA administrativo. | Sólo local/test; no crea asignaciones, no exige 2FA y no acredita producción. |
+| D-030 | READY FOR EXPLICIT AUTHORIZATION 2026-08-18 | La siguiente puerta propuesta es M3, limitada a la rúbrica global versionada aprobada. | Usar el prompt canónico de `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`; M4 espera M3 verde y autorización propia. |
+| D-031 | OWNER_APPROVED / `P2B-BLOCK-001 RESOLVED` 2026-08-18 | Cuatro jueces principales evaluarán todas las propuestas elegibles sin límite fijo; el quinto será exclusivamente sustituto con máximo diez reasignaciones activas. | Perfil M2 `primary=NULL`/`substitute=10`; M4 debe impedir carga inicial al sustituto y rechazar la undécima sustitución activa. |
 
 ## Decisiones jurídicas prioritarias v1.1
 
@@ -110,13 +120,13 @@ Siguen abiertas: hora exacta de apertura; fecha de salida; licencia Pixinvent; a
 
 | ID | Estado | Pregunta | Recomendación / supuesto de trabajo | Impacto si cambia |
 | --- | --- | --- | --- | --- |
-| Q-026 | PENDING | ¿La rúbrica provisional es definitiva, con pesos/rangos y puntaje mínimo? | Versionar rúbrica; total calculado por servidor; bloquear cambios tras iniciar evaluación. | **Crítico:** modelo, cálculo y pruebas. |
-| Q-027 | PENDING | ¿Cuántos jueces evaluarán cada proyecto? | Parámetro por convocatoria/categoría; no codificar un número fijo. | Alto: asignación, estado “evaluated” y capacidad. |
-| Q-028 | PENDING | ¿La evaluación será ciega? | Asumir ciega y mostrar sólo información necesaria; definir proceso de anonimización. | **Crítico:** vistas, archivos y PII. |
-| Q-029 | PENDING | ¿Cómo se resuelven empates y recusaciones? | Regla administrativa documentada; nunca selección aleatoria; toda excepción auditada. | **Crítico:** ganador y confianza. |
+| Q-026 | RESOLVED / OWNER_APPROVED | Rúbrica completa, escala, pesos y comentarios. | Pertinencia 20, Claridad 20, Viabilidad 25, Impacto 25, Coherencia 10; escala 0–10/paso 0.5; comentario general 100–2,000 y por criterio opcional hasta 1,000. | Contrato ADR-0008; implementación M3/M6. |
+| Q-027 | RESOLVED / UPDATED 2026-08-18 | Cuatro principales cubren todas las propuestas elegibles sin límite fijo; quinto sustituto exclusivo con máximo diez activas; sin especialidad. | Implementar exactamente en M4, sin carga inicial al sustituto. | Contrato compatible; flujo pendiente. |
+| Q-028 | RESOLVED / RISK ACCEPTED | Ceguera simple estructural; todos los campos sustantivos/anexos evaluables; PII estructurada/residencia/notas/aclaraciones/historial ocultos. | Automatización estructural y nombres/metadatos limpios; autoidentificación dentro del contenido aceptada sin bloqueo. | Implementación M5 y comunicación honesta del riesgo. |
+| Q-029 | PARTIAL RESOLVED / RESULTADOS FUERA DE ALCANCE | Conflictos con catálogo cerrado y reemplazo por admin al quinto sustituto; empate técnico por igualdad a dos decimales. | Resolución del empate/ganador queda fuera de 02B y nunca usa azar; reemplazo admite máximo diez activos. | Consolidación definida; ganador pendiente. |
 | Q-030 | PENDING | ¿Se puede declarar una categoría desierta? | Permitirlo con permiso, razón y acta/registro. | Alto: estados y publicación. |
-| Q-031 | PENDING | ¿Se requiere reapertura de evaluaciones y quién la autoriza? | Permiso separado, razón obligatoria, notificación y auditoría. | Alto: integridad y UX de juez. |
-| Q-032 | PENDING | ¿Cuáles tipos de conflicto y quién resuelve la reasignación? | Catálogo mínimo + texto; conflicto bloquea y notifica a administrador. | Alto: asignaciones y privacidad. |
+| Q-031 | RESOLVED / OWNER_APPROVED | Reapertura por `admin` hasta 20:00, razón 20–1,000, password confirmation y revisión append-only editable hasta 23:59:59; admin puede editar en nombre del juez con actor real. | Implementar sin sobrescribir ni suplantar autoría. | Alto: integridad/auditoría en M7. |
+| Q-032 | RESOLVED / UPDATED 2026-08-18 | Catálogo personal/familiar, profesional/económico, participación u otro explicado; admin resuelve y reasigna manualmente al quinto sustituto. | Varias asignaciones por propuesta; sustituto sólo reemplaza y tiene máximo diez activas. | Alto de implementación/concurrencia; decisión cerrada. |
 
 ### Premio, publicación y comunicación
 
@@ -137,7 +147,7 @@ Siguen abiertas: hora exacta de apertura; fecha de salida; licencia Pixinvent; a
 | --- | --- | --- | --- | --- |
 | Q-041 | PENDING | ¿Formulario de privacidad o sólo recepción por correo? | Bandeja interna mínima que pueda registrar casos de ambos canales. | Medio: alcance y operación. |
 | Q-042 | PENDING | ¿SLA, verificación de identidad y responsables de solicitudes? | Definir con asesoría legal; el sistema sólo apoya el proceso. | **Crítico:** privacidad y acceso. |
-| Q-043 | PENDING | ¿Retención de auditoría, evaluaciones, exports y backups? | Matriz por tipo; backups deben respetar expiración documentada. | **Crítico:** almacenamiento y cumplimiento. |
+| Q-043 | RESOLVED 02B / PENDING global | Retención 02B de 24 meses desde `evaluation_cycle_closed_at`; exports, backups y matriz global conservan contratos separados. | Implementar purga sólo en milestone autorizado y compatible con backups/conservación. | **Crítico:** 02B definido; operación global pendiente. |
 | Q-044 | PENDING | ¿Qué campos exactos deben redactarse en logs y cambios antes/después? | Denylist/allowlist explícita; nunca documentos, tokens, passwords o contenido sensible completo. | Alto: observabilidad segura. |
 
 ### AWS EC2 Ubuntu y operación

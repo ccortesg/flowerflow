@@ -1,38 +1,47 @@
 # Diagnóstico vigente por módulo y rol — 2026-08-17
 
-**Corte de evidencia:** 2026-08-17 22:58 MST (`America/Hermosillo`)
+**Corte de evidencia:** 2026-08-18 MST (`America/Hermosillo`)
 
 **Checkout:** `/home/ccortesg/workspace/flowerflow`
 
-**Rama/SHA auditados:** `codex/submission-deadline-extension` / `e2f4345`
-**Naturaleza:** auditoría local de código, documentación y configuración; no demuestra que este SHA esté desplegado.
+**Rama/SHA auditados:** `codex/submission-deadline-extension` / `e0fa0455e61afcb38593b62ae0d983f75a92b210`
+**Naturaleza:** auditoría local de código, documentación y configuración. El propietario confirmó la instalación productiva de los cambios actuales, pero no vinculó esa instalación a un SHA verificable.
+
+**Estado productivo informado:** `OWNER_CONFIRMED_DEPLOYED`
+
+**SHA productivo:** `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`
 
 Este documento es la fuente vigente para responder “qué existe hoy”. Los documentos con fechas anteriores conservan historia, decisiones y evidencia de sus milestones, pero no deben usarse solos para inferir el estado actual.
+
+> **Adenda Fase 02B M2 — 2026-08-18:** las decisiones permanecen `OWNER_APPROVED` y `P2B-BLOCK-001` quedó resuelto: cuatro jueces principales evaluarán todas las propuestas elegibles sin límite fijo; el quinto será exclusivamente sustituto con capacidad diez. M1/M2 quedaron implementados y verdes exclusivamente en local/test, incluido el perfil primary/substitute. La preparación 02B es 90 % y el avance funcional 20 %. M3 es la siguiente puerta; M4 continúa no implementado/no autorizado.
 
 ## Resultado ejecutivo
 
 | Lectura | Avance | Interpretación correcta |
 |---|---:|---|
-| Producto maestro completo | **58 %** | Incluye sitio, identidad, elegibilidad, propuestas, backoffice, jueces, evaluación, ganadores, resultados, privacidad, operación y producción. La vertical recepción/admisibilidad ya cerró UAT; los módulos 7 y 8 siguen sin existir. |
-| Alcance local expresamente aprobado | **96 %** | Fase 01, Fase 02A, cuarta categoría, exportación, plazo y sincronización jurídica v1.1 están implementadas, automatizadas y recorridas por rol. Restan decisiones de reaceptación, alcance temático de accesibilidad y evidencia histórica v1.0. |
-| Runtime aislado del release candidate | **96 %** | `scripts/serve_local_testing.sh` demuestra ambiente/base/cuenta, exige catálogos, habilita sólo flags UAT y mantiene resultados apagados. `flowerflow_testing` terminó 12/12, sembrada y sin cuentas sintéticas. |
+| Producto maestro completo | **63 %** | Incluye sitio, identidad, elegibilidad, propuestas, backoffice, jueces, evaluación, ganadores, resultados, privacidad, operación y producción. M2 añade el ciclo operativo de cuenta juez; rúbrica, asignación/evaluación sustantiva y módulo 8 siguen sin existir. |
+| Alcance local expresamente aprobado | **97 %** | Fase 01, Fase 02A, cuarta categoría, exportación, plazo, jurídicos v1.1 y M1/M2 están implementados, automatizados y recorridos por rol. Restan gates externos y de operación que este porcentaje local no acredita. |
+| Runtime aislado del release candidate | **97 %** | El guard demuestra ambiente/base/cuenta exactos. `flowerflow_testing` terminó 14/14; M2 usó sólo cuatro cuentas sintéticas, correo array y sesiones database. Resultados permanecieron apagados. |
 | Disponibilidad del runtime local primario | **42 %** | Se preservó sin tocarlo: el baseline previo tenía registro/recepción/admisibilidad apagados, cuatro migraciones funcionales pendientes y límite local de tres; el árbol agrega además la migración v1.1. No es el runtime autoridad del RC. |
-| Preparación de la rama actual para producción | **34 %** | Hay código, documentos v1.1, suite y UAT local, pero no existe evidencia de staging, migración productiva, worker/scheduler, SMTP, backup/restore, capacidad, monitoreo ni autorización de despliegue. |
+| Preparación técnica independiente de la rama para producción | **34 %** | Sin cambio: hay código, documentos v1.1, suite y UAT local, pero no evidencia independiente de SHA/migraciones/flags, worker/scheduler, SMTP, integridad, smoke, capacidad o monitoreo productivos. |
+| Paso de instalación productiva informado por el propietario | **100 % testimonial** | `OWNER_CONFIRMED_DEPLOYED`: el propietario confirma instalación y más de 50 propuestas reales. No se incorpora al porcentaje funcional ni sustituye evidencia técnica. |
+| Verificación técnica independiente de producción en esta tarea | **0 %** | No hubo acceso a URL pública, AWS, EC2, SSH/SSM, APIs, MySQL, logs o servicios externos; `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`. |
 
-La cifra **58 %** no contradice que el alcance local aprobado esté en **96 %**: la primera mide el plan maestro completo. El producto ya tiene una vertical de recepción y admisibilidad validada; evaluación, ganadores, resultados y operación productiva siguen fuera o ausentes.
+La cifra **63 %** no contradice que el alcance local aprobado esté en **97 %**: la primera mide el plan maestro completo; la segunda, sólo los milestones ya autorizados. La confirmación del despliegue cambia una puerta operativa, pero no demuestra M1/M2 en producción ni aumenta evaluación sustantiva, ganadores o resultados.
 
 ## Evidencia verificada en este corte
 
-- Baseline Git confirmado en rama `codex/submission-deadline-extension` y SHA `e2f4345…`; el árbol ya estaba sucio por documentación/PDF proporcionados y se preservó sin stage, commit, push ni sobrescritura.
+- Baseline Git confirmado en rama `codex/submission-deadline-extension`; `HEAD`, `origin/codex/submission-deadline-extension` y ancestro común coinciden en `e0fa0455e61afcb38593b62ae0d983f75a92b210`. El primer corte de diseño era limpio; al iniciar M1 existían cambios documentales preexistentes, inventariados y preservados en su ExecPlan.
+- El propietario confirma el 2026-08-18 que los cambios actuales fueron instalados, la plataforma sigue publicada y contiene más de 50 propuestas reales: `OWNER_CONFIRMED_DEPLOYED`. Codex no obtuvo evidencia productiva independiente y conserva `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`.
 - Stack efectivo: Laravel 12.64.0, PHP 8.3.33, Node 22.23.1, Yarn 1.22.22 y MySQL client 8.0.46.
-- 66 rutas totales registradas con flags actuales; 41 rutas propias al excluir rutas de paquetes.
-- 104 archivos PHP bajo `app/`, 12 migraciones y 24 clases de prueba.
-- `flowerflow_testing`: 12/12 migraciones aplicadas; seis versiones jurídicas, una v1.1 activa por tipo, cuatro categorías y cero usuarios/aceptaciones al cierre.
-- Suite completa vigente: **109 pruebas y 1,049 aserciones**, sin fallos.
+- 52 rutas propias al excluir rutas de paquetes; M2 añade `/juez/estado` y `/panel/jueces`.
+- 133 archivos PHP bajo `app/`, 14 migraciones y 26 clases de prueba.
+- `flowerflow_testing`: 14/14 migraciones aplicadas; M2 pasó forward/rollback/forward preservando un usuario sintético y el seeder no crea cuentas/perfiles juez.
+- Suite completa vigente: **125 pruebas y 1,316 aserciones**; M1+M2 dirigido: 16 pruebas y 267 aserciones.
 - Pint, Composer validate, requisitos de plataforma, Composer audit, JSON de menús y build Vite: verdes.
-- Build: 784 módulos y tres assets; catálogo de 97 iconos verificado.
+- Build: 784 módulos y tres assets; catálogo de 98 iconos verificado.
 - Yarn: un advisory **bajo** en Quill 2.0.3 (`GHSA-v3m3-f69x-jf25`), sin versión corregida publicada. La sanitización servidor reduce el vector, pero no elimina la deuda de dependencia.
-- UAT Firefox por rol en 1440/768/360: enlaces/documentos, alta y aceptación v1.1, perfil, cuatro propuestas/rechazo de quinta, archivo privado/envío/folio, aclaración/residencia/admisión, panel/paginación, 2FA, XLSX/expiración/purga, cierre, 403/404/IDOR, teclado, foco, zoom/reflow y consola.
+- UAT Firefox M2: alta/listado/detalle admin, pending/active/suspended, recovery y revocación efectiva de sesión, reactivación, 403/404, 1440/768/390, teclado/foco, reflow, simulación CSS zoom 200 % sin overflow y consola limpia; no se afirma zoom nativo.
 - Scheduler de código: sólo purga horaria de XLSX. Se validó manualmente su comando en local; la ejecución real mediante cron/worker externo no fue verificada.
 
 ## Cómo se calcularon los porcentajes
@@ -50,17 +59,17 @@ Cada funcionalidad se revisó en cinco dimensiones, de 0 a 20 puntos cada una:
 | Módulo | Peso | Avance | Aporte ponderado |
 |---|---:|---:|---:|
 | 1. Sitio público y convocatoria | 8 % | 95 % | 7.60 |
-| 2. Identidad, cuenta y acceso | 10 % | 64 % | 6.40 |
+| 2. Identidad, cuenta y acceso | 10 % | 78 % | 7.80 |
 | 3. Perfil, residencia y admisibilidad | 12 % | 88 % | 10.56 |
 | 4. Proyecto, equipo, archivos y envío | 16 % | 73 % | 11.68 |
 | 5. Backoffice y revisión | 12 % | 64 % | 7.68 |
 | 6. Legal, contenido y configuración | 8 % | 84 % | 6.72 |
-| 7. Jueces, asignación y evaluación | 12 % | 0 % | 0.00 |
+| 7. Jueces, asignación y evaluación | 12 % | 20 % | 2.40 |
 | 8. Ganadores y resultados públicos | 6 % | 0 % | 0.00 |
-| 9. Comunicaciones transaccionales | 5 % | 60 % | 3.00 |
-| 10. Reportes, auditoría y privacidad | 5 % | 42 % | 2.10 |
-| 11. QA, infraestructura y operación | 6 % | 45 % | 2.70 |
-| **Total** | **100 %** |  | **58.44 % → 58 %** |
+| 9. Comunicaciones transaccionales | 5 % | 63 % | 3.15 |
+| 10. Reportes, auditoría y privacidad | 5 % | 46 % | 2.30 |
+| 11. QA, infraestructura y operación | 6 % | 48 % | 2.88 |
+| **Total** | **100 %** |  | **62.77 % → 63 %** |
 
 El peso mide importancia en el plan maestro, no esfuerzo consumido ni cobertura de líneas.
 
@@ -78,19 +87,20 @@ El peso mide importancia en el plan maestro, no esfuerzo consumido ni cobertura 
 
 La versión vigente v1.1 ya alinea cuatro categorías, máximo cuatro y cierre al 23 de agosto. Los PDF v1.0 quedan sólo como historia; persiste un incidente de integridad porque el binario físico de Mecánica v1.0 no coincide con el hash registrado originalmente.
 
-### 2. Identidad, cuenta y acceso — 64 %
+### 2. Identidad, cuenta y acceso — 78 %
 
 | Funcionalidad principal | Avance | Estado/evidencia | Falta para 100 % |
 |---|---:|---|---|
 | Registro, login, logout y verificación | 98 % | Fortify, vistas propias, perfil transaccional, pruebas y UAT real con verificación controlada y correo array. | SMTP/entregabilidad externa y activación productiva. |
 | Reset y política de contraseña | 90 % | Regla backend única, vistas accesibles, notificación cifrada en cola y no 500 al fallar dispatch. | Prueba de entregabilidad real y operación de `failed_jobs`. |
-| RBAC/Policies actuales | 85 % | Roles sembrados `participant`, `reviewer`, `admin`; permisos granulares y Policies de recursos. | Adoptar nombres/roles finales del plan maestro y matriz completa por ruta. |
-| 2FA privilegiado | 70 % | Alta, confirmación, desafío TOTP y recuperación están automatizados y se recorrieron en navegador. | Hoy es **opcional**; falta exigirlo y definir recuperación operativa. |
-| Confirmación de contraseña crítica | 40 % | Se exige en creación/descarga de exportaciones. | Aplicarla según riesgo a resoluciones, gestión RBAC/configuración y acciones futuras. |
-| Suspensión y revocación de sesiones | 0 % | No existe estado de suspensión ni flujo de revocación administrativa. | Modelo, middleware, acción, auditoría, UI y pruebas. |
-| Invitaciones de integrante/juez | 0 % | No hay entidad, token ni endpoints. | Contrato de negocio, expiración, un solo uso, aceptación y pruebas. |
+| RBAC/Policies y gates de shell | 98 % | Roles `participant`, `reviewer`, `judge`, `admin`; permiso exclusivo de juez, middleware de rol exacto, estado activo, rutas separadas y matriz positiva/negativa. | Mantener el escritor exclusivo en M3+ y automatizar inventario global de rutas/permisos. |
+| Shell mínimo de juez M1/M2 | 100 % | `/juez` sólo con auth+verified+rol exacto+permiso+perfil active+flag; pending/suspended reciben estado seguro, UAT responsive y consola limpia. | Su contenido de evaluación pertenece a M4+ y no reduce el cierre de cuenta M2. |
+| 2FA privilegiado | 82 % | El juez conserva 2FA opcional; recovery sólo admin con permiso, razón, contraseña, auditoría, aviso y revocación. | Entregabilidad/operación externa y políticas distintas para otros roles. |
+| Confirmación de contraseña crítica | 60 % | Exportaciones y acciones M2 de suspensión/reactivación/recovery la exigen. | Aplicarla según riesgo a resoluciones, RBAC/configuración y acciones futuras. |
+| Suspensión y revocación de sesiones de juez | 100 % | Estado respaldado, sesiones database fail-closed, remember token, auditoría, UI, pruebas y navegador. | Otros roles/casos pertenecen a un alcance separado. |
+| Alta de juez | 100 % | Alta directa admin, correo normalizado, password aleatoria no expuesta, broker reset, activación por prerrequisitos y mail resiliente. | Invitaciones de integrantes pertenecen a otro contrato. |
 
-Riesgo de evolución: las rutas participantes exigen `auth` y `verified`, no el rol `participant`. Un futuro `judge` sin permisos de panel queda fuera del backoffice, pero podría caer en el shell participante; antes de crear ese rol debe definirse si los roles son excluyentes o acumulables y añadir el gate correspondiente.
+M1 cerró el riesgo de descarte y M2 añadió perfil activo/suspensión/recovery sin relajar gates. Una cuenta pending/suspended sólo recibe estado seguro y una cuenta cero/multirol falla cerrada.
 
 ### 3. Perfil, residencia y admisibilidad — 88 %
 
@@ -137,17 +147,26 @@ El runtime aislado valida cuatro propuestas y rechaza la quinta. El `.env` prima
 | Funcionalidad principal | Avance | Estado/evidencia | Falta para 100 % |
 |---|---:|---|---|
 | Documentos y hashes | 96 % | Seis PDF preservados; v1.1 inmutable/activa por tipo, hashes exactos y 28 páginas revisadas. | Resolver recuperación/publicación inequívoca del original v1.0. |
-| Aceptaciones | 94 % | Registro/envío guardan propósitos, FK, versión/hash real; pruebas y alta browser v1.1. | Decidir reaceptación de cuentas v1.0. |
+| Aceptaciones | 94 % | Registro/envío guardan propósitos, FK, versión/hash real; pruebas y alta browser v1.1. El propietario resolvió continuidad v1.0 sin backfill. | Evidencia operativa autorizada en el ambiente objetivo y política futura de retención/ARCO. |
 | Configuración tipada | 92 % | Flags, límites, fechas, jurídicos, colas, seguridad y hosts centralizados; runtime UAT valida drift/catálogos. | Validación equivalente en el proceso de release externo. |
 | Categorías por datos | 92 % | Cuatro activas, ordenadas, sembradas y respaldadas por v1.1. | CRUD/admin sólo si se aprueba. |
-| Coherencia jurídica vigente | 75 % | Cantidades, fecha, responsable y vínculos alineados; matriz página/sección completa. | Confirmar superposición de accesibilidad y política de reaceptación. |
+| Coherencia jurídica vigente | 75 % | Cantidades, fecha, responsable y vínculos alineados; superposición y continuidad v1.0 resueltas por el propietario. | Mantener evidencia histórica y verificar futuras versiones/cambios sin sustitución silenciosa. |
 | Licencia Materialize/Pixinvent | 0 % | No hay evidencia comercial en repositorio. | Confirmación documental antes de release. |
 
-### 7. Jueces, asignación y evaluación — 0 %
+### 7. Jueces, asignación y evaluación — 20 %
 
-No existen rol sembrado, perfiles, invitaciones, asignaciones, conflictos, rúbricas, criterios, evaluaciones, puntuaciones, rutas, Policies, vistas ni pruebas funcionales. Sólo hay diseño documental y pruebas negativas que simulan un rol `judge` sin permisos para demostrar que no accede a admisibilidad.
+| Funcionalidad principal | Avance | Estado/evidencia | Falta para 100 % |
+|---|---:|---|---|
+| Rol, permiso y exclusividad M1 | 100 % | Migración/seeder idempotentes; `AssignExclusiveBusinessRole`; admin no hereda el permiso exclusivo. | Reutilizar el contrato en todo escritor futuro. |
+| Gates, redirección y shell mínimo M1 | 100 % | Participant/panel/judge separados; cero/multirol fail-closed; `/juez` vacío detrás de flag. | Mantener invariantemente en M3+. |
+| Perfil y alta directa M2 | 100 % | `judge_profiles`, `/panel/jueces`, password propia, activación, suspensión/reactivación, sesiones y recovery 2FA; 165 aserciones M2 y UAT Firefox. | Operación de correo externa no forma parte del cierre local. |
+| Rúbrica M3 | 0 % | Contrato aprobado, sin tablas/código. | Milestone separado. |
+| Asignaciones/conflictos M4 | 0 % | Sin tablas/código; capacidad/cobertura ya definidas con cuatro principales y un sustituto. | Ejecutar sólo tras M3 verde y autorización M4 separada. |
+| Paquete ciego M5 | 0 % | Sin proyección/allowlist implementada. | Milestone separado después de dependencias. |
+| Evaluación/cálculo/reapertura M6–M7 | 0 % | Sin modelos, rutas, vistas ni puntajes. | Milestones separados; total sólo servidor y revisión append-only. |
+| Notificaciones/QA/RC M8–M10 | 0 % | Sólo contrato documental. | Implementar y validar por milestone. |
 
-Pendientes bloqueantes antes de programar: número de jueces, evaluación ciega, reglas de asignación, recusación/conflicto, rúbrica versionada, rangos/pesos, cierre, reapertura, desempate y operación. Deben aprobarse en una propuesta/ExecPlan separado; no se deben inferir.
+La preparación documental/técnica es 90 %. M1/M2 no crearon asignaciones ni acceso a propuestas. La próxima tarea implementable es exclusivamente M3. `P2B-BLOCK-001` está resuelto mediante cuatro principales sin límite fijo y un quinto sustituto exclusivo con capacidad diez; M4 espera M3 verde y autorización propia.
 
 ### 8. Ganadores y resultados públicos — 0 %
 
@@ -162,7 +181,7 @@ Pendientes: empate, categoría desierta, premio exacto, datos publicables, conse
 | Verificación/reset | 90 % | HTML/texto en español, cola cifrada, retries y respuesta resiliente. | SMTP/entregabilidad y operación de fallos real. |
 | Acuse de propuesta | 90 % | Folio/categoría, sin adjuntos, reenvío limitado y post-commit. | Métrica de entrega e idempotencia operativa por evento. |
 | Admisibilidad | 90 % | Cinco variantes, sin contenido sensible, sin rollback ante falla y UAT con correo array. | Worker/SMTP, rebotes y buzón staging. |
-| Invitaciones/asignaciones/evaluación/resultados | 0 % | No existen porque los módulos tampoco. | Implementar después de aprobar Fase 02B/cierre. |
+| Alta/asignaciones/evaluación/resultados | 0 % | La alta existe; asignaciones/evaluación/resultados no. Las invitaciones de juez fueron descartadas. | Implementar por milestone; M4 ya tiene contrato de capacidad, pero no autorización. |
 | Comunicaciones administrativas | 10 % | Sólo mailto/contacto; no hay módulo. | Permisos, plantillas, audiencia, auditoría y anti-duplicado. |
 
 ### 10. Reportes, auditoría y privacidad — 42 %
@@ -180,52 +199,55 @@ Pendientes: empate, categoría desierta, premio exacto, datos publicables, conse
 
 | Funcionalidad principal | Avance | Estado/evidencia | Falta para 100 % |
 |---|---:|---|---|
-| Pruebas automatizadas locales | 98 % | 109/1,049, MySQL protegido, legales v1.1, 503/CSP, archivos, permisos, fechas y concurrencia. | Cobertura de módulos futuros y CI permanente. |
+| Pruebas automatizadas locales | 98 % | 125/1,316, MySQL protegido, legales v1.1, 503/CSP, M1/M2, función/capacidad de juez, archivos, permisos, estados, sesiones, fechas y concurrencia. | Cobertura de módulos futuros y CI permanente. |
 | QA navegador | 95 % | UAT Firefox actual por cuatro roles, tres viewports, teclado/foco/zoom, IDOR, 2FA, XLSX y cierre. | Matriz multi-browser permanente y UAT firmada por owner. |
 | Dependencias/build | 90 % | Locks, build reproducible, Composer limpio. | Resolver Quill bajo y automatizar el gate en CI. |
-| Staging/producción actual | 10 % | Runbooks y una release histórica pública documentada. | Inventario autorizado, staging, release del SHA actual y smoke por rol. |
+| Staging/producción actual | 10 % | `OWNER_CONFIRMED_DEPLOYED` acredita testimonialmente la instalación; no existe evidencia técnica independiente del SHA, migraciones, flags o smoke. | Evidencia separada de SHA/runtime, integridad, smoke/UAT por rol, servicios y monitoreo. |
 | Backup/restore/rollback | 15 % | Estrategia escrita; no hay restore drill vigente. | Backup verificado, restauración medida y rollback ensayado. |
 | Worker/scheduler/SMTP/monitoreo | 10 % | Configuración y comandos existen. | Servicios reales, alarmas, logs, `failed_jobs`, entregabilidad y capacidad. |
 
 ## Estado por rol de usuario
 
-Los únicos roles creados por el seeder actual son `participant`, `reviewer` y `admin`. Los demás son roles del plan maestro, no cuentas operables.
+El seeder actual crea `participant`, `reviewer`, `judge` y `admin`. `judge` sólo tiene el permiso mínimo de shell y no se crean cuentas juez automáticamente; los demás actores del plan maestro no son cuentas operables.
 
 | Rol planificado | Avance funcional | Disponibilidad local actual | Acceso que sí existe | Pendientes para acceso completo |
 |---|---:|---:|---|---|
 | Visitante | 90 % | 96 % | Landing, cuatro categorías, FAQ, documentos v1.1, login, recuperación y registro UAT. | Resultados fuera de alcance, sitemap/OG y decisiones jurídicas residuales. |
 | Participante | 82 % | 96 % | Auth, verificación controlada, perfil, cuatro propuestas, archivo privado, envío/folio, aceptaciones v1.1 y seguimiento de admisibilidad. | Corrección versionada, retiro, colaboración por cuentas y resultados futuros. |
 | Revisor de elegibilidad | 90 % | 96 % | Panel, listado/detalle/descargas, aclaración, residencia, resolución y aislamiento de nota interna verificados. | Reapertura/SLA, 2FA obligatoria y password confirmation ampliada. |
-| Administrador de convocatoria | 68 % | 92 % | Dashboard, paginación, propuestas, descargas, admisibilidad, 2FA opcional y XLSX completo/expirable. | Gestión de configuración/roles, jueces, resultados, audit UI y operación productiva. |
+| Administrador de convocatoria | 75 % | 94 % | Además del panel actual, gestiona alta/estado/suspensión/recovery de jueces con auditoría. | Rúbrica, asignaciones, evaluación, resultados, audit UI y operación productiva. |
 | Integrante de equipo | 5 % | 0 % | Se guarda como fila dentro del equipo, sin identidad propia. | Invitación, cuenta, aceptación, permisos, acceso y baja. |
-| Juez | 0 % | 0 % | Sólo existe como concepto documental y actor negativo de una prueba. | Módulo 7 completo y aislamiento explícito de rutas participantes. |
+| Juez | 20 % | 30 % con flag test | Cuenta administrable, función primary/substitute, capacidad null/10, credencial propia, estados pending/active/suspended y `/juez` vacío; sin participant/panel/PII/archivos. | M3–M10 separados; M4 espera M3 verde y autorización propia. |
 | Soporte de privacidad | 0 % | 0 % | Ninguno. | Rol/permisos y módulo ARCO aprobado. |
 | Auditor | 10 % | 0 % | Existen datos de auditoría, no acceso dedicado. | Rol read-only, UI, scopes, masking y export. |
 | Superadministrador | 32 % | 25 % | Comando seguro de admin, RBAC base y 2FA opcional. | Rol diferenciado, gestión de permisos/configuración, 2FA obligatoria, password confirm, break-glass y auditoría reforzada. |
 
-### Matriz efectiva de los tres roles actuales
+### Matriz efectiva de los cuatro roles actuales
 
-| Capacidad | participant | reviewer | admin |
-|---|---:|---:|---:|
-| Ver/editar perfil propio | Sí | Técnicamente sí, aunque `/inicio` redirige al panel | Técnicamente sí, aunque `/inicio` redirige al panel |
-| Crear/editar/enviar propuesta | Sí con flags/perfil/plazo; personal organizador se bloquea al finalizar | Bloqueado al finalizar; las rutas previas no tienen middleware de rol | Bloqueado al finalizar; las rutas previas no tienen middleware de rol |
-| Ver propuesta propia | Sí | Sí si propia o por `view submissions` | Sí si propia o por `view submissions` |
-| Entrar a `/panel` | No | Sí | Sí |
-| Ver propuestas de todas las cuentas | No | Sí | Sí |
-| Descargar anexos de propuesta | Propios | Sí | Sí |
-| Operar admisibilidad | Responder/cargar sólo en expediente propio | Sí | Sí |
-| Descargar residencia | Propia solicitud | Sí | Sí |
-| Exportar XLSX global | No | No | Sí |
-| Gestionar 2FA de su cuenta | No desde navegación participante | Sí | Sí |
+| Capacidad | participant | reviewer | admin | judge |
+|---|---:|---:|---:|---:|
+| Ver/editar perfil participante | Sí | No, 403 | No, 403 | No, 403 |
+| Crear/editar/enviar propuesta | Sí con flags/perfil/plazo | No, 403 | No, 403 | No, 403 |
+| Ver propuesta desde superficie participante | Sólo propia por Policy | No, 403 | No, 403 | No, 403 |
+| Descargar anexo por ruta compartida | Sólo propio por Policy | Sí con permisos | Sí con permisos | No, 403 |
+| Entrar a `/panel` | No | Sí | Sí | No, 403 |
+| Entrar a `/juez` con flag activo | No, 403 | No, 403 | No, 403 | Sí; estado vacío sin datos |
+| Entrar a `/juez` con flag apagado | No | No | No | 404; `/inicio` redirige a estado seguro |
+| Operar admisibilidad | Responder/cargar sólo en expediente propio | Sí | Sí | No, 403 |
+| Descargar residencia | Propia solicitud | Sí | Sí | No, 403 |
+| Exportar XLSX global | No | No | Sí | No, 403 |
+| Gestionar/recuperar 2FA | No desde navegación participante | Sí en su cuenta | Sí en su cuenta y recovery de juez con permiso/step-up | Enrolamiento propio opcional; recovery sólo admin, sin ver secretos |
+
+Una cuenta autenticada sin rol o con múltiples roles no corresponde a ninguna columna válida: recibe `/cuenta/acceso`, sin navegación ni datos de participant, judge o panel.
 
 La “disponibilidad local” de esta tabla corresponde exclusivamente al runtime aislado `flowerflow_testing`; no describe el `.env` primario ni producción.
 
 ## Desalineaciones entre código, runtime y documentación
 
 1. **Runtime primario preservado:** `config/flowerflow.php` y `.env.example` usan cuatro; el `.env` primario auditado conserva tres. El RC no lo usa ni lo modificó.
-2. **Migraciones:** el diagnóstico previo de `flowerflow` registró cuatro migraciones funcionales pendientes; no se reconectó por la prohibición expresa y el árbol agrega ahora v1.1. `flowerflow_testing` quedó 12/12.
+2. **Migraciones:** el diagnóstico previo de `flowerflow` registró migraciones funcionales pendientes; no se reconectó por la prohibición expresa. `flowerflow_testing` quedó 14/14; M1/M2 pasaron forward/rollback/forward y M2 preservó un usuario sintético preexistente.
 3. **Flags:** los defaults siguen apagando registro/recepción/resultados/admisibilidad. El script UAT los habilita temporalmente salvo resultados, después de validar base, catálogos y documentos activos.
-4. **Producción:** existe evidencia pública histórica del commit `26256e3`, no evidencia de despliegue de `e2f4345`. No se debe extrapolar.
+4. **Producción:** el propietario registra `OWNER_CONFIRMED_DEPLOYED`, pero el SHA exacto y la evidencia técnica siguen `POR_CONFIRMAR`. No se debe convertir el SHA local `e0fa0455…` en SHA productivo por inferencia.
 5. **2FA:** documentación antigua decía “2FA privilegiado” como terminado; el comportamiento actual es enrolamiento opcional, no enforcement.
 6. **Plan maestro:** documentos históricos mezclaban el MVP completo con el alcance recortado Fase 01/02A. Este diagnóstico separa ambas medidas.
 7. **Rutas demo:** los JSON heredados conservan entradas demo, pero el layout Flower Flow activo no los usa para la navegación funcional. Sigue siendo deuda de limpieza, no evidencia de acceso real.
@@ -235,17 +257,15 @@ La “disponibilidad local” de esta tabla corresponde exclusivamente al runtim
 
 ## Riesgos priorizados
 
-### P0 — impiden declarar producción lista, no el RC local
+### P0 — impiden declarar producción verificada independientemente o iniciar el milestone afectado de Fase 02B
 
-1. Sin staging/UAT del propietario, backup restaurado, inventario/capacidad EC2, worker/scheduler, SMTP ni monitoreo para el SHA actual.
-2. No hay autorización de migración, release, despliegue ni rollback productivo.
-3. Fase 02B y resultados carecen de reglas aprobadas; implementarlos ahora exigiría inventar negocio.
+1. `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; migraciones, flags, integridad, smoke/UAT, worker/scheduler, SMTP y monitoreo carecen de evidencia independiente en esta tarea.
+2. `P2B-BLOCK-001` está resuelto: cuatro principales sin límite fijo y quinto sustituto exclusivo con capacidad diez; el riesgo residual es superar diez sustituciones activas.
 
 ### P1 — deben cerrarse antes de ampliar roles o activar recepción
 
-1. Exigir 2FA a roles privilegiados, completar password confirmation y suspensión/revocación.
-2. Definir exclusión o compatibilidad entre `participant` y futuros roles antes de sembrar `judge`.
-3. Decidir antimalware/storage productivo y resolver la operación del advisory bajo de Quill.
+1. El propietario decidió 2FA opcional para juez; M2 implementó localmente recuperación administrativa, suspensión/revocación y password confirmation. Resta acreditar operación externa y mantener estos controles en releases futuros.
+2. Decidir antimalware/storage productivo y resolver la operación del advisory bajo de Quill.
 
 ### P2 — calidad y mantenibilidad
 
@@ -258,10 +278,11 @@ P2 503/CSP quedó resuelto el 2026-08-18; ya no forma parte de esta lista.
 
 ## Siguiente secuencia óptima
 
-1. **Publicar un SHA exacto:** incluir v1.1, las decisiones documentadas y la vista 503 resuelta; no sustituir nuevamente los PDF bajo la misma identidad.
-2. **Generar el runbook ejecutable por el propietario:** sólo comandos para actualizar el checkout directo `/var/www/flowerflow`, instalar Composer, compilar Yarn/Vite, limpiar/recrear cachés, migrar de forma aditiva y reiniciar procesos. No crear ni asumir `releases/current/shared`; Codex no accede ni ejecuta producción.
-3. **Ejecutar por el propietario:** usar el respaldo que ya confirmó haber realizado, preservar las más de 50 propuestas y no ejecutar seeders ni comandos destructivos.
-4. **Después del release operativo**, diseñar Fase 02B en un ExecPlan separado; jueces/evaluación y ganadores/resultados permanecen fuera de alcance.
+1. **Autorizar y ejecutar sólo M3:** usar el prompt vigente para rúbrica global versionada en local/test.
+2. **Cerrar M3 con evidencia:** no avanzar hasta migración reversible, suite, permisos negativos, UAT, build, rollback y documentación verdes.
+3. **No mezclar M4 con M3:** M4 ya no tiene bloqueo decisorio, pero sólo puede proponerse después de M3 verde mediante autorización separada.
+4. **Preservar la corrección de capacidad:** cuatro principales sin límite fijo; quinto sólo sustituciones, máximo diez activas y undécima rechazada.
+5. **Mantener separados carriles futuros:** M3–M10 requieren sus propios gates; ganadores/resultados, ARCO, producción y cambios de infraestructura permanecen fuera.
 
 ## Prompt ejecutado para este release candidate
 
@@ -326,7 +347,221 @@ No hagas stage, commit, push ni despliegue. No toques EC2, DNS, TLS, SMTP real, 
 8. riesgos residuales, rollback y siguiente prompt recomendado.
 ```
 
-## Prompt óptimo siguiente — generar el runbook de instalación y compilación para ejecución del propietario
+## Prompt óptimo siguiente vigente — implementar únicamente Milestone 3
+
+La fuente canónica, completa y ejecutable está en `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`, sección 21. Este diagnóstico conserva a continuación una versión operativa abreviada; cualquier ejecución debe usar el bloque canónico completo y toda actualización futura debe modificarse primero allí para evitar divergencia:
+
+```text
+Trabaja exclusivamente en el repositorio local `/home/ccortesg/workspace/flowerflow`.
+
+Lee completamente antes de modificar: `AGENTS.md`, `.agent/PLANS.md`, `.agent/execplans/flowerflow-phase-02b-evaluation-design.md`, `.agent/execplans/flowerflow-phase-02b-m1-judge-rbac.md`, `.agent/execplans/flowerflow-phase-02b-m2-judge-profile-onboarding.md`, `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`, `docs/19-phase-02b-m2-implementation-report-2026-08-18.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/product-spec.md`, `docs/01-functional-scope.md`, `docs/02-architecture.md`, `docs/03-data-model.md`, `docs/04-security-privacy.md`, `docs/05-ux-ui.md`, `docs/06-roadmap-backlog.md`, `docs/08-testing-qa.md`, `docs/09-risk-register.md`, `docs/10-open-questions.md`, `docs/11-operations-handoff.md`, `docs/requirements-traceability.md` y ADR 0001/0003/0004/0005/0006/0007/0008.
+
+Objetivo: implementar exclusivamente el Milestone 3 de Fase 02B: rúbrica global versionada, validación de su contrato, ciclo administrativo borrador→activa→sustituida, inmutabilidad y trazabilidad. Conserva sin regresión M1 y M2.
+
+No implementes asignaciones, paquetes ciegos, conflictos, evaluaciones, borradores de evaluación, captura de puntajes, consolidación, reapertura, notificaciones de evaluación, retención/purga, ganadores o resultados. No crees jueces ni cambies perfiles/capacidad. No implementes todavía un calculador de evaluaciones: M3 sólo persiste y valida el contrato que M6 consumirá; ningún total proveniente del navegador debe aceptarse ahora o después.
+
+Contrato `OWNER_APPROVED`: rúbrica global para cuatro categorías; criterios exactos `pertinence`/Pertinencia/20 %, `clarity`/Claridad/20 %, `feasibility`/Viabilidad/25 %, `impact`/Impacto/25 % y `coherence`/Coherencia/10 %; escala 0–10, paso 0.5; total futuro 0–100 sólo servidor, cuatro decimales internos, dos visibles y `HALF_UP`; comentario general futuro obligatorio 100–2,000 y por criterio opcional hasta 1,000; cada evaluación futura conserva versión exacta; activa/referenciada nunca se modifica o borra; activar nueva versión sustituye la anterior sin reescribirla y existe como máximo una activa global por competencia.
+
+M1/M2 están `GO LOCAL/TEST` y son invariantes. Registra `P2B-BLOCK-001=RESOLVED`: cuatro principales sin límite fijo y quinto sustituto exclusivo con capacidad diez. M3 no implementa asignaciones ni modifica esta decisión; M4 espera M3 verde y autorización propia.
+
+Antes de modificar: confirma `pwd`, Git toplevel, rama, SHA local/remoto, ancestro común, status/diff/preexistentes; preserva cambios sin stage/commit/push/reset/clean; crea `.agent/execplans/flowerflow-phase-02b-m3-versioned-rubric.md`; usa sólo MySQL local `flowerflow_testing`/`flowerflow_testing_user`/loopback/datos sintéticos; antes de base demuestra `APP_ENV=testing`, MySQL, host/base/usuario exactos y `SELECT DATABASE()`; detente si difiere. No accedas a producción, URL pública, AWS, EC2, SSH/SSM, servicios externos o datos/logs productivos.
+
+Implementación autorizada:
+- migraciones aditivas/reversibles para versión de rúbrica ligada a competencia y criterios ordenados; ULID, versión positiva única, estados enum `draft`, `active`, `superseded`, precisión/escala/paso/límites de comentarios y actores/fechas de activación/sustitución;
+- criterios con código estable, etiqueta, descripción aprobada nullable, peso, mínimo, máximo, paso y orden; FKs, índices, unicidades/checks MySQL y validación server-side;
+- no inventar descripciones; si sólo existe el nombre, dejar null y `POR_CONFIRMAR` sin bloquear el contrato numérico;
+- exigir exactamente cinco códigos/orden/pesos, suma 100.0000, escala 0–10, paso 0.5, precisión 4/2, `HALF_UP` y límites 100/2,000/1,000; rechazar faltantes, duplicados, extras, NaN, negativos o valores fuera de contrato;
+- permisos `view evaluation rubrics`/`manage evaluation rubrics` sólo admin; no conceder `access judge workspace` al admin;
+- modelos guarded, enums, Actions transaccionales, Requests/Policies para listar/ver/crear/editar draft/activar; activación con locks, contraseña admin, razón 20–1,000 y auditoría;
+- draft editable sólo antes de activar y dentro del contrato; activa/sustituida inmutable/no eliminable. La nueva activa sustituye atómicamente la anterior;
+- garantizar una activa con lock/transacción y restricción compatible; no fingir unicidad nullable que MySQL no garantice;
+- `/panel/rubricas` accesible/paginado para admin, sin exponerlo al juez ni mostrar propuestas/evaluaciones;
+- provisionar idempotentemente en local/test una versión 1 draft exacta, nunca activarla por migración ni sobrescribir divergencias; activación siempre explícita;
+- no seeders productivos de evaluaciones/asignaciones ni cambios a propuestas, snapshots, aceptaciones, perfiles o sesiones;
+- auditoría redactada y actualización integral de documentación. M4 sigue `NOT IMPLEMENTED / NOT AUTHORIZED`; `P2B-BLOCK-001` permanece resuelto.
+
+Pruebas: forward/rollback/forward preserva usuarios/perfiles; provisionado doble deja una sola v1 exacta y divergencia falla; sólo admin accede; validación/mass assignment/ULID/IDOR negativos; activar exige contraseña/razón, deja una activa y sustituye sin pérdida; activa/sustituida son inmutables; concurrencia no deja dos activas; M1/M2 y suite completa verdes; `/juez` continúa vacío.
+
+Gates tras el guard: migración/rollback/forward M3, pruebas dirigidas M3/M2/M1 y suite completa; Pint; Composer validate/platform/audit; Yarn audit con Quill bajo visible; build, JSON, rutas, schedule, migrate status, diff check, enlaces y scan secretos/PII; UAT Firefox local `/panel/rubricas` en escritorio/tableta/móvil, teclado/foco/reflow/consola/403/404/inmutabilidad.
+
+No stage, commit, push, deploy ni producción/infra/SMTP real. Entrega `GO/NO-GO`, baseline/guard, modelo/versiones, archivos/comandos, matriz por rol, activación/sustitución/inmutabilidad/concurrencia, rollback, riesgos/auditoría, documentación y un siguiente prompt exacto limitado a M4 sólo si M3 queda verde; generarlo no autoriza ejecutarlo.
+```
+
+## Prompt histórico inmediato — Milestone 2 ejecutado localmente
+
+```text
+Trabaja exclusivamente en el repositorio local `/home/ccortesg/workspace/flowerflow`.
+
+Lee completamente antes de modificar: `AGENTS.md`, `.agent/PLANS.md`, `.agent/execplans/flowerflow-phase-02b-evaluation-design.md`, `.agent/execplans/flowerflow-phase-02b-m1-judge-rbac.md`, `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/product-spec.md`, `docs/01-functional-scope.md`, `docs/02-architecture.md`, `docs/03-data-model.md`, `docs/04-security-privacy.md`, `docs/05-ux-ui.md`, `docs/06-roadmap-backlog.md`, `docs/08-testing-qa.md`, `docs/09-risk-register.md`, `docs/10-open-questions.md`, `docs/11-operations-handoff.md`, `docs/requirements-traceability.md` y ADR 0001/0003/0004/0005/0006/0007/0008.
+
+Objetivo: implementar exclusivamente el Milestone 2 de Fase 02B: perfil operativo de juez, alta directa controlada por `admin`, establecimiento seguro de credencial, activación por prerrequisitos, suspensión/reactivación, revocación de sesiones y recuperación administrativa de 2FA. Conserva sin regresión el aislamiento M1.
+
+No implementes invitaciones, asignaciones, paquetes ciegos, conflictos, rúbricas, evaluaciones, puntajes, consolidación, reapertura de evaluaciones, recordatorios masivos, retención/purga, ganadores o resultados. La única notificación autorizada en M2 es la transaccional indispensable para alta/configuración de acceso, suspensión/reactivación y recuperación de 2FA del juez.
+
+Contratos `OWNER_APPROVED` aplicables a M2:
+1. `participant`, `reviewer`, `judge` y `admin` son roles estrictamente excluyentes.
+2. El alta de juez es directa por `admin`; no existe invitación de juez ni tabla/token equivalente.
+3. Cada perfil fija `max_active_assignments=8`; no maneja especialidad ni categorías.
+4. El correo debe verificarse antes de acceder a `/juez`.
+5. 2FA es opcional y su ausencia nunca bloquea al juez.
+6. Sólo `admin` puede recuperar 2FA, con permiso separado, razón obligatoria de 20–1,000 caracteres, confirmación de contraseña, auditoría, notificación y revocación de sesiones.
+7. Suspensión bloquea el shell y toda mutación futura de juez; reactivación sólo procede si correo y contraseña propia están establecidos.
+8. M1 ya está `GO LOCAL/TEST`; su permiso exclusivo, roles exactos, rutas fail-closed, flag y matrices negativas son invariantes.
+
+Preserva `P2B-BLOCK-001`: con más de 50 propuestas, cuatro jueces × ocho proyectos sólo aportan 32 cupos frente a al menos 204 requeridos, sin quinto juez sustituto. Este bloqueo no impide M2, pero prohíbe iniciar M4, crear asignaciones, elevar capacidades o cambiar el número de jueces por inferencia. M2 no debe auto-crear cuatro jueces ni imponer un máximo global de cuentas juez.
+
+Antes de modificar:
+1. confirma `pwd`, Git toplevel, rama, SHA local, SHA remoto, ancestro común, `git status --short`, `git diff` y archivos preexistentes modificados/no rastreados;
+2. preserva todos los cambios preexistentes; no hagas stage, commit, push, reset, clean ni checkout destructivo;
+3. crea `.agent/execplans/flowerflow-phase-02b-m2-judge-profile-onboarding.md` con baseline, alcance, decisiones, modelo, pasos, pruebas, resultados, riesgos y rollback;
+4. usa exclusivamente MySQL local `flowerflow_testing`, usuario `flowerflow_testing_user`, host loopback y datos sintéticos;
+5. antes de cualquier migración, seeder o prueba que pueda recrear esquema, demuestra sin exponer secretos: `APP_ENV=testing`, `DB_CONNECTION=mysql`, host `127.0.0.1` o `localhost`, base configurada `flowerflow_testing`, usuario configurado `flowerflow_testing_user` y `SELECT DATABASE()=flowerflow_testing`; si difiere cualquier valor, detente;
+6. no accedas a producción, URL pública, AWS, EC2, SSH/SSM, servicios externos, MySQL productivo, logs productivos ni datos reales.
+
+Implementación autorizada M2:
+- crea una migración aditiva y reversible para `judge_profiles`, uno-a-uno con `users`, usando el patrón ULID público existente. Incluye como mínimo: `public_id`, `user_id` único, `status` respaldado por enum (`pending_setup`, `active`, `suspended`), `max_active_assignments` con valor fijo ocho, `created_by_user_id`, `password_initialized_at`, `activated_at`, `suspended_at`, `suspended_by_user_id`, `suspension_reason`, `reactivated_at`, `reactivated_by_user_id` y timestamps. No agregues especialidades, categorías, invitaciones ni datos de evaluación;
+- protege integridad con FKs/índices/checks compatibles con MySQL y validación server-side. No modifiques ni backfillees usuarios existentes y no crees perfiles por seeder o migración;
+- añade permisos administrativos mínimos y separados para ver/administrar jueces y recuperar 2FA. Sólo `admin` los recibe; `reviewer`, `participant` y `judge` no. Conserva `access judge workspace` como permiso exclusivo únicamente de `judge`;
+- crea Actions/Services transaccionales y Form Requests/Policies para alta, activación derivada, suspensión, reactivación y recovery. Reutiliza `AssignExclusiveBusinessRole`; cualquier correo existente, cuenta con otro rol, perfil duplicado o carrera debe fallar sin mutación parcial ni sustitución de rol;
+- el formulario admin de alta solicita sólo nombre y correo. Normaliza el correo, crea `users` + rol `judge` + perfil `pending_setup` en una transacción y asigna una contraseña aleatoria criptográficamente fuerte que nunca se muestra, registra ni envía;
+- después del commit, envía mediante el dispatcher resiliente una plantilla HTML+texto de marca para establecer contraseña usando el broker/token seguro ya existente. No crees token de invitación ni incluyas contraseña, secretos TOTP, PII adicional o datos de propuestas. El fallo de correo no revierte la cuenta y debe quedar observable/reintentable conforme al patrón actual;
+- integra el flujo de reset para fijar `password_initialized_at` sólo la primera vez que una cuenta juez establece su propia contraseña. No alteres el contrato de participantes. El correo se verifica mediante el flujo firmado vigente y nunca se marca verificado por inferencia administrativa;
+- deriva `active` únicamente cuando existen `password_initialized_at` y `email_verified_at`, salvo que el perfil esté suspendido. La transición debe ser idempotente, transaccional y auditada; `pending_setup` no puede abrir `/juez` aunque el flag esté encendido;
+- añade middleware/gate `judge.active` al shell M1. `pending_setup` y `suspended` reciben una pantalla segura, accesible y sin datos de negocio; no caen en participant/panel y no revelan propuestas;
+- crea en `/panel/jueces` listado, alta y detalle mínimos para `admin`, con paginación, estados vacíos/error/éxito, acciones autorizadas y UI Materialize/Pixinvent. No agregues dashboard de asignaciones, filtros por especialidad, importación masiva ni exportación;
+- suspensión y reactivación requieren confirmación de contraseña y razón de 20–1,000 caracteres. Suspender conserva usuario/rol/perfil, rota `remember_token`, revoca sesiones persistidas de la cuenta y bloquea inmediatamente `/juez`. Reactivar conserva la historia y sólo deja `active` si los prerrequisitos están completos; de lo contrario vuelve a `pending_setup`;
+- recovery 2FA requiere permiso separado, confirmación de contraseña y razón de 20–1,000 caracteres. Elimina de forma segura secreto, recovery codes y confirmación TOTP del juez, rota `remember_token`, revoca sus sesiones, conserva actor/fecha/razón en auditoría y notifica al correo verificado. Nunca muestra secretos o recovery codes al admin;
+- registra auditoría redactada para alta, correo de configuración solicitado/fallido, activación, suspensión, reactivación y recovery 2FA. Conserva actor real, sujeto por ID técnico, transición y timestamps UTC; no copies contraseñas, tokens, TOTP ni datos de propuestas;
+- actualiza documentación, ADR-0008, trazabilidad, riesgos y registros vivos con el comportamiento realmente implementado. Mantén M3–M10 como no implementados y M4 como bloqueado.
+
+Pruebas mínimas obligatorias:
+- migración y seeder idempotentes preservan usuarios, roles/permisos y datos existentes; no crean jueces, perfiles, invitaciones ni asignaciones automáticamente;
+- `admin` puede crear una cuenta sintética nueva y sólo obtiene un perfil `pending_setup` con rol exclusivo `judge` y capacidad ocho; ningún otro rol puede listar, ver, crear, suspender, reactivar o recuperar 2FA;
+- correo existente participant/reviewer/admin/judge, duplicado de perfil, request repetido y carrera concurrente no sustituyen roles ni dejan filas parciales;
+- contraseña/token nunca aparecen en respuesta, HTML, correo, audit metadata o logs; Mail fake/array prueba plantilla HTML+texto y fallo resiliente;
+- establecer contraseña marca una sola vez `password_initialized_at`; verificar correo y completar ambos prerrequisitos activa de forma idempotente, en cualquier orden. Correo no verificado o contraseña no establecida mantiene `pending_setup`;
+- judge activo conserva la matriz M1: sólo `/juez` con flag, nunca participant/panel/archivos/residencia/exportaciones. Pending, suspendido, sin rol y multirol fallan cerrados;
+- suspensión revoca sesiones/remember token y bloquea accesos existentes/directos; reactivación exige razón, password confirmation y prerrequisitos;
+- 2FA sigue opcional. Recovery sólo admin, exige razón/password confirmation, revoca sesiones, limpia material TOTP, audita/notifica y no concede acceso adicional;
+- URLs directas, ULID alterado e IDOR devuelven 403/404 sin revelar existencia; mass assignment no permite cambiar rol, status, capacidad, actores o timestamps;
+- regresión positiva de visitante, participant, reviewer y admin, incluida la suite M1 completa.
+
+Validación final, únicamente después del guard MySQL:
+- migración/rollback/forward M2 sólo en `flowerflow_testing`, incluyendo upgrade con usuarios sintéticos preexistentes;
+- pruebas dirigidas M2, pruebas M1 y `php artisan test` completo;
+- `vendor/bin/pint --test`;
+- `composer validate --strict --no-check-publish`, `composer check-platform-reqs --no-dev` y `composer audit --locked`;
+- `corepack yarn audit --groups dependencies --level moderate`, manteniendo visible el advisory bajo conocido si continúa;
+- `scripts/build_frontend_production.sh`;
+- validación JSON de menús, `php artisan route:list --except-vendor`, `php artisan schedule:list`, `php artisan migrate:status --env=testing`, `git diff --check`, enlaces Markdown y revisión de secretos/PII;
+- QA real local con correo fake/array para admin y estados `pending_setup`/`active`/`suspended` de juez en escritorio, tableta y móvil; teclado, foco, zoom/reflow, consola, 403/404 e invalidación de sesión.
+
+No hagas stage, commit, push ni despliegue. No toques producción, AWS, Apache, PHP-FPM, Supervisor, MySQL productivo, DNS, TLS o SMTP real. Usa exclusivamente cuentas y correos sintéticos.
+
+Entrega:
+1. resumen y decisión `GO/NO-GO` local de M2;
+2. baseline Git y guard MySQL sin secretos;
+3. modelo/estados/invariantes y archivos modificados;
+4. comandos y resultados reales;
+5. matriz efectiva por rol y estado del perfil/flag;
+6. evidencia de alta, credencial segura, activación, suspensión, revocación y recovery 2FA;
+7. migración, compatibilidad con datos existentes y rollback;
+8. defectos, riesgos, auditoría y `P2B-BLOCK-001` preservado;
+9. documentación/trazabilidad actualizadas;
+10. siguiente prompt limitado a M3 —rúbrica versionada— sólo si M2 queda completamente verde. No autorices M4 mientras `P2B-BLOCK-001` siga abierto.
+```
+
+## Prompt histórico anterior — Milestone 1 ejecutado localmente
+
+Las 21 decisiones ya están `OWNER_APPROVED`. Este prompt autoriza sólo M1; preserva `P2B-BLOCK-001` y no habilita M2–M10.
+
+```text
+Trabaja exclusivamente en el repositorio local `/home/ccortesg/workspace/flowerflow`.
+
+Lee completamente antes de modificar: `AGENTS.md`, `.agent/PLANS.md`, `.agent/execplans/flowerflow-phase-02b-evaluation-design.md`, `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/product-spec.md`, `docs/01-functional-scope.md`, `docs/02-architecture.md`, `docs/03-data-model.md`, `docs/04-security-privacy.md`, `docs/05-ux-ui.md`, `docs/06-roadmap-backlog.md`, `docs/09-risk-register.md`, `docs/10-open-questions.md`, `docs/11-operations-handoff.md`, `docs/requirements-traceability.md` y ADR 0001/0003/0004/0005/0006/0007/0008.
+
+Objetivo: implementar exclusivamente el Milestone 1 de Fase 02B: rol `judge`, permisos mínimos, exclusividad de roles, gates explícitos de rutas, redirección/shell seguros y pruebas de aislamiento. No implementes todavía alta directa de jueces, `judge_profiles`, invitaciones, asignaciones, paquetes ciegos, conflictos, rúbricas, evaluaciones, puntajes, consolidación, reapertura, notificaciones, retención, ganadores o resultados.
+
+Decisiones `OWNER_APPROVED` del 2026-08-18 que debes conservar como contrato futuro, sin implementarlas fuera de M1:
+1. Roles `participant`, `reviewer`, `judge` y `admin` estrictamente excluyentes; ninguna combinación válida.
+2. Alta de juez directa por `admin`; no habrá invitaciones de juez.
+3. Cuatro jueces por propuesta en las cuatro categorías; los cuatro jueces disponibles evaluarían todas.
+4. Asignación manual.
+5. Máximo ocho asignaciones activas por juez, sin especialidad.
+6. Ceguera simple estructural.
+7. Visibles todos los campos sustantivos y anexos evaluables; siempre ocultos PII estructurada, residencia, notas internas, aclaraciones e historial de admisibilidad.
+8. Anonimización automática estructural; el propietario acepta el riesgo de identidad dentro de texto, imágenes, enlaces y anexos sin bloqueo.
+9. Rúbrica global: Pertinencia 20 %, Claridad 20 %, Viabilidad 25 %, Impacto 25 % y Coherencia 10 %.
+10. Escala 0–10, paso 0.5, total ponderado 0–100, cuatro decimales internos, dos visibles y `HALF_UP`.
+11. Comentario general obligatorio de 100–2,000 caracteres; comentarios por criterio opcionales hasta 1,000.
+12. Media aritmética de cuatro evaluaciones válidas con igual peso.
+13. Bloquear consolidación si falta cualquier evaluación; sin excepción administrativa.
+14. Conflictos: relación personal/familiar, relación profesional/económica, participación en la propuesta u otro conflicto; “otro” exige explicación.
+15. `admin` resuelve y reasigna a otro juez; varios jueces pueden evaluar una propuesta mediante asignaciones independientes.
+16. Cierre global `2026-08-27 23:59:59 America/Hermosillo`.
+17. `admin` puede reabrir hasta `2026-08-27 20:00:00 America/Hermosillo`, con razón de 20–1,000 caracteres, confirmación de contraseña y revisión append-only; juez o admin pueden modificar la revisión nueva hasta las 23:59:59, conservando actor real en auditoría.
+18. 2FA opcional; recuperación autorizada por `admin` con trazabilidad.
+19. Email mínimo para alta, asignación, conflicto resuelto, reasignación, envío, reapertura y cierre. Recordatorios de participantes el 20 y 22 de agosto de 2026 a las 09:00 Hermosillo para cuentas verificadas sin propuesta o con borrador, incluida una cuenta con otra propuesta enviada.
+20. Retención 02B uniforme de 24 meses desde el cierre administrativo del ciclo de evaluación.
+21. Empate técnico por igualdad del consolidado redondeado a dos decimales; resolución y ganador fuera de 02B.
+
+Registra y preserva `P2B-BLOCK-001`: con más de 50 propuestas, cuatro jueces × ocho proyectos aportan sólo 32 cupos de asignación, suficientes para ocho propuestas con cuatro evaluaciones; se requieren al menos 204 cupos y no existe un quinto juez de reemplazo ante conflicto. Este bloqueo impide M4/asignaciones, pero no M1. No cambies, “corrijas” ni implementes por inferencia cantidad, capacidad o reemplazos.
+
+Antes de modificar:
+1. confirma `pwd`, Git toplevel, rama, SHA local, SHA remoto, ancestro común, `git status --short`, `git diff` y archivos preexistentes modificados/no rastreados;
+2. preserva todos los cambios preexistentes; no hagas stage, commit, push, reset, clean ni checkout destructivo;
+3. crea `.agent/execplans/flowerflow-phase-02b-m1-judge-rbac.md` con baseline, alcance, decisiones, pasos, pruebas, resultados, riesgos y rollback;
+4. usa exclusivamente MySQL local `flowerflow_testing`, usuario `flowerflow_testing_user`, host loopback y datos sintéticos;
+5. antes de cualquier migración, seeder o prueba que pueda recrear esquema, demuestra sin exponer secretos: `APP_ENV=testing`, `DB_CONNECTION=mysql`, host `127.0.0.1` o `localhost`, base configurada `flowerflow_testing`, usuario configurado `flowerflow_testing_user` y `SELECT DATABASE()=flowerflow_testing`; si difiere cualquier valor, detente;
+6. no accedas a producción, URL pública, AWS, EC2, SSH/SSM, servicios externos, MySQL productivo, logs productivos ni datos reales.
+
+Implementación autorizada M1:
+- añadir de forma aditiva e idempotente el rol `judge` y únicamente el permiso base mínimo necesario para acceder al futuro shell de juez; no concederle permisos de participante, `view submissions`, panel, admisibilidad, residencia, exportaciones, configuración, usuarios, rúbricas, asignaciones o evaluaciones todavía;
+- impedir que `admin`, `reviewer` o `participant` obtengan el permiso exclusivo del shell juez por una asignación global de “todos los permisos”;
+- aplicar exclusividad fail-closed: una cuenta con cero roles o más de un rol no cae por descarte en ningún shell de negocio y recibe una pantalla segura sin datos; toda acción futura de asignación de rol debe rechazar combinaciones;
+- proteger explícitamente rutas de participante con rol/capacidad `participant`, conservando además `auth`, `verified`, ownership, flags, fechas y Policies actuales;
+- proteger `/panel` con las capacidades actuales de `reviewer`/`admin` y mantener sus permisos existentes;
+- crear el gate y redirección segura de `judge` sin tratarlo como participante ni como panel administrativo. Si se crea una superficie mínima `/juez`, debe ser sólo un estado vacío/cerrado accesible y de marca, sin propuestas, PII ni controles de evaluación;
+- añadir `FLOWERFLOW_EVALUATION_ENABLED=false` como flag fail-closed. Con flag apagado, el juez sigue sin caer al participante; con flag encendido en test sólo puede abrir la superficie mínima autorizada;
+- no exigir 2FA al juez: la decisión aprobada es opcional. M1 no implementa recovery, suspensión o perfil activo, pero no debe bloquear su incorporación posterior;
+- mantener rutas, contratos y UX actuales de visitante, participant, reviewer y admin salvo el gate mínimo necesario para cerrar el acceso por descarte;
+- actualizar documentación, ADR 0008, trazabilidad, riesgos y registro vivo con comportamiento realmente implementado; conservar M2–M10 como no implementados.
+
+Pruebas mínimas obligatorias:
+- matriz positiva/negativa para visitante, participant, reviewer, admin, judge, autenticado sin rol y cuenta sintética con roles múltiples creada sólo para probar fallo cerrado;
+- participant conserva inicio, perfil, propuestas, archivos y admisibilidad propia según flags/Policies actuales;
+- reviewer/admin conservan `/panel` y no acceden al shell juez como juez;
+- judge no accede a `/inicio`, `/perfil`, `/propuestas`, admisibilidad participante, `/panel`, descargas privadas, residencia ni exportaciones;
+- judge sólo accede a la superficie mínima cuando el flag está habilitado y su correo está verificado;
+- sin rol y multirol no reciben navegación ni datos de participant/judge/panel;
+- URLs directas e IDs alterados continúan devolviendo 403/404 sin filtrar existencia;
+- el mecanismo idempotente de rol/permisos preserva `participant`, `reviewer`, `admin` y usuarios/datos existentes, y no crea jueces ni asignaciones automáticamente.
+
+Validación final, únicamente después del guard MySQL:
+- migración/rollback/forward del cambio M1 si existe migración, sólo en `flowerflow_testing`;
+- pruebas dirigidas M1 y `php artisan test` completo;
+- `vendor/bin/pint --test`;
+- `composer validate --strict --no-check-publish`, `composer check-platform-reqs --no-dev` y `composer audit --locked`;
+- `corepack yarn audit --groups dependencies --level moderate`, documentando sin ocultar el advisory bajo conocido si continúa;
+- `scripts/build_frontend_production.sh`;
+- validación JSON de menús, `php artisan route:list --except-vendor`, `php artisan schedule:list`, `php artisan migrate:status --env=testing`, `git diff --check` y revisión de secretos/PII;
+- QA real de la superficie mínima y rechazos por rol en escritorio, tableta y móvil, teclado, foco, zoom/reflow y consola, sólo con cuentas sintéticas y correo fake/array.
+
+No hagas stage, commit, push ni despliegue. No toques producción, AWS, Apache, PHP-FPM, Supervisor, MySQL productivo, DNS, TLS o SMTP real.
+
+Entrega:
+1. resumen y decisión `GO/NO-GO` local de M1;
+2. baseline Git y guard MySQL sin secretos;
+3. archivos modificados y justificación;
+4. comandos ejecutados y resultados reales;
+5. matriz efectiva de acceso por rol y estado del flag;
+6. defectos/hallazgos, riesgos y `P2B-BLOCK-001` preservado;
+7. migración/compatibilidad/rollback;
+8. documentación y trazabilidad actualizadas;
+9. siguiente prompt limitado a M2 —perfil y alta directa— sólo si M1 queda completamente verde; no autorices M4 mientras `P2B-BLOCK-001` siga abierto.
+```
+
+## Prompt histórico — runbook de instalación y compilación ya ejecutado por el propietario
 
 ```text
 Trabaja únicamente con el repositorio local `/home/ccortesg/workspace/flowerflow`. Lee primero `AGENTS.md`, `.agent/PLANS.md`, `.agent/execplans/flowerflow-legal-v1-1-local-release-candidate.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/17-legal-v1-1-reconciliation-2026-08-17.md`, `docs/07-deployment-aws-ec2.md`, `docs/15-risk-reduction-release-runbook.md`, `docs/adr/0002-aws-ec2-ubuntu.md` y los demás ADR aplicables.

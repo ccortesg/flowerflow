@@ -1,6 +1,6 @@
 # Roadmap y backlog
 
-> **Estado vigente — 2026-08-17:** el plan maestro está en 58 % y el alcance local aprobado en 96 %. Fase 01/02A y la sincronización jurídica v1.1 están implementadas y cerraron UAT local; jueces/evaluación, ganadores/resultados y producción del SHA actual no. El detalle cuantificado y la próxima secuencia están en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+> **Estado vigente — 2026-08-18:** el plan maestro permanece en 63 % y el alcance local aprobado en 97 %. Fase 01/02A, sincronización jurídica v1.1 y Fase 02B M1/M2 están implementadas y validadas localmente. El propietario reporta el release anterior instalado como `OWNER_CONFIRMED_DEPLOYED`, pero `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; M1/M2 no se atribuyen a producción. Jueces/evaluación permanecen en 20 % funcional y suben a 90 % de preparación; M3 es la siguiente puerta y `P2B-BLOCK-001` está resuelto.
 
 ## Estado Fase 01 — 2026-07-15
 
@@ -124,7 +124,7 @@ Bloqueos externos de la ruta: licencia Materialize, textos legales, reglas de el
 
 - **Objetivo/valor:** identidades reales y acceso de mínimo privilegio.
 - **Actores:** participante y roles privilegiados.
-- **Historias:** registro/verificación/reset; invitación de roles; 2FA; suspensión y revocación.
+- **Historias:** registro/verificación/reset; alta directa de juez e invitación de integrante sólo si se aprueba; 2FA; suspensión y revocación.
 - **Reglas:** respuestas neutras, rate limits, roles.manage exclusivo, Policies siempre.
 - **Tareas:** aprobar/instalar auth y RBAC; endpoints POST; Form Requests; email verification; invitations; 2FA; roles/permisos seed sintético; middleware/Policies; comando superadmin; headers y session hardening.
 - **Artefactos:** users/profile mínimo, roles/permisos, invitations, controllers/requests/policies/tests.
@@ -134,7 +134,7 @@ Bloqueos externos de la ruta: licencia Materialize, textos legales, reglas de el
 - **Responsables:** backend A + QA; frontend apoya formularios.
 - **Aceptación:** matriz RBAC crítica y pruebas IDOR verdes; 2FA privilegiado; revocación efectiva.
 - **Validación:** feature tests por rol, rate limit, reset enumeration, browser auth.
-- **Rollback:** feature flag de registro/invitación; conservar usuario admin de recuperación auditado.
+- **Rollback:** feature flags de registro/onboarding; conservar usuario admin de recuperación auditado.
 - **Terminado:** threat controls T01/T02/T10/T12 cubiertos.
 
 ### M3 — Sitio público, convocatoria y legales
@@ -213,7 +213,7 @@ Bloqueos externos de la ruta: licencia Materialize, textos legales, reglas de el
 - **Reglas:** sólo asignados; conflicto bloquea; total servidor; ranking global oculto.
 - **Tareas:** judge_profiles, assignments, conflicts, rubrics/criteria, evaluations/scores; proyección ciega; transitions; cálculo; confirmación/reopen.
 - **Artefactos:** dominio y panel de juez separado, policies/tests.
-- **Dependencias:** rúbrica/número jueces/empates aprobados; M2/M5/M6.
+- **Dependencias:** contrato ADR-0008 aprobado; M1–M3/M5/M6; cuatro principales sin límite fijo y quinto sustituto exclusivo con capacidad diez.
 - **Riesgos:** identidad accidental, cálculo o reasignación incorrectos.
 - **Estimación:** 9 a 12 días-persona.
 - **Responsables:** backend B + frontend + QA/security.
@@ -314,10 +314,10 @@ Contratos de modelos, enums, rutas y componentes se acuerdan antes del paralelo.
 | Fase 02A admisibilidad | Cerrada en código/test local | expediente, aclaraciones, residencia privada, resolución, auditoría y correos; flag local primario apagado |
 | Cuarta categoría | Cerrada en código/test local | datos, límite cuatro, superficies públicas/participante/admin y concurrencia |
 | Exportación privada | Cerrada en código/test local | XLSX asíncrono privado, cinco hojas, permisos, auditoría y expiración; operación de worker/scheduler pendiente |
-| Ampliación de plazo | Cerrada en código/test local | cierre al 23-ago-2026 y migración fail-closed; regularización PDF pendiente |
-| Fase 02B evaluación | No autorizado | jueces, asignación, anonimización, rúbrica y calificaciones |
+| Ampliación de plazo y legales v1.1 | Cerrada en código/test local | cierre al 23-ago-2026, cuatro categorías/máximo cuatro y catálogo jurídico v1.1; continuidad histórica resuelta por owner |
+| Fase 02B evaluación | `M1/M2 IMPLEMENTED AND GREEN LOCALLY — M3 READY` | decisiones `OWNER_APPROVED`; preparación 90 %, funcional 20 %; perfil primary/substitute, aislamiento y ciclo de cuenta probados; `P2B-BLOCK-001` resuelto; M4 no implementado/no autorizado |
 | Resultados/retención ejecutable | No autorizado | ganadores, publicación y borrado condicionado |
-| Release candidate local | Siguiente puerta recomendada | alinear ambiente autorizado, migraciones y flags temporales; UAT autenticada por rol |
-| Producción del SHA actual | No autorizada/no demostrada | preflight, backup/restore, staging, UAT, workers, SMTP, despliegue y rollback |
+| Release candidate local previo | Cerrado localmente | validación/UAT documentadas; registro histórico conservado |
+| Producción de cambios actuales | `OWNER_CONFIRMED_DEPLOYED` | SHA, migraciones, flags, servicios y smoke siguen `POR_CONFIRMAR` sin evidencia independiente |
 
-La siguiente puerta es cerrar un release candidate local de lo ya implementado. No debe mezclarse con jueces, resultados, borrado de residencia ni producción. Fase 02B sólo puede iniciar después de aprobar reglas de jueces, rúbrica, asignación, conflictos y desempate.
+La siguiente puerta es autorizar y ejecutar únicamente M3 —rúbrica global versionada— en local/test mediante el prompt sincronizado. M1/M2 quedan como invariantes. `P2B-BLOCK-001` está resuelto, pero M4 sólo podrá proponerse después de M3 verde y requerirá autorización propia. M3 no incluye asignaciones, evaluaciones, puntajes capturados, consolidación, ganadores, resultados, ARCO ni producción.

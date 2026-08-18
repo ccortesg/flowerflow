@@ -1,6 +1,8 @@
 # Seguridad y privacidad desde el diseño
 
-> **Reconciliación jurídica v1.1 — 2026-08-17:** FUNXT, A.C. (RFC FUN110208BT0) es el responsable identificado; el Aviso v1.1 conserva las finalidades, retención de 24 meses/90 días y plazos ARCO descritos en v1.0, pero actualiza identidad y domicilio. El código local registra nuevas aceptaciones contra el documento activo v1.1 y conserva las v1.0. Forzar reaceptación a cuentas anteriores no está inequívocamente ordenado por los PDF y permanece en `PROPOSAL_NEEDED`; ARCO completo sigue fuera de alcance.
+> **Adenda Fase 02B — 2026-08-18:** M1/M2 están probados fail-closed. Alta juez usa password aleatoria nunca expuesta, broker reset y función `primary|substitute` con capacidad validada; `/juez` exige rol/permiso/flag/correo/perfil activo. Suspensión y recovery 2FA requieren admin exacto, permiso, razón 20–1,000, contraseña y sesiones database; rotan `remember_token`, revocan sesiones y auditan sin secretos. 2FA del juez sigue opcional. No existe acceso a propuestas/PII; M3–M10 siguen futuros.
+
+> **Reconciliación jurídica v1.1 — 2026-08-18:** FUNXT, A.C. (RFC FUN110208BT0) es el responsable identificado; el Aviso v1.1 conserva las finalidades, retención de 24 meses/90 días y plazos ARCO descritos en v1.0, pero actualiza identidad y domicilio. El código local registra nuevas aceptaciones contra el documento activo v1.1 y conserva las v1.0. El propietario resolvió continuidad sin reaceptación forzada ni alteración de evidencia; ARCO completo sigue fuera de alcance.
 
 ## Adenda de hardening Fases 01/02A — 2026-08-06
 
@@ -24,7 +26,7 @@
 - Consentimientos: WhatsApp y avisos opcionales son reversibles y separados; jurídicos versionados por propósito.
 - Logs/correo: no adjuntar proyecto/PII; secreto DB sólo `.env`; mail post-commit en cola.
 
-Pendiente operativo: antivirus real, revisión de formatos Office binarios, CSP sin excepción si es viable, automatización de retención/borrado, SMTP, decisión de reaceptación v1.1, recuperación verificable del binario original de Mecánica v1.0, secret scan y prueba de carga/concurrencia MySQL. El owner aceptó temporalmente el 2026-07-15 abrir la recepción sin motor antimalware; esto no elimina el riesgo ni autoriza retirar allowlist, firma, cuota, almacenamiento privado, monitoreo o capacidad de cierre inmediato.
+Pendiente operativo: antivirus real, revisión de formatos Office binarios, CSP sin excepción si es viable, automatización de retención/borrado, SMTP, secret scan y prueba de carga/concurrencia MySQL. Continuidad v1.0 y el binario físico designado fueron resueltos por el propietario sin modificar evidencia. El owner aceptó temporalmente el 2026-07-15 abrir la recepción sin motor antimalware; esto no elimina el riesgo ni autoriza retirar allowlist, firma, cuota, almacenamiento privado, monitoreo o capacidad de cierre inmediato.
 
 **Estado:** controles propuestos; requieren aprobación de producto/legal e implementación posterior.  
 **Objetivo:** WCAG y seguridad son criterios de aceptación, no declaraciones de cumplimiento.
@@ -55,9 +57,9 @@ Pendiente operativo: antivirus real, revisión de formatos Office binarios, CSP 
 
 | ID | Amenaza | Escenario | Impacto | Controles preventivos | Detección/respuesta |
 |---|---|---|---|---|---|
-| T01 | Toma de cuenta | credential stuffing o reset abusivo | crítico | rate limit por IP/cuenta, mensajes neutros, hash robusto, 2FA privilegiado | alertas de intentos, revocar sesiones |
+| T01 | Toma de cuenta | credential stuffing o reset abusivo | crítico | rate limit por IP/cuenta, mensajes neutros, hash robusto; 2FA disponible pero opcional para juez | alertas de intentos, revocar sesiones |
 | T02 | IDOR/BOLA | cambiar ULID para ver proyecto/archivo ajeno | crítico | Policies, route model binding acotado, query scopes, storage privado | test negativo y audit log |
-| T03 | Fuga juez/PII | endpoint o export expone identidad/residencia | crítico | DTO/vistas ciegas, permisos separados, allowlist de columnas | canary tests y auditoría de descarga |
+| T03 | Fuga juez/PII | endpoint/export expone PII estructurada o contenido evaluable autoidentifica al participante | crítico | DTO ciego por allowlist, permisos/archivos separados; riesgo semántico aceptado y advertencia honesta | canary tests, auditoría de descarga y no prometer anonimización total |
 | T04 | Archivo hostil | ejecutable, polyglot, ZIP bomb, MIME falso | alto | allowlist, límites, magic bytes, nombre aleatorio, no ejecución, escaneo PENDING | cuarentena, log, eliminación |
 | T05 | Doble envío | reintento crea folios/versiones duplicados | alto | idempotency key, unique constraint, transacción y lock | métrica de conflictos/reintentos |
 | T06 | Manipular score | total enviado desde browser o criterio alterado | alto | cálculo servidor, rúbrica versionada e inmutable | recalcular y comparar, audit |
@@ -73,6 +75,8 @@ Pendiente operativo: antivirus real, revisión de formatos Office binarios, CSP 
 | T16 | Supply chain | paquete vulnerable o demo abandonado | alto | locks, auditorías, mínimo de paquetes, revisión de licencias | CVE cadence y rollback |
 | T17 | DoS cierre | carga o uploads agotan CPU/disco | alto | rate limits, cuotas, tamaños, capacidad y monitor | alarmas, modo degradado |
 | T18 | Repudio | actor niega cambio crítico | alto | actor, fecha, entidad, before/after redactado, request ID | export de auditoría inmutable |
+| T19 | Suplantación administrativa | admin modifica puntajes y la historia aparenta que actuó el juez | crítico | revisión append-only con actor admin, juez sujeto, razón y password confirmation | comparación de revisiones y alerta de override |
+| T20 | Cobertura o sustitución fuera de contrato | sustituto recibe carga inicial, principal se limita o se exceden diez reemplazos activos | alto | cuatro principales sin límite fijo; quinto sólo sustituciones; checks, conteo transaccional y fallo cerrado en M4 | reporte previo de cobertura/capacidad sin datos sensibles |
 
 ## RBAC de mínimo privilegio
 
@@ -112,7 +116,7 @@ La matriz no sustituye Policies. Super admin puede usar un bypass controlado só
 
 ## Capas de autorización obligatorias
 
-1. **Ruta:** auth, verified, 2FA/confirmación de contraseña y permiso grueso.
+1. **Ruta:** auth, verified, permiso grueso y, donde el contrato lo exija, 2FA/confirmación de contraseña. Para juez, 2FA es opcional.
 2. **Form Request/controller:** authorize sobre la acción y el recurso.
 3. **Policy:** ownership, asignación, estado, fecha, conflicto y visibilidad.
 4. **Consulta:** filtrar antes de paginar; nunca cargar todos y ocultar después.
@@ -137,11 +141,11 @@ La matriz no sustituye Policies. Super admin puede usar un bypass controlado só
 - Contraseñas nuevas: mínimo 8 caracteres, mayúscula, minúscula, número, símbolo y confirmación; checklist cliente como ayuda, regla Laravel como autoridad.
 - Rate limit separado para login, registro, reset, verificación, contacto y uploads.
 - Respuestas de reset/verificación no confirman si el email existe.
-- 2FA obligatorio para super_admin, call_admin, reviewer, judge, privacy_support y auditor antes de producción.
+- 2FA opcional para `judge` por decisión del propietario. La política de otros roles privilegiados no se relaja por esta excepción.
 - Confirmación de contraseña para roles, winner declaration/publication, reapertura, exportación masiva y cambios de email/2FA.
 - Cookies Secure, HttpOnly, SameSite=Lax o Strict según flujo; nombre y dominio propios.
 - Rotar ID de sesión al autenticar/elevar; revocar sesiones al suspender o cambiar rol crítico.
-- Invitations y reset tokens se almacenan hasheados, con expiración y uso único.
+- Los jueces se crean directamente por `admin`; no existen tokens de invitación de juez. Reset e invitaciones futuras de integrante se almacenan hasheados, con expiración y uso único.
 - No crear un superadmin con contraseña hardcodeada; usar comando interactivo seguro en milestone aprobado.
 
 ## Aplicación y cabeceras

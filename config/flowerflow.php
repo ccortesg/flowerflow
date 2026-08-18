@@ -41,6 +41,7 @@ return [
         'results' => env('FLOWERFLOW_RESULTS_ENABLED', false),
         'panel' => env('FLOWERFLOW_PANEL_ENABLED', true),
         'admissibility_review' => env('FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED', false),
+        'evaluation' => env('FLOWERFLOW_EVALUATION_ENABLED', false),
     ],
     'security' => [
         'enforce_strict_csp' => env('FLOWERFLOW_CSP_ENFORCE_STRICT', false),

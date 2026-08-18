@@ -1,6 +1,6 @@
 # UX/UI, accesibilidad e identidad — Flower Flow 2026
 
-> **Estado vigente — 2026-08-17:** público, acceso, participante, wizard, panel y admisibilidad tienen interfaces reales; jueces, resultados, privacidad y auditor dedicado no. El diagnóstico por superficie/rol y los pendientes de UAT del SHA actual están en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+> **Estado vigente — 2026-08-18:** M2 añade `/panel/jueces` con listado, alta, función principal/sustituto, capacidad, detalle y acciones confirmadas, y `/juez/estado` para pending/suspended sin datos. UAT Firefox validó escritorio/tableta/móvil, teclado/foco, reflow, consola, 403/404, recovery con sesión invalidada y suspensión/reactivación. Rúbrica, asignaciones y evaluación siguen sin UI; `P2B-BLOCK-001` está resuelto y M4 permanece futuro.
 
 > **Sincronización v1.1, actualizada 2026-08-18:** landing, `/documentos`, registro, login, perfil, envío, footer y panel muestran vínculos v1.1; las superficies globales identifican a FUNXT, A.C. y su RFC/domicilio verificados. La fecha del 23 de agosto, cuatro categorías y máximo cuatro propuestas están confirmados. La UI conserva sus descripciones actuales y el propietario aceptó que el PDF mencione accesibilidad en Movilidad y Hermosillo sin Barreras, sin recategorización.
 
@@ -174,13 +174,18 @@ Pruebas automatizadas: `tests/Feature/SubmissionWizardTest.php` cubre renderizad
 
 | Página | Ruta conceptual | Tarea principal |
 | --- | --- | --- |
-| Dashboard | `/juez` | Asignaciones pendientes, en borrador y finalizadas. |
+| Estado base M1 | `/juez` | Estado vacío/cerrado sin datos; validado en 1440/768/360, zoom 200 %, reflow 320 px, teclado y consola. |
+| Dashboard futuro | `/juez` | M2+ ampliará la superficie sólo cuando existan perfil activo y, después, asignaciones autorizadas. |
 | Instrucciones/rúbrica | `/juez/instrucciones` | Mostrar versión vigente. |
 | Proyecto asignado | `/juez/asignaciones/{id}` | Vista anónima y anexos autorizados. |
 | Conflicto | modal o sección en asignación | Declarar conflicto antes de evaluar. |
 | Evaluación | `/juez/asignaciones/{id}/evaluacion` | Puntuar, comentar y guardar borrador. |
 | Confirmar envío | paso final | Revisar puntajes/comentarios y confirmar. |
 | Historial | `/juez/evaluaciones` | Sólo evaluaciones propias. |
+
+Contrato visual aprobado: la vista asignada aplica ceguera simple estructural. Presenta todos los campos sustantivos y anexos evaluables, pero nunca PII estructurada, residencia, notas internas, aclaraciones, historial de admisibilidad, nombres de archivo reveladores o metadatos técnicos. Debe advertir de forma honesta que texto, imágenes, enlaces o anexos pueden contener identidad porque ese riesgo fue aceptado; no usa claims de “anonimización total”.
+
+La evaluación muestra los cinco criterios y pesos aprobados, escala 0–10/paso 0.5, comentario general obligatorio y total de servidor. La confirmación de envío explica la inmutabilidad. Una reapertura presenta la revisión anterior sólo como historial, la nueva como editable y el actor administrativo real; nunca reemplaza visualmente la autoría original.
 
 ### Administración y revisión
 
@@ -287,13 +292,13 @@ Patrones:
 
 1. Ver asignación y estado.
 2. Declarar ausencia o presencia de conflicto.
-3. Consultar proyecto anónimo y anexos autorizados.
-4. Completar cada criterio con rango, peso y ayuda.
+3. Consultar la proyección ciega estructural y todos los anexos evaluables autorizados, con advertencia sobre autoidentificación posible.
+4. Completar Pertinencia 20 %, Claridad 20 %, Viabilidad 25 %, Impacto 25 % y Coherencia 10 %, escala 0–10/paso 0.5.
 5. Ver total calculado por servidor como información, no como ranking.
 6. Guardar borrador.
 7. Revisar resumen y confirmar envío.
 
-**Aceptación:** conflicto desactiva evaluación; un juez no ve asignaciones ajenas; reapertura se comunica de forma explícita.
+**Aceptación:** conflicto desactiva evaluación; un juez no ve asignaciones ajenas; el total 0–100 proviene del servidor; comentario general 100–2,000 es obligatorio; reapertura append-only se comunica explícitamente y no permite envío después de `2026-08-27 23:59:59 America/Hermosillo`.
 
 ### 6. Ganador y publicación
 
@@ -493,7 +498,7 @@ La aceptación se registra como UAT manual confirmada por el usuario. No se inco
 - **RESOLVED Fase 01:** campos y flujo definidos por prompt v2; ver perfil/propuesta y docs 01/14.
 - **RESOLVED/PENDING:** cierre 23:59:59 Hermosillo; no se implementa contador hasta tener apertura aprobada.
 - **RESOLVED Fase 01:** individual o equipo de hasta cinco, representante incluida; una cuenta opera el envío.
-- **PENDING:** ¿evaluación ciega y qué metadatos deben anonimizarse?
+- **RESOLVED 02B:** ceguera simple estructural; se eliminan PII estructurada, residencia, notas, aclaraciones, historial, nombres expuestos y metadatos técnicos. Todos los campos sustantivos/anexos evaluables son visibles y el riesgo de autoidentificación en contenido fue aceptado.
 - **PENDING:** ¿qué datos del ganador tienen consentimiento para publicación?
 - **PARTIAL:** cinco PNG autorizados recibidos y documentados; manual de marca y licencia Pixinvent siguen pendientes.
 - **PENDING:** ¿contenido administrable o por despliegue?

@@ -1,6 +1,6 @@
 # Modelo de datos preliminar
 
-> **Estado vigente — 2026-08-17:** el esquema real contiene las tablas Fase 01, Fase 02A y `submission_exports`; jueces, rúbricas, evaluaciones, ganadores y solicitudes de privacidad del ERD siguen siendo diseño futuro. El candidato local incorpora una duodécima migración para publicar v1.1 sin eliminar v1.0. Sólo `flowerflow_testing` está autorizado para ejecutar y verificar este estado; la base local primaria `flowerflow` no se modifica. Ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+> **Estado vigente — 2026-08-18:** M2 añadió `judge_profiles` uno-a-uno con `users`, ULID público, estado enum `pending_setup|active|suspended`, función `primary|substitute`, capacidad `NULL` sin límite para principal o diez para sustituto y actores/fechas operativas. La migración es aditiva, no backfillea usuarios ni crea jueces/asignaciones y pasó forward/rollback/forward. Rúbricas, asignaciones y evaluaciones siguen sin tablas; `P2B-BLOCK-001` está resuelto y M4 permanece no implementado/no autorizado.
 
 ## Adenda Fase 01 implementada — 2026-07-15
 
@@ -43,7 +43,6 @@ erDiagram
     COMPETITIONS ||--o{ RUBRICS : defines
 
     CATEGORIES ||--o{ SUBMISSIONS : classifies
-    CATEGORIES ||--o{ RUBRICS : customizes
     CATEGORIES ||--o{ WINNER_DECISIONS : awards
 
     SUBMISSIONS ||--o{ SUBMISSION_VERSIONS : snapshots
@@ -80,8 +79,8 @@ Las tablas de roles y permisos de un paquete aprobado se conectan con users y no
 |---|---|---|---|
 | users | id, public_id, name, email, email_verified_at, password, status, suspended_at, last_login_at | unique public_id/email; index status | anonimizar tras cierre de retención; RESTRICT si hay evidencia |
 | participant_profiles | user_id, phone_encrypted, birth_date, municipality, privacy_flags | unique user_id; index municipality | ligado al proceso ARCO |
-| judge_profiles | user_id, expertise, availability_status, blinded_name | unique user_id; index availability | conservar mínimo para trazabilidad; anonimizar después |
-| invitations | public_id, email, role, token_hash, expires_at, accepted_at, inviter_id | unique token_hash; index email/expires_at | purga corta tras expiración |
+| judge_profiles | user_id, status, capacity_limit, created_by, suspended_at | unique user_id; index status | conservar mínimo para trazabilidad; anonimizar después |
+| team_invitations | public_id, email, token_hash, expires_at, accepted_at, inviter_id | unique token_hash; index email/expires_at | contrato futuro sólo para integrantes; no se usa para juez |
 
 No guardar edad calculada; derivarla de birth_date en la fecha definida por las reglas.
 
@@ -121,15 +120,17 @@ El snapshot contiene sólo los campos de la versión; no duplica tokens, contras
 
 | Tabla | Campos clave | Índices/constraints | Borrado |
 |---|---|---|---|
-| judge_assignments | public_id, submission_id, judge_profile_id, status, assigned_by, assigned_at, due_at, closed_at | unique submission+judge; index judge+status/due | void, no delete, al iniciar evaluación |
-| conflict_declarations | assignment_id, type, explanation_redacted, declared_at, resolution, resolved_by, resolved_at | unique assignment; index resolution | inmutable con resolución adicional |
-| rubrics | public_id, competition_id, category_id nullable, version, name, status, total_weight | unique scope+version; index status | inmutable al activarse |
-| rubric_criteria | rubric_id, code, name, description, weight, min_score, max_score, sort_order | unique rubric+code/order | RESTRICT con scores |
-| evaluations | public_id, assignment_id, rubric_id, status, total_score, general_comment, started_at, submitted_at, reopened_by | unique assignment; index status/submitted_at | void, no delete |
-| evaluation_scores | evaluation_id, criterion_id, score, comment | unique evaluation+criterion | ligado a evaluación |
+| judge_assignments | public_id, submission_version_id, judge_profile_id, rubric_version_id, status, assigned_by, assigned_at, due_at, closed_at, voided_at | unique version+judge activa; index judge+status/due | void, no delete |
+| conflict_declarations | assignment_id, type, explanation_redacted, declared_at, resolution, resolved_by, resolved_at, replacement_assignment_id | unique assignment; index resolution | inmutable con resolución adicional |
+| rubrics | public_id, competition_id, version, name, status, total_weight, activated_at | unique competition+version; index status | inmutable al activarse |
+| rubric_criteria | rubric_id, code, name, description, weight, min_score, max_score, step, sort_order | unique rubric+code/order | RESTRICT con scores |
+| blind_review_packages | assignment_id, schema_version, payload, content_hash, generated_at | unique assignment; payload allowlist sin PII estructurada | inmutable; regenerar crea versión, no overwrite |
+| evaluations | public_id, assignment_id, rubric_id, status, current_revision_id, started_at, submitted_at | unique assignment; index status/submitted_at | void, no delete |
+| evaluation_revisions | evaluation_id, revision_no, status, general_comment, total_score, subject_judge_id, acted_by, reason, opened_at, submitted_at | unique evaluation+revision; index status/dates | append-only al enviar/reabrir |
+| evaluation_scores | evaluation_revision_id, criterion_id, score, comment | unique revision+criterion | ligado a revisión exacta |
 | winner_decisions | public_id, category_id, submission_id nullable, decision_type, justification, decided_by, decided_at, published_at | unique category+decision_type activo; index dates | revocar con nueva evidencia, no sobrescribir |
 
-total_score se recalcula en servidor desde scores, límites y pesos de la rúbrica activa. No se acepta un total enviado por el navegador.
+`total_score` se recalcula en servidor desde scores, escala 0–10, paso 0.5 y pesos 20/20/25/25/10. Usa cuatro decimales internos, dos visibles y `HALF_UP`; nunca acepta el total del navegador. La media sólo se consolida con cuatro evaluaciones válidas. La asignación es manual: cuatro principales sin límite fijo cubren todas las propuestas elegibles y un quinto sustituto exclusivo admite máximo diez reasignaciones activas. `P2B-BLOCK-001` está resuelto; el flujo aún no está implementado.
 
 ### Operación
 
@@ -213,6 +214,7 @@ stateDiagram-v2
 | winner a publicación | permiso winners.publish | consentimiento y doble confirmación | published_at y bitácora | despublicar auditado |
 | assigned a conflict_declared | juez | asignación propia abierta | bloquea edición de scores | resolución por admin |
 | in_progress a submitted | juez | rúbrica completa, calendario abierto, sin conflicto | total servidor, lock y confirmación | sólo reopen autorizado |
+| submitted a reopened | admin | antes de `2026-08-27 20:00:00 America/Hermosillo`, razón 20–1,000 y password confirmation | nueva revisión append-only, actor real y notificación | no overwrite; nueva revisión puede enviarse hasta 23:59:59 |
 
 ## Invariantes de base y aplicación
 
@@ -226,6 +228,10 @@ stateDiagram-v2
 8. Folio, public_id, claves idempotentes y hashes son únicos.
 9. closes_at se evalúa con reloj del servidor y zona de la convocatoria; se persiste UTC.
 10. Una excepción de deadline exige permiso, razón, actor y audit log.
+11. Los roles `participant`, `reviewer`, `judge` y `admin` son excluyentes; cero/múltiples roles fallan cerrados.
+12. La rúbrica activada y una revisión enviada son inmutables; reabrir crea revisión nueva.
+13. La consolidación requiere cuatro evaluaciones válidas y el empate técnico compara totales `HALF_UP` a dos decimales.
+14. Una acción administrativa en nombre del juez registra tanto `subject_judge_id` como `acted_by`; nunca suplanta al juez.
 
 ## Índices prioritarios
 
@@ -253,15 +259,15 @@ Los planes EXPLAIN y volumen sintético se validan antes de fijar índices adici
 
 ## Retención propuesta
 
-Los plazos requieren aprobación legal; son defaults operativos, no afirmaciones de cumplimiento.
+Los plazos generales requieren aprobación legal. El plazo de evaluación/auditoría 02B fue aprobado por el propietario como contrato operativo de diseño; su purga no está implementada.
 
 | Entidad | ASSUMPTION | Fin de periodo |
 |---|---|---|
-| Invitaciones expiradas | 90 días | purga |
+| Invitaciones de integrante expiradas | 90 días | purga; no existen invitaciones de juez |
 | Comprobantes no ganadores | 90 días tras cierre firme | borrar binario y conservar decisión mínima |
 | Anexos no ganadores | 12 meses | borrar o anonimizar según bases |
 | Datos de ganadores | mientras exista archivo público autorizado | retirar al revocar consentimiento cuando proceda |
-| Evaluaciones/auditoría | 24 meses | anonimizar actor/PII si ya no es necesaria |
+| Evaluaciones, revisiones, puntajes, asignaciones, conflictos y auditoría 02B | 24 meses desde `evaluation_cycle_closed_at` | purga/anonimización futura compatible con backups y conservación autorizada |
 | Exportaciones generadas | 24 horas | borrar archivo; conservar evento |
 | Jobs/failed_jobs | 30/90 días | purga redactada |
 | Sesiones/reset tokens | expiración técnica | purga automática |

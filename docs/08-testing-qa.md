@@ -7,15 +7,29 @@ La reconciliación jurídica v1.1 añade `LegalDocumentsV11Test`: valida existen
 | Gate | Resultado actual |
 |---|---|
 | Base/cuenta de tests | `flowerflow_testing` / `flowerflow_testing_user`, MySQL loopback, guard obligatorio |
-| Migraciones de test | 12/12 aplicadas después de guard exacto y `migrate:fresh --seed` |
-| Suite | 109 pruebas/1,049 aserciones, verde; `LegalDocumentsV11Test`: 3/36; seguimiento 503/CSP: 2 pruebas nuevas |
+| Migraciones de test | 14/14 aplicadas; M2 pasó forward/rollback/forward preservando un usuario sintético después del guard exacto |
+| Suite | 125 pruebas/1,316 aserciones, verde; M1+M2 dirigido: 16 pruebas/267 aserciones |
 | Pint | Verde |
 | Composer validate/platform/audit | Verde; cero advisories |
 | Yarn dependencies | Un advisory bajo de Quill 2.0.3 sin fix; cero moderados/altos/críticos |
-| Iconos/build | 97 iconos, 784 módulos y tres assets Vite, verde |
-| Browser | UAT del candidato cerrada en Firefox: visitante, participante, reviewer y admin en 1440/768/360, teclado, foco, zoom/reflow, consola, 403/404/IDOR, límite 4/quinta rechazada, admisibilidad, 2FA, XLSX, expiración y cierre |
+| Iconos/build | 98 iconos, 784 módulos y tres assets Vite, verde |
+| Browser | UAT previa más M1/M2 en Firefox: matriz visitante/participant/reviewer/admin/judge/sin rol/multirol/no verificado; alta y estados pending/active/suspended; 1440/768/390, reflow, simulación CSS zoom 200 %, teclado/foco, 403/404, revocación de sesión y consola limpia. No se afirma zoom nativo. |
 
 La base local primaria no sustituye este ambiente y no está autorizada para esta ejecución. El único runtime destructivo permitido es `flowerflow_testing` con `flowerflow_testing_user`, MySQL loopback, datos sintéticos y guard probado antes de cada `migrate:fresh`. La auditoría vigente está en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+
+## Contrato de QA Fase 02B aprobado — 2026-08-18
+
+Fase 02B alcanza 20 % funcional y 90 % de preparación documental/técnica. Las matrices M1/M2 están ejecutadas y verdes; las pruebas M3–M10 siguen siendo contratos futuros. M3 es la siguiente puerta. `P2B-BLOCK-001` está resuelto mediante cuatro principales sin límite fijo y un quinto sustituto exclusivo con capacidad diez; M4 continúa no implementado/no autorizado.
+
+- M1 — `VERIFIED LOCAL`: visitante, `participant`, `reviewer`, `admin`, `judge`, sin rol y multirol; roles estrictamente excluyentes, gates fail-closed, rutas directas/IDOR y flag de evaluación apagado/encendido.
+- M2 — `VERIFIED LOCAL`: alta directa por `admin`, función `primary|substitute`, capacidad `NULL|10`, correo verificado, primer cambio seguro de contraseña, activación idempotente en cualquier orden, suspensión/reactivación, revocación de sesiones y recovery administrativo. 2FA de juez es opcional y su ausencia no se trató como fallo.
+- M3/M6: rúbrica global 20/20/25/25/10, escala 0–10/paso 0.5, comentario general 100–2,000, comentarios por criterio opcionales hasta 1,000, total servidor 0–100 con precisión 4/2 y `HALF_UP`. Payload total hostil se ignora.
+- M4: ejecutar sólo mediante autorización posterior a M3 verde. Probar cuatro asignaciones iniciales exclusivamente a los principales, cobertura de todas las propuestas elegibles, sustituto sin carga inicial, máximo diez reemplazos activos, undécimo rechazado, catálogo de conflicto, carrera, void y reemplazo.
+- M5: proyección automática estructural y archivos con etiquetas/metadatos neutros; ausencia de PII estructurada, residencia, notas, aclaraciones e historial. La prueba no puede prometer eliminar identidad semántica de texto/imágenes/enlaces/anexos; ese riesgo está aceptado.
+- M7: envío inmutable; reapertura sólo por `admin` hasta 20:00 Hermosillo con razón 20–1,000/password confirmation; revisión append-only editable hasta 23:59:59. Si admin edita en nombre del juez, se prueban actor real, juez sujeto y preservación de la revisión previa.
+- Consolidación: media aritmética sólo con cuatro evaluaciones válidas; cualquier faltante mantiene `incomplete`; empate técnico sólo por igualdad a dos decimales y nunca declara ganador.
+- M8: emails idempotentes de alta/asignación/conflicto resuelto/reasignación/envío/reapertura/cierre y recordatorios de participantes 20/22-ago 09:00 Hermosillo. Incluye cero propuestas, al menos un borrador, enviada+borrador, todas enviadas y duplicado de ventana.
+- Retención: 24 meses desde `evaluation_cycle_closed_at`; antes de implementar purga se prueban legal hold, auditoría, idempotencia y compatibilidad documentada con backups.
 
 ## Evidencia de reducción de riesgos — 2026-08-06
 
@@ -38,7 +52,7 @@ La QA real de las páginas públicas comparó local contra producción en 360, 7
 
 La colisión entre la ruta Laravel `/documentos` y el directorio físico `public/documentos/` se corrigió para Apache mediante una regla exacta anterior a `-d` en `public/.htaccess`; los PDF anidados continúan estáticos. `apache2ctl configtest` devolvió `Syntax OK`. El servidor incorporado conserva su limitación de resolución de directorios físicos, pero la UAT del candidato validó la superficie dinámica mediante el runtime seguro y los contratos automatizados. No se hizo smoke autenticado sobre el VirtualHost primario porque su `.env` no usa la base/cuenta exclusiva y esa ejecución no estaba autorizada.
 
-El runtime UAT reproducible es `scripts/serve_local_testing.sh`: fija testing/MySQL loopback/base y usuario exclusivos, sesiones/cache en archivo, correo array, cola sync, flags autorizados y resultados apagados. Además falla cerrado si faltan esquema, rol participante, convocatoria, cuatro categorías o las tres versiones jurídicas activas. La primera alta posterior a la suite evidenció que `RefreshDatabase` deja el esquema sin seeders; la transacción se revirtió al faltar el rol. Se añadió el readiness gate, se ejecutó el seeder autorizado y la repetición registró cuatro aceptaciones v1.1 exactas de Términos/Privacidad. Después se recreó y sembró la base: quedó con cero usuarios/aceptaciones sintéticas.
+El runtime UAT reproducible es `scripts/serve_local_testing.sh`: fija testing/MySQL loopback/base y usuario exclusivos, sesiones en base, cache en archivo, correo array, cola sync, flags autorizados y resultados apagados. Además falla cerrado si faltan esquema, roles, permisos, convocatoria, cuatro categorías o las tres versiones jurídicas activas, y limpia la cache de permisos de Spatie antes de servir para no reutilizar una matriz obsoleta entre procesos. La primera alta posterior a la suite evidenció que `RefreshDatabase` deja el esquema sin seeders; la transacción se revirtió al faltar el rol. Se añadió el readiness gate, se ejecutó el seeder autorizado y la repetición registró cuatro aceptaciones v1.1 exactas de Términos/Privacidad. Después de M2 se recrea y siembra la base para retirar todas las cuentas y sesiones sintéticas.
 
 ## Suite Fase 01
 
@@ -94,7 +108,7 @@ La evidencia de cierre es la aceptación manual explícita del usuario. No se re
 | Área | Casos positivos | Casos negativos/límite | Nivel |
 |---|---|---|---|
 | Registro/login | alta con perfil mínimo, teléfono `+52`, aceptaciones, verificación, login, logout | duplicado, menor de edad, teléfono incompleto, faltan documentos legales, credenciales, rate limit, enumeración | Feature/browser |
-| Reset/2FA | reset de uso único, enrolamiento y recuperación | expirado/reutilizado, rol privilegiado sin 2FA | Feature/browser |
+| Reset/2FA | reset de uso único, enrolamiento y recuperación | expirado/reutilizado; enforcement sólo para roles/acciones cuyo contrato lo exija; juez puede operar sin 2FA | Feature/browser |
 | RBAC | acción permitida por rol | cada rol contra cada permiso crítico | Feature |
 | Ownership | participante opera recurso propio | ULID de otro usuario, recurso archivado | Feature |
 | Convocatoria | abre/cierra en fecha | antes/después, borde exacto, excepción sin permiso | Unit/feature |
@@ -107,10 +121,10 @@ La evidencia de cierre es la aceptación manual explícita del usuario. No se re
 | Idempotencia | mismo key devuelve resultado previo | keys concurrentes, mismo key distinto payload | Integration |
 | Corrección | solicitud y nueva versión | alterar snapshot anterior | Feature |
 | DataTables | filtro/paginación/orden | columna no permitida, N+1, filtro hostil | Integration/perf |
-| Asignación | proyecto elegible a juez | duplicada, juez inactivo/no disponible | Unit/feature |
+| Asignación | proyecto admitido a cuatro principales por flujo manual; conflicto reasignado al sustituto | duplicada, juez inactivo, sustituto en carga inicial, undécimo reemplazo activo y concurrencia | Unit/feature |
 | Conflicto | declaración bloquea evaluación | editar score tras conflicto | Feature/browser |
-| Evaluación | borrador, total y submit | no asignado, score fuera rango, incomplete, tardío | Unit/feature |
-| Reopen | reabre con permiso/razón | juez se reabre a sí mismo | Feature |
+| Evaluación | borrador, fórmula 20/20/25/25/10, comentario general, total servidor y submit | no asignado, score fuera rango/paso, comentario incompleto, payload total hostil, tardío | Unit/feature |
+| Reopen | admin crea revisión append-only antes de 20:00 con razón/password y actor real | juez se reabre; admin fuera de hora; overwrite; envío después de 23:59:59 | Feature/security |
 | Ganador | decisión separada con razón | selección aleatoria, publicar sin permiso/consentimiento | Feature |
 | Correo | plantilla/evento/locale correctos; HTML/texto y ambas marcas | retry, duplicado, falla de dispatch/SMTP, PII en body | Unit/feature |
 | Export | allowlist y auditoría | rol/columnas ajenas, expirado | Feature |
@@ -138,7 +152,7 @@ Cada celda denegada se materializa al menos una vez en una prueba Feature.
 - Dos submits concurrentes producen un snapshot/folio.
 - Autosave exige versión optimista y devuelve conflicto claro.
 - Asignación única por juez/proyecto mediante constraint y transacción.
-- Evaluation submit bloquea edición; reopen crea audit event.
+- Evaluation submit bloquea edición; reopen crea nueva revisión y evento, nunca overwrite.
 - Winner declare y publish son acciones distintas y serializadas.
 
 ## Fecha y zona horaria

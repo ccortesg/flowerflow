@@ -62,6 +62,10 @@ No hay despliegue. El rollback documental consiste en revertir únicamente los a
 - [x] 2026-08-17 20:02 MST — Pint, Composer validate/platform/audit y build Vite verdes; Yarn reporta un advisory bajo conocido de Quill 2.0.3 sin fix.
 - [!] 2026-08-17 20:04 MST — Runtime local primario desalineado: `FLOWERFLOW_MAX_SUBMISSIONS_PER_USER=3` frente al contrato de cuatro, y cuatro migraciones funcionales permanecen pendientes. No se modificaron por estar fuera del alcance documental.
 - [x] 2026-08-17 20:14 MST — Diagnóstico publicado en `docs/16-project-status-by-module-and-role-2026-08-17.md`; handoff, alcance, arquitectura, modelo, UX, roadmap, QA, riesgos, preguntas, desarrollo local, estado histórico, runbook, producto y trazabilidad alineados. El diff es exclusivamente documental y `git diff --check` pasó.
+- [x] 2026-08-18 MST — Entrada histórica append-only: el propietario respondió las 21 decisiones de Fase 02B. La preparación documental/técnica cambia de 32 % a 78 % y la implementación funcional permanece en 0 %. M1 queda listo para autorización expresa; no se reinterpretan los porcentajes de módulos implementados.
+- [!] 2026-08-18 MST — `P2B-BLOCK-001`: cuatro jueces con máximo ocho proyectos aportan 32 cupos, suficientes sólo para ocho propuestas con cobertura de cuatro; más de 50 propuestas exigen al menos 204 asignaciones y no queda sustituto distinto ante conflicto. Bloquea M4, no M1.
+- [x] 2026-08-18 MST — `P2B-BLOCK-001 RESOLVED BY OWNER`: el contrato anterior queda sustituido por cuatro jueces principales que evaluarán todas las propuestas elegibles sin límite fijo y un quinto juez exclusivamente sustituto con máximo diez reasignaciones activas. M4 deja de estar bloqueado por esta decisión, pero sigue no implementado/no autorizado y debe esperar M3 verde.
+- [x] 2026-08-18 MST — El propietario autoriza commit/push de todos los cambios acumulados para preparar su despliegue manual. La autorización no incluye despliegue, acceso a producción ni verificación del SHA productivo.
 
 ## Decision Log
 
@@ -72,6 +76,10 @@ No hay despliegue. El rollback documental consiste en revertir únicamente los a
 - Decision: no alterar `.env` ni aplicar las migraciones pendientes durante la auditoría.
   Rationale: el propietario pidió diagnóstico/documentación y la base primaria no es el ambiente desechable autorizado para cambios destructivos.
   Date/Author: 2026-08-17 / Codex.
+
+- Decision: registrar `P2B-DEC-001`–`021` como `OWNER_APPROVED`, conservar Fase 02B en 0 % funcional y habilitar sólo la siguiente puerta documental de M1.
+  Rationale: aprobar el contrato no crea rol, rutas, datos ni UI; cada milestone mantiene autorización y evidencia independientes.
+  Date/Author: 2026-08-18 / propietario y Codex.
 
 ## Outcomes & Retrospective
 

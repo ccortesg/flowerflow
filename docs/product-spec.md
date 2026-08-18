@@ -1,18 +1,20 @@
 # Especificación de producto — Flower Flow 2026
 
+> **Adenda de estado productivo y Fase 02B — 2026-08-18:** el propietario confirma el release anterior como `OWNER_CONFIRMED_DEPLOYED`, sin evidencia técnica independiente y con `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`. M1/M2 quedaron implementados y verdes exclusivamente en local/test; Fase 02B permanece en 20 % funcional y sube a 90 % de preparación. M3 es la siguiente puerta. `P2B-BLOCK-001` está resuelto mediante cuatro principales sin límite fijo y un quinto sustituto exclusivo con capacidad diez.
+
 > **Decisiones jurídicas del propietario — 2026-08-18:** Mecánica, Términos y Aviso v1.1 permanecen vigentes con cuatro categorías, máximo cuatro propuestas y cierre al 23 de agosto. La superposición temática de accesibilidad se acepta sin cambios. Las cuentas con aceptación v1.0 continúan operativamente sin reaceptación forzada ni modificación de evidencia; las nuevas aceptaciones registran v1.1. El archivo físico v1.0 designado es `3bcf31…` y la discrepancia histórica `42bd5e…` se conserva visible. Ver `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
 
-> **Adenda autoritativa de plazo — 2026-08-17:** el cierre inclusivo de `hermosillo-florece-2026` se amplía al `2026-08-23 23:59:59 America/Hermosillo`, persistido como `2026-08-24 06:59:59 UTC`. Esta adenda sustituye únicamente las referencias operativas al cierre del 15 de agosto. Por instrucción del propietario, los PDF jurídicos no se modifican en este cambio; su regularización queda pendiente y registrada como riesgo.
+> **Adenda histórica de plazo — 2026-08-17, reconciliada después por v1.1:** el cierre inclusivo de `hermosillo-florece-2026` se amplió al `2026-08-23 23:59:59 America/Hermosillo`, persistido como `2026-08-24 06:59:59 UTC`. En ese milestone los PDF no se modificaron; las versiones v1.1 posteriores ya regularizaron el plazo.
 
-> **Adenda autoritativa “Hermosillo sin Barreras” — 2026-08-06:** para la plataforma, las categorías exactas son Movilidad con Flow, Hermosillo Florece, Mi familia, mi mascota y Hermosillo sin Barreras; máximo cuatro propuestas por cuenta, una por categoría; un Apple iPad Pro y máximo un ganador por categoría, cuatro en total. “Movilidad con Flow” ya no incluye accesibilidad en su descripción. Los PDF y aceptaciones de Mecánica v1.0 permanecen sin cambios por decisión del propietario, con contradicción jurídica alta aceptada y pendiente de adenda aprobada. Esta adenda sustituye las cantidades de la adenda Fase 01 siguiente.
+> **Adenda histórica “Hermosillo sin Barreras” — 2026-08-06, reconciliada después por v1.1:** para la plataforma se fijaron cuatro categorías y máximo cuatro propuestas. En ese corte los PDF v1.0 todavía divergían; las versiones v1.1 y decisiones del 2026-08-18 resolvieron cantidades y aceptaron la superposición temática sin recategorización. Esta adenda conserva la secuencia histórica.
 
 > **Adenda autoritativa Fase 01 — 2026-07-15:** el alcance aprobado es recepción local/test, no el MVP completo histórico. Cierre inclusivo: 15 de agosto de 2026 a las 23:59:59 en `America/Hermosillo`; categorías exactas: Movilidad con Flow, Hermosillo Florece y Mi familia, mi mascota; participación individual/equipo hasta cinco; una propuesta por categoría y tres totales. Registro/recepción/resultados están apagados por defecto. Evaluación, jueces, ganadores y publicación permanecen fuera. Ver `docs/01-functional-scope.md` y `docs/legal-change-log.md`.
 
-> **Estado vigente de implementación — 2026-08-18:** Fase 01 y Fase 02A, cuarta categoría, exportación privada, ampliación de plazo, sincronización v1.1 y 503/CSP existen en el repositorio, cerraron validación local y están cubiertas por 109 pruebas/1,049 aserciones. El producto maestro completo está en 58 % porque jueces/evaluación, ganadores/resultados, ARCO y la operación productiva actual no están implementados. El diagnóstico autoritativo por módulo/rol es `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+> **Estado vigente de implementación — 2026-08-18:** además del alcance anterior, M1/M2 aportan RBAC y ciclo operativo de cuenta juez. La validación local cerró con 125 pruebas/1,316 aserciones; M1+M2 dirigido aporta 16/267. El producto maestro se estima en 63 % porque rúbrica, asignación/evaluación, ganadores/resultados y ARCO no están implementados, y producción no fue verificada independientemente.
 
-**Fecha de corte de la baseline:** 2026-07-15; **corte vigente:** 2026-08-17
+**Fecha de corte de la baseline:** 2026-07-15; **corte vigente:** 2026-08-18
 
-**Estado:** especificación viva; documenta código local implementado, pero no autoriza despliegue
+**Estado:** especificación viva; distingue código local, `OWNER_CONFIRMED_DEPLOYED`, evidencia productiva `POR_CONFIRMAR` y diseño futuro
 **Propósito:** consolidar el producto que debe construirse, sus límites y las decisiones que requieren aprobación.
 
 ## Convenciones de decisión
@@ -20,10 +22,11 @@
 - **DECISION:** dato confirmado por el solicitante, por el alcance recibido o por evidencia directa del repositorio.
 - **ASSUMPTION:** supuesto de trabajo recomendado para poder planificar; requiere validación antes de implementar la parte afectada.
 - **PENDING:** dato, aprobación o evidencia aún no disponible.
+- **PROPOSAL_NEEDED:** contrato futuro con alternativas/recomendación que requiere decisión expresa antes de implementar.
 
 ## Integridad del insumo
 
-> **RESOLVED para Fase 01 y Fase 02A; PENDING para el producto maestro:** los prompts aprobados posteriores resolvieron recepción y admisibilidad. Jueces, rúbrica, asignación, empate, ganadores, publicación y ARCO todavía requieren decisiones expresas; esta especificación no las inventa.
+> **RESOLVED para Fase 01, Fase 02A, contrato 02B y M1/M2; PENDING para el producto maestro:** identidad/alta/función de juez ya están probadas. M3–M10 no están implementados; resolución de empates, ganadores, publicación y ARCO permanecen pendientes. `P2B-BLOCK-001` está resuelto.
 
 ## Resumen ejecutivo
 
@@ -58,17 +61,21 @@ La frase histórica “la primera fase es documental” quedó superada por las 
 | DEC-019 | DECISION / OWNER APPROVED | No se fuerza reaceptación v1.1 a cuentas existentes ni se alteran `legal_acceptances` históricas; nuevas cuentas y nuevos envíos registran v1.1. |
 | DEC-020 | DECISION / OWNER DESIGNATION | El archivo físico Mecánica v1.0 que se conserva es `3bcf31…`; `42bd5e…` permanece como hash histórico registrado. |
 | DEC-021 | DECISION OPERATIVA / OWNER CONFIRMED | Producción usa el checkout Git directo `/var/www/flowerflow`, sin `releases/current/shared`; el update inmediato se genera para esa topología y no cambia Apache ni dominios. |
+| DEC-022 | `OWNER_CONFIRMED_DEPLOYED` | El propietario confirma el 2026-08-18 que instaló los cambios actuales y que existen más de 50 propuestas reales. `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; no equivale a verificación técnica independiente. |
+| DEC-023 | SUPERSEDED 2026-08-18 | La espera de las 21 decisiones terminó con la respuesta expresa del propietario. |
+| DEC-024 | OWNER_APPROVED / M1-M2 IMPLEMENTED LOCAL | Las 21 decisiones quedan en ADR-0008; M1/M2 cerraron `GO LOCAL/TEST`. M3 queda listo para autorización y M4 queda no implementado/no autorizado. |
+| DEC-025 | RESOLVED / OWNER APPROVED 2026-08-18 | `P2B-BLOCK-001`: cuatro principales sin límite fijo cubren todas las propuestas elegibles; quinto sustituto exclusivo con capacidad diez. M4 requiere implementación/autorización, no otra decisión de capacidad. |
 
 ## Evidencia actual del repositorio
 
 | Elemento | Estado | Evidencia al 2026-08-17 |
 | --- | --- | --- |
-| Backend | VERIFIED | Laravel 12.64.0 sobre PHP 8.3.33; 109 pruebas/1,049 aserciones verdes en MySQL aislado. |
+| Backend | VERIFIED | Laravel 12.64.0 sobre PHP 8.3.33; 125 pruebas/1,316 aserciones verdes en MySQL aislado. |
 | Plantilla | DECISION | `package.json` declara Materialize `3.0.0` con licencia comercial. |
 | Frontend | DECISION | Bootstrap 5.3.6, Vite 6.3.5 y varios plugins de la plantilla están declarados; su presencia no autoriza usarlos todos. |
 | Layouts | VERIFIED | `layouts/flowerflow.blade.php` sirve público, participante y panel; layouts heredados se conservan sin ser el contrato principal. |
 | Navegación | VERIFIED / DEUDA | Navegación Flower Flow usa parciales/Blade por rol; los JSON heredados conservan demos no usados por este layout. |
-| Aplicación | VERIFIED | Hay 66 rutas registradas/41 propias y módulos de auth, perfil, propuestas, archivos, admisibilidad, panel y exportación. |
+| Aplicación | VERIFIED | Hay 77 rutas registradas/52 propias y módulos de auth, perfil, propuestas, archivos, admisibilidad, panel, exportación y ciclo de cuenta juez. |
 | Variante/licencia exacta | PENDING | Debe confirmarse si el paquete adquirido es starter kit o full version, y el alcance de su licencia para dominio/proyecto. |
 
 ## Objetivo del producto
@@ -127,9 +134,9 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 
 - **IAM-001 — DECISION:** registro, login, restablecimiento y verificación de correo.
 - **IAM-002 — DECISION:** RBAC de mínimo privilegio complementado con Policies por recurso.
-- **IAM-003 — DECISION:** 2FA para roles privilegiados y confirmación de contraseña para acciones críticas.
+- **IAM-003 — DECISION DIFERENCIADA:** 2FA es opcional para `judge`; las acciones administrativas críticas, incluida reapertura/recuperación, exigen confirmación de contraseña. Reglas de otros roles privilegiados conservan su propio alcance.
 - **IAM-004 — DECISION:** rate limiting por IP y cuenta, respuestas que no revelen si un correo existe y revocación de sesiones al suspender usuarios.
-- **IAM-005 — ASSUMPTION:** las invitaciones de jueces e integrantes usarán tokens firmados, expirables y de un solo uso.
+- **IAM-005 — OWNER_APPROVED / PENDING INTEGRANTES:** alta de jueces directa por `admin`, sin invitaciones. Las invitaciones de integrantes permanecen como contrato separado pendiente.
 
 ### Perfil, residencia y elegibilidad
 
@@ -158,13 +165,14 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 
 ### Jueces y evaluación
 
-- **JUD-001 — DECISION:** dashboard de asignaciones pendientes, borrador y finalizadas.
-- **JUD-002 — DECISION:** vista anónima de proyecto y sólo anexos autorizados.
-- **JUD-003 — DECISION:** declaración de conflicto por proyecto; un conflicto bloquea evaluación.
-- **JUD-004 — DECISION:** evaluación por criterio con comentarios y guardado de borrador.
-- **JUD-005 — DECISION:** confirmación explícita antes de enviar; el juez conserva historial personal.
-- **JUD-006 — DECISION:** cierre automático conforme al calendario; excepciones auditadas.
-- **JUD-007 — PENDING:** número de jueces por proyecto, modalidad ciega, rúbrica final, puntaje mínimo, empate y recusación.
+- **JUD-001 — OWNER_APPROVED / PARTIAL — M1 VERIFIED:** rol `judge`, permiso mínimo exclusivo, correo verificado, gates y shell vacío detrás de flag están implementados/probados. M2 aborda perfil, alta directa por `admin`, activación, suspensión y recovery; no hay dashboard de asignaciones.
+- **JUD-002 — OWNER_APPROVED / NOT IMPLEMENTED:** ceguera simple estructural; todos los campos sustantivos y anexos evaluables son visibles, mientras PII estructurada, residencia, notas, aclaraciones e historial permanecen ocultos. El riesgo de autoidentificación dentro del contenido fue aceptado.
+- **JUD-003 — OWNER_APPROVED / NOT IMPLEMENTED:** catálogo cerrado de cuatro tipos de conflicto; `admin` resuelve y reasigna a otro juez mediante una asignación independiente.
+- **JUD-004 — OWNER_APPROVED / NOT IMPLEMENTED:** rúbrica global Pertinencia 20, Claridad 20, Viabilidad 25, Impacto 25 y Coherencia 10; escala 0–10/paso 0.5; comentario general 100–2,000 obligatorio y por criterio opcional hasta 1,000.
+- **JUD-005 — OWNER_APPROVED / NOT IMPLEMENTED:** envío inmutable, reapertura append-only por `admin` hasta las 20:00 con razón/password confirmation y edición hasta las 23:59:59; toda edición administrativa conserva actor real y revisión previa.
+- **JUD-006 — OWNER_APPROVED / NOT IMPLEMENTED:** cierre global `2026-08-27 23:59:59 America/Hermosillo`; notificaciones mínimas de juez y recordatorios de participantes 20/22 de agosto a las 09:00.
+- **JUD-007 — OWNER_APPROVED / NOT IMPLEMENTED:** total sólo servidor, precisión 4/2 `HALF_UP`, media aritmética de cuatro evaluaciones, consolidación bloqueada ante faltantes y empate por igualdad a dos decimales. Ganador/desempate quedan fuera.
+- **JUD-008 — PENDING BLOCKER:** M4 no puede implementar las asignaciones mientras cuatro jueces × ocho proyectos sean incompatibles con más de 50 propuestas y con una sustitución por conflicto.
 
 ### Ganadores y resultados
 
@@ -178,7 +186,7 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 
 ### Comunicaciones, privacidad y reportes
 
-- **COM-001 — DECISION:** plantillas transaccionales para verificación, invitaciones, correcciones, envío, elegibilidad, asignación, evaluación y resultados.
+- **COM-001 — DECISION:** plantillas transaccionales para verificación, alta directa de juez, invitaciones de integrante si se aprueban, correcciones, envío, elegibilidad, asignación, evaluación y resultados.
 - **COM-002 — DECISION:** colas, idempotencia, reintentos y registro de resultado sin contenido sensible innecesario.
 - **COM-003 — DECISION:** usar `convocatoria@flowerflow.com.mx` como remitente o reply-to funcional y `privacidad@flowerflow.com.mx` para privacidad; credenciales SMTP permanecen pendientes y no deben inventarse.
 - **COM-004 — DECISION:** no construir marketing masivo sin consentimiento y alcance explícitos.
@@ -214,11 +222,11 @@ Transiciones laterales controladas: `correction_requested → submitted` mediant
 
 ### Evaluación
 
-`assigned → in_progress → submitted`
+Contrato de diseño aprobado, todavía no implementado: `assigned → in_progress → submitted`.
 
-Transiciones excepcionales: `assigned → conflict_declared`; `submitted → reopened → in_progress`; cualquier evaluación inválida puede pasar a `voided` por actor autorizado y con auditoría.
+Transiciones aprobadas: `assigned|in_progress → conflict_declared`; `submitted → reopened → in_progress`; y paso controlado a `voided`. El envío es inmutable; la reapertura administrativa crea una revisión append-only conforme a ADR-0008.
 
-Cada transición deberá especificar actor, precondiciones, efectos, notificaciones, evidencia de auditoría y reversibilidad.
+El contrato completo está en `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`; ninguna transición existe en código y cada milestone requiere autorización expresa.
 
 ## Invariantes de negocio
 
@@ -375,6 +383,8 @@ No se desplegará hasta contar con backup probado, staging/UAT, smoke tests y ap
 - `docs/05-ux-ui.md`
 - `docs/10-open-questions.md`
 - `docs/requirements-traceability.md`
+- `docs/11-operations-handoff.md`
+- `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`
 
 ## Adenda aprobada — Fase 02A, 2026-07-16
 

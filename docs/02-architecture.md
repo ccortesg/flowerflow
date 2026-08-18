@@ -1,8 +1,10 @@
 # Arquitectura propuesta
 
-> **Implementación vigente — 2026-08-17:** monolito modular Laravel 12.64.0 con Fase 01/02A, exportaciones XLSX privadas y cierre ampliado. MySQL es el datastore local; timestamps se persisten UTC y el concurso conserva `America/Hermosillo`. Uploads usan discos privados y sólo salen por controller+Policy. AWS sigue como arquitectura objetivo; no hay evidencia de que el SHA actual esté desplegado. Ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+> **Adenda Fase 02B — 2026-08-18:** M1/M2 están implementados localmente. Sobre roles/gates exactos se añadió `JudgeProfile`, enums de estado y función, capacidad derivada, Actions transaccionales, Policy/Requests, listener de verificación, middleware `judge.active`, notificaciones cifradas y `/panel/jueces`. Las sesiones database permiten revocación dirigida fail-closed. M3–M10 no están implementados; `P2B-BLOCK-001` está resuelto y M4 requiere autorización posterior.
 
-> **Reconciliación jurídica v1.1 local:** `config/flowerflow.php` declara identidad y metadatos esperados; `legal_documents` conserva v1.0 y v1.1; la migración `2026_08_17_220000_publish_legal_documents_v1_1.php` hace vigente exactamente una v1.1 por tipo sin borrar historia; registro, perfil y envío fallan de forma cerrada si el catálogo activo no es determinístico. `legal_acceptances` conserva el `legal_document_id` realmente aceptado y no se reescribe. La política de reaceptación para usuarios v1.0 permanece en `PROPOSAL_NEEDED`.
+> **Implementación vigente — 2026-08-18:** monolito modular Laravel 12.64.0 con Fase 01/02A, exportaciones XLSX privadas y cierre ampliado. MySQL es el datastore local; timestamps se persisten UTC y el concurso conserva `America/Hermosillo`. Uploads usan discos privados y sólo salen por controller+Policy. El propietario registra `OWNER_CONFIRMED_DEPLOYED`; el SHA y la operación productiva siguen sin evidencia técnica independiente. Ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+
+> **Reconciliación jurídica v1.1 local:** `config/flowerflow.php` declara identidad y metadatos esperados; `legal_documents` conserva v1.0 y v1.1; la migración `2026_08_17_220000_publish_legal_documents_v1_1.php` hace vigente exactamente una v1.1 por tipo sin borrar historia; registro, perfil y envío fallan de forma cerrada si el catálogo activo no es determinístico. `legal_acceptances` conserva el `legal_document_id` realmente aceptado y no se reescribe. El propietario resolvió continuidad v1.0 sin reaceptación forzada ni backfill.
 
 **Estado:** arquitectura parcialmente implementada; decisiones productivas pendientes
 
@@ -46,7 +48,7 @@ flowchart LR
 
     Participant -->|HTTPS| FF
     Reviewer -->|HTTPS + 2FA| FF
-    Judge -->|HTTPS + 2FA| FF
+    Judge -->|HTTPS; 2FA opcional| FF
     Admin -->|HTTPS + 2FA| FF
     Privacy -->|HTTPS + 2FA| FF
     Auditor -->|HTTPS + 2FA| FF
@@ -146,7 +148,7 @@ flowchart LR
 | Convocatorias | calendario, categorías, reglas activas, estado | resultados individuales |
 | Proyectos | borradores, integrantes, folio, snapshots, envío | puntuaciones de otros proyectos |
 | Elegibilidad | residencia, revisión, correcciones | rúbrica y ranking |
-| Evaluación | asignaciones, conflicto, rúbrica, borrador y envío | PII y comprobantes |
+| Evaluación | asignaciones, conflicto, rúbrica, borrador, envío y revisiones append-only | PII estructurada, comprobantes, notas, aclaraciones e historial de admisibilidad |
 | Decisiones | finalistas, ganador y publicación explícita | selección aleatoria |
 | Legal | documentos versionados y aceptaciones | edición retroactiva de aceptaciones |
 | Comunicaciones | eventos y resultados de entrega | documentos o PII de alto riesgo |
@@ -186,7 +188,7 @@ La operación debe ser idempotente: una misma clave y proyecto devuelve el resul
 | UI | Blade + Bootstrap 5 + Materialize 3.0.0 | Reutiliza el activo comprado y reduce complejidad |
 | JS | módulos por página con Vite | Evita una SPA y limita bundle |
 | Datos | MySQL 8, InnoDB, utf8mb4 | Requisito del producto; transacciones e índices |
-| Auth/RBAC | Fortify 1.37.2 + Spatie Permission 8.3.0 + Policies | Implementado para `participant`, `reviewer` y `admin`; roles futuros y enforcement 2FA permanecen pendientes |
+| Auth/RBAC | Fortify 1.37.2 + Spatie Permission 8.3.0 + Policies | M1 implementa `participant`, `reviewer`, `judge` y `admin` excluyentes, gates exactos y fallo cerrado; perfil/alta/suspensión/recovery de juez quedan para M2 y 2FA continúa opcional |
 | Sesión/cache/cola | database en MVP | Sin dependencia Redis; operación simple y auditable |
 | Archivos | EBS privado cifrado o S3 privado | Decisión de preflight; descarga sólo por Policy/controlador |
 | Correo | Notifications/Mailables + SMTP PENDING | Plantillas multi-canal y pruebas con fakes |
@@ -243,13 +245,24 @@ Estos objetivos son de aplicación; disponibilidad y recuperación requieren con
 
 1. Inventario de EC2: Ubuntu, servidor web, PHP-FPM, MySQL, CPU/RAM/disco, acceso y procesos.
 2. Variante/licencia de Materialize para el dominio.
-3. Roles finales, obligatoriedad 2FA privilegiada, suspensión/revocación y gestión excepcional de permisos; los paquetes Fortify/Spatie ya están decididos e instalados.
+3. Suspensión/revocación y gestión excepcional de permisos. Los roles exclusivos y 2FA opcional para juez ya están aprobados; Fortify/Spatie ya están instalados.
 4. SMTP y política de entregabilidad.
 5. Storage privado EBS frente a S3 para producción.
 6. Fecha/hora de apertura, correcciones/retiro/equipos colaborativos y reglas legales; el cierre inclusivo ya es `2026-08-23 23:59:59 America/Hermosillo`.
 7. RPO/RTO y propietario de operación.
+8. Ejecutar M4 sólo tras M3 verde y autorización separada: conservar cuatro principales sin límite fijo y quinto sustituto exclusivo con capacidad diez; `P2B-BLOCK-001` ya está resuelto.
 
 No se autoriza implementar los módulos o comportamientos aún pendientes ni desplegar hasta aprobar esas decisiones o aceptar los supuestos explícitos de un ExecPlan nuevo.
+
+## Adenda arquitectónica Fase 02B aprobada — 2026-08-18
+
+- Identidad ya agrega el rol exclusivo `judge`; una cuenta sin rol o multirol falla cerrada mediante `EnsureExclusiveBusinessRole`. Alta directa por `admin`, sin invitaciones de juez, sigue pendiente de M2.
+- El shell juez ya está separado de participante y `/panel`; `FLOWERFLOW_EVALUATION_ENABLED=false` lo cierra por defecto y `/juez` sólo muestra un estado vacío sin propuestas ni PII.
+- El dominio futuro usa `judge_profiles`, paquetes ciegos estructurales, asignaciones manuales, conflictos, rúbrica/versiones, evaluaciones y revisiones append-only. No reusa el snapshot crudo como DTO de juez.
+- La proyección permite campos sustantivos y anexos evaluables, pero elimina PII estructurada, residencia, notas internas, aclaraciones, historial, nombres expuestos y metadatos técnicos. La autoidentificación dentro del contenido es un riesgo aceptado, no una promesa de anonimización total.
+- El servidor calcula y persiste puntajes; la consolidación sólo existe con cuatro evaluaciones válidas. Ganadores/resultados no forman parte del componente Evaluación.
+- La edición administrativa conserva actor real, juez sujeto, razón y revisión previa; no suplanta ni sobrescribe la autoría histórica.
+- Todas las migraciones futuras serán aditivas, sin backfill de asignaciones ni cambios inferidos sobre las más de 50 propuestas existentes.
 
 ## Adenda arquitectónica — Fase 02A, 2026-07-16
 

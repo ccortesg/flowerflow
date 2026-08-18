@@ -2,6 +2,8 @@
 
 namespace App\Actions\Fortify;
 
+use App\Actions\AssignExclusiveBusinessRole;
+use App\Enums\BusinessRole;
 use App\Models\LegalDocument;
 use App\Models\User;
 use App\Support\MexicoPhoneNumber;
@@ -19,7 +21,10 @@ class CreateNewUser implements CreatesNewUsers
 {
     use PasswordValidationRules;
 
-    public function __construct(private Request $request) {}
+    public function __construct(
+        private Request $request,
+        private AssignExclusiveBusinessRole $assignRole,
+    ) {}
 
     /**
      * Validate and create a newly registered user.
@@ -127,7 +132,7 @@ class CreateNewUser implements CreatesNewUsers
                 ]);
             }
 
-            $user->assignRole('participant');
+            $this->assignRole->execute($user, BusinessRole::Participant);
 
             return $user;
         });

@@ -17,7 +17,7 @@ export DB_CONNECTION=mysql
 export DB_HOST=127.0.0.1
 export DB_DATABASE=flowerflow_testing
 export DB_USERNAME=flowerflow_testing_user
-export SESSION_DRIVER=file
+export SESSION_DRIVER=database
 export CACHE_STORE=file
 export MAIL_MAILER=array
 export QUEUE_CONNECTION=sync
@@ -25,6 +25,7 @@ export FLOWERFLOW_REGISTRATION_ENABLED=true
 export FLOWERFLOW_SUBMISSIONS_ENABLED=true
 export FLOWERFLOW_PANEL_ENABLED=true
 export FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED=true
+export FLOWERFLOW_EVALUATION_ENABLED=true
 export FLOWERFLOW_RESULTS_ENABLED=false
 export FLOWERFLOW_SUBMISSIONS_CLOSE_AT="${FLOWERFLOW_SUBMISSIONS_CLOSE_AT:-2026-08-23T23:59:59-07:00}"
 
@@ -58,8 +59,10 @@ if [[ "${FLOWERFLOW_TEST_GUARD_ONLY:-false}" == "true" ]]; then
   exit 0
 fi
 
+php artisan permission:cache-reset >/dev/null
+
 php artisan tinker --execute='
-$requiredTables = ["roles", "permissions", "competitions", "categories", "legal_documents"];
+$requiredTables = ["roles", "permissions", "competitions", "categories", "legal_documents", "judge_profiles", "sessions"];
 $missingTables = array_values(array_filter(
     $requiredTables,
     static fn (string $table): bool => ! Illuminate\Support\Facades\Schema::hasTable($table),
@@ -84,6 +87,9 @@ $facts = [
     "submissions_enabled" => config("flowerflow.flags.submissions"),
     "panel_enabled" => config("flowerflow.flags.panel"),
     "admissibility_enabled" => config("flowerflow.flags.admissibility_review"),
+    "evaluation_enabled" => config("flowerflow.flags.evaluation"),
+    "judge_role" => $db->table("roles")->where("name", "judge")->where("guard_name", "web")->count(),
+    "judge_profiles" => $db->table("judge_profiles")->count(),
     "results_enabled" => config("flowerflow.flags.results"),
 ];
 
@@ -96,6 +102,8 @@ if (
     || $facts["submissions_enabled"] !== true
     || $facts["panel_enabled"] !== true
     || $facts["admissibility_enabled"] !== true
+    || $facts["evaluation_enabled"] !== true
+    || $facts["judge_role"] !== 1
     || $facts["results_enabled"] !== false
 ) {
     fwrite(STDERR, "TEST_RUNTIME_DATA_NOT_READY: run the approved seeders and verify feature flags\n");

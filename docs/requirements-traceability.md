@@ -14,6 +14,7 @@
 | LEG-V11-008 | Preservar integridad v1.0 | propietario designa el archivo físico `3bcf31…`; hash histórico `42bd5e…` y aceptaciones permanecen intactos | VERIFIED / HISTORICAL DISCREPANCY ACCEPTED |
 | SEC-503-001 | 503 accesible y compatible con CSP | vista propia sin estilos inline, prueba CSP estricta, pre-render de mantenimiento y revisión responsive | VERIFIED local |
 | OPS-TOPOLOGY-001 | Runbook coherente con la topología productiva real | ADR 0002, runbooks 07/15, handoff y prompt registran checkout directo `/var/www/flowerflow`, sin `releases/current/shared` | OWNER CONFIRMED / DOCUMENTED |
+| OPS-DEPLOY-001 | Registrar instalación informada sin inventar evidencia | diagnóstico/product spec/handoff separan `OWNER_CONFIRMED_DEPLOYED` de `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR` | OWNER CONFIRMED / TECHNICAL EVIDENCE PENDING |
 
 ## Trazabilidad de la auditoría integral — 2026-08-17
 
@@ -21,9 +22,30 @@
 |---|---|---|---|
 | AUDIT-001 | Diagnóstico por módulo y funcionalidad con porcentajes reproducibles | `docs/16-project-status-by-module-and-role-2026-08-17.md`, rúbrica de cinco dimensiones y pesos del plan maestro | VERIFIED documental |
 | AUDIT-002 | Diagnóstico por rol y acceso efectivo | roles/permisos del seeder, rutas, Policies, vistas y pruebas negativas contrastadas con la matriz planificada | VERIFIED documental/local |
-| AUDIT-003 | Separar código, runtime local y producción | estado de flags/config, migraciones de `flowerflow_testing`/`flowerflow` y evidencia Git/productiva histórica | VERIFIED; runtime local desalineado |
-| AUDIT-004 | Gate de código vigente | 109 pruebas/1,049 aserciones, Pint, Composer, JSON y build verdes; Quill bajo documentado | VERIFIED local |
-| AUDIT-005 | Próximo prompt exacto y acotado | prompt de release candidate local al final del diagnóstico, sin Fase 02B ni producción | READY FOR OWNER REVIEW |
+| AUDIT-003 | Separar código, runtime local y producción | estado de flags/config, migraciones de testing, `OWNER_CONFIRMED_DEPLOYED` y `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR` separados | VERIFIED documental; producción no verificada independientemente |
+| AUDIT-004 | Gate de código vigente | 125 pruebas/1,316 aserciones, Pint, Composer, JSON y build verdes; Quill bajo documentado | VERIFIED local |
+| AUDIT-005 | Próximo prompt exacto y acotado | prompt M3 sincronizado en diagnóstico/paquete; conserva M1/M2 y registra `P2B-BLOCK-001=RESOLVED` | READY FOR EXPLICIT OWNER AUTHORIZATION |
+
+## Trazabilidad del diseño Fase 02B — 2026-08-18
+
+| ID | Requisito de diseño | Evidencia | Estado |
+|---|---|---|---|
+| F2B-DES-001 | Baseline Git y código real antes de diseñar | ExecPlan 02B e inventario en paquete sección 4 | VERIFIED documental/local read-only |
+| F2B-DES-002 | Distinguir despliegue informado de evidencia técnica | diagnóstico, product spec y handoff con ambos estados | `OWNER_CONFIRMED_DEPLOYED` / SHA `POR_CONFIRMAR` |
+| F2B-DES-003 | Identidad/alta directa/perfil/gate de juez | M1: enum/Action/middleware/migración/rutas/shell; M2: `judge_profiles`, acciones, Policy/Requests, admin UI y middleware activo | M1/M2 VERIFIED LOCAL |
+| F2B-DES-004 | Asignación/reasignación/cobertura/plazo | paquete sección 7; decisiones 003–005/015/016 y corrección D-031 | OWNER_APPROVED / BLOCK RESOLVED / M4 NOT AUTHORIZED |
+| F2B-DES-005 | Matriz ciega campo por campo y anonimización | paquete sección 8; decisiones 006–008 | OWNER_APPROVED / SEMANTIC IDENTITY RISK ACCEPTED |
+| F2B-DES-006 | Rúbrica versionada y contrato exacto | paquete sección 9; decisiones 009–011 | OWNER_APPROVED / NOT IMPLEMENTED |
+| F2B-DES-007 | Estados, envío inmutable y reapertura versionada | paquete sección 10; decisión 017 | OWNER_APPROVED / NOT IMPLEMENTED |
+| F2B-DES-008 | Cálculo sólo servidor, consolidación/faltantes/empate | paquete sección 11; decisiones 010/012/013/021 | OWNER_APPROVED / NOT IMPLEMENTED |
+| F2B-DES-009 | Matriz negativa, amenazas y auditoría | `JudgeRbacIsolationTest` + `JudgeProfileOnboardingTest` (16 pruebas/267 aserciones), suite completa y paquete sección 12 | M1/M2 VERIFIED; M3+ PENDING |
+| F2B-DES-010 | UX accesible mínima | `/juez`, `/juez/estado`, `/panel/jueces` y `/cuenta/acceso`; UAT Firefox desktop/tablet/mobile, teclado, foco, reflow, consola y 403/404 | M1/M2 VERIFIED; UX M3+ PENDING |
+| F2B-DES-011 | Notificaciones idempotentes y operación | M2: configuración de acceso, verificación y estado/recovery con HTML+texto y dispatcher resiliente; paquete sección 14 para eventos futuros | M2 SUBSET VERIFIED / M3+ PENDING |
+| F2B-DES-012 | Compatibilidad con más de 50 propuestas | migración M2 aditiva, perfil primary/substitute, sin backfill/asignaciones; upgrade/rollback/forward preservó usuario sintético | M2 VERIFIED LOCAL / CAPACITY DECISION CLOSED |
+| F2B-DES-013 | Diez milestones futuros | paquete sección 18 | M1/M2 COMPLETE; M3 READY; M4 READY AFTER M3; M5–M10 NOT AUTHORIZED |
+| F2B-DES-014 | Bloque de 21 respuestas y siguiente prompt | paquete secciones 20–21; diagnóstico prompt vigente | 21/21 OWNER_APPROVED / M3 READY |
+| F2B-DES-015 | Resolver incompatibilidad de cobertura/capacidad/reemplazo | paquete secciones 5/7/19/20; ADR-0008; D-031; riesgo R76 | `P2B-BLOCK-001 RESOLVED BY OWNER` |
+| F2B-DES-016 | Contrato de QA por milestone | `JudgeRbacIsolationTest`, `JudgeProfileOnboardingTest`, `docs/08-testing-qa.md`; gates futuros de fórmula, reapertura, anonimización y retención | M1/M2 TESTS VERIFIED / M3+ PENDING |
 
 ## Trazabilidad paginación y exportación privada — 2026-08-11
 
@@ -47,7 +69,7 @@
 | HSB-003 | Landing sólo activa, fallback de cuatro, iconos por slug y 4/2/1 | `LandingController`, Blade, CSS, catálogo/generador Iconify | `PublicLandingTest`, `icons:check`, build y QA 360/768/1440 sin overflow ni consola | VERIFIED local |
 | HSB-004 | Superficies participante y snapshot/correo | vistas dinámicas, config iconos y mail de acuse | dashboard, crear/editar/listar/ver/enviar e inmutabilidad en `HermosilloSinBarrerasCategoryTest` | VERIFIED local automatizado |
 | HSB-005 | Dashboard/filtro/listado/detalle/descarga admin | scope de dashboard y contratos existentes | cero/uno, filtro slug, detalle y descarga en `HermosilloSinBarrerasCategoryTest` | VERIFIED local automatizado |
-| HSB-006 | Conservar evidencia histórica y reconciliar nueva Mecánica | v1.0/v1.1 no se sobrescriben; `legal-change-log.md`, risk register y matriz jurídica | v1.1 definitiva confirma cuatro categorías; el binario v1.0 actual no coincide con su hash original | VERIFIED funcional / PENDING crítico histórico |
+| HSB-006 | Conservar evidencia histórica y reconciliar nueva Mecánica | v1.0/v1.1 no se sobrescriben; `legal-change-log.md`, risk register y matriz jurídica | v1.1 confirma cuatro categorías; propietario designó binario v1.0 y conserva discrepancia de hash | VERIFIED / HISTORICAL DISCREPANCY ACCEPTED |
 | HSB-007 | Despliegue reversible según existencia de datos | migración aditiva con `down` no destructivo y ExecPlan | UAT, backup y smoke son puertas externas | READY FOR OWNER REVIEW |
 
 ## Trazabilidad del plan de reducción de riesgos — 2026-08-06
@@ -159,9 +181,9 @@
 | IAM-001 | DECISION | Registro completo, login, logout y restablecimiento; contraseña mínima de 8 con mayúscula, minúscula, número, símbolo y confirmación. | Fortify, `CreateNewUser`, vistas auth, `phone-number-field` y componente `password-fields` | Backend aplica regla única; UI muestra requisitos/confirmación; registro crea perfil completo y recuperación no enumera correo. | `AuthMailHardeningTest`, `RegistrationProfileFlowTest` + browser | MVP |
 | IAM-002 | DECISION | Verificación de correo antes de enviar. | Verificación; wizard | Usuario no verificado puede guardar borrador pero no enviar. | F + B | MVP |
 | IAM-003 | DECISION | Roles/permisos de mínimo privilegio y Policies por recurso. | Todas las rutas autenticadas | Cada rol sólo accede a recursos autorizados incluso por URL directa. | F matriz RBAC + SEC IDOR | MVP |
-| IAM-004 | DECISION | 2FA y confirmación de contraseña en acciones privilegiadas. | Cuenta/admin | Rol privilegiado no accede/ejecuta acción crítica sin controles. | F + B + SEC | MVP |
+| IAM-004 | DECISION DIFERENCIADA | 2FA opcional para juez; confirmación de contraseña en reapertura/recovery y demás acciones privilegiadas según contrato. | Cuenta/admin/juez futuro | No convertir 2FA opcional de juez en requisito; acciones críticas administrativas sí aplican step-up. | F + B + SEC | MVP/F2B |
 | IAM-005 | DECISION | Rate limit, sesión revocable y respuestas no enumerables. | Auth/contacto/uploads | Abuso se limita y suspensión revoca sesiones. | F + SEC | MVP |
-| IAM-006 | ASSUMPTION | Invitaciones firmadas, expirables y de un uso. | Equipo/jueces | Token alterado, vencido o reutilizado se rechaza. | U + F + SEC | MVP si equipos |
+| IAM-006 | OWNER APPROVED JUEZ / PENDING EQUIPO | Alta de juez directa por admin, sin invitación; invitaciones firmadas sólo si se aprueban para integrantes. | Equipo/juez | M2 crea juez directamente; ningún token de juez. | U + F + SEC | F2B / MVP si equipos |
 | ELG-001 | DECISION | Perfil mínimo y declaración de elegibilidad. | `/registro` y `/participante/perfil` | Participante captura los mínimos desde el alta, conoce finalidad de cada dato y puede revisar preferencias después. | F + B + A11Y + UAT | MVP |
 | ELG-002 | DECISION | Comprobante de residencia separado y privado. | Perfil/residencia; admin elegibilidad | Sólo revisor autorizado accede; juez nunca lo ve. | F descarga + SEC + B por roles | MVP |
 | ELG-003 | PENDING | Allowlist, vigencia y retención de comprobantes. | Upload/política de datos | Sólo formatos aprobados; retención ejecutable y documentada. | U + F archivos + OPS eliminación | MVP |
@@ -181,17 +203,32 @@
 | REV-002 | DECISION | Revisor decide elegible/no elegible/corrección según máquina de estados. | Detalle/revisión | Transición inválida se rechaza; válida notifica y audita. | U + F + B | MVP |
 | REV-003 | DECISION | Notas internas no se exponen a participante/juez. | Detalle admin | Respuestas, exports y vistas externas omiten notas. | F serialización + SEC | MVP |
 | REV-004 | DECISION | Reapertura excepcional requiere permiso, razón y auditoría. | Admin proyecto/evaluación | Sin permiso o razón no procede; usuario afectado recibe estado correcto. | F + SEC + UAT | MVP |
-| JUD-001 | DECISION | Dashboard de asignaciones propias por estado. | `/juez` | Juez ve sólo pendientes, borrador y finalizadas propias. | F scope + B + SEC | MVP |
-| JUD-002 | DECISION | Vista anónima y anexos autorizados. | `/juez/asignaciones/{id}` | Respuesta no contiene identidad ni residencia cuando evaluación es ciega. | F payload + B + SEC | MVP |
-| JUD-003 | DECISION | Conflicto bloquea evaluación. | Conflicto/evaluación | Tras declarar conflicto no se puede puntuar/enviar; admin puede reasignar. | U estados + F + B | MVP |
-| JUD-004 | PENDING | Número de jueces, modalidad ciega y reglas de asignación. | Admin asignaciones | Asignaciones cumplen cantidad/capacidad aprobada y no duplican. | U algoritmo/reglas + F | MVP |
-| JUD-005 | PENDING | Rúbrica final versionada con pesos, rangos y mínimo. | Instrucciones/rúbrica/evaluación | Evaluación usa versión fija; cambios no alteran envíos previos. | U cálculo/versionado + F | MVP |
-| JUD-006 | DECISION | Borrador de evaluación y confirmación antes de enviar. | `/juez/asignaciones/{id}/evaluacion` | Juez recupera borrador y revisa resumen antes de cierre. | F + B + A11Y | MVP |
-| JUD-007 | DECISION | Total calculado en servidor; sin ranking global para juez. | Evaluación/historial | Manipulación cliente no altera total; juez no recibe ranking. | U cálculo + F payload + SEC | MVP |
-| JUD-008 | DECISION | Acceso de juez cierra por calendario con excepción auditada. | Middleware/Policy/evaluación | Después del cierre no edita salvo reapertura autorizada. | U fecha + F + SEC | MVP |
+| F2B-M1-001 | OWNER_APPROVED / VERIFIED LOCAL | Los cuatro roles de negocio son excluyentes. | `BusinessRole`, `AssignExclusiveBusinessRole`, creación participant/admin | Mismo rol es idempotente; cero/multirol y sustitución implícita fallan cerrados. | `JudgeRbacIsolationTest` | F2B-M1 |
+| F2B-M1-002 | VERIFIED LOCAL | `judge` sólo recibe permiso mínimo exclusivo. | migración M1 y `FlowerFlowSeeder` | Admin/reviewer/participant no heredan `access judge workspace`; no se crean jueces. | M1 dirigido + seeder doble | F2B-M1 |
+| F2B-M1-003 | VERIFIED LOCAL | Gates exactos separan participant, panel y judge. | `EnsureExclusiveBusinessRole`, rutas y Policies | Acceso positivo por rol y 403/404 en cruces/IDOR. | matriz 6/92 + regresión 40/393 | F2B-M1 |
+| F2B-M1-004 | VERIFIED LOCAL | Evaluación permanece apagada por defecto. | `FLOWERFLOW_EVALUATION_ENABLED=false`, `EnsureEvaluationEnabled` | Judge no cae a participante; flag off da 404 y estado seguro. | Feature + UAT flag on/off | F2B-M1 |
+| F2B-M1-005 | VERIFIED LOCAL | Shell juez mínimo no contiene datos ni controles futuros. | `/juez`, layout/vista/estado restringido | Sólo correo verificado+rol+permiso+flag; sin propuestas, PII o archivos. | Firefox 1440/768/360/320, teclado/zoom/consola | F2B-M1 |
+| F2B-M1-006 | VERIFIED LOCAL | Migración es aditiva, reversible y preserva roles/datos. | `2026_08_18_120000_add_judge_role_and_workspace_permission.php` | Forward/rollback/forward; down falla seguro si el rol/permiso tiene asignaciones. | `migrate`, rollback, 13/13 | F2B-M1 |
+| F2B-M1-007 | VERIFIED LOCAL | La suite y los gates de release local permanecen verdes. | ExecPlan M1 y QA | 115 pruebas/1,141; Pint, Composer, build, JSON, rutas y schedule verdes; Quill bajo visible. | gates automatizados/locales | F2B-M1 |
+| F2B-M2-001 | VERIFIED LOCAL | Perfil juez uno-a-uno, ULID, estados, función primary/substitute y capacidad derivada. | `JudgeProfile`, enums y migración M2 | Principal sin límite fijo (`NULL`), sustituto diez; checks/FKs/índices; sin especialidad, invitación, backfill, juez o asignación automática. | `JudgeProfileOnboardingTest` + forward/rollback/forward | F2B-M2 |
+| F2B-M2-002 | VERIFIED LOCAL | Sólo admin crea juez directamente con nombre/correo/función y rol exclusivo; capacidad derivada en servidor. | `CreateJudgeAccount`, Requests/Policy, `/panel/jueces` | Correo/rol/perfil duplicados o carreras fallan sin sustitución ni fila parcial; contraseña aleatoria nunca se expone; `primary=NULL`/`substitute=10`. | Feature positivo/negativo/concurrencia/DB checks | F2B-M2 |
+| F2B-M2-003 | VERIFIED LOCAL | El juez establece su credencial mediante broker seguro y se activa sólo con contraseña propia y correo verificado. | `InitializeJudgePassword`, `SynchronizeJudgeProfileActivation`, listener de verificación | `password_initialized_at` se fija una vez; ambos órdenes activan idempotentemente; 2FA permanece opcional. | Feature reset/verificación/activación | F2B-M2 |
+| F2B-M2-004 | VERIFIED LOCAL | Pending/suspended fallan cerrados y sólo active puede abrir el shell con flag. | middleware `judge.active`, `/juez/estado`, gate M1 | Ningún estado recibe rutas participant/panel/archivos; flag apagado sigue fail-closed. | M1+M2 matrix + Firefox | F2B-M2 |
+| F2B-M2-005 | VERIFIED LOCAL | Suspensión/reactivación requieren admin, permiso, razón y password confirmation; sesiones se revocan. | `SuspendJudge`, `ReactivateJudge`, `RevokeUserSessions` | Rol/perfil se conservan; reactivación vuelve a pending si faltan prerrequisitos. | Feature + UAT de sesión real | F2B-M2 |
+| F2B-M2-006 | VERIFIED LOCAL | Recovery 2FA sólo admin y sin mostrar secreto/códigos. | `RecoverJudgeTwoFactor`, permiso separado, aviso de estado | Razón/password confirmation, auditoría, limpieza TOTP, remember token y sesiones revocadas; correo verificado requerido. | Feature + UAT de invalidación | F2B-M2 |
+| F2B-M2-007 | VERIFIED LOCAL | Alta, setup, activación, estado y recovery quedan auditados/notificados sin secretos. | acciones M2, `ResilientMailDispatcher`, notificaciones duales | Actor/sujeto/transición/timestamps UTC; fallo de despacho observable y no revierte la cuenta. | Mail fake/array, fallo resiliente y scan | F2B-M2 |
+| F2B-M2-008 | VERIFIED LOCAL | Gates de release local y UX M2 están verdes. | ExecPlan/reporte M2 y QA | M1+M2 16/267 tras función/capacidad; suite completa y gates finales registrados en el reporte; Firefox desktop/tablet/mobile. | automatizado + UAT local | F2B-M2 |
+| JUD-001 | M1/M2 VERIFIED LOCAL | Shell exclusivo; roles excluyentes, alta directa, correo verificado, perfil activo y 2FA opcional. | `/juez`, `judge.active`, `/panel/jueces`, escritor exclusivo y flag | M1 aísla; M2 crea/activa/suspende/recupera sin conceder superficies ajenas. | suites M1/M2 + Firefox local | F2B |
+| JUD-002 | OWNER_APPROVED / NOT IMPLEMENTED | Ceguera simple estructural; todos los campos sustantivos/anexos evaluables; nunca PII estructurada/residencia/notas/aclaraciones/historial. | `/juez/asignaciones/{id}` futura | Allowlist elimina estructura/metadatos; riesgo de identidad en contenido aceptado y visible. | F payload + B + SEC | F2B |
+| JUD-003 | OWNER_APPROVED / NOT IMPLEMENTED | Catálogo cerrado de conflicto y resolución/reasignación manual por admin al quinto sustituto. | Conflicto/evaluación futura | Estado bloqueante, reemplazo, locks y máximo diez sustituciones activas. | U estados + F + B | F2B |
+| JUD-004 | OWNER_APPROVED / NOT IMPLEMENTED | Cuatro principales por propuesta sin límite fijo, asignación manual; quinto sólo sustituciones con capacidad diez; sin especialidad. | Admin asignaciones futura | Impedir carga inicial al sustituto y rechazar la undécima activa; no autoasignar. | U reglas/capacidad + F | F2B |
+| JUD-005 | OWNER_APPROVED / NOT IMPLEMENTED | Rúbrica 20/20/25/25/10, escala 0–10/paso 0.5, comentario general obligatorio y por criterio opcional. | Rúbrica/evaluación futura | Versión activada inmutable; evaluación conserva versión exacta. | U cálculo/versionado + F | F2B |
+| JUD-006 | OWNER_APPROVED / NOT IMPLEMENTED | Borrador, envío inmutable y reapertura append-only con ventanas, razón, password confirmation y actor real. | Evaluación futura | Admin no sobrescribe ni suplanta; cierre 27-ago 23:59:59. | F + B + A11Y + SEC | F2B |
+| JUD-007 | OWNER_APPROVED / NOT IMPLEMENTED | Total servidor 0–100, precisión 4/2 HALF_UP; media de cuatro; faltante bloquea; igualdad a dos decimales señala empate. | Evaluación/historial futura | Payload cliente no altera total; señal no declara ganador. | U cálculo + F payload + SEC | F2B |
+| JUD-008 | OWNER_APPROVED / NOT IMPLEMENTED | Cierre global y reapertura sólo hasta 20:00; envío/reenvío hasta 23:59:59 Hermosillo. | Middleware/Policy futura | Tests de segundo anterior/exacto/posterior en servidor. | U fecha + F + SEC | F2B |
 | WIN-001 | DECISION | Declarar ganador es separado del cálculo. | `/admin/ganadores` | Resultado calculado no cambia proyecto a ganador automáticamente. | U + F | MVP |
 | WIN-002 | DECISION | Declaración registra categoría, proyecto, actor, justificación y fecha. | Ganadores/auditoría | Decisión incompleta o sin permiso se rechaza. | F + SEC + UAT | MVP |
-| WIN-003 | PENDING | Empates, recusaciones, categoría desierta y premio. | Ganadores/reglas | Flujo implementa sólo regla aprobada y nunca azar. | U reglas + F + UAT | MVP |
+| WIN-003 | PARTIAL | Empate técnico se detecta por igualdad del consolidado redondeado a dos decimales; resolución, categoría desierta y premio siguen pendientes. | Ganadores/reglas | 02B sólo emite señal; nunca elige ganador ni usa azar. | U reglas + F + UAT | MVP/FUTURE |
 | COM-001 | DECISION | Notificaciones transaccionales de eventos críticos en español, HTML/texto y marca dual. | `VerifyEmailNotification`, `ResetPasswordNotification`, `SubmissionReceived`, `resources/views/mail` | Verificación, reset y acuse generan plantilla profesional sin adjuntos/PII adicional. | `AuthMailHardeningTest` + revisión render | MVP |
 | COM-002 | DECISION | Cola cifrada post-commit, reintento y recuperación de correo. | `ResilientMailDispatcher`, `database/default`, `failed_jobs`, reenvíos | Cuatro intentos con 60/300/900; falla de enqueue avisa sin 500 y permite reintentar; fallo SMTP queda observable. | Feature con dispatcher/Mail fake + OPS worker | MVP |
 | COM-003 | DECISION | Usar `convocatoria@flowerflow.com.mx` para convocatoria y `privacidad@flowerflow.com.mx` para privacidad. | Plantillas/configuración | Remitente/reply-to y canal corresponden al propósito sin mezclar casos. | F con mail fake + revisión de configuración | MVP |

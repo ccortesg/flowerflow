@@ -110,10 +110,11 @@ No hay despliegue. El rollback local consiste en retirar las referencias activas
 - [x] 2026-08-17 MST — Decisión final: `GO` técnico para el release candidate exclusivamente local/test. Producción/despliegue sigue `NO-GO`, fuera de alcance y condicionado a decisiones jurídicas/evidenciales y gates externos.
 - [x] 2026-08-18 MST — Seguimiento P2 final: guard MySQL exacto repetido; cuenta sintética eliminada; 11 pruebas dirigidas/53 aserciones y suite completa 109/1,049 verdes. Pint global/acotado, Composer validate/platform/audit, build Vite (784 módulos/97 iconos), estado de mantenimiento activo y `git diff --check` verdes. Codex no accedió ni desplegó producción.
 - [x] 2026-08-18 MST — El propietario confirmó la topología productiva real: checkout Git directo `/var/www/flowerflow`, sin `releases/current/shared`, asociado al VirtualHost informado `app.sguniformes.com.mx`. Se actualizan ADR/runbooks/handoff/diagnóstico como documentación; no se accede al servidor ni se infiere un cambio del host canónico `app.flowerflow.com.mx`.
+- [x] 2026-08-18 MST — Entrada histórica append-only: el propietario confirma que instaló los cambios actuales y que la plataforma continúa publicada con más de 50 propuestas reales (`OWNER_CONFIRMED_DEPLOYED`). Esta confirmación sustituye la puerta documental “desplegar el RC” por “cerrar decisiones/diseño Fase 02B”, pero no reescribe la evidencia anterior de que Codex no desplegó ni accedió a producción. Sin evidencia inequívoca del release, `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; migraciones, flags, workers, scheduler, SMTP, monitoreo, integridad, smoke y UAT productiva permanecen sin verificación independiente.
 
 ## Decisiones, sorpresas y pendientes
 
 - `RESOLVED / OWNER DECISION`: las cuentas con v1.0 se tratan operativamente como aceptantes de v1.1, sin forzar reaceptación ni fabricar/modificar filas históricas. Nuevas aceptaciones siguen registrando v1.1.
 - `RESOLVED / OWNER ACCEPTED`: accesibilidad permanece en ambas categorías como está, sin recategorización.
 - `RESOLVED / OWNER DESIGNATION`: se conserva el archivo físico v1.0 `3bcf31…`; `42bd5e…` permanece como antecedente histórico visible.
-- `PENDING`: licencia Materialize/Pixinvent, SMTP, storage productivo, backup/RPO/RTO y producción permanecen fuera de este milestone.
+- `PENDING`: licencia Materialize/Pixinvent, SMTP, storage productivo, backup/RPO/RTO y evidencia técnica independiente de producción permanecen fuera de este milestone; el despliegue sólo está `OWNER_CONFIRMED_DEPLOYED`.
