@@ -100,11 +100,15 @@ class FlowerFlowSeeder extends Seeder
             'view residency documents',
             'download residency documents',
             'manage admissibility reviews',
+            'access judge workspace',
+            'view judges',
+            'manage judges',
+            'recover judge two factor',
         ] as $name) {
             Permission::findOrCreate($name, 'web');
         }
 
-        Role::findOrCreate('participant', 'web');
+        Role::findOrCreate('participant', 'web')->syncPermissions([]);
         Role::findOrCreate('reviewer', 'web')->syncPermissions([
             'view panel',
             'view submissions',
@@ -116,6 +120,9 @@ class FlowerFlowSeeder extends Seeder
             'view residency documents',
             'download residency documents',
         ]);
-        Role::findOrCreate('admin', 'web')->syncPermissions(Permission::all());
+        Role::findOrCreate('judge', 'web')->syncPermissions(['access judge workspace']);
+        Role::findOrCreate('admin', 'web')->syncPermissions(
+            Permission::query()->where('name', '!=', 'access judge workspace')->get()
+        );
     }
 }

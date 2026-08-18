@@ -52,5 +52,13 @@ a { color: var(--ff-green-dark); }
 .ff-phone-status.is-valid { color: #13734f; }
 .ff-phone-status.is-invalid { color: #b42318; }
 .ff-verification-icon { display: grid; place-items: center; width: 4.5rem; height: 4.5rem; border-radius: 50%; background: #dcefe7; color: #13734f; font-size: 2.4rem; font-weight: 800; }
+.ff-account-shell { min-height: 100vh; background: radial-gradient(circle at 90% 10%, #e8f69b, transparent 35%), linear-gradient(135deg, #f4fff9, #fff8ee); }
+.ff-account-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem clamp(1rem, 4vw, 3rem); border-bottom: 1px solid #dfe8e2; background: rgba(255, 253, 245, .96); }
+.ff-account-brand { display: inline-flex; align-items: center; gap: .75rem; color: var(--ff-ink); text-decoration: none; }
+.ff-account-brand span { display: grid; }
+.ff-account-brand small { color: #4b625b; }
+.ff-account-content { width: 100%; padding: clamp(2rem, 7vw, 5rem) 1rem; }
+.ff-narrow-card { width: min(100%, 42rem); margin-inline: auto; }
 @media (max-width: 575.98px) { .ff-phone-prefix { min-width: 7.8rem; font-size: .875rem; } }
+@media (max-width: 575.98px) { .ff-account-header { align-items: flex-start; } .ff-account-brand small { max-width: 10rem; } }
 @media (max-width: 767.98px) { .ff-sidebar { min-height: auto; } }

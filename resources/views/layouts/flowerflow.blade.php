@@ -14,7 +14,14 @@
 @php
   $isLandingPage = request()->routeIs('landing');
   $isLoginPage = request()->routeIs('login', 'panel.login');
-  $isParticipant = auth()->check() && ! auth()->user()->hasAnyRole(['admin', 'reviewer']);
+  $businessRoleNames = auth()->check() ? auth()->user()->getRoleNames()->values() : collect();
+  $businessRole = $businessRoleNames->count() === 1
+      ? \App\Enums\BusinessRole::tryFrom((string) $businessRoleNames->first())
+      : null;
+  $isParticipant = $businessRole === \App\Enums\BusinessRole::Participant;
+  $isPanelUser = in_array($businessRole, [\App\Enums\BusinessRole::Reviewer, \App\Enums\BusinessRole::Admin], true);
+  $isJudgeShell = $businessRole === \App\Enums\BusinessRole::Judge
+      && (bool) config('flowerflow.flags.evaluation');
   $isDashboardPage = request()->routeIs('dashboard');
   $isProfilePage = request()->routeIs('profile.*');
   $isSubmissionsPage = request()->routeIs('submissions.index');
@@ -62,6 +69,8 @@
   'ff-participant-submissions-page' => $isParticipant && $isSubmissionsPage,
   'ff-participant-submission-wizard-page' => $isParticipant && $isSubmissionWizardPage,
   'ff-participant-submission-review-page' => $isParticipant && $isSubmissionReviewPage,
+  'ff-judge-shell-page' => $isJudgeShell,
+  'ff-restricted-account-page' => auth()->check() && ! $isParticipant && ! $isPanelUser && ! $isJudgeShell,
 ])>
 <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
@@ -115,7 +124,7 @@
       </main>
     </div>
   </div>
-@elseif(auth()->check())
+@elseif($isPanelUser)
   <div class="container-fluid ff-shell">
     <div class="row">
       <aside class="col-md-3 col-xl-2 ff-sidebar p-3" aria-label="Navegación de cuenta">
@@ -128,6 +137,9 @@
         @if(config('flowerflow.flags.admissibility_review') && auth()->user()->can('view admissibility reviews'))
           <a href="{{ route('panel.admissibility.index') }}" @if(request()->routeIs('panel.admissibility.*')) aria-current="page" @endif>Admisibilidad</a>
         @endif
+        @if(auth()->user()->hasExactRoles(['admin']) && auth()->user()->can('view judges'))
+          <a href="{{ route('panel.judges.index') }}" @if(request()->routeIs('panel.judges.*')) aria-current="page" @endif>Jueces</a>
+        @endif
         <a href="{{ route('panel.account') }}" @if(request()->routeIs('panel.account')) aria-current="page" @endif>Cuenta y seguridad</a>
         <form method="POST" action="{{ route('logout') }}" class="mt-4">@csrf<button class="btn btn-sm btn-outline-light w-100">Cerrar sesión</button></form>
       </aside>
@@ -136,6 +148,26 @@
         @yield('content')
       </main>
     </div>
+  </div>
+@elseif(auth()->check())
+  <div class="ff-account-shell">
+    <header class="ff-account-header">
+      <a class="ff-account-brand" href="{{ $isJudgeShell ? route('judge.dashboard') : route('landing') }}" aria-label="Flower Flow">
+        <img src="{{ asset('assets/flowerflow/logo_flowerflow_transparente.png') }}" width="52" height="52" alt="">
+        <span>
+          <strong>FlowerFlow</strong>
+          <small>{{ $isJudgeShell ? 'Área de evaluación' : 'Cuenta protegida' }}</small>
+        </span>
+      </a>
+      <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button class="btn btn-outline-dark" type="submit">Cerrar sesión</button>
+      </form>
+    </header>
+    <main id="contenido" class="ff-account-content">
+      @include('partials.messages')
+      @yield('content')
+    </main>
   </div>
 @else
   @if($isLandingPage)

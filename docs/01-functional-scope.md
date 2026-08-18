@@ -1,6 +1,6 @@
 # Alcance funcional — Flower Flow 2026
 
-> **Estado vigente — 2026-08-17:** el alcance local aprobado de Fase 01 y Fase 02A está implementado y cerró UAT, junto con cuarta categoría, exportación XLSX privada, ampliación de plazo y sincronización jurídica v1.1. Jueces/evaluación, ganadores/resultados, ARCO completo y producción siguen fuera de alcance. El avance del plan maestro es 58 %; ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+> **Estado vigente — 2026-08-18:** además del alcance anterior, Fase 02B M1/M2 implementa localmente rol/gates y perfil operativo de juez, función primary/substitute, capacidad derivada, alta directa admin, credencial propia, activación, suspensión/reactivación, sesiones y recovery 2FA. M3–M10 siguen sin implementar; `P2B-BLOCK-001` está resuelto por decisión del propietario. Producción permanece `OWNER_CONFIRMED_DEPLOYED`/SHA `POR_CONFIRMAR`; M1/M2 no se atribuyen a ella.
 
 > **Reconciliación jurídica v1.1, actualizada 2026-08-18:** las nuevas versiones identifican a `FUNXT, A.C.`, confirman el cierre del 23 de agosto, cuatro categorías y máximo cuatro propuestas. El propietario aceptó sin cambios la superposición de accesibilidad, aprobó continuidad operativa sin reaceptación forzada para cuentas v1.0 y designó el archivo físico v1.0 `3bcf31…` conservando el antecedente `42bd5e…`. Evidencia: `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
 
@@ -52,7 +52,7 @@ Resultados públicos, reportes ampliados y comunicaciones no críticas no pueden
 | Participante | Gestionar cuenta/perfil; crear proyecto; invitar equipo si se aprueba; cargar archivos; enviar; atender correcciones; ver su estado. | No ver proyectos ajenos, notas internas, evaluaciones ni ranking. |
 | Integrante | Aceptar invitación y realizar acciones expresamente delegadas. | No obtiene permisos por conocer un folio o URL. |
 | Revisor de elegibilidad | Consultar datos necesarios, revisar residencia, solicitar corrección, declarar elegibilidad. | No evaluar, alterar rúbrica ni publicar ganadores. |
-| Juez | Consultar asignaciones y anexos autorizados; declarar conflicto; guardar/enviar su evaluación. | No ver comprobantes, identidad innecesaria, otros jueces o ranking global. |
+| Juez | Consultar sólo asignaciones propias; ver campos sustantivos/anexos evaluables; declarar conflicto; guardar/enviar evaluación. | No ver PII estructurada, residencia, notas, aclaraciones, historial, proyectos no asignados, otros jueces o ranking global. La autoidentificación dentro del contenido es riesgo aceptado. |
 | Administrador de convocatoria | Operar convocatoria, revisión, asignaciones, comunicaciones y resultados según permiso. | No eludir auditoría ni acceso por recurso. |
 | Soporte de privacidad | Registrar y gestionar solicitudes de privacidad. | Acceso sólo a datos necesarios para el caso. |
 | Auditor | Consultar reportes, conflictos, decisiones y bitácora. | Sin escritura operativa. |
@@ -86,9 +86,9 @@ Resultados públicos, reportes ampliados y comunicaciones no críticas no pueden
 - Registro con nombres, correo, celular México `+52`, fecha de nacimiento, colonia, residencia y preferencias de comunicación.
 - Verificación de correo con confirmación amigable, login, logout y restablecimiento.
 - Aceptación obligatoria de documentos versionados y consentimiento opcional de futuras actividades desde el alta.
-- Invitaciones firmadas/expirables para jueces e integrantes, si equipos se aprueban.
+- Alta directa administrativa para jueces implementada en local/test; invitaciones firmadas/expirables sólo para integrantes si ese flujo se aprueba.
 - Roles/permisos y Policies por recurso.
-- 2FA para roles privilegiados.
+- 2FA opcional para juez; reglas reforzadas para otras acciones privilegiadas según su contrato.
 - Rate limiting, sesiones revocables y confirmación de contraseña.
 
 ### Criterios
@@ -209,6 +209,18 @@ El orden es ajustable tras conocer los campos finales.
 - Historial personal.
 - Cierre automático por calendario y excepción auditada.
 
+### Contrato 02B aprobado — todavía no implementado
+
+- Roles estrictamente excluyentes y alta directa de juez por `admin`.
+- Asignación manual; cuatro principales evalúan todas las propuestas elegibles sin límite fijo; quinto sustituto exclusivo con máximo diez reasignaciones activas; sin especialidad.
+- Ceguera simple estructural, con todos los campos sustantivos y anexos evaluables, nunca PII estructurada/residencia/notas/aclaraciones/historial.
+- Rúbrica: Pertinencia 20 %, Claridad 20 %, Viabilidad 25 %, Impacto 25 % y Coherencia 10 %; escala 0–10/paso 0.5.
+- Total en servidor 0–100, precisión interna cuatro, visible dos y `HALF_UP`; media aritmética de cuatro evaluaciones; faltantes bloquean consolidación.
+- Comentario general obligatorio 100–2,000; comentarios por criterio opcionales hasta 1,000.
+- Cierre `2026-08-27 23:59:59 America/Hermosillo`; reapertura append-only por `admin` hasta las 20:00 con razón/password confirmation.
+- Retención 02B de 24 meses desde el cierre administrativo; empate por igualdad a dos decimales sin declarar ganador.
+- `P2B-BLOCK-001` está resuelto: la cobertura recae en cuatro principales sin límite fijo y el reemplazo en un quinto sustituto exclusivo con capacidad diez. M4 sigue sujeto a implementación y autorización separadas.
+
 ### Excluido
 
 - Acceso a otros jueces.
@@ -241,7 +253,7 @@ El orden es ajustable tras conocer los campos finales.
 ### MVP crítico
 
 - Verificación de correo.
-- Invitación de integrante o juez.
+- Alta directa y aviso seguro de cuenta de juez; invitación de integrante sólo si ese flujo se aprueba.
 - Confirmación de comprobante recibido.
 - Solicitud de corrección.
 - Confirmación de proyecto y folio.
@@ -300,7 +312,7 @@ El orden es ajustable tras conocer los campos finales.
 
 ### Juez
 
-`invitación → acceso seguro → asignación → conflicto | evaluación en borrador → confirmación → evaluación enviada → eventual reapertura auditada`
+`alta directa administrativa → acceso seguro → asignación → conflicto | evaluación en borrador → confirmación → evaluación enviada → eventual reapertura append-only`
 
 ### Ganador
 

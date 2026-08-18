@@ -5,13 +5,16 @@
 
 @php
   $errors ??= new \Illuminate\Support\ViewErrorBag;
-  $isPanelUser = auth()->check() && auth()->user()->hasAnyRole(['admin', 'reviewer']);
+  $roles = auth()->check() ? auth()->user()->getRoleNames()->values() : collect();
+  $role = $roles->count() === 1 ? $roles->first() : null;
+  $isPanelUser = in_array($role, ['admin', 'reviewer'], true);
+  $isParticipant = $role === 'participant';
   $returnUrl = $isPanelUser
       ? route('panel.dashboard')
-      : (auth()->check() ? route('submissions.index') : route('landing'));
+      : ($isParticipant ? route('submissions.index') : (auth()->check() ? route('dashboard') : route('landing')));
   $returnLabel = $isPanelUser
       ? 'Ir al panel'
-      : (auth()->check() ? 'Ver mis propuestas' : 'Volver al inicio');
+      : ($isParticipant ? 'Ver mis propuestas' : (auth()->check() ? 'Volver a un área segura' : 'Volver al inicio'));
 @endphp
 
 @section('content')

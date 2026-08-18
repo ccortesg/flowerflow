@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\JudgeVerifyEmailNotification;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
 use App\Services\ResilientMailDispatcher;
@@ -45,6 +46,11 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return $this->hasOne(ParticipantProfile::class);
     }
 
+    public function judgeProfile(): HasOne
+    {
+        return $this->hasOne(JudgeProfile::class);
+    }
+
     public function submissions(): HasMany
     {
         return $this->hasMany(Submission::class);
@@ -69,7 +75,9 @@ class User extends Authenticatable implements MustVerifyEmailContract
     {
         app(ResilientMailDispatcher::class)->notify(
             $this,
-            new VerifyEmailNotification,
+            $this->hasExactRoles(['judge'])
+                ? new JudgeVerifyEmailNotification
+                : new VerifyEmailNotification,
             'No pudimos programar el correo de verificación en este momento. Tu cuenta está segura; intenta reenviarlo más tarde.'
         );
     }
