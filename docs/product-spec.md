@@ -1,6 +1,6 @@
 # Especificación de producto — Flower Flow 2026
 
-> **Incorporación jurídica v1.1 — 2026-08-17:** Mecánica, Términos y Aviso de Privacidad v1.1 identifican a `FUNXT, A.C.` (RFC `FUN110208BT0`) como responsable legal, con nombre comercial FLORECE HERMOSILLO y movimiento ciudadano FLOWER FLOW. Mecánica y Términos regularizan el cierre del 23 de agosto; la Mecánica corregida confirma cuatro categorías y máximo cuatro propuestas; el Aviso mantiene finalidades/retención sustantivas. Las nuevas rutas/hashes/versiones están incorporadas localmente sin alterar aceptaciones v1.0. Sólo queda `POR_CONFIRMAR P1` la superposición temática de accesibilidad entre Movilidad con Flow y Hermosillo sin Barreras. Ver `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
+> **Decisiones jurídicas del propietario — 2026-08-18:** Mecánica, Términos y Aviso v1.1 permanecen vigentes con cuatro categorías, máximo cuatro propuestas y cierre al 23 de agosto. La superposición temática de accesibilidad se acepta sin cambios. Las cuentas con aceptación v1.0 continúan operativamente sin reaceptación forzada ni modificación de evidencia; las nuevas aceptaciones registran v1.1. El archivo físico v1.0 designado es `3bcf31…` y la discrepancia histórica `42bd5e…` se conserva visible. Ver `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
 
 > **Adenda autoritativa de plazo — 2026-08-17:** el cierre inclusivo de `hermosillo-florece-2026` se amplía al `2026-08-23 23:59:59 America/Hermosillo`, persistido como `2026-08-24 06:59:59 UTC`. Esta adenda sustituye únicamente las referencias operativas al cierre del 15 de agosto. Por instrucción del propietario, los PDF jurídicos no se modifican en este cambio; su regularización queda pendiente y registrada como riesgo.
 
@@ -8,7 +8,7 @@
 
 > **Adenda autoritativa Fase 01 — 2026-07-15:** el alcance aprobado es recepción local/test, no el MVP completo histórico. Cierre inclusivo: 15 de agosto de 2026 a las 23:59:59 en `America/Hermosillo`; categorías exactas: Movilidad con Flow, Hermosillo Florece y Mi familia, mi mascota; participación individual/equipo hasta cinco; una propuesta por categoría y tres totales. Registro/recepción/resultados están apagados por defecto. Evaluación, jueces, ganadores y publicación permanecen fuera. Ver `docs/01-functional-scope.md` y `docs/legal-change-log.md`.
 
-> **Estado vigente de implementación — 2026-08-17:** Fase 01 y Fase 02A, cuarta categoría, exportación privada, ampliación de plazo y sincronización v1.1 existen en el repositorio, cerraron UAT local y están cubiertas por 107 pruebas/1,031 aserciones. El producto maestro completo está en 58 % porque jueces/evaluación, ganadores/resultados, ARCO y la operación productiva actual no están implementados. El diagnóstico autoritativo por módulo/rol es `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+> **Estado vigente de implementación — 2026-08-18:** Fase 01 y Fase 02A, cuarta categoría, exportación privada, ampliación de plazo, sincronización v1.1 y 503/CSP existen en el repositorio, cerraron validación local y están cubiertas por 109 pruebas/1,049 aserciones. El producto maestro completo está en 58 % porque jueces/evaluación, ganadores/resultados, ARCO y la operación productiva actual no están implementados. El diagnóstico autoritativo por módulo/rol es `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
 **Fecha de corte de la baseline:** 2026-07-15; **corte vigente:** 2026-08-17
 
@@ -52,16 +52,18 @@ La frase histórica “la primera fase es documental” quedó superada por las 
 | DEC-013 | DECISION / RESOLVED LEGAL | La plataforma y la Mecánica v1.1 corregida conservan cuatro categorías activas, incluida `hermosillo-sin-barreras`. |
 | DEC-014 | DECISION / RESOLVED LEGAL | Máximo cuatro propuestas por cuenta y una por categoría, confirmado por el propietario y la Mecánica v1.1 corregida. |
 | DEC-015 | DECISION / RESOLVED LEGAL | La plataforma muestra máximo cuatro premios, uno por cada categoría; la Mecánica v1.1 corregida respalda cuatro categorías. |
-| DEC-016 | RISK / POR_CONFIRMAR P1 | La Mecánica v1.1 menciona accesibilidad tanto en Movilidad con Flow como en Hermosillo sin Barreras. No se reasigna alcance ni se reformula el PDF por inferencia. |
+| DEC-016 | DECISION / OWNER ACCEPTED | La Mecánica v1.1 menciona accesibilidad tanto en Movilidad con Flow como en Hermosillo sin Barreras; se conserva sin recategorización ni cambio operativo. |
 | DEC-017 | DECISION / RESOLVED LEGAL | El cierre se amplía a `2026-08-23 23:59:59 America/Hermosillo`; Mecánica y Términos v1.1 ya reflejan el 23 de agosto de 2026. |
 | DEC-018 | DECISION | Nuevas aceptaciones y vínculos usan documentos v1.1; v1.0 permanece inmutable e histórico. Responsable legal: FUNXT, A.C.; vigencia Mecánica/Términos 14-ago y Aviso 11-ago de 2026. |
-| DEC-019 | PROPOSAL_NEEDED | No hay instrucción inequívoca para forzar reaceptación de v1.1 a cuentas existentes; nuevas cuentas y nuevos envíos sí registran v1.1. |
+| DEC-019 | DECISION / OWNER APPROVED | No se fuerza reaceptación v1.1 a cuentas existentes ni se alteran `legal_acceptances` históricas; nuevas cuentas y nuevos envíos registran v1.1. |
+| DEC-020 | DECISION / OWNER DESIGNATION | El archivo físico Mecánica v1.0 que se conserva es `3bcf31…`; `42bd5e…` permanece como hash histórico registrado. |
+| DEC-021 | DECISION OPERATIVA / OWNER CONFIRMED | Producción usa el checkout Git directo `/var/www/flowerflow`, sin `releases/current/shared`; el update inmediato se genera para esa topología y no cambia Apache ni dominios. |
 
 ## Evidencia actual del repositorio
 
 | Elemento | Estado | Evidencia al 2026-08-17 |
 | --- | --- | --- |
-| Backend | VERIFIED | Laravel 12.64.0 sobre PHP 8.3.33; 107 pruebas/1,031 aserciones verdes en MySQL aislado. |
+| Backend | VERIFIED | Laravel 12.64.0 sobre PHP 8.3.33; 109 pruebas/1,049 aserciones verdes en MySQL aislado. |
 | Plantilla | DECISION | `package.json` declara Materialize `3.0.0` con licencia comercial. |
 | Frontend | DECISION | Bootstrap 5.3.6, Vite 6.3.5 y varios plugins de la plantilla están declarados; su presencia no autoriza usarlos todos. |
 | Layouts | VERIFIED | `layouts/flowerflow.blade.php` sirve público, participante y panel; layouts heredados se conservan sin ser el contrato principal. |

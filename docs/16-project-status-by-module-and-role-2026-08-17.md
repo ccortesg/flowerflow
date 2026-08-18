@@ -28,7 +28,7 @@ La cifra **58 %** no contradice que el alcance local aprobado esté en **96 %**:
 - 66 rutas totales registradas con flags actuales; 41 rutas propias al excluir rutas de paquetes.
 - 104 archivos PHP bajo `app/`, 12 migraciones y 24 clases de prueba.
 - `flowerflow_testing`: 12/12 migraciones aplicadas; seis versiones jurídicas, una v1.1 activa por tipo, cuatro categorías y cero usuarios/aceptaciones al cierre.
-- Suite completa: **107 pruebas y 1,031 aserciones**, sin fallos.
+- Suite completa vigente: **109 pruebas y 1,049 aserciones**, sin fallos.
 - Pint, Composer validate, requisitos de plataforma, Composer audit, JSON de menús y build Vite: verdes.
 - Build: 784 módulos y tres assets; catálogo de 97 iconos verificado.
 - Yarn: un advisory **bajo** en Quill 2.0.3 (`GHSA-v3m3-f69x-jf25`), sin versión corregida publicada. La sanitización servidor reduce el vector, pero no elimina la deuda de dependencia.
@@ -72,8 +72,8 @@ El peso mide importancia en el plan maestro, no esfuerzo consumido ni cobertura 
 |---|---:|---|---|
 | Landing, propósito, proceso, FAQ y contacto | 98 % | Vista real, responsive/accesible, pruebas y UAT 1440/768/360, teclado, foco y zoom sin hallazgos. | Medición externa de rendimiento/SEO. |
 | Convocatoria, categorías y fecha de cierre | 98 % | Cuatro categorías, máximo cuatro y cierre inclusivo confirmados en código, datos, PDF v1.1 y UAT. | Apertura formal y ciclo de estados persistido si se aprueba. |
-| Documentos públicos | 97 % | Seis PDF inventariados; v1.1 activa por ruta/hash y vínculos recorridos. | Resolver publicación inequívoca del binario histórico v1.0 original. |
-| Flags y estados visibles | 92 % | Runtime UAT fail-closed, cierre servidor 503 y resultados apagados. | Excepción administrativa/ciclo programado si negocio lo aprueba; página 503 propia. |
+| Documentos públicos | 99 % | Seis PDF inventariados; v1.1 activa por ruta/hash y vínculos recorridos. El propietario designó el binario físico v1.0 y aceptó conservar la discrepancia histórica de hash. | Validación externa posterior a la publicación del SHA. |
+| Flags y estados visibles | 97 % | Runtime UAT fail-closed, resultados apagados y vista 503 propia accesible, de marca, sin estilos inline y compatible con CSP/mantenimiento. | Excepción administrativa/ciclo programado sólo si negocio lo aprueba. |
 | SEO/noindex | 65 % | Canonical y noindex para panel/autenticado; `robots.txt` existe. | Open Graph propio en layout activo, sitemap y validación SEO externa. |
 
 La versión vigente v1.1 ya alinea cuatro categorías, máximo cuatro y cierre al 23 de agosto. Los PDF v1.0 quedan sólo como historia; persiste un incidente de integridad porque el binario físico de Mecánica v1.0 no coincide con el hash registrado originalmente.
@@ -180,7 +180,7 @@ Pendientes: empate, categoría desierta, premio exacto, datos publicables, conse
 
 | Funcionalidad principal | Avance | Estado/evidencia | Falta para 100 % |
 |---|---:|---|---|
-| Pruebas automatizadas locales | 98 % | 107/1,031, MySQL protegido, legales v1.1, archivos, permisos, fechas y concurrencia. | Cobertura de módulos futuros y CI permanente. |
+| Pruebas automatizadas locales | 98 % | 109/1,049, MySQL protegido, legales v1.1, 503/CSP, archivos, permisos, fechas y concurrencia. | Cobertura de módulos futuros y CI permanente. |
 | QA navegador | 95 % | UAT Firefox actual por cuatro roles, tres viewports, teclado/foco/zoom, IDOR, 2FA, XLSX y cierre. | Matriz multi-browser permanente y UAT firmada por owner. |
 | Dependencias/build | 90 % | Locks, build reproducible, Composer limpio. | Resolver Quill bajo y automatizar el gate en CI. |
 | Staging/producción actual | 10 % | Runbooks y una release histórica pública documentada. | Inventario autorizado, staging, release del SHA actual y smoke por rol. |
@@ -230,7 +230,8 @@ La “disponibilidad local” de esta tabla corresponde exclusivamente al runtim
 6. **Plan maestro:** documentos históricos mezclaban el MVP completo con el alcance recortado Fase 01/02A. Este diagnóstico separa ambas medidas.
 7. **Rutas demo:** los JSON heredados conservan entradas demo, pero el layout Flower Flow activo no los usa para la navegación funcional. Sigue siendo deuda de limpieza, no evidencia de acceso real.
 8. **Evidencia jurídica v1.0:** el hash histórico de Mecánica (`42bd5e…`) no coincide con el binario hoy publicado bajo el mismo nombre (`3bcf31…`). v1.1 no reescribe ese antecedente.
-9. **Error de cierre:** la respuesta 503 usa la página por defecto de Laravel y reporta dos estilos inline bajo CSP Report-Only. Es P2 y requiere propuesta UX, no cambia la regla de cierre.
+9. **Error de cierre resuelto:** `resources/views/errors/503.blade.php` usa el layout y assets Vite normales, contenido accesible/de marca y cero estilos inline. Funciona para cierre por middleware y pre-render de mantenimiento; la prueba dirigida bajo CSP estricta y el render real móvil/escritorio quedaron verdes.
+10. **Topología productiva confirmada:** `/var/www/flowerflow` es el checkout Git productivo directo y no existen `releases/current/shared`. El propietario informa que el VirtualHost `app.sguniformes.com.mx` apunta a esa ruta. Se registra literalmente sin inferir un cambio del host canónico `app.flowerflow.com.mx` ni autorizar cambios de Apache.
 
 ## Riesgos priorizados
 
@@ -242,11 +243,9 @@ La “disponibilidad local” de esta tabla corresponde exclusivamente al runtim
 
 ### P1 — deben cerrarse antes de ampliar roles o activar recepción
 
-1. Decidir si v1.1 exige reaceptación a cuentas históricas y cómo comunicar/evidenciarla.
-2. Confirmar la superposición de accesibilidad entre dos categorías y recuperar/publicar inequívocamente el original v1.0.
-3. Exigir 2FA a roles privilegiados, completar password confirmation y suspensión/revocación.
-4. Definir exclusión o compatibilidad entre `participant` y futuros roles antes de sembrar `judge`.
-5. Decidir antimalware/storage productivo y resolver la operación del advisory bajo de Quill.
+1. Exigir 2FA a roles privilegiados, completar password confirmation y suspensión/revocación.
+2. Definir exclusión o compatibilidad entre `participant` y futuros roles antes de sembrar `judge`.
+3. Decidir antimalware/storage productivo y resolver la operación del advisory bajo de Quill.
 
 ### P2 — calidad y mantenibilidad
 
@@ -254,15 +253,15 @@ La “disponibilidad local” de esta tabla corresponde exclusivamente al runtim
 2. Pruebas de carga/EXPLAIN con volumen aprobado.
 3. Limpiar documentación/menús demo restantes y completar SEO.
 4. Crear vista de auditor y matriz automatizada de permisos por ruta/rol.
-5. Diseñar una página 503 propia compatible con CSP para el cierre de recepción.
+
+P2 503/CSP quedó resuelto el 2026-08-18; ya no forma parte de esta lista.
 
 ## Siguiente secuencia óptima
 
-1. **Congelar el RC local:** revisión del propietario sobre este diff, PDF definitivo `11c399ca…`, matriz jurídica y evidencia UAT; no reemplazar otra vez el archivo bajo la misma identidad.
-2. **Cerrar tres decisiones jurídicas/evidenciales:** alcance de accesibilidad, reaceptación v1.1 y publicación histórica del binario v1.0 `42bd5e…` recuperable desde Git.
-3. **Preparar, sin ejecutar, la puerta externa:** licencia, owner UAT, SMTP, storage, backup/RPO/RTO, topología EC2 y plan de migración/rollback. Cualquier preflight debe tener autorización nueva y comenzar read-only.
-4. **Sólo después, diseñar Fase 02B** en un ExecPlan separado; jueces/evaluación y ganadores/resultados son milestones distintos.
-5. **Staging/producción** únicamente con autorización explícita, SHA inmutable, backup/restore, worker/scheduler, smoke por rol y rollback probado.
+1. **Publicar un SHA exacto:** incluir v1.1, las decisiones documentadas y la vista 503 resuelta; no sustituir nuevamente los PDF bajo la misma identidad.
+2. **Generar el runbook ejecutable por el propietario:** sólo comandos para actualizar el checkout directo `/var/www/flowerflow`, instalar Composer, compilar Yarn/Vite, limpiar/recrear cachés, migrar de forma aditiva y reiniciar procesos. No crear ni asumir `releases/current/shared`; Codex no accede ni ejecuta producción.
+3. **Ejecutar por el propietario:** usar el respaldo que ya confirmó haber realizado, preservar las más de 50 propuestas y no ejecutar seeders ni comandos destructivos.
+4. **Después del release operativo**, diseñar Fase 02B en un ExecPlan separado; jueces/evaluación y ganadores/resultados permanecen fuera de alcance.
 
 ## Prompt ejecutado para este release candidate
 
@@ -327,7 +326,165 @@ No hagas stage, commit, push ni despliegue. No toques EC2, DNS, TLS, SMTP real, 
 8. riesgos residuales, rollback y siguiente prompt recomendado.
 ```
 
-## Prompt óptimo siguiente — cierre de decisiones y congelamiento del RC
+## Prompt óptimo siguiente — generar el runbook de instalación y compilación para ejecución del propietario
+
+```text
+Trabaja únicamente con el repositorio local `/home/ccortesg/workspace/flowerflow`. Lee primero `AGENTS.md`, `.agent/PLANS.md`, `.agent/execplans/flowerflow-legal-v1-1-local-release-candidate.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/17-legal-v1-1-reconciliation-2026-08-17.md`, `docs/07-deployment-aws-ec2.md`, `docs/15-risk-reduction-release-runbook.md`, `docs/adr/0002-aws-ec2-ubuntu.md` y los demás ADR aplicables.
+
+Objetivo: genera un runbook productivo exacto, concreto y listo para copiar/pegar para que yo, el propietario, actualice `https://app.flowerflow.com.mx/` con el `RELEASE_SHA` aprobado. Tu tarea es exclusivamente redactar los pasos y comandos para descargar el SHA en el checkout Git existente, activar mantenimiento, instalar Composer, limpiar cachés generadas, instalar/compilar Yarn/Vite, ejecutar migraciones aditivas, recompilar cachés, reiniciar el worker Flower Flow y salir de mantenimiento. No te conectes al servidor, no ejecutes comandos remotos, no uses AWS/SSM/SSH, no despliegues, no hagas stage, commit ni push y no afirmes resultados productivos.
+
+El propietario confirma que los respaldos necesarios de base y archivos ya fueron realizados. No incluyas comandos de respaldo, restore drill, inventario, auditoría, smoke, consultas SQL, conteos, validaciones ni verificaciones previas/posteriores. Incluye el respaldo únicamente como precondición declarada por el propietario, sin volver a ejecutarlo. Enfoca la respuesta en instalación y compilación.
+
+Contexto obligatorio:
+- la plataforma ya está publicada y contiene más de 50 propuestas reales; cuentas, propuestas, borradores, archivos privados, folios, snapshots, revisiones y aceptaciones son datos que deben preservarse;
+- la rama de origen es `codex/submission-deadline-extension`; el `RELEASE_SHA` final debe contener como ancestro `32adee0121ea20c557d4a4583680f8a5a62e146d` e incluir los cambios locales aprobados posteriores, incluida la vista 503;
+- el runbook debe usar un marcador único y visible `<RELEASE_SHA_APROBADO>` porque el SHA definitivo será el commit publicado por el propietario; no sustituyas ese marcador por el HEAD local si todavía hay cambios sin commit;
+- URL productiva: `https://app.flowerflow.com.mx/`;
+- topología productiva real confirmada por el propietario: `/var/www/flowerflow` es el checkout Git directamente vinculado al repositorio de GitHub; no existen `/var/www/flowerflow/releases`, `/var/www/flowerflow/current` ni `/var/www/flowerflow/shared`;
+- el propietario informa que el VirtualHost `app.sguniformes.com.mx` apunta a `/var/www/flowerflow`; registra ese dato sin cambiar, diagnosticar ni reconfigurar Apache, DNS, TLS o el host canónico público `app.flowerflow.com.mx`;
+- remoto Git ya configurado en el checkout: `origin`; repositorio de referencia `https://github.com/ccortesg/flowerflow.git`;
+- ejecutar Composer, Yarn y Artisan como el usuario de despliegue/aplicación, nunca como root;
+- usar los locks existentes: `composer install`, nunca `composer update`; `scripts/build_frontend_production.sh`, nunca `yarn upgrade`, `npm update` ni edición manual de `public/build`;
+- no ejecutar `migrate:fresh`, `migrate:refresh`, `migrate:reset`, `db:wipe`, `db:seed`, rollback de datos ni ningún comando destructivo. La única mutación de esquema permitida en el runbook es `php artisan migrate --force`;
+- no ejecutar `git clean`, `git reset --hard`, `rm -rf` ni globs amplios; no borrar o sustituir `.env`, `storage`, base de datos, archivos privados, sesiones, logs o propuestas;
+- resultados permanecen apagados y no se implementan jueces, evaluación, ganadores, ARCO completo o módulos futuros.
+
+Decisiones vigentes del propietario que el runbook debe respetar:
+1. Son cuatro categorías y máximo cuatro propuestas, una por categoría; accesibilidad permanece mencionada en Movilidad con Flow y Hermosillo sin Barreras, sin recategorización.
+2. Las cuentas que aceptaron v1.0 se tratan operativamente como aceptantes de v1.1. No se fuerza reaceptación, no se bloquean cuentas/propuestas y no se modifica, duplica ni fabrica ninguna fila histórica de `legal_acceptances`. Las nuevas aceptaciones continúan registrando v1.1.
+3. La Mecánica v1.0 que se conserva es `public/documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf`, SHA-256 físico `3bcf31ece0bd1bdbf4392908a27ec3812495dfa588091e9bbce9f7c4ea1e5cb3`. El hash histórico `42bd5e…` permanece documentado; no se sustituye el archivo ni se reescribe evidencia.
+4. P2 503/CSP está resuelto y debe formar parte del `RELEASE_SHA`: `resources/views/errors/503.blade.php` usa layout/recursos Vite normales, contenido accesible y de marca, cero estilos inline y es compatible con cierre por middleware y `php artisan down --render="errors::503"`.
+5. Documentos v1.1 vigentes e inmutables:
+   - Mecánica: `11c399ca84735d7dbcb17174e192582c93589afa5100c0250753ca15def4db36`;
+   - Términos: `4e3e6c272f9459b934004168bfccc26d6759a4dbce6c804c03afbb86cda6b144`;
+   - Aviso de Privacidad: `041ae9704f80a0108ee69bb39b8646ee8098134573a730f801e4057642ae2da1`.
+
+Genera una única secuencia Bash con `set -euo pipefail` y variables explícitas al inicio. Debe:
+1. fijar únicamente `APP_DIR=/var/www/flowerflow`, `RELEASE_SHA='<RELEASE_SHA_APROBADO>'` y `SUPERVISOR_PROGRAM='<PROGRAMA_SUPERVISOR_FLOWERFLOW>'`; no usar `$HOME`, `~`, rutas de releases ni directorios temporales de despliegue;
+2. entrar a `APP_DIR` y descargar referencias sin cambiar todavía el código mediante `git fetch --prune origin`;
+3. activar mantenimiento desde el código actualmente instalado con `php artisan down --retry=60`; no usar todavía `--render="errors::503"` porque la versión productiva previa puede no contener la vista nueva;
+4. cambiar el mismo checkout al SHA exacto mediante `git checkout --detach "$RELEASE_SHA"`; no usar `git pull`, `git reset --hard`, `git clean`, clone nuevo ni symlinks;
+5. ejecutar en `/var/www/flowerflow` `composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-progress`, `php artisan optimize:clear` y `scripts/build_frontend_production.sh`;
+6. después de instalar y compilar el SHA nuevo, reemplazar la página temporal de mantenimiento con `APP_URL=https://app.flowerflow.com.mx php artisan down --render="errors::503" --retry=60`;
+7. ejecutar exclusivamente `php artisan migrate --force`; no incluir seeders;
+8. ejecutar `php artisan optimize`, `php artisan queue:restart` y reiniciar únicamente `$SUPERVISOR_PROGRAM`; no reiniciar Apache, PHP-FPM, MySQL, Supervisor completo ni servicios de otras aplicaciones;
+9. finalizar con `php artisan up`;
+10. no crear, mover, enlazar ni eliminar carpetas de releases, `current`, `shared`, `.env` o `storage`.
+
+No presentes alternativas ni la topología futura de releases. Si el nombre de Supervisor no está documentado de manera inequívoca, conserva el marcador indicado y no inventes uno. No inventes usuarios, hostnames, llaves, credenciales, secretos ni nombres de servicios. No incluyas comandos de comprobación. Entrega únicamente:
+1. una nota breve de alcance indicando que tú no ejecutarás el despliegue y que el backup fue confirmado por el propietario;
+2. la lista de marcadores que debo sustituir;
+3. un solo bloque Bash continuo, comentado por etapas, en el orden exacto de ejecución;
+4. tres advertencias finales: no usar seeders/comandos destructivos, no alterar `legal_acceptances` históricas y no ejecutar `git clean/reset --hard` ni borrar `.env`/`storage`.
+```
+
+## Prompt anterior inmediato — sustituido por la instrucción de sólo generar comandos
+
+```text
+Trabaja con el repositorio `/home/ccortesg/workspace/flowerflow` y con la plataforma productiva ya publicada en `https://app.flowerflow.com.mx/`. Lee primero `AGENTS.md`, `.agent/PLANS.md`, `.agent/execplans/flowerflow-legal-v1-1-local-release-candidate.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/17-legal-v1-1-reconciliation-2026-08-17.md`, `docs/07-deployment-aws-ec2.md`, `docs/15-risk-reduction-release-runbook.md`, `docs/adr/0002-aws-ec2-ubuntu.md` y los demás ADR aplicables.
+
+Objetivo: preparar y ejecutar, dentro de una ventana de mantenimiento expresamente confirmada en esta tarea, el despliegue productivo de los cambios ya aprobados de Flower Flow: fecha de cierre del 23 de agosto de 2026 a las 23:59:59 `America/Hermosillo`, cuatro categorías, máximo cuatro propuestas, documentos jurídicos v1.1, vínculos/identidad legal, versionado de aceptaciones nuevas, correcciones de landing/panel y migraciones pendientes del SHA aprobado. La plataforma ya está operando y contiene más de 50 propuestas reales; preservarlas, junto con cuentas, archivos privados, folios, snapshots, revisiones y aceptaciones, es un invariante absoluto.
+
+No implementes jueces, evaluación, ganadores, resultados, ARCO completo, módulos futuros ni cambios de negocio adicionales. No modifiques `administratec` ni ninguna de las otras aplicaciones que comparten la EC2. No hagas cambios globales de Ubuntu, Apache, PHP, MySQL, Node o Composer.
+
+Decisiones del propietario que sustituyen los pendientes anteriores:
+1. Accesibilidad: se acepta definitivamente que la Mecánica v1.1 mencione accesibilidad tanto en Movilidad con Flow como en Hermosillo sin Barreras. Conserva código, textos, categorías y propuestas exactamente como están. Marca R62/Q-LEGAL-001 como `RESOLVED / OWNER ACCEPTED`; no propongas ni implementes recategorización.
+2. Reaceptación: quienes aceptaron v1.0 deben tratarse operativamente como si v1.1 estuviera aceptada, porque los cambios fueron comunicados a todas las personas y se limitaron, según decisión del propietario, a fecha y nueva categoría. No fuerces reaceptación al login ni bloquees cuentas/propuestas históricas. No reescribas, dupliques ni falsifiques filas de `legal_acceptances`: las aceptaciones v1.0 siguen siendo evidencia histórica real y la equivalencia es una política autorizada de continuidad. Nuevas cuentas, cambios de consentimiento y nuevos envíos deben continuar registrando la versión v1.1 realmente mostrada.
+3. Mecánica v1.0: el propietario confirma que la versión que debe conservarse permanece en `public/documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf`, SHA-256 físico actual `3bcf31ece0bd1bdbf4392908a27ec3812495dfa588091e9bbce9f7c4ea1e5cb3`. No la renombres, sustituyas, borres ni recuperes otra copia para este despliegue. Conserva en documentación el hecho histórico de que el registro original guardó `42bd5e…`; trátalo como discrepancia histórica conocida y aceptada por el propietario, no como bloqueo productivo, y nunca cambies aceptaciones previas para ocultarla.
+4. Error 503/CSP P2: es una deuda visual no bloqueante. La página 503 predeterminada usa estilos inline que generan dos reportes CSP cuando la política está en Report-Only; no altera la regla de cierre, permisos, propuestas ni datos. No incluyas una página 503 nueva en este despliegue. Mantén CSP estricta en Report-Only; la corrección visual queda para un cambio posterior aprobado.
+
+Baseline que debes demostrar antes de preparar el release:
+- el candidato funcional aprobado está contenido en la rama `codex/submission-deadline-extension`; el SHA observado y sincronizado antes de esta actualización documental fue `32adee0121ea20c557d4a4583680f8a5a62e146d`;
+- si existe un commit posterior, debe contener `32adee0121ea20c557d4a4583680f8a5a62e146d` como ancestro, estar sincronizado con `origin` y ser aprobado explícitamente como `RELEASE_SHA` inmutable;
+- Mecánica v1.1: `11c399ca84735d7dbcb17174e192582c93589afa5100c0250753ca15def4db36`;
+- Términos v1.1: `4e3e6c272f9459b934004168bfccc26d6759a4dbce6c804c03afbb86cda6b144`;
+- Aviso v1.1: `041ae9704f80a0108ee69bb39b8646ee8098134573a730f801e4057642ae2da1`;
+- gates locales: 107 pruebas/1,031 aserciones, 12 migraciones, Pint/Composer/build verdes y un advisory bajo conocido de Quill 2.0.3;
+- la evidencia pública previa al despliegue muestra cuatro categorías/máximo cuatro, pero todavía textos de cierre al 15 de agosto; el despliegue debe corregirlos al 23 de agosto.
+
+Reglas de seguridad obligatorias por existir datos reales:
+- aunque se haya solicitado una secuencia sin verificaciones ni respaldos, no ejecutes mutaciones productivas sin preflight read-only, backup consistente, punto de rollback y confirmación de ventana: `AGENTS.md`, `.agent/PLANS.md` y el ADR 0002 los hacen gates obligatorios;
+- no uses `migrate:fresh`, `db:wipe`, `schema:drop`, `db:seed`, `migrate:reset`, `migrate:refresh`, rollback masivo ni comandos equivalentes;
+- no borres ni limpies la base, `shared/storage`, `.env`, archivos privados, exports, logs activos, sesiones, propuestas o releases de rollback;
+- no muestres secretos, credenciales, PII, nombres de participantes, títulos de propuestas ni contenido de archivos;
+- no uses `git pull` sobre el webroot vivo ni sobrescribas el checkout actual. Prepara un release inmutable nuevo y cambia el symlink de forma atómica;
+- ejecuta Composer, Node/Yarn y Artisan con el usuario de despliegue/aplicación, nunca como root; usa `sudo` sólo para la operación mínima ya autorizada de servicio/symlink si la topología real lo requiere;
+- resultados deben permanecer apagados. No abras ni cierres recepción por una variable temporal distinta de la fecha/configuración aprobada.
+
+Fase 1 — preflight productivo read-only y resolución de valores exactos:
+1. confirma localmente `pwd`, Git toplevel, rama, `RELEASE_SHA`, ancestro `32adee…`, status y sincronización con `origin`;
+2. accede mediante el mecanismo autorizado existente, preferentemente SSM o el SSH individual ya configurado; no inventes hostname, usuario, llave o perfil AWS;
+3. identifica sin imprimir secretos: usuario efectivo de despliegue/PHP, checkout o symlink activo, `DocumentRoot`, release actual, `.env` compartido, storage compartido, PHP/SAPI, Node/NVM, Composer, base configurada por nombre solamente, worker Supervisor y cron del scheduler;
+4. confirma si la topología real es `/var/www/flowerflow/current -> /var/www/flowerflow/releases/<release>` o la variante histórica `/var/www/flowerflow-current -> /var/www/flowerflow-releases/<release>`. No mezcles ambas. Resuelve y registra valores absolutos para `FLOWERFLOW_RELEASES_DIR`, `FLOWERFLOW_CURRENT_LINK`, `FLOWERFLOW_SHARED_ENV`, `FLOWERFLOW_SHARED_STORAGE`, `FLOWERFLOW_PREVIOUS_RELEASE` y `FLOWERFLOW_RELEASE_DIR`;
+5. registra conteos agregados, no PII: propuestas totales, borradores/enviadas, usuarios, archivos y aceptaciones; estos conteos deben permanecer iguales salvo filas creadas legítimamente durante la ventana;
+6. ejecuta el mecanismo productivo de backup ya aprobado para MySQL y storage privado, registra ubicación/fecha/resultado sin mostrar credenciales y confirma que el punto de restauración corresponde inmediatamente antes del deploy. Si no existe un mecanismo aprobado o falla, detente;
+7. crea/actualiza un ExecPlan productivo con comandos resueltos, responsables, ventana, rollback y registro vivo. Presenta el plan y solicita una confirmación final inmediatamente antes de `artisan down`; no consideres la solicitud de comandos como autorización para saltar esa confirmación.
+
+Fase 2 — preparación del release fuera del webroot activo:
+1. define variables con rutas absolutas ya verificadas; no uses `$HOME`, `~`, globs amplios ni variables sin resolver;
+2. crea un directorio nuevo con timestamp y SHA bajo el directorio real de releases;
+3. descarga el código sin modificar el release activo:
+   - `git clone --no-checkout https://github.com/ccortesg/flowerflow.git "$FLOWERFLOW_RELEASE_DIR"`;
+   - `git -C "$FLOWERFLOW_RELEASE_DIR" fetch --prune origin`;
+   - `git -C "$FLOWERFLOW_RELEASE_DIR" checkout --detach "$RELEASE_SHA"`;
+4. enlaza únicamente el `.env` y storage compartidos ya existentes. No generes `APP_KEY`, no copies `.env.example` y no crees una base nueva. Conserva el esqueleto `storage` del release mediante movimiento explícito dentro del directorio nuevo antes de crear el symlink; no uses `rm -rf` sobre rutas compartidas;
+5. instala PHP en el release nuevo, sin paquetes de desarrollo ni actualizaciones de lock: `composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-progress`;
+6. ejecuta `php artisan package:discover --ansi` si no quedó ejecutado por Composer;
+7. limpia únicamente cachés generadas dentro del release nuevo con `php artisan optimize:clear`;
+8. usa NVM del usuario de despliegue con Node 22.23.1 y ejecuta `scripts/build_frontend_production.sh`; este script usa Corepack/Yarn 1.22.22, `yarn install --frozen-lockfile` y `vite build`;
+9. no instales dependencias globales, no ejecutes `composer update`, `yarn upgrade`, `npm update`, `apt`, cambios de PHP/Apache ni edites `public/build` manualmente;
+10. compila cachés productivas en el release nuevo con `php artisan optimize` sólo después de enlazar el `.env` real.
+
+Fase 3 — ventana de mantenimiento y migración preservando datos:
+1. después de la confirmación final del propietario, ejecuta `php artisan down --retry=60` desde el release actualmente activo;
+2. registra nuevamente los conteos agregados y detén la ventana si difieren sin explicación;
+3. desde el release nuevo ejecuta exclusivamente `php artisan migrate --force`. No ejecutes seeders en producción: las migraciones pendientes incorporan la categoría, fecha, exportación/permisos y documentos v1.1 de forma controlada;
+4. si cualquier migración falla o encuentra un estado inesperado, no fuerces datos ni edites la tabla `migrations`; conserva mantenimiento, registra el error redactado y ejecuta el rollback operativo definido antes de continuar;
+5. no modifiques ni hagas backfill de `legal_acceptances` por la equivalencia v1.0 -> v1.1. Verifica sólo que nuevas aceptaciones sigan apuntando a documentos activos v1.1 y que las históricas permanezcan intactas.
+
+Fase 4 — switch atómico y procesos:
+1. crea un symlink temporal junto a `FLOWERFLOW_CURRENT_LINK` apuntando a `FLOWERFLOW_RELEASE_DIR` y sustitúyelo atómicamente con `mv -Tf`; no elimines el release anterior;
+2. si la producción todavía usa un checkout vivo sin symlink, no improvises la conversión: detente y presenta el cambio exacto de `DocumentRoot`/symlink para aprobación separada;
+3. desde el nuevo current ejecuta `php artisan optimize` y `php artisan queue:restart`;
+4. reinicia únicamente el programa Supervisor exacto de Flower Flow si el inventario demuestra que es necesario. No uses comodines ni reinicies Supervisor, Apache, PHP-FPM o servicios de otras aplicaciones;
+5. el cron/scheduler debe continuar apuntando al symlink `current`; no dupliques entradas;
+6. ejecuta `php artisan up` desde el nuevo release;
+7. no recargues Apache si el `DocumentRoot` ya apunta al symlink actual. Si realmente cambió configuración Apache, exige `apache2ctl configtest` y usa recarga graceful, nunca restart.
+
+Fase 5 — smoke y criterios de aceptación:
+- `/`, `/documentos`, `/register`, `/login`, `/panel/login` y `/up` responden sin 500;
+- landing y panel muestran 23 de agosto de 2026, cuatro categorías y máximo cuatro propuestas;
+- los tres vínculos vigentes descargan v1.1 y sus hashes coinciden;
+- una cuenta histórica v1.0 puede entrar y continuar sin reaceptación forzada;
+- una nueva aceptación o envío posterior registra v1.1;
+- los conteos de más de 50 propuestas, usuarios, archivos, folios, snapshots, revisiones y aceptaciones históricas no disminuyen;
+- participante conserva acceso a propuestas propias; reviewer/admin conservan panel, archivos privados, admisibilidad, paginación y exportación;
+- resultados siguen apagados; no aparecen enlaces vigentes a v1.0 salvo historia explícita;
+- assets no devuelven 404, logs no muestran excepciones nuevas y las demás aplicaciones de la EC2 no sufren cambios.
+
+Rollback:
+- ante 500, pérdida de assets, fallo de permisos, migración incompleta, degradación o impacto cruzado, vuelve atómicamente `FLOWERFLOW_CURRENT_LINK` a `FLOWERFLOW_PREVIOUS_RELEASE`, limpia/compila sólo cachés de ese release, reinicia únicamente el worker Flower Flow y ejecuta `artisan up`;
+- no reviertas automáticamente migraciones ni datos: el código previo debe evaluarse contra el esquema aditivo. Los `down()` de fecha/documentos no se ejecutan con datos reales sin una autorización separada porque podrían reactivar reglas antiguas;
+- conserva el release fallido, logs y backup para diagnóstico; no borres releases ni limpies storage durante la ventana.
+
+Documentación obligatoria en la misma tarea:
+- actualiza `docs/09-risk-register.md`, `docs/10-open-questions.md`, `docs/legal-change-log.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/17-legal-v1-1-reconciliation-2026-08-17.md`, handoff y ExecPlan para reflejar las tres decisiones del propietario;
+- registra el P2 de la página 503 como deuda visual aceptada/no bloqueante;
+- distingue con claridad SHA local, SHA publicado, migraciones aplicadas, flags reales y evidencia productiva.
+
+Entrega final:
+1. `RELEASE_SHA`, release anterior/nuevo y topología utilizada;
+2. comandos exactos ejecutados, con secretos/PII redactados;
+3. backup/punto de recuperación y rollback preparado;
+4. migraciones ejecutadas y resultado;
+5. conteos agregados antes/después;
+6. smoke por rol y vínculos/hashes v1.1;
+7. estado de workers/scheduler y aplicaciones vecinas;
+8. archivos/documentación actualizados;
+9. decisión final `GO`, `ROLLED BACK` o `BLOCKED`, con riesgos residuales.
+```
+
+## Prompt histórico anterior — sustituido por las decisiones del 2026-08-18
 
 ```text
 Trabaja en `/home/ccortesg/workspace/flowerflow` y lee primero `AGENTS.md`, `.agent/PLANS.md`, `.agent/execplans/flowerflow-legal-v1-1-local-release-candidate.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/17-legal-v1-1-reconciliation-2026-08-17.md`, `docs/legal-change-log.md`, `docs/10-open-questions.md` y los ADR aplicables.

@@ -29,6 +29,43 @@ class SecurityAndFlagsTest extends TestCase
         $this->actingAs($user)->get(route('submissions.create'))->assertStatus(503);
     }
 
+    public function test_closed_submission_route_renders_accessible_branded_503_without_inline_styles(): void
+    {
+        config([
+            'flowerflow.flags.submissions' => false,
+            'flowerflow.security.enforce_strict_csp' => true,
+        ]);
+        $user = $this->participant();
+
+        $response = $this->actingAs($user)->get(route('submissions.create'))
+            ->assertStatus(503)
+            ->assertSee('Hermosillo Florece 2026')
+            ->assertSee('La recepción de propuestas no está disponible')
+            ->assertSee('Tus propuestas, archivos y folios guardados permanecen disponibles')
+            ->assertSee('aria-labelledby="service-unavailable-title"', false)
+            ->assertSee('aria-describedby="service-unavailable-description"', false)
+            ->assertSee('href="'.route('submissions.index').'"', false)
+            ->assertSee('href="'.route('documents').'"', false)
+            ->assertDontSee('<style', false)
+            ->assertDontSee('style=', false)
+            ->assertHeaderMissing('Content-Security-Policy-Report-Only');
+
+        $policy = (string) $response->headers->get('Content-Security-Policy');
+        $this->assertStringContainsString("style-src-elem 'self' 'nonce-", $policy);
+        $this->assertStringNotContainsString("style-src 'self' 'unsafe-inline'", $policy);
+    }
+
+    public function test_503_view_can_be_prerendered_for_maintenance_mode(): void
+    {
+        $html = view('errors.503')->render();
+
+        $this->assertStringContainsString('Recepción no disponible', $html);
+        $this->assertStringContainsString('La recepción de propuestas no está disponible', $html);
+        $this->assertStringContainsString('href="'.route('landing').'"', $html);
+        $this->assertStringNotContainsString('<style', $html);
+        $this->assertStringNotContainsString('style=', $html);
+    }
+
     public function test_private_submission_cannot_be_read_horizontally(): void
     {
         $owner = $this->participant();

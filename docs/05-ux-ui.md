@@ -2,7 +2,7 @@
 
 > **Estado vigente — 2026-08-17:** público, acceso, participante, wizard, panel y admisibilidad tienen interfaces reales; jueces, resultados, privacidad y auditor dedicado no. El diagnóstico por superficie/rol y los pendientes de UAT del SHA actual están en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
-> **Sincronización v1.1:** landing, `/documentos`, registro, login, perfil, envío, footer y panel muestran vínculos v1.1; las superficies globales identifican a FUNXT, A.C. y su RFC/domicilio verificados. La fecha del 23 de agosto, las cuatro categorías y el máximo de cuatro propuestas quedan confirmados por la Mecánica v1.1 corregida. La UI conserva la delimitación aprobada de accesibilidad en Hermosillo sin Barreras; como el PDF también menciona accesibilidad en Movilidad, ese alcance queda `POR_CONFIRMAR P1` sin cambiar la interfaz por inferencia.
+> **Sincronización v1.1, actualizada 2026-08-18:** landing, `/documentos`, registro, login, perfil, envío, footer y panel muestran vínculos v1.1; las superficies globales identifican a FUNXT, A.C. y su RFC/domicilio verificados. La fecha del 23 de agosto, cuatro categorías y máximo cuatro propuestas están confirmados. La UI conserva sus descripciones actuales y el propietario aceptó que el PDF mencione accesibilidad en Movilidad y Hermosillo sin Barreras, sin recategorización.
 
 ## Adenda Hermosillo sin Barreras — 2026-08-06
 
@@ -11,7 +11,7 @@
 - El dashboard participante enumera las cuatro categorías activas. Creación y edición de borradores usan una cuadrícula de dos columnas que baja a una; listado, detalle y revisión conservan el nombre y el icono configurado. Una propuesta enviada permanece inmutable.
 - El dashboard administrativo limita “Enviadas por categoría” a categorías activas de la convocatoria activa e incluye conteo cero. El filtro/listado/detalle histórico conserva relaciones existentes y acepta `?category=hermosillo-sin-barreras`.
 - El correo de confirmación incluye la categoría, además de folio, título y fecha. El snapshot inmutable conserva `public_id`, slug y nombre de la nueva categoría.
-- La Mecánica v1.1 corregida confirma cuatro categorías y máximo cuatro propuestas. La interfaz no presenta como resuelta la superposición temática de accesibilidad entre Movilidad con Flow y Hermosillo sin Barreras.
+- La Mecánica v1.1 corregida confirma cuatro categorías y máximo cuatro propuestas. La superposición temática de accesibilidad quedó aceptada por el propietario; la interfaz conserva sus textos y categorías sin cambios.
 
 ## Sistema visual Fase 01
 

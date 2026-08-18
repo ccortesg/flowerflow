@@ -2,11 +2,11 @@
 
 > **Estado vigente — 2026-08-17:** el alcance local aprobado de Fase 01 y Fase 02A está implementado y cerró UAT, junto con cuarta categoría, exportación XLSX privada, ampliación de plazo y sincronización jurídica v1.1. Jueces/evaluación, ganadores/resultados, ARCO completo y producción siguen fuera de alcance. El avance del plan maestro es 58 %; ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
-> **Reconciliación jurídica v1.1, 2026-08-17:** las nuevas versiones identifican a `FUNXT, A.C.` (RFC `FUN110208BT0`) como responsable, confirman el cierre del 23 de agosto de 2026 a las 23:59, hora de Hermosillo, y se publican como versiones inmutables adicionales. La Mecánica v1.1 corregida confirma cuatro categorías y máximo cuatro propuestas, una por categoría. Sólo queda `POR_CONFIRMAR P1` la superposición de “accesibilidad” entre Movilidad con Flow y Hermosillo sin Barreras. Evidencia página/sección: `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
+> **Reconciliación jurídica v1.1, actualizada 2026-08-18:** las nuevas versiones identifican a `FUNXT, A.C.`, confirman el cierre del 23 de agosto, cuatro categorías y máximo cuatro propuestas. El propietario aceptó sin cambios la superposición de accesibilidad, aprobó continuidad operativa sin reaceptación forzada para cuentas v1.0 y designó el archivo físico v1.0 `3bcf31…` conservando el antecedente `42bd5e…`. Evidencia: `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
 
 > **Adenda autoritativa de plazo, 2026-08-17:** el cierre inclusivo de `hermosillo-florece-2026` se amplía a `2026-08-23 23:59:59 America/Hermosillo`, equivalente a `2026-08-24 06:59:59 UTC`. La Mecánica v1.1, p. 3, “Recepción de propuestas”, y los Términos v1.1, p. 2, “Vigencia y acceso”, confirman esta fecha; la contradicción de plazo con v1.0 queda resuelta para nuevas operaciones v1.1.
 
-> **Adenda funcional histórica de categoría, 2026-08-06:** la implementación aprobada opera con cuatro categorías activas y ordenadas: Movilidad con Flow, Hermosillo Florece, Mi familia, mi mascota y Hermosillo sin Barreras. La última usa el slug `hermosillo-sin-barreras` y la descripción “Ideas para mejorar la accesibilidad y la inclusión para todas y todos.” Cada cuenta puede registrar hasta cuatro propuestas, máximo una por categoría. La Mecánica v1.1 corregida y la confirmación del propietario respaldan ahora esas cantidades. El PDF todavía integra accesibilidad en Movilidad con Flow además de Hermosillo sin Barreras; ese alcance se conserva `POR_CONFIRMAR P1`.
+> **Adenda funcional histórica de categoría, resuelta 2026-08-18:** la implementación opera con cuatro categorías activas y ordenadas y máximo cuatro propuestas, una por categoría. La plataforma conserva sus descripciones actuales; la referencia adicional a accesibilidad en Movilidad dentro de la Mecánica v1.1 fue aceptada por el propietario y no produce recategorización.
 
 > **Sustitución parcial aprobada, 2026-07-15 (histórica):** Fase 01 implementó sitio público, auth, perfil, borradores/envío, archivos y panel mínimo. La adenda Fase 02A al final de este documento autorizó e implementó después la revisión de admisibilidad; jueces, rúbrica, ganadores y resultados continúan sin implementar.
 
@@ -21,7 +21,7 @@
 - Finalización: correo verificado, perfil mínimo capturado desde registro, legales separados, snapshot/folio/idempotencia.
 - Flags default: público/panel `true`; registro/recepción/resultados `false`.
 
-La descripción funcional vigente de “Movilidad con Flow” es “Ideas para mejorar la movilidad, la vialidad y la seguridad de los desplazamientos en la ciudad.” Accesibilidad e inclusión se delimitan en “Hermosillo sin Barreras”. La Mecánica v1.1 corregida sí enumera las cuatro categorías, pero también incluye accesibilidad dentro de Movilidad con Flow; la delimitación temática queda `POR_CONFIRMAR P1` en `docs/legal-change-log.md`, `docs/09-risk-register.md` y `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
+La descripción funcional vigente de “Movilidad con Flow” es “Ideas para mejorar la movilidad, la vialidad y la seguridad de los desplazamientos en la ciudad.” Accesibilidad e inclusión permanecen destacadas en “Hermosillo sin Barreras”; la referencia adicional de la Mecánica v1.1 en Movilidad se acepta como está y no cambia categorías, descripciones ni propuestas existentes.
 
 **Fecha de corte de baseline:** 2026-07-15; **estado vigente:** 2026-08-17
 

@@ -9,9 +9,10 @@
 | R59 | Seguridad privilegiada documentada como completa cuando 2FA es opcional | Alto antes de producción | Flujo TOTP funciona y está probado, pero no hay enforcement, suspensión/revocación ni password confirm en todas las acciones críticas | Milestone de hardening de identidad antes de ampliar roles/producción |
 | R60 | Futuros roles pueden caer en superficies participantes | Medio/Alto de evolución | Rutas participante usan `auth+verified`; `FinalizeSubmission` excluye sólo admin/reviewer; `judge` no existe aún | Definir roles excluyentes/acumulables y gates antes de Fase 02B |
 | R61 | Estado documental podía confundirse con disponibilidad/deploy | Medio, mitigado documentalmente | Nuevo diagnóstico separa plan maestro, código aprobado, runtime local y producción | Mantener `docs/16-project-status-by-module-and-role-2026-08-17.md` en cada milestone |
-| R62 | Alcance de accesibilidad se superpone entre dos categorías | **Medio/P1** | La Mecánica v1.1 corregida, p. 2, confirma cuatro categorías/máximo cuatro, pero menciona accesibilidad en Movilidad con Flow y en Hermosillo sin Barreras | Confirmar si la superposición es deliberada antes de comunicación productiva; no reescribir reglas ni recategorizar por inferencia |
-| R63 | El binario actual de Mecánica v1.0 no coincide con el hash histórico | **Crítico de evidencia** | Seeder/commit original conservan `42bd5e…`; archivo actual bajo el mismo nombre da `3bcf31…`; aceptaciones no se reescribieron | Recuperar el binario original verificable y definir publicación histórica sin sustituir evidencia |
-| R64 | Reaceptación de v1.1 no definida | Alto legal/UX | PDF v1.1 no ordena inequívocamente forzar reaceptación a cuentas v1.0; cuentas/aceptaciones nuevas sí referencian v1.1 | `PROPOSAL_NEEDED`: decisión jurídica de efectividad, audiencia, bloqueo, comunicación y evidencia |
+| R62 | Alcance de accesibilidad se superpone entre dos categorías | **Resuelto / owner accepted** | El propietario indicó que la redacción y operación se conservan como están | No recategorizar ni modificar UI/reglas por este punto |
+| R63 | El binario actual de Mecánica v1.0 no coincide con el hash histórico | **Histórico aceptado** | El propietario designó el archivo físico actual `3bcf31…` como v1.0; `42bd5e…` permanece en registros/aceptaciones históricas | Mantener visible la discrepancia y no sustituir archivo ni reescribir evidencia |
+| R64 | Reaceptación de v1.1 no definida | **Resuelto / owner decision** | Cuentas v1.0 continúan operativamente sin reaceptación forzada; nuevas aceptaciones registran v1.1 | No bloquear ni hacer backfill/falsificación de `legal_acceptances` |
+| R65 | El 503 predeterminado generaba reportes CSP por estilos inline | **Resuelto local** | Vista FlowerFlow propia, accesible, con assets Vite normales y sin `<style>`/`style=`; pruebas bajo CSP estricta y render de mantenimiento | Incluir el cambio en el SHA publicado por el propietario |
 
 La auditoría vigente cuantifica estos riesgos y el avance en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
@@ -20,7 +21,7 @@ La auditoría vigente cuantifica estos riesgos y el avance en `docs/16-project-s
 | ID | Riesgo residual | Nivel actual | Evidencia/mitigación | Próxima puerta |
 |---|---|---:|---|---|
 | R42 | Regresión automatizada MySQL | Bajo controlado | Gate verde: 90 pruebas/800 aserciones con base y cuenta exclusivas; secreto ignorado | Repetir en cada SHA candidato |
-| R43 | Producción sin staging y checkout vivo | Crítico operativo | Tres commits sin migraciones y runbook de releases inmutables | Preflight, conversión a symlink, smoke y rollback del propietario |
+| R43 | Producción usa checkout Git directo sin release alterno | Crítico operativo confirmado | El propietario confirmó `/var/www/flowerflow` directamente vinculado a GitHub, sin `releases/current/shared`; el runbook inmediato se alinea a esa realidad | Actualizar por SHA exacto sin `git clean/reset --hard`; preservar `.env`/`storage`. Conversión a symlink queda como milestone futuro |
 | R44 | EC2 compartida con otras seis aplicaciones | Crítico operativo | Prohibidos paquetes globales; sólo vhost Flower Flow, `configtest` y reload graceful | Baseline/smoke de las siete aplicaciones antes y después |
 | R45 | Consistencia archivo/SQL | Bajo tras mitigación | Compensación, borrado post-commit y auditor read-only verificados en MySQL, incluso fallos sintéticos | Repetir prueba operativa con el storage del ambiente candidato |
 | R46 | Estados/abuso de mutaciones administrativas | Bajo tras mitigación | Matriz `pending/in_review`, rechazo de demás estados y throttle por actor/ruta verificados | QA real de doble clic antes de UAT |
@@ -41,7 +42,7 @@ Esta adenda prevalece para el estado actual; las tablas históricas siguientes s
 
 | Riesgo | Estado/mitigación | Gate |
 |---|---|---|
-| Legal v1.1 no define reaceptación y superpone accesibilidad entre dos categorías | Recepción productiva debe permanecer apagada; cantidades ya están reconciliadas en la matriz página/sección | Resolución formal de R62/R64 y nueva evidencia versionada. |
+| Continuidad jurídica v1.1 | R62/R64 y el tratamiento del PDF v1.0 fueron resueltos por el propietario; cantidades y vínculos están reconciliados | Conservar la decisión, las aceptaciones históricas y los hashes sin backfill. |
 | Licencia Pixinvent no comprobada | `_referencia` sólo local; adaptación puntual | Evidencia comercial antes de producción. |
 | Upload Office/ODF complejo | Firma, macros OOXML, ZIP bomb y ausencia temporal de antimalware; privado | Riesgo aceptado temporalmente por el owner el 2026-07-15; conservar allowlist, validación de firma, cuota, storage privado y monitoreo. ClamAV/cuarentena y pruebas corpus siguen pendientes. |
 | Bundle demo excesivo | Build verde pero chunks grandes | Racionalizar entradas tras browser baseline. |

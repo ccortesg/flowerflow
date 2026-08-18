@@ -9,9 +9,11 @@
 | LEG-V11-003 | Publicar v1.1 sin borrar v1.0 | config, seeder y migración `2026_08_17_220000_publish_legal_documents_v1_1.php`; base aislada con seis versiones y una activa por tipo | VERIFIED local |
 | LEG-V11-004 | Conservar aceptaciones históricas y registrar la versión real | `CreateNewUser`, `ProfileController`, `FinalizeSubmission`, FKs existentes y `LegalDocumentsV11Test`; UAT autenticada con v1.1 | VERIFIED local |
 | LEG-V11-005 | Enlaces v1.1 coherentes por superficie/rol | landing, documentos, registro, login, perfil, envío, footers y panel; UAT 360/768/1440 | VERIFIED local |
-| LEG-V11-006 | No inferir contradicciones de categorías | cantidades 4/4 verificadas; superposición de accesibilidad conservada en R62 y Q-LEGAL-001 | VERIFIED en cantidad / POR_CONFIRMAR P1 en alcance |
-| LEG-V11-007 | Política de reaceptación | nuevas aceptaciones usan v1.1; no se fuerza a históricos | PROPOSAL_NEEDED |
-| LEG-V11-008 | Preservar integridad v1.0 | hashes histórica/actual documentados; aceptaciones intactas | PENDING crítico: recuperar binario original |
+| LEG-V11-006 | No inferir contradicciones de categorías | cantidades 4/4 verificadas; superposición de accesibilidad aceptada por el propietario sin recategorización | VERIFIED / OWNER ACCEPTED |
+| LEG-V11-007 | Política de reaceptación | cuentas v1.0 continúan sin bloqueo/backfill; nuevas aceptaciones usan v1.1 | VERIFIED / OWNER DECISION |
+| LEG-V11-008 | Preservar integridad v1.0 | propietario designa el archivo físico `3bcf31…`; hash histórico `42bd5e…` y aceptaciones permanecen intactos | VERIFIED / HISTORICAL DISCREPANCY ACCEPTED |
+| SEC-503-001 | 503 accesible y compatible con CSP | vista propia sin estilos inline, prueba CSP estricta, pre-render de mantenimiento y revisión responsive | VERIFIED local |
+| OPS-TOPOLOGY-001 | Runbook coherente con la topología productiva real | ADR 0002, runbooks 07/15, handoff y prompt registran checkout directo `/var/www/flowerflow`, sin `releases/current/shared` | OWNER CONFIRMED / DOCUMENTED |
 
 ## Trazabilidad de la auditoría integral — 2026-08-17
 
@@ -20,7 +22,7 @@
 | AUDIT-001 | Diagnóstico por módulo y funcionalidad con porcentajes reproducibles | `docs/16-project-status-by-module-and-role-2026-08-17.md`, rúbrica de cinco dimensiones y pesos del plan maestro | VERIFIED documental |
 | AUDIT-002 | Diagnóstico por rol y acceso efectivo | roles/permisos del seeder, rutas, Policies, vistas y pruebas negativas contrastadas con la matriz planificada | VERIFIED documental/local |
 | AUDIT-003 | Separar código, runtime local y producción | estado de flags/config, migraciones de `flowerflow_testing`/`flowerflow` y evidencia Git/productiva histórica | VERIFIED; runtime local desalineado |
-| AUDIT-004 | Gate de código vigente | 107 pruebas/1,031 aserciones, Pint, Composer, JSON y build verdes; Quill bajo documentado | VERIFIED local |
+| AUDIT-004 | Gate de código vigente | 109 pruebas/1,049 aserciones, Pint, Composer, JSON y build verdes; Quill bajo documentado | VERIFIED local |
 | AUDIT-005 | Próximo prompt exacto y acotado | prompt de release candidate local al final del diagnóstico, sin Fase 02B ni producción | READY FOR OWNER REVIEW |
 
 ## Trazabilidad paginación y exportación privada — 2026-08-11
@@ -85,7 +87,7 @@
 | F1-010 | Rich text seguro | Quill + Delta/HTML/texto + Symfony sanitizer | Unit XSS + Feature stored XSS + browser | VERIFIED local |
 | F1-011 | Upload privado/10 MiB/formatos/hash | inspector/store/Policy, disk `serve=false` | MIME/signature/quota/IDOR + PDF browser | VERIFIED local; antivirus pendiente |
 | F1-012 | Links allowlist sin SSRF | Form Request host exacto, no cliente HTTP | hosts internos/prohibidos | VERIFIED local |
-| F1-013 | Legales versionados/consentimientos separados | tablas, config/seeder/migración v1.1, registro/perfil/envío y `legal-change-log.md` | hashes, una activa por tipo, rollback y acceptance rows en `LegalDocumentsV11Test` | IMPLEMENTED local; reaceptación pendiente |
+| F1-013 | Legales versionados/consentimientos separados | tablas, config/seeder/migración v1.1, registro/perfil/envío y `legal-change-log.md` | hashes, una activa por tipo, rollback y acceptance rows en `LegalDocumentsV11Test` | IMPLEMENTED local; continuidad v1.0 resuelta por el propietario sin backfill |
 | F1-014 | Envío transaccional/idempotente | `FinalizeSubmission`, lock, snapshot, folio, event | doble POST, una versión/mail + envío browser | VERIFIED local |
 | F1-015 | Panel mínimo sin evaluación | counts/distribución/lista/detalle/cuenta | admin/participant/browser desktop/móvil | VERIFIED local |
 | F1-016 | Correo post-commit, sin adjuntos | queued Mailable y config central | Mail fake | VERIFIED local; SMTP pendiente |

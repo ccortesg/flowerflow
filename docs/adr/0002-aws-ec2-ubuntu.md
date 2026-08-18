@@ -1,6 +1,6 @@
 # ADR 0002: AWS EC2 con Ubuntu como destino de despliegue
 
-- Estado: `Accepted`
+- Estado: `Accepted` con adenda operativa del 2026-08-18
 - Fecha: `2026-07-15`
 - Alcance: infraestructura de staging y producción
 - Reemplaza: supuestos de GoDaddy/cPanel del texto inicial
@@ -20,7 +20,15 @@ El checkout local de Administratec también documenta un target AWS/Ubuntu/Apach
 
 ## Decisión
 
-Flower Flow se desplegará en AWS EC2 con Ubuntu y Apache, con PHP 8.3 como runtime objetivo, mediante releases inmutables y un symlink `current`.
+Flower Flow se despliega en AWS EC2 con Ubuntu y Apache, con PHP 8.3 como runtime objetivo. La arquitectura objetivo continúa prefiriendo releases inmutables y un symlink `current`, pero esa estructura **no existe actualmente en producción**.
+
+Adenda operativa confirmada por el propietario el 2026-08-18:
+
+- la instalación productiva actual es un checkout Git vinculado directamente al repositorio de GitHub en `/var/www/flowerflow`;
+- no existen `/var/www/flowerflow/releases`, `/var/www/flowerflow/current` ni `/var/www/flowerflow/shared`;
+- el propietario informa que el VirtualHost `app.sguniformes.com.mx` apunta a la misma ruta `/var/www/flowerflow`;
+- esta adenda no cambia por sí sola el host canónico público documentado `app.flowerflow.com.mx` ni autoriza cambios de Apache, DNS o TLS;
+- mientras no exista un milestone separado de migración de topología, los runbooks productivos deben trabajar sobre el checkout directo y no crear ni asumir symlinks de releases.
 
 La coexistencia con Administratec exige aislamiento explícito de:
 
@@ -34,7 +42,7 @@ La coexistencia con Administratec exige aislamiento explícito de:
 - cache, sesiones, cookies y storage;
 - IAM, parámetros, buckets y alarmas.
 
-El path lógico propuesto es `/var/www/flowerflow`, con webroot `/var/www/flowerflow/current/public`.
+El path productivo real es `/var/www/flowerflow`. El webroot objetivo `/var/www/flowerflow/current/public` queda como arquitectura futura, no como descripción del servidor actual.
 
 Se prefiere AWS Systems Manager Session Manager frente a SSH público. Si SSH se mantiene, debe limitarse a VPN/IP administrativa, con credenciales individuales y sin acceso directo de `root`.
 
@@ -71,7 +79,7 @@ No se realizará ningún despliegue durante fase 0. El runbook, preflight, stagi
 1. inventario autorizado de AWS y del host antes de instalar;
 2. baseline y smoke test de Administratec antes/después de cada cambio;
 3. recursos Flower Flow con nombres, usuarios y paths exclusivos;
-4. `DocumentRoot` limitado a `current/public` y `Options -Indexes`;
+4. mantener el VirtualHost existente asociado a `/var/www/flowerflow` sin cambios durante el update directo; una futura migración a `current/public` requiere tarea, validación y rollback propios;
 5. TLS, Security Groups, UFW e IAM de mínimo privilegio;
 6. secretos fuera de Git y sin claves AWS estáticas;
 7. storage privado y cifrado;
@@ -127,4 +135,3 @@ Revisar si:
 - [Runbook AWS EC2](../07-deployment-aws-ec2.md)
 - [Desarrollo local](../11-local-development.md)
 - [ADR 0003](0003-mysql-environments-and-time.md)
-

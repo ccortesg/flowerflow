@@ -8,7 +8,7 @@ La reconciliación jurídica v1.1 añade `LegalDocumentsV11Test`: valida existen
 |---|---|
 | Base/cuenta de tests | `flowerflow_testing` / `flowerflow_testing_user`, MySQL loopback, guard obligatorio |
 | Migraciones de test | 12/12 aplicadas después de guard exacto y `migrate:fresh --seed` |
-| Suite | 107 pruebas/1,031 aserciones, verde; `LegalDocumentsV11Test`: 3/36 |
+| Suite | 109 pruebas/1,049 aserciones, verde; `LegalDocumentsV11Test`: 3/36; seguimiento 503/CSP: 2 pruebas nuevas |
 | Pint | Verde |
 | Composer validate/platform/audit | Verde; cero advisories |
 | Yarn dependencies | Un advisory bajo de Quill 2.0.3 sin fix; cero moderados/altos/críticos |
@@ -312,3 +312,9 @@ La suite usa exclusivamente MySQL desechable confirmado, storage fake, mail fake
 El QA de navegador sólo incluye superficies nuevas y se documenta en `docs/design-qa-phase-02-admissibility.md`. No se usan PII, documentos reales ni pruebas contra producción.
 
 Gate final local del 2026-07-16: 72 pruebas y 696 aserciones verdes; Pint sobre cambios, `composer validate --strict`, `composer audit`, build Vite, vistas, rutas y diff sin errores. El recorrido real de navegador cerró las superficies autorizadas con consola limpia y eliminó todos los artefactos temporales.
+
+## Seguimiento 503/CSP — 2026-08-18
+
+El cierre de recepción y el modo mantenimiento usan ahora `resources/views/errors/503.blade.php`, con layout/recursos Vite normales y sin etiquetas `<style>` ni atributos `style=`. `SecurityAndFlagsTest` cubre estado 503, título/descripcion accesibles, enlaces de retorno/documentos y respuesta con CSP estricta; una prueba adicional renderiza la vista sin la bolsa de errores del middleware para representar `artisan down --render="errors::503"`.
+
+La vista se pre-renderizó localmente en mantenimiento y devolvió HTTP 503. Se revisó visualmente con Chrome a 1440×1000 y Firefox a 390×844: marca, jerarquía, alerta, acciones y reflow permanecen legibles y sin desbordamiento. El HTML renderizado conserva `aria-labelledby`/`aria-describedby`, orden DOM de teclado y cero estilos inline. No se usaron cuentas ni datos reales.
