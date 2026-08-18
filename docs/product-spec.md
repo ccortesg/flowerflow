@@ -1,13 +1,18 @@
 # Especificación de producto — Flower Flow 2026
 
+> **Incorporación jurídica v1.1 — 2026-08-17:** Mecánica, Términos y Aviso de Privacidad v1.1 identifican a `FUNXT, A.C.` (RFC `FUN110208BT0`) como responsable legal, con nombre comercial FLORECE HERMOSILLO y movimiento ciudadano FLOWER FLOW. Mecánica y Términos regularizan el cierre del 23 de agosto; la Mecánica corregida confirma cuatro categorías y máximo cuatro propuestas; el Aviso mantiene finalidades/retención sustantivas. Las nuevas rutas/hashes/versiones están incorporadas localmente sin alterar aceptaciones v1.0. Sólo queda `POR_CONFIRMAR P1` la superposición temática de accesibilidad entre Movilidad con Flow y Hermosillo sin Barreras. Ver `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
+
 > **Adenda autoritativa de plazo — 2026-08-17:** el cierre inclusivo de `hermosillo-florece-2026` se amplía al `2026-08-23 23:59:59 America/Hermosillo`, persistido como `2026-08-24 06:59:59 UTC`. Esta adenda sustituye únicamente las referencias operativas al cierre del 15 de agosto. Por instrucción del propietario, los PDF jurídicos no se modifican en este cambio; su regularización queda pendiente y registrada como riesgo.
 
 > **Adenda autoritativa “Hermosillo sin Barreras” — 2026-08-06:** para la plataforma, las categorías exactas son Movilidad con Flow, Hermosillo Florece, Mi familia, mi mascota y Hermosillo sin Barreras; máximo cuatro propuestas por cuenta, una por categoría; un Apple iPad Pro y máximo un ganador por categoría, cuatro en total. “Movilidad con Flow” ya no incluye accesibilidad en su descripción. Los PDF y aceptaciones de Mecánica v1.0 permanecen sin cambios por decisión del propietario, con contradicción jurídica alta aceptada y pendiente de adenda aprobada. Esta adenda sustituye las cantidades de la adenda Fase 01 siguiente.
 
 > **Adenda autoritativa Fase 01 — 2026-07-15:** el alcance aprobado es recepción local/test, no el MVP completo histórico. Cierre inclusivo: 15 de agosto de 2026 a las 23:59:59 en `America/Hermosillo`; categorías exactas: Movilidad con Flow, Hermosillo Florece y Mi familia, mi mascota; participación individual/equipo hasta cinco; una propuesta por categoría y tres totales. Registro/recepción/resultados están apagados por defecto. Evaluación, jueces, ganadores y publicación permanecen fuera. Ver `docs/01-functional-scope.md` y `docs/legal-change-log.md`.
 
-**Fecha de corte:** 2026-07-15  
-**Estado:** planificación; no autoriza implementación ni despliegue  
+> **Estado vigente de implementación — 2026-08-17:** Fase 01 y Fase 02A, cuarta categoría, exportación privada, ampliación de plazo y sincronización v1.1 existen en el repositorio, cerraron UAT local y están cubiertas por 107 pruebas/1,031 aserciones. El producto maestro completo está en 58 % porque jueces/evaluación, ganadores/resultados, ARCO y la operación productiva actual no están implementados. El diagnóstico autoritativo por módulo/rol es `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+
+**Fecha de corte de la baseline:** 2026-07-15; **corte vigente:** 2026-08-17
+
+**Estado:** especificación viva; documenta código local implementado, pero no autoriza despliegue
 **Propósito:** consolidar el producto que debe construirse, sus límites y las decisiones que requieren aprobación.
 
 ## Convenciones de decisión
@@ -18,22 +23,22 @@
 
 ## Integridad del insumo
 
-> **PENDING — especificación de origen incompleta:** el texto recibido comienza en “Comunicaciones” y después salta a “7. Módulo de jueces” y “8. Resultados públicos”. Faltan la introducción y los módulos 1–6. Este documento propone una reconstrucción mínima para planificar, pero no convierte esa reconstrucción en requisito aprobado. Debe solicitarse el fragmento faltante y reconciliarse mediante diff antes de iniciar desarrollo.
+> **RESOLVED para Fase 01 y Fase 02A; PENDING para el producto maestro:** los prompts aprobados posteriores resolvieron recepción y admisibilidad. Jueces, rúbrica, asignación, empate, ganadores, publicación y ARCO todavía requieren decisiones expresas; esta especificación no las inventa.
 
 ## Resumen ejecutivo
 
-Flower Flow será la plataforma web de la convocatoria 2026 para registrar participantes, recibir proyectos, verificar elegibilidad, gestionar anexos privados, asignar proyectos a jueces, capturar evaluaciones con rúbrica y declarar resultados de manera trazable.
+Flower Flow es la plataforma web de la convocatoria 2026. El repositorio ya registra participantes, recibe proyectos, verifica admisibilidad y gestiona anexos privados; asignación a jueces, evaluación con rúbrica y resultados continúan como objetivo futuro.
 
 El MVP se limita a lo indispensable para recibir, revisar y evaluar proyectos de forma segura antes del 15 de agosto de 2026. Desde la fecha de corte quedan 31 días calendario, de modo que seguridad, flujo de envío, revisión y evaluación tienen precedencia sobre funciones presentacionales. La publicación pública de ganadores se prepara con un interruptor desactivado por defecto; una galería enriquecida, marketing masivo y cualquier API o aplicación móvil quedan fuera del MVP.
 
-La primera fase es documental. No incluye cambios de aplicación, dependencias, esquema de base de datos ni producción. La implementación posterior requiere aprobación expresa del alcance, del modelo de datos, de los textos legales y del ExecPlan.
+La frase histórica “la primera fase es documental” quedó superada por las autorizaciones de Fase 01/02A. Producción, reglas futuras y cualquier ampliación funcional siguen requiriendo aprobación expresa, ExecPlan y gates.
 
 ## Decisiones confirmadas
 
 | ID | Estado | Decisión |
 | --- | --- | --- |
 | DEC-001 | DECISION | La edición operativa es Flower Flow 2026. |
-| DEC-002 | DECISION | La fecha límite de negocio es el 2026-08-15; la hora exacta permanece pendiente. |
+| DEC-002 | SUPERSEDED | La fecha histórica del 2026-08-15 fue sustituida por DEC-017. |
 | DEC-003 | DECISION | La zona horaria de presentación es `America/Hermosillo`; los timestamps persistidos se planifican en UTC. |
 | DEC-004 | DECISION | No existe selección aleatoria. La declaración de ganador es una acción administrativa separada del cálculo de puntuación. |
 | DEC-005 | DECISION | Los jueces sólo acceden a proyectos asignados y nunca a comprobantes de residencia. |
@@ -43,23 +48,25 @@ La primera fase es documental. No incluye cambios de aplicación, dependencias, 
 | DEC-009 | DECISION | La contraseña de MySQL fue proporcionada fuera del repositorio y sólo se configura en el `.env` local no versionado. No se reproduce en documentación, ejemplos, logs ni fixtures. |
 | DEC-010 | DECISION | Producción se planifica en una instancia AWS EC2 con Ubuntu, coexistente con el proyecto `administratec`. |
 | DEC-011 | DECISION | La coexistencia en EC2 exige aislamiento por virtual host, ruta, usuario de sistema, variables, base de datos, storage, procesos, logs y backups. |
-| DEC-012 | DECISION | En esta primera fase no se implementa código ni se despliega. |
-| DEC-013 | DECISION | `hermosillo-florece-2026` tiene cuatro categorías activas; `hermosillo-sin-barreras` ocupa el orden 4 y concentra accesibilidad e inclusión. |
-| DEC-014 | DECISION | Cada cuenta puede registrar máximo cuatro propuestas y máximo una por categoría; la creación revalida el límite bajo bloqueo transaccional. |
-| DEC-015 | DECISION | El premio de la cuarta categoría es un Apple iPad Pro; existe máximo un ganador por categoría y cuatro en total. |
-| DEC-016 | DECISION/RISK ACCEPTED | La plataforma adopta la cuarta categoría sin modificar Mecánica v1.0, sus hashes o aceptaciones; requiere regularización jurídica posterior. |
-| DEC-017 | DECISION/RISK ACCEPTED | El cierre se amplía a `2026-08-23 23:59:59 America/Hermosillo`; los PDF jurídicos quedan fuera del cambio técnico y requieren regularización separada. |
+| DEC-012 | DECISION HISTÓRICA | La fase documental inicial no implementaba código; autorizaciones posteriores sí permitieron implementación local, nunca despliegue implícito. |
+| DEC-013 | DECISION / RESOLVED LEGAL | La plataforma y la Mecánica v1.1 corregida conservan cuatro categorías activas, incluida `hermosillo-sin-barreras`. |
+| DEC-014 | DECISION / RESOLVED LEGAL | Máximo cuatro propuestas por cuenta y una por categoría, confirmado por el propietario y la Mecánica v1.1 corregida. |
+| DEC-015 | DECISION / RESOLVED LEGAL | La plataforma muestra máximo cuatro premios, uno por cada categoría; la Mecánica v1.1 corregida respalda cuatro categorías. |
+| DEC-016 | RISK / POR_CONFIRMAR P1 | La Mecánica v1.1 menciona accesibilidad tanto en Movilidad con Flow como en Hermosillo sin Barreras. No se reasigna alcance ni se reformula el PDF por inferencia. |
+| DEC-017 | DECISION / RESOLVED LEGAL | El cierre se amplía a `2026-08-23 23:59:59 America/Hermosillo`; Mecánica y Términos v1.1 ya reflejan el 23 de agosto de 2026. |
+| DEC-018 | DECISION | Nuevas aceptaciones y vínculos usan documentos v1.1; v1.0 permanece inmutable e histórico. Responsable legal: FUNXT, A.C.; vigencia Mecánica/Términos 14-ago y Aviso 11-ago de 2026. |
+| DEC-019 | PROPOSAL_NEEDED | No hay instrucción inequívoca para forzar reaceptación de v1.1 a cuentas existentes; nuevas cuentas y nuevos envíos sí registran v1.1. |
 
 ## Evidencia actual del repositorio
 
-| Elemento | Estado | Evidencia al 2026-07-15 |
+| Elemento | Estado | Evidencia al 2026-08-17 |
 | --- | --- | --- |
-| Backend | DECISION | `composer.json` declara PHP `^8.2` y Laravel `^12.0`. |
+| Backend | VERIFIED | Laravel 12.64.0 sobre PHP 8.3.33; 107 pruebas/1,031 aserciones verdes en MySQL aislado. |
 | Plantilla | DECISION | `package.json` declara Materialize `3.0.0` con licencia comercial. |
 | Frontend | DECISION | Bootstrap 5.3.6, Vite 6.3.5 y varios plugins de la plantilla están declarados; su presencia no autoriza usarlos todos. |
-| Layouts | DECISION | Existen `layoutFront.blade.php` y layouts administrativos vertical/horizontal. |
-| Navegación | DECISION | `resources/menu/verticalMenu.json` conserva entradas demo. |
-| Aplicación | DECISION | `routes/web.php` sólo expone páginas base/demo, selector de idioma y vistas básicas de login/registro; los módulos de negocio aún no están implementados. |
+| Layouts | VERIFIED | `layouts/flowerflow.blade.php` sirve público, participante y panel; layouts heredados se conservan sin ser el contrato principal. |
+| Navegación | VERIFIED / DEUDA | Navegación Flower Flow usa parciales/Blade por rol; los JSON heredados conservan demos no usados por este layout. |
+| Aplicación | VERIFIED | Hay 66 rutas registradas/41 propias y módulos de auth, perfil, propuestas, archivos, admisibilidad, panel y exportación. |
 | Variante/licencia exacta | PENDING | Debe confirmarse si el paquete adquirido es starter kit o full version, y el alcance de su licencia para dominio/proyecto. |
 
 ## Objetivo del producto

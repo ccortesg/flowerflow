@@ -1,10 +1,33 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+## Trazabilidad de reconciliación jurídica v1.1 — 2026-08-17
+
+| ID | Requisito | Implementación/evidencia | Estado |
+|---|---|---|---|
+| LEG-V11-001 | Validar seis PDF por existencia, tipo, páginas, tamaño y SHA-256 | inventario y revisión de 28 páginas en `docs/17-legal-v1-1-reconciliation-2026-08-17.md` | VERIFIED local |
+| LEG-V11-002 | Comparar v1.0/v1.1 con evidencia de página/sección | matriz jurídica del mismo documento; extracción y revisión visual | VERIFIED documental |
+| LEG-V11-003 | Publicar v1.1 sin borrar v1.0 | config, seeder y migración `2026_08_17_220000_publish_legal_documents_v1_1.php`; base aislada con seis versiones y una activa por tipo | VERIFIED local |
+| LEG-V11-004 | Conservar aceptaciones históricas y registrar la versión real | `CreateNewUser`, `ProfileController`, `FinalizeSubmission`, FKs existentes y `LegalDocumentsV11Test`; UAT autenticada con v1.1 | VERIFIED local |
+| LEG-V11-005 | Enlaces v1.1 coherentes por superficie/rol | landing, documentos, registro, login, perfil, envío, footers y panel; UAT 360/768/1440 | VERIFIED local |
+| LEG-V11-006 | No inferir contradicciones de categorías | cantidades 4/4 verificadas; superposición de accesibilidad conservada en R62 y Q-LEGAL-001 | VERIFIED en cantidad / POR_CONFIRMAR P1 en alcance |
+| LEG-V11-007 | Política de reaceptación | nuevas aceptaciones usan v1.1; no se fuerza a históricos | PROPOSAL_NEEDED |
+| LEG-V11-008 | Preservar integridad v1.0 | hashes histórica/actual documentados; aceptaciones intactas | PENDING crítico: recuperar binario original |
+
+## Trazabilidad de la auditoría integral — 2026-08-17
+
+| ID | Requisito | Implementación/evidencia | Estado |
+|---|---|---|---|
+| AUDIT-001 | Diagnóstico por módulo y funcionalidad con porcentajes reproducibles | `docs/16-project-status-by-module-and-role-2026-08-17.md`, rúbrica de cinco dimensiones y pesos del plan maestro | VERIFIED documental |
+| AUDIT-002 | Diagnóstico por rol y acceso efectivo | roles/permisos del seeder, rutas, Policies, vistas y pruebas negativas contrastadas con la matriz planificada | VERIFIED documental/local |
+| AUDIT-003 | Separar código, runtime local y producción | estado de flags/config, migraciones de `flowerflow_testing`/`flowerflow` y evidencia Git/productiva histórica | VERIFIED; runtime local desalineado |
+| AUDIT-004 | Gate de código vigente | 107 pruebas/1,031 aserciones, Pint, Composer, JSON y build verdes; Quill bajo documentado | VERIFIED local |
+| AUDIT-005 | Próximo prompt exacto y acotado | prompt de release candidate local al final del diagnóstico, sin Fase 02B ni producción | READY FOR OWNER REVIEW |
+
 ## Trazabilidad paginación y exportación privada — 2026-08-11
 
 | ID | Requisito aprobado | Implementación | Evidencia prevista/actual | Estado |
 |---|---|---|---|---|
-| EXP-001 | Corregir iconos Anterior/Siguiente sobredimensionados y revisar otras pantallas | `Paginator::useBootstrapFive()` global; cubre propuestas y admisibilidad | `PanelPaginationRenderingTest`, build y QA browser | VERIFIED automatizado; browser pendiente |
+| EXP-001 | Corregir iconos Anterior/Siguiente sobredimensionados y revisar otras pantallas | `Paginator::useBootstrapFive()` global; cubre propuestas y admisibilidad | `PanelPaginationRenderingTest`, build y UAT browser con 31 filas/2 páginas | VERIFIED local |
 | EXP-002 | Exportar todas las propuestas borrador y enviadas | consulta server-side por bloques; `withdrawn` excluida | `SubmissionExportTest` con ambos estados y negativo retirado | VERIFIED local |
 | EXP-003 | Incluir contacto y toda la información funcional del proyecto | hojas Propuestas, Contactos, Integrantes, Archivos y Enlaces externos | lectura independiente de cinco hojas, conteos y valores | VERIFIED local |
 | EXP-004 | Preservar la versión enviada | snapshot inmutable para `submitted`; estado actual para `draft` | título vivo distinto del título exportado de snapshot | VERIFIED local |
@@ -22,7 +45,7 @@
 | HSB-003 | Landing sólo activa, fallback de cuatro, iconos por slug y 4/2/1 | `LandingController`, Blade, CSS, catálogo/generador Iconify | `PublicLandingTest`, `icons:check`, build y QA 360/768/1440 sin overflow ni consola | VERIFIED local |
 | HSB-004 | Superficies participante y snapshot/correo | vistas dinámicas, config iconos y mail de acuse | dashboard, crear/editar/listar/ver/enviar e inmutabilidad en `HermosilloSinBarrerasCategoryTest` | VERIFIED local automatizado |
 | HSB-005 | Dashboard/filtro/listado/detalle/descarga admin | scope de dashboard y contratos existentes | cero/uno, filtro slug, detalle y descarga en `HermosilloSinBarrerasCategoryTest` | VERIFIED local automatizado |
-| HSB-006 | Conservar Mecánica v1.0 y evidenciar contradicción | `legal-change-log.md`, risk register y ExecPlan | diff sin cambios en PDF/hash; revisión jurídica posterior | RISK ACCEPTED alto |
+| HSB-006 | Conservar evidencia histórica y reconciliar nueva Mecánica | v1.0/v1.1 no se sobrescriben; `legal-change-log.md`, risk register y matriz jurídica | v1.1 definitiva confirma cuatro categorías; el binario v1.0 actual no coincide con su hash original | VERIFIED funcional / PENDING crítico histórico |
 | HSB-007 | Despliegue reversible según existencia de datos | migración aditiva con `down` no destructivo y ExecPlan | UAT, backup y smoke son puertas externas | READY FOR OWNER REVIEW |
 
 ## Trazabilidad del plan de reducción de riesgos — 2026-08-06
@@ -36,7 +59,7 @@
 | RR-005 | Auditor de storage no destructivo | `flowerflow:storage-audit --disk --json` | missing/orphan determinista sin mutación, verde | VERIFIED local |
 | RR-006 | Transiciones y throttle administrativo | workflow y `panel-mutations` | estados inválidos, idempotencia y 10/min por actor/ruta verdes | VERIFIED local |
 | RR-007 | Contratos admin/reviewer/IDOR | Policies y `PanelSubmissionContractTest` | descarga positiva y rechazos cruzados/directos verdes | VERIFIED local |
-| RR-008 | 2FA opcional completo | `/panel/cuenta/2fa/*`, UI y Fortify trait | flujo TOTP/recovery/desactivación y throttle por ruta verdes | VERIFIED automatizado; browser pendiente |
+| RR-008 | 2FA opcional completo | `/panel/cuenta/2fa/*`, UI y Fortify trait | flujo TOTP/recovery/desactivación, throttle y desafío browser verdes | VERIFIED local; enforcement pendiente |
 | RR-009 | Reducir grafo frontend | dos entrypoints, poda y generador de iconos | build/manifest/audit verdes | VERIFIED local |
 | RR-010 | CSP con nonce y HSTS gradual | `SecurityHeaders`, flags de config | tests de promoción/HTTPS y navegador público con nonces/consola limpia | VERIFIED local |
 | RR-011 | Preservar nueve flujos productivos | QA pública y suites de regresión | 90 pruebas/800 aserciones y público comparado en 3 viewports | VERIFIED automatizado/público; browser autenticado pendiente |
@@ -53,7 +76,7 @@
 | F1-001 | Reconciliar docs/ExecPlan sin borrar historia | `AGENTS.md`, ExecPlan, docs 00–14, ADR 0005/0006 | Revisión documental | IMPLEMENTED |
 | F1-002 | Base reproducible Laravel/MySQL/Yarn | `composer.lock`, `yarn.lock`, `.env.example`, docs 11 | Composer validate/audit, Yarn frozen/build y migración/seed MySQL | VERIFIED local |
 | F1-003 | Activos autorizados/hashes | `formatos/`, `imagen/`, script y `public/documentos/2026` | SHA-256 exacto y revisión 14 páginas | VERIFIED |
-| F1-004 | Landing V2 con contenido crítico, CTA por estado y responsive encapsulado | `public/landing.blade.php`, parciales `public/partials/landing-*`, `resources/css/pages/public-landing.css`, flags y derivados locales | `PublicLandingTest`: 6 pruebas/61 aserciones + build; browser desktop/móvil registrado en `docs/design-qa.md` | VERIFIED automatizado; QA visual en curso |
+| F1-004 | Landing V2 con contenido crítico, CTA por estado y responsive encapsulado | `public/landing.blade.php`, parciales `public/partials/landing-*`, `resources/css/pages/public-landing.css`, flags y derivados locales | `PublicLandingTest`, build y browser desktop/móvil registrados en `docs/design-qa.md`; regresión posterior incluida en la suite vigente | VERIFIED local; QA visual histórica aceptada |
 | F1-005 | Auth, correo verificado, reset y 2FA | Fortify 1.37.2, vistas propias y página `/correo-verificado` | rutas, login/logout browser, signed verify y mail fake | VERIFIED local; UAT correo pendiente |
 | F1-006 | RBAC/panel sólo admin | Permission 8.3.0, middleware y Policy | `PanelAuthorizationTest`, IDOR y browser admin | VERIFIED local |
 | F1-007 | Registro/perfil 18+/residencia/E.164/WhatsApp | `CreateNewUser`, profile model/request/controller/view y teléfono México `+52` | `RegistrationProfileFlowTest`, `ProfileEligibilityTest` | VERIFIED local |
@@ -62,7 +85,7 @@
 | F1-010 | Rich text seguro | Quill + Delta/HTML/texto + Symfony sanitizer | Unit XSS + Feature stored XSS + browser | VERIFIED local |
 | F1-011 | Upload privado/10 MiB/formatos/hash | inspector/store/Policy, disk `serve=false` | MIME/signature/quota/IDOR + PDF browser | VERIFIED local; antivirus pendiente |
 | F1-012 | Links allowlist sin SSRF | Form Request host exacto, no cliente HTTP | hosts internos/prohibidos | VERIFIED local |
-| F1-013 | Legales versionados/consentimientos separados | tablas, seeder, registro/perfil UI y `legal-change-log.md` | hashes + acceptance rows | IMPLEMENTED local; v1.1 pendiente |
+| F1-013 | Legales versionados/consentimientos separados | tablas, config/seeder/migración v1.1, registro/perfil/envío y `legal-change-log.md` | hashes, una activa por tipo, rollback y acceptance rows en `LegalDocumentsV11Test` | IMPLEMENTED local; reaceptación pendiente |
 | F1-014 | Envío transaccional/idempotente | `FinalizeSubmission`, lock, snapshot, folio, event | doble POST, una versión/mail + envío browser | VERIFIED local |
 | F1-015 | Panel mínimo sin evaluación | counts/distribución/lista/detalle/cuenta | admin/participant/browser desktop/móvil | VERIFIED local |
 | F1-016 | Correo post-commit, sin adjuntos | queued Mailable y config central | Mail fake | VERIFIED local; SMTP pendiente |
@@ -195,7 +218,7 @@
 | SEC-003 | DECISION | Cookies seguras, headers y `APP_DEBUG=false` en producción. | Middleware/config AWS | Smoke productivo confirma atributos y ausencia de debug. | OPS + SEC headers | MVP |
 | SEC-004 | DECISION | Secretos fuera de JS, HTML, repo, docs y logs. | Configuración/CI/runbook | Escaneo no encuentra valores reales; ejemplos usan placeholders. | Secret scan + revisión diff | MVP |
 | SEC-005 | DECISION | Minimización, masking y separación de PII/evaluación. | Datos, vistas, exports | Cada rol recibe sólo campos necesarios. | F serialización/export + SEC | MVP |
-| SEC-006 | PENDING | CSP con nonces/hashes compatible con scripts de plantilla. | Layouts/headers | Política report-only se valida antes de enforcement sin romper flujos. | Browser console + SEC | MVP-R |
+| SEC-006 | IMPLEMENTED/PARTIAL | CSP estricta con nonce disponible por flag y desplegada inicialmente en Report-Only. | `SecurityHeaders`, Vite nonce y configuración Flower Flow | Tests cubren promoción/HTTPS; enforcement productivo requiere consola, soak y aprobación. | `SecurityAndFlagsTest` + browser/OPS | MVP-R |
 | LEG-001 | DECISION | Documentos y aceptaciones versionadas. | Legal/registro/perfil/envío | Se conserva documento/hash/version aceptada en el contexto correcto; términos, privacidad, WhatsApp y futuras actividades son propósitos independientes. | U + F + auditoría | MVP |
 | LEG-002 | PENDING | Textos legales finales y política de retención. | Público/legal/privacidad | Sólo versiones aprobadas se publican/aceptan. | Revisión legal + UAT | MVP |
 | DATA-001 | DECISION | MySQL, InnoDB, `utf8mb4`, FKs e índices intencionales. | Modelo/migraciones futuras | Esquema soporta integridad y filtros; no usa JSON central injustificado. | Revisión migraciones + EXPLAIN | MVP |

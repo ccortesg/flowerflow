@@ -42,19 +42,50 @@ class FlowerFlowSeeder extends Seeder
             ]);
         }
 
-        foreach ([
+        $historicalDocuments = [
             ['mechanics', 'Mecánica y convocatoria', '/documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf', '42bd5ea13e491dc64a6520f0e26d9663e8e8f973b35a3febf226999118685aa2'],
             ['terms', 'Términos y condiciones', '/documentos/2026/02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026.pdf', 'ca5fdb36f7a35f8268458144348e66485e8870f55a2bdd9da59137143ef4f28c'],
             ['privacy', 'Aviso de privacidad integral', '/documentos/2026/03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026.pdf', '056355c0405984a239e97b5074fc6b78eef61570022f8f94c062919620cc6898'],
-        ] as [$code, $title, $path, $hash]) {
-            LegalDocument::query()->updateOrCreate(['code' => $code, 'version' => '1.0'], [
+        ];
+
+        foreach ($historicalDocuments as [$code, $title, $path, $hash]) {
+            LegalDocument::query()->firstOrCreate(['code' => $code, 'version' => '1.0'], [
                 'title' => $title,
                 'public_path' => $path,
                 'sha256' => $hash,
                 'effective_at' => CarbonImmutable::parse('2026-07-15 00:00:00', 'America/Hermosillo')->utc(),
-                'active' => true,
+                'active' => false,
                 'acceptance_required' => true,
             ]);
+        }
+
+        foreach (config('flowerflow.legal_documents') as $code => $definition) {
+            $effectiveAt = CarbonImmutable::parse($definition['effective_at'], config('flowerflow.timezone'))->utc();
+            $expected = [
+                'title' => $definition['title'],
+                'public_path' => '/'.ltrim($definition['path'], '/'),
+                'sha256' => $definition['sha256'],
+                'effective_at' => $effectiveAt,
+                'acceptance_required' => true,
+            ];
+
+            $document = LegalDocument::query()->firstOrCreate(
+                ['code' => $code, 'version' => $definition['version']],
+                [...$expected, 'active' => false]
+            );
+
+            if ($document->title !== $expected['title']
+                || $document->public_path !== $expected['public_path']
+                || $document->sha256 !== $expected['sha256']
+                || ! $document->effective_at?->equalTo($effectiveAt)
+                || ! $document->acceptance_required) {
+                throw new \RuntimeException("El documento jurídico {$code} {$definition['version']} no coincide con el artefacto inmutable esperado.");
+            }
+
+            LegalDocument::query()->where('code', $code)->update(['active' => false]);
+            LegalDocument::query()
+                ->whereKey($document->getKey())
+                ->update(['active' => true]);
         }
 
         foreach ([

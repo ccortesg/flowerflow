@@ -21,15 +21,16 @@
       <ul class="ff-footer-links">
         <li><a href="mailto:convocatoria@flowerflow.com.mx">convocatoria@flowerflow.com.mx</a></li>
         <li><a href="mailto:privacidad@flowerflow.com.mx">privacidad@flowerflow.com.mx</a></li>
-        <li>Hermosillo, Sonora, México</li>
+        <li>{{ config('flowerflow.organization.legal_name') }} · RFC {{ config('flowerflow.organization.rfc') }}</li>
+        <li>{{ config('flowerflow.organization.address') }}</li>
       </ul>
     </div>
   </div>
   <div class="ff-landing-container ff-footer-bottom">
     <p>© {{ now()->year }} Flower Flow. Todos los derechos reservados.</p>
     <div>
-      <a href="{{ asset('documentos/2026/02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026.pdf') }}">Términos y condiciones</a>
-      <a href="{{ asset('documentos/2026/03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026.pdf') }}">Aviso de privacidad</a>
+      <a href="{{ asset(config('flowerflow.legal_documents.terms.path')) }}">Términos y condiciones v{{ config('flowerflow.legal_documents.terms.version') }}</a>
+      <a href="{{ asset(config('flowerflow.legal_documents.privacy.path')) }}">Aviso de privacidad v{{ config('flowerflow.legal_documents.privacy.version') }}</a>
     </div>
   </div>
 </footer>

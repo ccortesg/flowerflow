@@ -31,6 +31,9 @@ class PublicLandingTest extends TestCase
             ->assertSee('Apple')
             ->assertSee('iPad Pro')
             ->assertSee('1 ganador por categoría')
+            ->assertSee('FUNXT, A.C.')
+            ->assertSee('FUN110208BT0')
+            ->assertSee('Versión 1.1')
             ->assertSee('Recepción aún no habilitada')
             ->assertDontSee('iPad Pro Max');
 
@@ -41,9 +44,9 @@ class PublicLandingTest extends TestCase
             ->assertSee('assets/flowerflow/landing/premio-ipad-pro.webp', false);
 
         $documents = [
-            '01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf',
-            '02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026.pdf',
-            '03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026.pdf',
+            '01_Mecanica_Convocatoria_Hermosillo_Florece_2026_v1.1.pdf',
+            '02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026_v1.1.pdf',
+            '03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026_v1.1.pdf',
         ];
 
         foreach ($documents as $document) {

@@ -1,5 +1,7 @@
 # Estado del proyecto — Fase 01
 
+> **Documento histórico:** conserva el cierre de Fase 01 y sus adendas. Para rama, SHA, porcentajes, roles, migraciones y gates vigentes al 2026-08-17 usar `docs/16-project-status-by-module-and-role-2026-08-17.md` y `docs/CODEX_PROJECT_HANDOFF.md`.
+
 Fecha base: 2026-07-15
 Adenda de cierre: 2026-07-16 (`America/Hermosillo`)
 Rama: `codex/phase-01-public-submissions`

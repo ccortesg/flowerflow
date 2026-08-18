@@ -1,5 +1,20 @@
 # Registro de riesgos
 
+## Recalificación de auditoría integral — 2026-08-17
+
+| ID | Riesgo residual | Nivel actual | Evidencia/mitigación | Próxima puerta |
+|---|---|---:|---|---|
+| R57 | Runtime local primario no representa el SHA actual | Alto operativo local | El baseline de `flowerflow` registró cuatro migraciones pendientes y no se volvió a usar; test aislado quedó 12/12 con runtime fail-closed | Release candidate únicamente en ambiente autorizado y sintético; no migrar por inferencia |
+| R58 | Límite de propuestas divergente | Alto funcional local | `.env` fija 3; código, `.env.example`, UI contractual y pruebas fijan 4 | Alinear ambiente local autorizado y probar cuarta/quinta propuesta |
+| R59 | Seguridad privilegiada documentada como completa cuando 2FA es opcional | Alto antes de producción | Flujo TOTP funciona y está probado, pero no hay enforcement, suspensión/revocación ni password confirm en todas las acciones críticas | Milestone de hardening de identidad antes de ampliar roles/producción |
+| R60 | Futuros roles pueden caer en superficies participantes | Medio/Alto de evolución | Rutas participante usan `auth+verified`; `FinalizeSubmission` excluye sólo admin/reviewer; `judge` no existe aún | Definir roles excluyentes/acumulables y gates antes de Fase 02B |
+| R61 | Estado documental podía confundirse con disponibilidad/deploy | Medio, mitigado documentalmente | Nuevo diagnóstico separa plan maestro, código aprobado, runtime local y producción | Mantener `docs/16-project-status-by-module-and-role-2026-08-17.md` en cada milestone |
+| R62 | Alcance de accesibilidad se superpone entre dos categorías | **Medio/P1** | La Mecánica v1.1 corregida, p. 2, confirma cuatro categorías/máximo cuatro, pero menciona accesibilidad en Movilidad con Flow y en Hermosillo sin Barreras | Confirmar si la superposición es deliberada antes de comunicación productiva; no reescribir reglas ni recategorizar por inferencia |
+| R63 | El binario actual de Mecánica v1.0 no coincide con el hash histórico | **Crítico de evidencia** | Seeder/commit original conservan `42bd5e…`; archivo actual bajo el mismo nombre da `3bcf31…`; aceptaciones no se reescribieron | Recuperar el binario original verificable y definir publicación histórica sin sustituir evidencia |
+| R64 | Reaceptación de v1.1 no definida | Alto legal/UX | PDF v1.1 no ordena inequívocamente forzar reaceptación a cuentas v1.0; cuentas/aceptaciones nuevas sí referencian v1.1 | `PROPOSAL_NEEDED`: decisión jurídica de efectividad, audiencia, bloqueo, comunicación y evidencia |
+
+La auditoría vigente cuantifica estos riesgos y el avance en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+
 ## Recalificación posterior al hardening local — 2026-08-06
 
 | ID | Riesgo residual | Nivel actual | Evidencia/mitigación | Próxima puerta |
@@ -15,10 +30,10 @@
 | R50 | Antimalware ausente | Alto aceptado | Allowlist, firma, cuota, storage privado y capacidad de cierre permanecen | Decisión posterior; cerrar uploads ante señal |
 | R51 | IP/user-agent crudos y fallback legal | Medio aceptado | Acceso restringido; sin cambio por instrucción del propietario | Revisión jurídica/privacidad posterior |
 | R52 | Restore no ensayado | Crítico externo | Fuera del alcance técnico de esta rama | Evidencia externa antes de autorizar despliegue |
-| R53 | La plataforma usa cuatro categorías/propuestas/premios, pero Mecánica v1.0 declara tres e incluye accesibilidad en Movilidad | Alto aceptado | Contradicción exacta registrada; PDF, hash y aceptaciones preservados por decisión expresa del propietario | Adenda o nueva versión jurídica aprobada, publicada y aceptada; hasta entonces no declarar el riesgo resuelto |
+| R53 | Históricamente la plataforma y los primeros PDF divergieron en categorías/propuestas/premios | Resuelto en cantidades; residual P1 | El PDF v1.1 definitivo y el propietario confirman cuatro categorías/máximo cuatro; permanece la superposición temática de accesibilidad | Mantener cantidades y confirmar sólo el alcance temático de R62 |
 | R54 | La migración de categoría es deliberadamente no reversible después de recibir datos | Medio controlado | `down` no elimina ni recategoriza; código anterior conserva relaciones y la configuración debe permanecer en cuatro si existe cualquier propuesta asociada | Backup/UAT antes de desplegar; rollback sólo de presentación compatible tras existir datos |
 | R55 | Dos creaciones simultáneas pueden intentar superar el límite por cuenta | Bajo tras mitigación | Bloqueo de la fila de usuario, recuento y unicidad dentro de una transacción; prueba MySQL con dos procesos | Repetir prueba de carga en ambiente candidato si cambia el flujo de creación |
-| R56 | El cierre técnico se amplía al 23 de agosto, pero los PDF jurídicos mantienen el 15 de agosto | Alto aceptado por alcance | Configuración, base, UI, trazabilidad y pruebas alineadas; PDF y aceptaciones preservados por instrucción expresa del propietario | Adenda o nueva versión jurídica aprobada antes de declarar resuelta la contradicción |
+| R56 | El cierre técnico se amplía al 23 de agosto, pero los PDF jurídicos v1.0 mantienen el 15 de agosto | Resuelto para v1.1; histórico | Mecánica v1.1 p. 3 y Términos v1.1 p. 2 confirman 23 de agosto de 2026, 23:59 Hermosillo; v1.0 se conserva como historia | Verificar vínculos/aceptaciones v1.1 y no reescribir v1.0 |
 
 Esta adenda prevalece para el estado actual; las tablas históricas siguientes se conservan para trazabilidad y no deben interpretarse como verificación vigente.
 
@@ -26,7 +41,7 @@ Esta adenda prevalece para el estado actual; las tablas históricas siguientes s
 
 | Riesgo | Estado/mitigación | Gate |
 |---|---|---|
-| Legal v1.0 no cubre todos los campos/canales | Recepción productiva apagada; v1.1 en `legal-change-log.md` | Aprobación y publicación versionada. |
+| Legal v1.1 no define reaceptación y superpone accesibilidad entre dos categorías | Recepción productiva debe permanecer apagada; cantidades ya están reconciliadas en la matriz página/sección | Resolución formal de R62/R64 y nueva evidencia versionada. |
 | Licencia Pixinvent no comprobada | `_referencia` sólo local; adaptación puntual | Evidencia comercial antes de producción. |
 | Upload Office/ODF complejo | Firma, macros OOXML, ZIP bomb y ausencia temporal de antimalware; privado | Riesgo aceptado temporalmente por el owner el 2026-07-15; conservar allowlist, validación de firma, cuota, storage privado y monitoreo. ClamAV/cuarentena y pruebas corpus siguen pendientes. |
 | Bundle demo excesivo | Build verde pero chunks grandes | Racionalizar entradas tras browser baseline. |

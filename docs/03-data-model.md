@@ -1,14 +1,18 @@
 # Modelo de datos preliminar
 
+> **Estado vigente — 2026-08-17:** el esquema real contiene las tablas Fase 01, Fase 02A y `submission_exports`; jueces, rúbricas, evaluaciones, ganadores y solicitudes de privacidad del ERD siguen siendo diseño futuro. El candidato local incorpora una duodécima migración para publicar v1.1 sin eliminar v1.0. Sólo `flowerflow_testing` está autorizado para ejecutar y verificar este estado; la base local primaria `flowerflow` no se modifica. Ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+
 ## Adenda Fase 01 implementada — 2026-07-15
 
 Tablas nuevas: `competitions`, `categories`, `participant_profiles`, `legal_documents`, `legal_acceptances`, `teams`, `team_members`, `submissions`, `submission_files`, `submission_external_links`, `submission_versions`, `submission_events` y las tablas RBAC de Spatie. `users.public_id` y las entidades expuestas usan ULID público.
 
 Invariantes de base: `competition+user+category` único, folio e idempotency key únicos, snapshot `submission+version` único, links `submission+kind` únicos. Los perfiles no se duplican dentro de propuestas; el snapshot copia el estado de envío. Archivos conservan actor, disk/path privado, nombre original/servidor, tipo de formato, MIME, extensión, bytes y SHA-256. Legales conservan código, versión, vigencia, obligatoriedad, hash y path; aceptaciones conservan propósito independiente, valor, versión, UTC, IP, agente y contexto.
 
+Para cada código jurídico (`mechanics`, `terms`, `privacy`) debe existir exactamente una versión activa. v1.0 y sus aceptaciones son evidencia histórica inmutable; v1.1 es una fila nueva con ruta y SHA-256 propios. `up` activa v1.1 de forma idempotente; `down` desactiva v1.1 y reactiva v1.0 sin borrar filas ni aceptaciones. Existe una incidencia de integridad histórica: el binario actualmente publicado como Mecánica v1.0 no coincide con el SHA-256 original conservado por el seeder; no debe corregirse sobrescribiendo la evidencia.
+
 El cierre sembrado es `2026-08-24 06:59:59 UTC`, equivalente a `2026-08-23 23:59:59 America/Hermosillo`. `opens_at` queda nullable/configurable porque no existe hora jurídica aprobada.
 
-**Estado:** hipótesis validable; no representa migraciones ejecutadas.  
+**Estado de la sección histórica:** el diseño inicial ya se materializó parcialmente; el ERD mezcla tablas reales y futuras y debe leerse con la advertencia vigente anterior.
 **Motor:** MySQL 8, InnoDB, utf8mb4.  
 **Tiempo:** persistencia UTC; presentación y reglas en America/Hermosillo.
 

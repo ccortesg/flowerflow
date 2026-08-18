@@ -14,6 +14,9 @@
 /.playwright-cli/
 /output/playwright/
 
+# Windows alternate-stream metadata copied as regular files; never release it.
+*:Zone.Identifier
+
 /.env
 /.env.*
 !/.env.example

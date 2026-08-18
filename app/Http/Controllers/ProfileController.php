@@ -7,6 +7,7 @@ use App\Models\LegalDocument;
 use App\Support\MexicoPhoneNumber;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -34,6 +35,20 @@ class ProfileController extends Controller
             ->latest('id')
             ->value('accepted');
         $futureActivities = $request->boolean('future_activities_opt_in');
+        $whatsappChanged = $previousWhatsapp === null || $previousWhatsapp !== $whatsapp;
+        $futureActivitiesChanged = $previousFutureActivities === null || (bool) $previousFutureActivities !== $futureActivities;
+        $privacyDocuments = LegalDocument::query()
+            ->where('code', 'privacy')
+            ->where('active', true)
+            ->get();
+
+        if (($whatsappChanged || $futureActivitiesChanged) && $privacyDocuments->count() !== 1) {
+            throw ValidationException::withMessages([
+                'legal_documents' => 'No podemos actualizar tus consentimientos porque no existe una única versión vigente del aviso de privacidad.',
+            ]);
+        }
+
+        $privacyDocument = $privacyDocuments->first();
         $user->profile()->updateOrCreate([], [
             ...$request->safe()->only(['first_names', 'last_names', 'birth_date', 'neighborhood']),
             'mobile_e164' => MexicoPhoneNumber::toE164((string) $request->string('mobile_national')),
@@ -44,11 +59,11 @@ class ProfileController extends Controller
 
         $user->update(['name' => trim($request->string('first_names').' '.$request->string('last_names'))]);
 
-        if ($previousWhatsapp === null || $previousWhatsapp !== $whatsapp) {
+        if ($whatsappChanged) {
             $user->legalAcceptances()->create([
-                'legal_document_id' => null,
+                'legal_document_id' => $privacyDocument->id,
                 'purpose' => 'whatsapp_contact',
-                'document_version' => 'draft-1.1',
+                'document_version' => $privacyDocument->version,
                 'accepted' => $whatsapp,
                 'accepted_at' => now('UTC'),
                 'ip_address' => $request->ip(),
@@ -57,12 +72,11 @@ class ProfileController extends Controller
             ]);
         }
 
-        if ($previousFutureActivities === null || (bool) $previousFutureActivities !== $futureActivities) {
-            $privacyDocument = LegalDocument::query()->where('code', 'privacy')->where('active', true)->first();
+        if ($futureActivitiesChanged) {
             $user->legalAcceptances()->create([
-                'legal_document_id' => $privacyDocument?->id,
+                'legal_document_id' => $privacyDocument->id,
                 'purpose' => 'future_activities',
-                'document_version' => $privacyDocument?->version ?? '1.0',
+                'document_version' => $privacyDocument->version,
                 'accepted' => $futureActivities,
                 'accepted_at' => now('UTC'),
                 'ip_address' => $request->ip(),

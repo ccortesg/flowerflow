@@ -129,7 +129,7 @@
       </article>
       <article>
         <span class="ri ri-shield-user-line" aria-hidden="true"></span>
-        <div><h2>Seguridad y privacidad</h2><p>Tus datos están protegidos. <a href="{{ asset('documentos/2026/03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026.pdf') }}">Consulta nuestro aviso de privacidad.</a></p></div>
+        <div><h2>Seguridad y privacidad</h2><p>Tus datos están protegidos. <a href="{{ asset(config('flowerflow.legal_documents.privacy.path')) }}">Consulta nuestro aviso de privacidad versión {{ config('flowerflow.legal_documents.privacy.version') }}.</a></p></div>
       </article>
       <article>
         <span class="ri ri-customer-service-2-line" aria-hidden="true"></span>

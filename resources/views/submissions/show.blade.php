@@ -86,17 +86,17 @@
       <p>Lee y confirma cada documento vigente. Estas aceptaciones se registran por separado.</p>
       <div class="form-check">
         <input class="form-check-input @error('accept_call_rules') is-invalid @enderror" id="accept_call_rules" name="accept_call_rules" type="checkbox" value="1" @checked(old('accept_call_rules')) required>
-        <label class="form-check-label" for="accept_call_rules">He leído y acepto la <a href="{{ asset('documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf') }}" target="_blank" rel="noopener noreferrer">Mecánica de la Convocatoria</a>.</label>
+        <label class="form-check-label" for="accept_call_rules">He leído y acepto la <a href="{{ asset(config('flowerflow.legal_documents.mechanics.path')) }}" target="_blank" rel="noopener noreferrer">Mecánica de la Convocatoria versión {{ config('flowerflow.legal_documents.mechanics.version') }}</a>.</label>
         @error('accept_call_rules')<p class="ff-field-error">{{ $message }}</p>@enderror
       </div>
       <div class="form-check">
         <input class="form-check-input @error('accept_terms') is-invalid @enderror" id="accept_terms" name="accept_terms" type="checkbox" value="1" @checked(old('accept_terms')) required>
-        <label class="form-check-label" for="accept_terms">He leído y acepto los <a href="{{ asset('documentos/2026/02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026.pdf') }}" target="_blank" rel="noopener noreferrer">Términos y Condiciones</a>.</label>
+        <label class="form-check-label" for="accept_terms">He leído y acepto los <a href="{{ asset(config('flowerflow.legal_documents.terms.path')) }}" target="_blank" rel="noopener noreferrer">Términos y Condiciones versión {{ config('flowerflow.legal_documents.terms.version') }}</a>.</label>
         @error('accept_terms')<p class="ff-field-error">{{ $message }}</p>@enderror
       </div>
       <div class="form-check">
         <input class="form-check-input @error('accept_privacy') is-invalid @enderror" id="accept_privacy" name="accept_privacy" type="checkbox" value="1" @checked(old('accept_privacy')) required>
-        <label class="form-check-label" for="accept_privacy">He leído y acepto el <a href="{{ asset('documentos/2026/03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026.pdf') }}" target="_blank" rel="noopener noreferrer">Aviso de Privacidad Integral</a>.</label>
+        <label class="form-check-label" for="accept_privacy">He leído y acepto el <a href="{{ asset(config('flowerflow.legal_documents.privacy.path')) }}" target="_blank" rel="noopener noreferrer">Aviso de Privacidad Integral versión {{ config('flowerflow.legal_documents.privacy.version') }}</a>.</label>
         @error('accept_privacy')<p class="ff-field-error">{{ $message }}</p>@enderror
       </div>
       <div class="ff-review-submit-actions">

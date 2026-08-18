@@ -1,9 +1,12 @@
 # Arquitectura propuesta
 
-> **Implementación Fase 01:** monolito modular Laravel 12.64.0 con controllers delgados, Form Requests, `FinalizeSubmission`, servicios de sanitización/archivo, Policies, Fortify y Spatie Permission. MySQL es el datastore local; timestamps se persisten UTC y el concurso conserva `America/Hermosillo`. Uploads usan `storage/app/private` y sólo salen por Policy. Ver ADR 0005 y ADR 0006. AWS sigue como arquitectura objetivo no ejecutada.
+> **Implementación vigente — 2026-08-17:** monolito modular Laravel 12.64.0 con Fase 01/02A, exportaciones XLSX privadas y cierre ampliado. MySQL es el datastore local; timestamps se persisten UTC y el concurso conserva `America/Hermosillo`. Uploads usan discos privados y sólo salen por controller+Policy. AWS sigue como arquitectura objetivo; no hay evidencia de que el SHA actual esté desplegado. Ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
-**Estado:** propuesta para aprobación  
-**Corte de información:** 2026-07-15  
+> **Reconciliación jurídica v1.1 local:** `config/flowerflow.php` declara identidad y metadatos esperados; `legal_documents` conserva v1.0 y v1.1; la migración `2026_08_17_220000_publish_legal_documents_v1_1.php` hace vigente exactamente una v1.1 por tipo sin borrar historia; registro, perfil y envío fallan de forma cerrada si el catálogo activo no es determinístico. `legal_acceptances` conserva el `legal_document_id` realmente aceptado y no se reescribe. La política de reaceptación para usuarios v1.0 permanece en `PROPOSAL_NEEDED`.
+
+**Estado:** arquitectura parcialmente implementada; decisiones productivas pendientes
+
+**Corte de información:** 2026-08-17
 **Destino decidido:** una instancia AWS EC2 con Ubuntu donde ya opera Administratec, con aislamiento lógico y operativo.  
 **Restricción:** esta fase no instala, configura ni despliega componentes.
 
@@ -13,7 +16,7 @@ Se recomienda un **monolito modular Laravel 12 renderizado en servidor**, con Bl
 
 La decisión minimiza piezas nuevas durante el plazo de 31 días. Mantiene las fronteras de dominio en código para poder extraer componentes después, sin pagar ahora el costo de una SPA, microservicios o Redis.
 
-## Estado de partida
+## Estado de partida histórico (2026-07-15)
 
 - El repositorio es un skeleton Laravel 12 sin vendor ni composer.lock.
 - Materialize/Pixinvent 3.0.0 aporta layouts front, blank, vertical y horizontal, pero no módulos Flower Flow.
@@ -183,7 +186,7 @@ La operación debe ser idempotente: una misma clave y proyecto devuelve el resul
 | UI | Blade + Bootstrap 5 + Materialize 3.0.0 | Reutiliza el activo comprado y reduce complejidad |
 | JS | módulos por página con Vite | Evita una SPA y limita bundle |
 | Datos | MySQL 8, InnoDB, utf8mb4 | Requisito del producto; transacciones e índices |
-| Auth/RBAC | mecanismos Laravel + paquete RBAC PENDING | Debe aprobarse Spatie Permission/Fortify o alternativa antes de instalar |
+| Auth/RBAC | Fortify 1.37.2 + Spatie Permission 8.3.0 + Policies | Implementado para `participant`, `reviewer` y `admin`; roles futuros y enforcement 2FA permanecen pendientes |
 | Sesión/cache/cola | database en MVP | Sin dependencia Redis; operación simple y auditable |
 | Archivos | EBS privado cifrado o S3 privado | Decisión de preflight; descarga sólo por Policy/controlador |
 | Correo | Notifications/Mailables + SMTP PENDING | Plantillas multi-canal y pruebas con fakes |
@@ -240,13 +243,13 @@ Estos objetivos son de aplicación; disponibilidad y recuperación requieren con
 
 1. Inventario de EC2: Ubuntu, servidor web, PHP-FPM, MySQL, CPU/RAM/disco, acceso y procesos.
 2. Variante/licencia de Materialize para el dominio.
-3. Paquetes de autenticación y RBAC.
+3. Roles finales, obligatoriedad 2FA privilegiada, suspensión/revocación y gestión excepcional de permisos; los paquetes Fortify/Spatie ya están decididos e instalados.
 4. SMTP y política de entregabilidad.
 5. Storage privado EBS frente a S3 para producción.
-6. Fecha/hora de apertura y cierre, equipo, límites y reglas legales.
+6. Fecha/hora de apertura, correcciones/retiro/equipos colaborativos y reglas legales; el cierre inclusivo ya es `2026-08-23 23:59:59 America/Hermosillo`.
 7. RPO/RTO y propietario de operación.
 
-No se autoriza implementación hasta aprobar esas decisiones o aceptar los supuestos explícitos del ExecPlan.
+No se autoriza implementar los módulos o comportamientos aún pendientes ni desplegar hasta aprobar esas decisiones o aceptar los supuestos explícitos de un ExecPlan nuevo.
 
 ## Adenda arquitectónica — Fase 02A, 2026-07-16
 

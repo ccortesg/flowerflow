@@ -1,30 +1,41 @@
 # Handoff actual — Flower Flow
 
-Fecha de corte: 2026-08-06.
+Fecha de corte: 2026-08-17.
 
 ## Estado canónico
 
 - Checkout: `/home/ccortesg/workspace/flowerflow`.
-- Rama de trabajo: `codex/f01-f02a-risk-reduction`.
-- Base productiva: `baff7892f886af3fd4e42132c686620f1ae76d91`.
-- Releases locales cerradas: Composer `84e34d1`, backend `f530e6a`, frontend/headers `7f660b0` y cierre de regresiones `9338eb5`.
-- El propietario autorizó expresamente publicar la rama actual en GitHub. Esto no autoriza PR ni despliegue.
-- Producción está fuera de alcance: no hubo acceso, despliegue, migraciones ni cambios de servicios.
-- Fase 02B, jueces, evaluación, resultados y ganadores permanecen fuera de alcance.
+- Rama auditada: `codex/submission-deadline-extension`.
+- SHA base del candidato jurídico local: `e2f4345`; el árbol ya contenía cambios documentales y los tres PDF v1.1 sin seguimiento al iniciar esta tarea, por lo que no debe describirse como limpio ni sustituir cambios preexistentes.
+- El diagnóstico vigente es `docs/16-project-status-by-module-and-role-2026-08-17.md`: producto maestro 58 %, alcance local aprobado 96 %, runtime aislado del RC 96 %, runtime local primario 42 % y preparación productiva 34 %.
+- Fase 01, Fase 02A, cuarta categoría, exportación privada, ampliación de plazo y catálogo/vínculos/aceptaciones v1.1 están implementados, probados y recorridos localmente sin tocar v1.0 ni aceptaciones históricas.
+- La Mecánica v1.1 definitiva confirma cuatro categorías y máximo cuatro propuestas. Sólo queda `POR_CONFIRMAR P1` la superposición de accesibilidad entre Movilidad con Flow y Hermosillo sin Barreras. El RC es `GO` técnico sólo local/test; producción continúa `NO-GO` y fuera de alcance.
+- Existe una incidencia de integridad histórica: el archivo actual bajo el nombre Mecánica v1.0 no coincide con el SHA-256 original conservado en Git/seeder. Ver `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
+- Fase 02B, jueces, evaluación, ganadores, resultados, ARCO y despliegue de esta rama permanecen fuera de alcance.
+- Existe evidencia pública histórica de una release anterior (`26256e3`), pero no prueba que `e2f4345` esté desplegado.
 
-## Evidencia vigente y siguiente puerta
+## Evidencia vigente
 
-El secreto quedó únicamente en `.env.testing`, ignorado y no rastreado. `scripts/quality_gate_local.sh` pasó con 90 pruebas y 800 aserciones, Pint, Composer validate/platform/audit, Yarn sin avisos moderados/altos/críticos, build de dos entrypoints, 63 rutas y `git diff --check`.
+- Suite MySQL aislada: 107 pruebas y 1,031 aserciones verdes.
+- Pint, Composer validate/platform/audit, JSON y build Vite: verdes.
+- Yarn conserva un advisory bajo conocido de Quill 2.0.3 sin fix; sanitización servidor vigente.
+- 66 rutas totales/41 propias; 12 migraciones aplicadas en `flowerflow_testing`.
+- UAT Firefox visitante/participante/reviewer/admin en 1440/768/360 cerrada: vínculos v1.1, aceptación real, límite cuatro/quinta rechazada, envío/folio, admisibilidad, paginación, 2FA, XLSX/expiración, cierre e IDOR.
+- `scripts/serve_local_testing.sh` valida base/cuenta/catálogos/flags antes de servir; usa correo array, cola sync y resultados apagados. La base terminó sembrada con cero usuarios/aceptaciones sintéticas.
+- La base local primaria `flowerflow` conserva cuatro migraciones funcionales pendientes.
+- El `.env` local conserva `FLOWERFLOW_MAX_SUBMISSIONS_PER_USER=3`; el contrato, código, ejemplo y pruebas usan cuatro.
+- Flags observados: público/panel activos; registro/recepción/resultados/admisibilidad inactivos.
 
-La siguiente puerta previa a UAT/release es QA autenticada local en navegador de participante, administrador, archivos, estados, rate limit, 2FA y flag Fase 02A. Producción sólo puede tratarse mediante autorización separada y el runbook `docs/15-risk-reduction-release-runbook.md`.
+## Siguiente puerta
 
-## Evidencia y continuidad
+Congelar el RC local con los hashes definitivos y obtener decisiones formales sobre la delimitación de accesibilidad, reaceptación e integridad/publicación histórica v1.0. Después puede prepararse —sin ejecutarse— un preflight externo autorizado. No usar `flowerflow`, no implementar Fase 02B y no tocar producción.
 
-- ExecPlan vivo: `.agent/execplans/flowerflow-f01-f02a-risk-reduction.md`.
-- Gate local: `scripts/quality_gate_local.sh`.
-- Auditor privado read-only: `php artisan flowerflow:storage-audit --disk=<disk> --json`.
-- Worktree anterior preservado en `/home/ccortesg/workspace/flowerflow-worktree-archive/2026-08-06-ui-public-landing-v2/` mediante patch, tar, bundle y hashes.
-- Capturas QA públicas en `output/playwright/`, ignoradas.
-- Rollback y operación futura: `docs/15-risk-reduction-release-runbook.md`.
+El ExecPlan vigente es `.agent/execplans/flowerflow-legal-v1-1-local-release-candidate.md`; la matriz jurídica está en `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
 
-No registrar secretos, PII, documentos reales ni contenido de `.env` en evidencia o comandos.
+## Reglas de continuidad
+
+- Leer `AGENTS.md`, `.agent/PLANS.md`, el ExecPlan activo y ADR antes de editar.
+- No registrar secretos, PII, documentos reales ni contenido sensible de `.env`.
+- Separar código implementado, flag activado, migración aplicada y despliegue verificado.
+- No ejecutar `migrate:fresh` fuera de la base/cuenta de pruebas exactas y del guard previo.
+- No hacer stage, commit, push, AWS ni despliegue sin autorización expresa de esa acción.

@@ -1,5 +1,7 @@
 # Seguridad y privacidad desde el diseño
 
+> **Reconciliación jurídica v1.1 — 2026-08-17:** FUNXT, A.C. (RFC FUN110208BT0) es el responsable identificado; el Aviso v1.1 conserva las finalidades, retención de 24 meses/90 días y plazos ARCO descritos en v1.0, pero actualiza identidad y domicilio. El código local registra nuevas aceptaciones contra el documento activo v1.1 y conserva las v1.0. Forzar reaceptación a cuentas anteriores no está inequívocamente ordenado por los PDF y permanece en `PROPOSAL_NEEDED`; ARCO completo sigue fuera de alcance.
+
 ## Adenda de hardening Fases 01/02A — 2026-08-06
 
 - Cada respuesta genera un nonce criptográfico independiente y Laravel Vite lo aplica a los tags de scripts y estilos.
@@ -22,7 +24,7 @@
 - Consentimientos: WhatsApp y avisos opcionales son reversibles y separados; jurídicos versionados por propósito.
 - Logs/correo: no adjuntar proyecto/PII; secreto DB sólo `.env`; mail post-commit en cola.
 
-Pendiente operativo: antivirus real, revisión de formatos Office binarios, CSP sin excepción si es viable, retención/borrado, SMTP, revisión legal v1.1, secret scan y prueba de carga/concurrencia MySQL. El owner aceptó temporalmente el 2026-07-15 abrir la recepción sin motor antimalware; esto no elimina el riesgo ni autoriza retirar allowlist, firma, cuota, almacenamiento privado, monitoreo o capacidad de cierre inmediato.
+Pendiente operativo: antivirus real, revisión de formatos Office binarios, CSP sin excepción si es viable, automatización de retención/borrado, SMTP, decisión de reaceptación v1.1, recuperación verificable del binario original de Mecánica v1.0, secret scan y prueba de carga/concurrencia MySQL. El owner aceptó temporalmente el 2026-07-15 abrir la recepción sin motor antimalware; esto no elimina el riesgo ni autoriza retirar allowlist, firma, cuota, almacenamiento privado, monitoreo o capacidad de cierre inmediato.
 
 **Estado:** controles propuestos; requieren aprobación de producto/legal e implementación posterior.  
 **Objetivo:** WCAG y seguridad son criterios de aceptación, no declaraciones de cumplimiento.

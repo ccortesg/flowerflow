@@ -1,5 +1,9 @@
 # Runbook de releases de reducción de riesgos Fases 01/02A
 
+> **Gate jurídico añadido — 2026-08-17:** este runbook histórico no autoriza desplegar el candidato v1.1. La Mecánica corregida ya confirma cuatro categorías y máximo cuatro propuestas; antes de cualquier ventana externa aún deben resolverse la delimitación temática de accesibilidad, la integridad del binario histórico v1.0, la política de reaceptación y los gates operativos/productivos. Inventario/hashes, migración reversible, UAT por rol y gates locales se registran en el ExecPlan `.agent/execplans/flowerflow-legal-v1-1-local-release-candidate.md`. Producción sigue `NO-GO` y resultados permanecen apagados.
+
+> **Referencia histórica:** este runbook corresponde a la serie de agosto iniciada en `baff789…` y no es un plan de despliegue de `e2f4345`. El estado y la siguiente puerta de la rama actual están en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+
 Fecha: 2026-08-06. Estado: **referencia y evidencia de la release ya integrada; no autoriza un nuevo acceso, push, PR ni despliegue**.
 
 ## Invariantes

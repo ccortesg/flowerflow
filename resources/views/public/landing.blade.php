@@ -172,22 +172,23 @@
         <p>Descarga y revisa la información completa de la convocatoria.</p>
       </div>
       <div class="ff-document-list">
-        <a href="{{ asset('documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf') }}" download type="application/pdf">
+        <a href="{{ asset(config('flowerflow.legal_documents.mechanics.path')) }}" download type="application/pdf">
           <span class="ff-landing-icon ri-file-pdf-2-line" aria-hidden="true"></span>
-          <span><strong>Mecánica de la convocatoria</strong><small>Descargar PDF</small></span>
+          <span><strong>Mecánica de la convocatoria</strong><small>Versión {{ config('flowerflow.legal_documents.mechanics.version') }} · Descargar PDF</small></span>
           <span class="ff-landing-icon ri-arrow-right-line" aria-hidden="true"></span>
         </a>
-        <a href="{{ asset('documentos/2026/02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026.pdf') }}" download type="application/pdf">
+        <a href="{{ asset(config('flowerflow.legal_documents.terms.path')) }}" download type="application/pdf">
           <span class="ff-landing-icon ri-file-pdf-2-line" aria-hidden="true"></span>
-          <span><strong>Términos y condiciones</strong><small>Descargar PDF</small></span>
+          <span><strong>Términos y condiciones</strong><small>Versión {{ config('flowerflow.legal_documents.terms.version') }} · Descargar PDF</small></span>
           <span class="ff-landing-icon ri-arrow-right-line" aria-hidden="true"></span>
         </a>
-        <a href="{{ asset('documentos/2026/03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026.pdf') }}" download type="application/pdf">
+        <a href="{{ asset(config('flowerflow.legal_documents.privacy.path')) }}" download type="application/pdf">
           <span class="ff-landing-icon ri-file-pdf-2-line" aria-hidden="true"></span>
-          <span><strong>Aviso de privacidad integral</strong><small>Descargar PDF</small></span>
+          <span><strong>Aviso de privacidad integral</strong><small>Versión {{ config('flowerflow.legal_documents.privacy.version') }} · Descargar PDF</small></span>
           <span class="ff-landing-icon ri-arrow-right-line" aria-hidden="true"></span>
         </a>
       </div>
+      <p class="mt-3 mb-0 small"><strong>Responsable legal:</strong> {{ config('flowerflow.organization.legal_name') }}, RFC {{ config('flowerflow.organization.rfc') }}, bajo el nombre comercial {{ config('flowerflow.organization.commercial_name') }}.</p>
     </div>
 
     <div id="preguntas">
