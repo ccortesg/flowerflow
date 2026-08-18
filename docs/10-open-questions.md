@@ -1,12 +1,14 @@
 # Preguntas abiertas y decisiones — Flower Flow 2026
 
-> **Actualización 2026-08-17:** el propietario amplió el cierre inclusivo al `2026-08-23 23:59:59 America/Hermosillo`. Los PDF jurídicos quedan fuera del cambio técnico y su regularización permanece pendiente.
+> **Decisiones del propietario — 2026-08-18:** se conserva sin cambios la superposición temática de accesibilidad de la Mecánica v1.1; las cuentas que aceptaron v1.0 se tratan operativamente como aceptantes de v1.1 sin forzar reaceptación ni alterar evidencia histórica; y el archivo físico v1.0 designado por el propietario es `public/documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf`. La discrepancia entre su SHA-256 actual `3bcf31…` y el hash histórico registrado `42bd5e…` se conserva documentada, no se oculta ni se corrige mediante backfill.
+
+> **Auditoría integral 2026-08-17:** Fase 01/02A está implementada en repositorio, pero el runtime local primario no está alineado: límite tres frente a cuatro y cuatro migraciones funcionales pendientes. Jueces/evaluación y resultados siguen bloqueados por decisiones de negocio. Ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
 ## Resoluciones Fase 01 — 2026-07-15
 
 Resueltas: destino AWS EC2 Ubuntu (no GoDaddy), host/panel, MySQL local, cierre y zona, categorías, límites de equipo/propuestas/archivos, Fortify, Spatie, Quill+sanitizer, flags y formato de folio/snapshot.
 
-Siguen abiertas y no bloquean código local detrás de flags: hora exacta de apertura; fecha de salida; licencia Pixinvent; aceptación de integrantes y persona en varios equipos; texto v1.1/WhatsApp; proveedores adicionales; cantidad máxima definitiva de archivos e imágenes; remediación antimalware después de la aceptación temporal del riesgo; SMTP/DNS; EC2/PHP/web server/capacidad; DB productiva; EBS/S3; staging, backups, RPO/RTO, monitoreo y responsables UAT/soporte. Rúbrica, desempate, conflictos y anonimización pertenecen a fase posterior.
+Siguen abiertas: hora exacta de apertura; fecha de salida; licencia Pixinvent; aceptación de integrantes y persona en varios equipos; WhatsApp; proveedores adicionales; cantidad máxima definitiva de archivos e imágenes; remediación antimalware; SMTP/DNS; EC2/PHP/web server/capacidad; DB productiva; EBS/S3; staging, RPO/RTO, monitoreo y responsables UAT/soporte. Rúbrica, desempate, conflictos y anonimización pertenecen a fase posterior. Los tres puntos jurídicos/evidenciales anteriores quedaron resueltos por decisión expresa del propietario y ya no bloquean por sí solos la continuidad operativa.
 
 **Fecha de corte:** 2026-07-15  
 **Uso:** registro de decisiones para planificación y aprobación.  
@@ -38,7 +40,23 @@ Siguen abiertas y no bloquean código local detrás de flags: hora exacta de ape
 | D-012 | DECISION | API móvil/integraciones externas quedan fuera del MVP por defecto. | No diseñar contratos externos en la ruta crítica. |
 | D-013 | DECISION | Código en inglés e interfaz en español. | Nombres técnicos y contenidos se gestionan por separado. |
 | D-014 | DECISION | No usar datos reales en desarrollo/pruebas. | Factories/fixtures sintéticos y redactados. |
-| D-015 | DECISION/RISK ACCEPTED | El cierre se amplía al 2026-08-23 23:59:59 en Hermosillo sin modificar los PDF jurídicos en esta tarea. | Configuración, base, UI y pruebas se alinean; la regularización jurídica queda pendiente. |
+| D-015 | RESOLVED POR v1.1 | El cierre se amplía al 2026-08-23 23:59:59 en Hermosillo. | Mecánica v1.1 p. 3 y Términos v1.1 p. 2 ya coinciden con configuración/base/UI; v1.0 queda histórico. |
+| D-016 | DECISION DE AUDITORÍA | Separar avance del producto maestro, código local verificado, runtime activado y producción demostrada. | Ningún porcentaje o handoff puede presentar una suite verde como despliegue o acceso habilitado. |
+| D-017 | DECISION DE SECUENCIA | La siguiente puerta es un release candidate/UAT local de lo ya implementado; Fase 02B no se mezcla. | Primero alinear ambiente autorizado y cerrar evidencia por rol; después aprobar reglas de jueces/rúbrica. |
+| D-018 | DECISION TÉCNICA LOCAL | Nuevas altas, cambios de consentimiento y envíos registran la versión jurídica activa v1.1; v1.0 y sus aceptaciones no se mutan. | Catálogo determinístico, migración reversible y tests de preservación. |
+| D-019 | RESOLVED / OWNER DECISION 2026-08-18 | No se fuerza reaceptación v1.1 a cuentas que aceptaron v1.0; se consideran operativamente aceptantes de v1.1 porque los cambios fueron comunicados. | No bloquear cuentas ni propuestas y no fabricar, duplicar o modificar filas históricas de `legal_acceptances`; las nuevas aceptaciones continúan registrando v1.1. |
+| D-020 | DECISION / RESOLVED LEGAL | La operación conserva cuatro categorías y máximo cuatro propuestas, una por categoría. | El propietario lo confirmó y la Mecánica v1.1 corregida lo respalda en pp. 2–3; no requiere rollback funcional. |
+| D-021 | RESOLVED / OWNER DECISION 2026-08-18 | La referencia a accesibilidad se conserva como está en las dos categorías. | No recategorizar propuestas, cambiar UI ni reinterpretar la Mecánica. |
+| D-022 | RESOLVED / OWNER DECISION 2026-08-18 | El PDF físico v1.0 que debe conservarse es `01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf`, SHA-256 actual `3bcf31…`. | Mantener la discrepancia histórica `42bd5e…` en registros/aceptaciones; no sustituir el archivo ni reescribir evidencia. |
+| D-023 | OWNER CONFIRMED 2026-08-18 | Producción usa un checkout Git directo en `/var/www/flowerflow`; no existen `releases/current/shared`. El propietario informa que el VirtualHost `app.sguniformes.com.mx` apunta a esa ruta. | El update actual trabaja en sitio por SHA exacto. La topología de symlinks queda futura; no se infiere un cambio del host canónico ni se modifica Apache. |
+
+## Decisiones jurídicas prioritarias v1.1
+
+| ID | Estado | Pregunta | Alternativas y recomendación | Impacto |
+|---|---|---|---|---|
+| Q-LEGAL-001 | RESOLVED / OWNER ACCEPTED 2026-08-18 | ¿La referencia a “accesibilidad” en Movilidad con Flow es deliberada aunque exista Hermosillo sin Barreras? | Sí; se conserva como está, sin recategorización ni cambio funcional. | Sin pendiente operativo. |
+| Q-LEGAL-002 | RESOLVED / OWNER DECISION 2026-08-18 | ¿Quién debe reaceptar v1.1 y desde cuándo? | No se fuerza reaceptación a cuentas v1.0; se aplica equivalencia operativa sin alterar evidencia y las nuevas aceptaciones registran v1.1. | No requiere migración ni backfill de `legal_acceptances`. |
+| Q-LEGAL-003 | RESOLVED / OWNER DESIGNATION 2026-08-18 | ¿Qué binario se conserva como Mecánica v1.0? | El archivo físico actual `01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf` (`3bcf31…`); el hash `42bd5e…` permanece como antecedente histórico. | Discrepancia histórica aceptada y visible; no bloquea la continuidad operativa. |
 
 ## Preguntas prioritarias
 

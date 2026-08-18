@@ -1,5 +1,22 @@
 # Estrategia de pruebas y calidad
 
+## Evidencia vigente — 2026-08-17
+
+La reconciliación jurídica v1.1 añade `LegalDocumentsV11Test`: valida existencia y SHA-256 de los tres PDF nuevos, una versión activa determinística por tipo, preservación de v1.0/aceptaciones durante rollback-forward, vínculos públicos/autenticados e identidad en superficies por rol. La inspección PDF combinó `pdfinfo`, extracción de texto y revisión visual de las 28 páginas de v1.0/v1.1. Los resultados finales del candidato se registran en el ExecPlan `.agent/execplans/flowerflow-legal-v1-1-local-release-candidate.md` y en `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
+
+| Gate | Resultado actual |
+|---|---|
+| Base/cuenta de tests | `flowerflow_testing` / `flowerflow_testing_user`, MySQL loopback, guard obligatorio |
+| Migraciones de test | 12/12 aplicadas después de guard exacto y `migrate:fresh --seed` |
+| Suite | 109 pruebas/1,049 aserciones, verde; `LegalDocumentsV11Test`: 3/36; seguimiento 503/CSP: 2 pruebas nuevas |
+| Pint | Verde |
+| Composer validate/platform/audit | Verde; cero advisories |
+| Yarn dependencies | Un advisory bajo de Quill 2.0.3 sin fix; cero moderados/altos/críticos |
+| Iconos/build | 97 iconos, 784 módulos y tres assets Vite, verde |
+| Browser | UAT del candidato cerrada en Firefox: visitante, participante, reviewer y admin en 1440/768/360, teclado, foco, zoom/reflow, consola, 403/404/IDOR, límite 4/quinta rechazada, admisibilidad, 2FA, XLSX, expiración y cierre |
+
+La base local primaria no sustituye este ambiente y no está autorizada para esta ejecución. El único runtime destructivo permitido es `flowerflow_testing` con `flowerflow_testing_user`, MySQL loopback, datos sintéticos y guard probado antes de cada `migrate:fresh`. La auditoría vigente está en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+
 ## Evidencia de reducción de riesgos — 2026-08-06
 
 El ambiente destructivo quedó limitado a MySQL `flowerflow_testing` sobre loopback y al usuario exacto `flowerflow_testing_user`. `phpunit.xml` fija los valores no secretos; `Tests\TestCase` aborta antes de `RefreshDatabase` si cambian ambiente, driver, host, base, usuario o aparece `DB_URL`. La contraseña sólo puede vivir en `.env.testing`, ignorado.
@@ -19,7 +36,9 @@ Estado de la ejecución actual:
 
 La QA real de las páginas públicas comparó local contra producción en 360, 768 y 1440 px. Landing, registro y login conservaron composición y comportamiento; no hubo overflow horizontal, la navegación por teclado y el skip link funcionaron, el foco fue visible, el zoom 200 % no rompió el flujo y la consola terminó sin errores ni advertencias. Las capturas son locales e ignoradas en `output/playwright/`.
 
-La descarga `/documentos` no se puede validar con `php artisan serve`: el directorio físico `public/documentos/` hace que el servidor incorporado resuelva la URL antes que Laravel. Esta limitación local no demuestra un defecto en Apache ni reemplaza el smoke productivo. Los contratos automatizados de archivos, transacciones, descargas/IDOR, estados, rate limit, 2FA, fecha y flag Fase 02A quedaron verdes. La QA autenticada en navegador real continúa como puerta previa a UAT/release, no como bloqueo para publicar esta rama de trabajo.
+La colisión entre la ruta Laravel `/documentos` y el directorio físico `public/documentos/` se corrigió para Apache mediante una regla exacta anterior a `-d` en `public/.htaccess`; los PDF anidados continúan estáticos. `apache2ctl configtest` devolvió `Syntax OK`. El servidor incorporado conserva su limitación de resolución de directorios físicos, pero la UAT del candidato validó la superficie dinámica mediante el runtime seguro y los contratos automatizados. No se hizo smoke autenticado sobre el VirtualHost primario porque su `.env` no usa la base/cuenta exclusiva y esa ejecución no estaba autorizada.
+
+El runtime UAT reproducible es `scripts/serve_local_testing.sh`: fija testing/MySQL loopback/base y usuario exclusivos, sesiones/cache en archivo, correo array, cola sync, flags autorizados y resultados apagados. Además falla cerrado si faltan esquema, rol participante, convocatoria, cuatro categorías o las tres versiones jurídicas activas. La primera alta posterior a la suite evidenció que `RefreshDatabase` deja el esquema sin seeders; la transacción se revirtió al faltar el rol. Se añadió el readiness gate, se ejecutó el seeder autorizado y la repetición registró cuatro aceptaciones v1.1 exactas de Términos/Privacidad. Después se recreó y sembró la base: quedó con cero usuarios/aceptaciones sintéticas.
 
 ## Suite Fase 01
 
@@ -293,3 +312,9 @@ La suite usa exclusivamente MySQL desechable confirmado, storage fake, mail fake
 El QA de navegador sólo incluye superficies nuevas y se documenta en `docs/design-qa-phase-02-admissibility.md`. No se usan PII, documentos reales ni pruebas contra producción.
 
 Gate final local del 2026-07-16: 72 pruebas y 696 aserciones verdes; Pint sobre cambios, `composer validate --strict`, `composer audit`, build Vite, vistas, rutas y diff sin errores. El recorrido real de navegador cerró las superficies autorizadas con consola limpia y eliminó todos los artefactos temporales.
+
+## Seguimiento 503/CSP — 2026-08-18
+
+El cierre de recepción y el modo mantenimiento usan ahora `resources/views/errors/503.blade.php`, con layout/recursos Vite normales y sin etiquetas `<style>` ni atributos `style=`. `SecurityAndFlagsTest` cubre estado 503, título/descripcion accesibles, enlaces de retorno/documentos y respuesta con CSP estricta; una prueba adicional renderiza la vista sin la bolsa de errores del middleware para representar `artisan down --render="errors::503"`.
+
+La vista se pre-renderizó localmente en mantenimiento y devolvió HTTP 503. Se revisó visualmente con Chrome a 1440×1000 y Firefox a 390×844: marca, jerarquía, alerta, acciones y reflow permanecen legibles y sin desbordamiento. El HTML renderizado conserva `aria-labelledby`/`aria-describedby`, orden DOM de teclado y cero estilos inline. No se usaron cuentas ni datos reales.

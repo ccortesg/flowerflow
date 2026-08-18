@@ -74,6 +74,14 @@ class SubmissionFlowTest extends TestCase
         $this->assertDatabaseCount('submission_versions', 1);
         $this->assertDatabaseCount('submission_events', 4);
         $this->assertDatabaseCount('legal_acceptances', 3);
+        foreach (['call_rules', 'terms', 'privacy'] as $purpose) {
+            $this->assertDatabaseHas('legal_acceptances', [
+                'user_id' => $user->id,
+                'purpose' => $purpose,
+                'document_version' => '1.1',
+                'accepted' => true,
+            ]);
+        }
         Mail::assertQueued(SubmissionReceived::class, 1);
 
         $this->actingAs($user)->post(route('submissions.confirmation.resend', $submission))

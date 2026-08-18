@@ -1,5 +1,11 @@
 # Runbook de releases de reducción de riesgos Fases 01/02A
 
+> **Topología productiva vigente — 2026-08-18:** el propietario confirmó que `/var/www/flowerflow` es el checkout Git directamente vinculado con GitHub y la ruta asociada al VirtualHost `app.sguniformes.com.mx`. No existen `releases`, `current` ni `shared`. La conversión descrita más abajo queda como mejora futura y no debe mezclarse con el update actual. Para la actualización inmediata, los comandos de descarga, Composer, Yarn/Vite, Artisan y migración se ejecutan dentro de `/var/www/flowerflow`, preservando `.env`, `storage` y los datos existentes.
+
+> **Actualización jurídica — 2026-08-18:** cuatro categorías/máximo cuatro, accesibilidad, continuidad de aceptaciones v1.0 y designación del PDF físico v1.0 fueron resueltos por el propietario. El runbook continúa sin autorizar a Codex a desplegar; el propietario ejecutará la actualización y confirmó que realizó sus respaldos. Resultados permanecen apagados.
+
+> **Referencia histórica:** este runbook corresponde a la serie de agosto iniciada en `baff789…` y no es un plan de despliegue de `e2f4345`. El estado y la siguiente puerta de la rama actual están en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+
 Fecha: 2026-08-06. Estado: **referencia y evidencia de la release ya integrada; no autoriza un nuevo acceso, push, PR ni despliegue**.
 
 ## Invariantes
@@ -37,9 +43,9 @@ Registrar sin contenidos secretos:
 7. Evidencia externa de preparación de recuperación.
 8. Baseline HTTP y funcional de las siete aplicaciones compartidas.
 
-## Conversión inicial a releases inmutables
+## Conversión futura a releases inmutables — no instalada ni incluida en el update actual
 
-Conservar `/var/www/flowerflow` intacto como rollback legado. Crear, con el usuario de despliegue y permisos mínimos:
+Esta conversión requiere un milestone posterior. Sólo entonces se conservaría `/var/www/flowerflow` como rollback legado y se crearían, con el usuario de despliegue y permisos mínimos:
 
 ```text
 /var/www/flowerflow-releases/<timestamp>-<sha>
@@ -49,6 +55,10 @@ Conservar `/var/www/flowerflow` intacto como rollback legado. Crear, con el usua
 ```
 
 Preparar el release fuera del webroot activo, enlazar `.env` y `storage` compartidos y construir sin root. Verificar que el artefacto corresponde al SHA aprobado. Cambiar únicamente el `DocumentRoot` de Flower Flow a `/var/www/flowerflow-current/public`; ejecutar `apache2ctl configtest` y una recarga graceful, nunca restart.
+
+## Update vigente sobre checkout directo
+
+El prompt operativo vigente está en `docs/16-project-status-by-module-and-role-2026-08-17.md`. Debe generar una sola secuencia sobre `/var/www/flowerflow`: `git fetch`, mantenimiento inicial, `git checkout --detach <SHA>`, `composer install` con lock, `php artisan optimize:clear`, build reproducible, render 503 nuevo, `php artisan migrate --force`, `php artisan optimize`, reinicio exclusivo del worker y `php artisan up`. No debe crear carpetas/symlinks ni ejecutar `git pull`, `git clean`, `git reset --hard`, seeders o borrados.
 
 ## Smoke obligatorio
 

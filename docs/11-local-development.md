@@ -1,5 +1,7 @@
 # Desarrollo local Flower Flow sobre WSL2 y MySQL
 
+> **Hallazgo vigente — 2026-08-17:** `flowerflow_testing`/`flowerflow_testing_user` sigue siendo el único ambiente autorizado para pruebas destructivas y quedó con 12/12 migraciones, seeders vigentes y cero usuarios sintéticos. La base primaria `flowerflow` no se tocó: el diagnóstico previo registró cuatro migraciones funcionales pendientes y el `.env` local fija tres propuestas; el árbol agrega ahora la migración jurídica v1.1. No corregir, consultar destructivamente ni migrar esos recursos por inferencia; usar `scripts/serve_local_testing.sh` y seguir el próximo prompt de `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+
 ## Contrato vigente de pruebas destructivas — 2026-08-06
 
 La base automatizada permitida ya no es la base principal descrita en secciones históricas. Es exclusivamente:

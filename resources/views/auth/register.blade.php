@@ -76,9 +76,9 @@
                                     <input class="form-check-input @error('accept_legal') is-invalid @enderror" id="accept_legal" name="accept_legal" type="checkbox" value="1" required @checked(old('accept_legal')) @error('accept_legal') aria-invalid="true" @enderror>
                                     <label class="form-check-label" for="accept_legal">
                                         Declaro que soy mayor de 18 años, y que he leído y acepto los
-                                        <a href="{{ asset('documentos/2026/02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026.pdf') }}" download>Términos y Condiciones</a>
+                                        <a href="{{ asset(config('flowerflow.legal_documents.terms.path')) }}" download>Términos y Condiciones versión {{ config('flowerflow.legal_documents.terms.version') }}</a>
                                         y el
-                                        <a href="{{ asset('documentos/2026/03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026.pdf') }}" download>Aviso de Privacidad</a>.
+                                        <a href="{{ asset(config('flowerflow.legal_documents.privacy.path')) }}" download>Aviso de Privacidad versión {{ config('flowerflow.legal_documents.privacy.version') }}</a>.
                                     </label>
                                     @error('accept_legal')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>

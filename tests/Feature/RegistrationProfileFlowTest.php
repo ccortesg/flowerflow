@@ -31,8 +31,8 @@ class RegistrationProfileFlowTest extends TestCase
         $this->assertSame('Ana María Prueba López', $user->name);
         $this->assertSame('+526621234567', $user->profile->mobile_e164);
         $this->assertTrue($user->profile->whatsapp_opt_in);
-        $this->assertDatabaseHas('legal_acceptances', ['user_id' => $user->id, 'purpose' => 'registration_terms', 'document_version' => '1.0', 'accepted' => true]);
-        $this->assertDatabaseHas('legal_acceptances', ['user_id' => $user->id, 'purpose' => 'registration_privacy', 'document_version' => '1.0', 'accepted' => true]);
+        $this->assertDatabaseHas('legal_acceptances', ['user_id' => $user->id, 'purpose' => 'registration_terms', 'document_version' => '1.1', 'accepted' => true]);
+        $this->assertDatabaseHas('legal_acceptances', ['user_id' => $user->id, 'purpose' => 'registration_privacy', 'document_version' => '1.1', 'accepted' => true]);
         $this->assertDatabaseHas('legal_acceptances', ['user_id' => $user->id, 'purpose' => 'whatsapp_contact', 'accepted' => true]);
         $this->assertDatabaseHas('legal_acceptances', ['user_id' => $user->id, 'purpose' => 'future_activities', 'accepted' => true]);
         $this->assertSame(4, $user->legalAcceptances()->count());
@@ -87,6 +87,7 @@ class RegistrationProfileFlowTest extends TestCase
             ->assertSee('Declaro que soy mayor de 18 años')
             ->assertSee('Términos y Condiciones')
             ->assertSee('Aviso de Privacidad')
+            ->assertSee('versión 1.1')
             ->assertSee('download', false)
             ->assertSee('Acepto recibir información sobre futuras actividades de FLORECE HERMOSILLO y FLOWER FLOW')
             ->assertSee('id="future_activities_opt_in" name="future_activities_opt_in" type="checkbox" value="1" checked', false);

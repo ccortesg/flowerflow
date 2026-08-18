@@ -193,7 +193,7 @@
   <span class="ri ri-shield-user-line" aria-hidden="true"></span>
   <div>
     <h2>Tu información personal está protegida</h2>
-    <p>Usamos tus datos para gestionar tu participación conforme al aviso vigente. <a href="{{ asset('documentos/2026/03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026.pdf') }}">Consulta el aviso de privacidad.</a></p>
+    <p>Usamos tus datos para gestionar tu participación conforme al aviso vigente. <a href="{{ asset(config('flowerflow.legal_documents.privacy.path')) }}">Consulta el aviso de privacidad versión {{ config('flowerflow.legal_documents.privacy.version') }}.</a></p>
   </div>
 </aside>
 @endsection

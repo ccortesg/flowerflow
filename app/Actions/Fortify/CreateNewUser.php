@@ -63,15 +63,15 @@ class CreateNewUser implements CreatesNewUsers
         ]);
 
         $validated = $validator->validate();
-        $documents = LegalDocument::query()
+        $activeDocuments = LegalDocument::query()
             ->where('active', true)
             ->whereIn('code', ['terms', 'privacy'])
-            ->get()
-            ->keyBy('code');
+            ->get();
+        $documents = $activeDocuments->keyBy('code');
 
-        if (! $documents->has('terms') || ! $documents->has('privacy')) {
+        if ($activeDocuments->count() !== 2 || ! $documents->has('terms') || ! $documents->has('privacy')) {
             throw ValidationException::withMessages([
-                'accept_legal' => 'No podemos completar el registro porque los documentos legales no están disponibles. Inténtalo de nuevo más tarde.',
+                'accept_legal' => 'No podemos completar el registro porque no existe una única versión vigente de cada documento legal. Inténtalo de nuevo más tarde.',
             ]);
         }
 

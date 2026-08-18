@@ -1,8 +1,10 @@
 # Despliegue en AWS EC2 con Ubuntu
 
+> **Topología productiva confirmada por el propietario — 2026-08-18:** el proyecto es un checkout Git vinculado directamente con GitHub en `/var/www/flowerflow`. No existen las carpetas `releases`, `current` ni `shared`. El propietario informa además que el VirtualHost `app.sguniformes.com.mx` apunta a esa misma ruta. Esta evidencia sustituye para el despliegue actual cualquier supuesto de symlink; no cambia automáticamente el host canónico `app.flowerflow.com.mx` ni autoriza cambios de Apache/DNS/TLS. Las secciones de releases inmutables se conservan sólo como arquitectura futura.
+
 > **Actualización 2026-08-06:** la topología real informada es una EC2 compartida con Flower Flow, administratec, biru, festypass, pulso, sguniformes y sinc. El plan aprobado no permite cambios durante la recepción ni cambios globales de Ubuntu, Apache, PHP, MySQL, Node o Composer. La secuencia exacta posterior al cierre, conversión desde checkout vivo, smoke cruzado y rollback está en [`15-risk-reduction-release-runbook.md`](15-risk-reduction-release-runbook.md). Esa guía es preparación local y no autoriza acceso o despliegue.
 
-> **Adenda Fase 01:** host canónico `app.flowerflow.com.mx`, `DocumentRoot=/var/www/flowerflow/current/public` (ruta final sujeta a inventario), panel `/panel`, SMTP externo con remitente `notificaciones@flowerflow.com.mx`. No se accedió ni modificó la EC2. El preflight de sólo lectura de este runbook sigue siendo el siguiente paso autorizado por separado; debe identificar Ubuntu, Apache/Nginx, PHP-FPM/extensiones, capacidad, aislamiento de Administratec, MySQL vs RDS, EBS vs S3 privado, secretos, worker/scheduler, staging, backup/restore, RPO/RTO, monitoreo, TLS/DNS y salida SMTP.
+> **Adenda Fase 01 histórica:** host canónico `app.flowerflow.com.mx`, panel `/panel` y SMTP externo con remitente `notificaciones@flowerflow.com.mx`. La suposición `DocumentRoot=/var/www/flowerflow/current/public` quedó sustituida por la topología directa confirmada arriba.
 
 Fecha de evidencia: `2026-07-15`  
 Estado: `RUNBOOK PROPUESTO — NO EJECUTADO`  
@@ -48,7 +50,24 @@ Los valores entre `<...>` son placeholders. No deben pegarse sin resolverlos y n
 
 La señal pública de AWS no sustituye inventario con AWS API, SSM o SSH autorizado. Todo dato de la instancia debe capturarse antes de aprobar el despliegue.
 
-## 3. Arquitectura objetivo e aislamiento de Administratec
+## 3. Topología actual, arquitectura objetivo y aislamiento
+
+### 3.0 Topología productiva actual confirmada
+
+```text
+/var/www/flowerflow/
+├── .git/
+├── .env
+├── app/
+├── public/
+├── storage/
+├── vendor/
+└── ...
+```
+
+`/var/www/flowerflow` es simultáneamente el checkout Git productivo y la ruta de proyecto asociada al VirtualHost informado por el propietario. No hay un release alterno, symlink `current` ni storage compartido externo. Un update de esta instalación debe conservar en sitio `.env`, `storage`, archivos privados y datos; no debe ejecutar `git clean`, `git reset --hard`, `rm -rf`, seeders o migraciones destructivas.
+
+El dato `app.sguniformes.com.mx -> /var/www/flowerflow` se registra literalmente como evidencia del propietario. Como la URL pública canónica previamente documentada es `app.flowerflow.com.mx`, este runbook no infiere ni ejecuta cambios de dominio, certificado o VirtualHost.
 
 ### 3.1 Fronteras obligatorias
 
@@ -66,7 +85,9 @@ Flower Flow no debe compartir con Administratec ninguno de estos elementos:
 - bucket/prefix de backups o permisos IAM;
 - staging, datos de prueba o usuarios de UAT.
 
-La estructura propuesta es:
+### 3.2 Arquitectura futura propuesta, no instalada
+
+La estructura siguiente se conserva como objetivo futuro y no debe usarse en los comandos del update actual:
 
 ```text
 /var/www/flowerflow/
@@ -83,7 +104,7 @@ La estructura propuesta es:
         └── logs/
 ```
 
-El `DocumentRoot` de Apache debe ser exclusivamente:
+En una migración de topología futura, el `DocumentRoot` propuesto sería:
 
 ```text
 /var/www/flowerflow/current/public
@@ -442,7 +463,7 @@ Ningún usuario de aplicación productivo debe tener `WITH GRANT OPTION`, privil
 
 ## 12. Composer, Node y build de release
 
-La unidad de despliegue debe ser un release inmutable identificado por fecha y SHA de Git. Se prefiere artefacto construido en CI; si el build se hace en EC2, validar capacidad y retirar dependencias de build no requeridas por runtime.
+La unidad productiva actual es el checkout Git directo `/var/www/flowerflow`, fijado al SHA aprobado mediante `git fetch` y `git checkout --detach`. Los releases inmutables separados siguen siendo la arquitectura objetivo, pero no forman parte del update actual. Si el build se hace en EC2, se ejecuta dentro de ese checkout sin cambiar paquetes globales.
 
 ### 12.1 Node y Corepack aislados de Administratec
 
@@ -488,7 +509,7 @@ composer check-platform-reqs --no-dev
 test -f public/build/manifest.json
 ```
 
-Para la instalación productiva actual, donde Apache apunta directamente a `/var/www/flowerflow`, la secuencia equivalente es:
+Para la instalación productiva actual confirmada, la secuencia de instalación y compilación se ejecuta directamente en:
 
 ```bash
 cd /var/www/flowerflow
@@ -500,7 +521,7 @@ test -s public/build/manifest.json
 
 Después del build puede retirarse `node_modules` del artefacto runtime si no lo requiere ninguna tarea. No editar manualmente `public/build`.
 
-Preparación Laravel, sólo con `.env` y `shared/storage` enlazados:
+Preparación Laravel: en la topología actual `.env` y `storage` permanecen dentro de `/var/www/flowerflow`; no se crean enlaces a `shared`.
 
 El archivo de entorno protegido debe conservar este contrato no secreto: `APP_LOCALE=es_MX`, `APP_FALLBACK_LOCALE=es_MX`, `APP_TIMEZONE=UTC`, `DB_TIMEZONE=+00:00` y `FLOWERFLOW_TIMEZONE=America/Hermosillo`. Así, la interfaz y las reglas de negocio usan español de México y horario de Hermosillo, mientras PHP/MySQL persisten instantes sin ambigüedad en UTC. El cierre `2026-08-23 23:59:59 America/Hermosillo` se conserva como `2026-08-24 06:59:59 UTC`.
 
@@ -582,8 +603,8 @@ Configuración conceptual:
 ```ini
 [program:flowerflow-worker]
 process_name=%(program_name)s_%(process_num)02d
-directory=/var/www/flowerflow/current
-command=/usr/bin/php /var/www/flowerflow/current/artisan queue:work --queue=high,exports,default,low --sleep=3 --tries=3 --timeout=120 --max-time=3600
+directory=/var/www/flowerflow
+command=/usr/bin/php /var/www/flowerflow/artisan queue:work --queue=high,exports,default,low --sleep=3 --tries=3 --timeout=120 --max-time=3600
 user=flowerflow
 numprocs=1
 autostart=true
@@ -608,7 +629,7 @@ sudo supervisorctl update
 sudo supervisorctl status flowerflow-worker:*
 ```
 
-Después de cambiar el symlink de release:
+Después de actualizar el checkout directo:
 
 ```bash
 php artisan queue:restart
@@ -622,7 +643,7 @@ Verificar que sólo reinicie Flower Flow. No usar `supervisorctl restart all`.
 Usar una sola fuente de scheduling. Entrada propuesta en `/etc/cron.d/flowerflow`:
 
 ```cron
-* * * * * flowerflow cd /var/www/flowerflow/current && /usr/bin/php artisan schedule:run >> /var/log/flowerflow/scheduler.log 2>&1
+* * * * * flowerflow cd /var/www/flowerflow && /usr/bin/php artisan schedule:run >> /var/log/flowerflow/scheduler.log 2>&1
 ```
 
 Validar:
@@ -734,6 +755,10 @@ La aprobación debe registrar versión/SHA, ambiente, casos, defectos aceptados 
 
 ## 19. Procedimiento de despliegue
 
+### 19.0 Aplicabilidad según la topología real
+
+Para el servidor productivo confirmado el 2026-08-18 se usa **exclusivamente** el procedimiento 19.2A de checkout directo. Las secciones 19.2B–19.5 describen la arquitectura futura de releases y no deben ejecutarse mientras no exista una conversión aprobada de topología.
+
 ### 19.1 Preparación
 
 1. confirmar ticket, ventana, responsables y canal de coordinación;
@@ -742,10 +767,38 @@ La aprobación debe registrar versión/SHA, ambiente, casos, defectos aceptados 
 4. confirmar backup y restore drill vigente;
 5. validar capacidad, DNS, certificado, SG/UFW e IAM;
 6. confirmar migraciones revisadas y compatibilidad hacia atrás;
-7. identificar release actual y release previo sano;
+7. identificar el SHA actual y el SHA previo conocido; para la topología futura, identificar además release actual y release previo sano;
 8. pausar si cualquier evidencia falta.
 
-### 19.2 Crear release
+### 19.2A Actualizar el checkout Git directo actual
+
+El runbook que genere Codex no ejecuta estos comandos; los entrega al propietario. La secuencia base del checkout actual es:
+
+```bash
+set -euo pipefail
+
+APP_DIR=/var/www/flowerflow
+RELEASE_SHA='<RELEASE_SHA_APROBADO>'
+SUPERVISOR_PROGRAM='<PROGRAMA_SUPERVISOR_FLOWERFLOW>'
+
+cd "$APP_DIR"
+git fetch --prune origin
+php artisan down --retry=60
+git checkout --detach "$RELEASE_SHA"
+composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-progress
+php artisan optimize:clear
+scripts/build_frontend_production.sh
+APP_URL=https://app.flowerflow.com.mx php artisan down --render="errors::503" --retry=60
+php artisan migrate --force
+php artisan optimize
+php artisan queue:restart
+sudo supervisorctl restart "$SUPERVISOR_PROGRAM"
+php artisan up
+```
+
+La primera entrada a mantenimiento usa el render disponible en la versión anterior. La segunda, después de instalar y compilar el SHA nuevo, activa la vista 503 propia. Esta secuencia no crea releases, no cambia Apache y no debe acompañarse de `git pull`, `git clean`, `git reset --hard`, `rm -rf`, seeders o eliminación de `.env`/`storage`.
+
+### 19.2B Crear release futuro — no aplicable a la topología actual
 
 ```bash
 release=/var/www/flowerflow/releases/<timestamp>-<git-sha>
@@ -758,7 +811,7 @@ scripts/build_frontend_production.sh
 
 Crear symlinks a `shared/.env` y `shared/storage` sin imprimir el archivo de entorno. Validar permisos con el usuario efectivo de PHP y del worker.
 
-### 19.3 Validación antes del switch
+### 19.3 Validación futura antes del switch
 
 ```bash
 php artisan about
@@ -772,7 +825,7 @@ composer check-platform-reqs --no-dev
 
 No ejecutar `migrate --force` si no existe backup inmediato, revisión de la migración y aprobación del change owner.
 
-### 19.4 Migración y switch atómico
+### 19.4 Migración y switch atómico futuros
 
 Cuando el release lo requiera y esté autorizado:
 
@@ -790,7 +843,7 @@ php artisan up
 
 Las migraciones deben seguir expand/contract. Un switch de symlink no revierte una migración destructiva.
 
-### 19.5 Smoke tests
+### 19.5 Smoke tests de la topología futura
 
 ```bash
 curl -fsS https://<production-domain>/up
@@ -815,6 +868,8 @@ Confirmar además:
 La ruta `/up` debe existir y ser inocua; si no existe, crear un health check mínimo en un milestone aprobado.
 
 ## 20. Rollback
+
+En el checkout directo actual, el rollback de código requiere volver a un `<SHA_ANTERIOR_CONOCIDO>` en `/var/www/flowerflow`, reinstalar dependencias/bundle con locks, reconstruir cachés y reiniciar únicamente el worker Flower Flow. No ejecutar automáticamente migraciones `down`: el cambio de código y el tratamiento del esquema/datos son decisiones distintas. El procedimiento de symlink siguiente sólo aplica después de una futura conversión a releases.
 
 ### 20.1 Disparadores
 

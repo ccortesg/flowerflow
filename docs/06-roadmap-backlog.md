@@ -1,5 +1,7 @@
 # Roadmap y backlog
 
+> **Estado vigente — 2026-08-17:** el plan maestro está en 58 % y el alcance local aprobado en 96 %. Fase 01/02A y la sincronización jurídica v1.1 están implementadas y cerraron UAT local; jueces/evaluación, ganadores/resultados y producción del SHA actual no. El detalle cuantificado y la próxima secuencia están en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+
 ## Estado Fase 01 — 2026-07-15
 
 Completado en código: locks/runtime, assets legales/branding, configuración/flags, auth/RBAC, modelo/migraciones/seed, perfil, borradores/equipos, sanitización, uploads/enlaces, finalización/snapshot/correo, panel mínimo y pruebas preparadas.
@@ -304,14 +306,18 @@ Contratos de modelos, enums, rutas y componentes se acuerdan antes del paralelo.
 - Documentación/traceability/ExecPlan actualizados.
 - UAT y aprobación de producción explícitas.
 
-## Actualización de roadmap — 2026-07-16
+## Actualización de roadmap — 2026-08-17
 
 | Milestone | Estado | Alcance |
 |---|---|---|
 | Fase 01 recepción pública/participante | Cerrado local; QA manual aceptado | auth, perfil, propuestas, archivos, envío y panel mínimo |
-| Fase 02A admisibilidad | En ejecución local | expediente, aclaraciones, residencia privada, resolución, auditoría y correos |
+| Fase 02A admisibilidad | Cerrada en código/test local | expediente, aclaraciones, residencia privada, resolución, auditoría y correos; flag local primario apagado |
+| Cuarta categoría | Cerrada en código/test local | datos, límite cuatro, superficies públicas/participante/admin y concurrencia |
+| Exportación privada | Cerrada en código/test local | XLSX asíncrono privado, cinco hojas, permisos, auditoría y expiración; operación de worker/scheduler pendiente |
+| Ampliación de plazo | Cerrada en código/test local | cierre al 23-ago-2026 y migración fail-closed; regularización PDF pendiente |
 | Fase 02B evaluación | No autorizado | jueces, asignación, anonimización, rúbrica y calificaciones |
 | Resultados/retención ejecutable | No autorizado | ganadores, publicación y borrado condicionado |
-| Producción | No autorizado en esta rama | preflight, backup, UAT, despliegue y rollback |
+| Release candidate local | Siguiente puerta recomendada | alinear ambiente autorizado, migraciones y flags temporales; UAT autenticada por rol |
+| Producción del SHA actual | No autorizada/no demostrada | preflight, backup/restore, staging, UAT, workers, SMTP, despliegue y rollback |
 
-La siguiente puerta después de Fase 02A es revisión técnica/UAT de este módulo. No debe mezclarse con jueces ni con borrado de documentos.
+La siguiente puerta es cerrar un release candidate local de lo ya implementado. No debe mezclarse con jueces, resultados, borrado de residencia ni producción. Fase 02B sólo puede iniciar después de aprobar reglas de jueces, rúbrica, asignación, conflictos y desempate.

@@ -165,7 +165,7 @@
   @if($isLandingPage)
     @include('public.partials.landing-footer')
   @elseif(! $isLoginPage)
-    <footer class="bg-dark text-white py-5"><div class="container small"><div class="row g-4"><div class="col-md-7"><strong>FLORECE HERMOSILLO</strong><p class="mb-0 mt-2">Agrupación: FLOWER FLOW<br>Colonia Centro Hermosillo, Sonora. CP 83000</p></div><div class="col-md-5"><strong>Contacto</strong><p class="mb-0 mt-2"><a class="text-white" href="mailto:convocatoria@flowerflow.com.mx">convocatoria@flowerflow.com.mx</a><br><a class="text-white" href="mailto:privacidad@flowerflow.com.mx">privacidad@flowerflow.com.mx</a></p></div></div></div></footer>
+    <footer class="bg-dark text-white py-5"><div class="container small"><div class="row g-4"><div class="col-md-7"><strong>{{ config('flowerflow.organization.legal_name') }}</strong><p class="mb-0 mt-2">RFC {{ config('flowerflow.organization.rfc') }}<br>Nombre comercial: {{ config('flowerflow.organization.commercial_name') }}<br>Movimiento ciudadano: {{ config('flowerflow.organization.citizen_movement') }}<br>{{ config('flowerflow.organization.address') }}</p></div><div class="col-md-5"><strong>Contacto</strong><p class="mb-0 mt-2"><a class="text-white" href="mailto:convocatoria@flowerflow.com.mx">convocatoria@flowerflow.com.mx</a><br><a class="text-white" href="mailto:privacidad@flowerflow.com.mx">privacidad@flowerflow.com.mx</a></p></div></div></div></footer>
   @endif
 @endif
 @stack('scripts')

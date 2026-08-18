@@ -68,7 +68,21 @@ class FinalizeSubmission
                 'created_at' => now('UTC'),
             ]);
 
-            $documents = LegalDocument::query()->where('active', true)->get()->keyBy('code');
+            $activeDocuments = LegalDocument::query()
+                ->where('active', true)
+                ->whereIn('code', ['mechanics', 'terms', 'privacy'])
+                ->get();
+            $documents = $activeDocuments->keyBy('code');
+
+            if ($activeDocuments->count() !== 3
+                || ! $documents->has('mechanics')
+                || ! $documents->has('terms')
+                || ! $documents->has('privacy')) {
+                throw ValidationException::withMessages([
+                    'legal_documents' => 'No podemos enviar la propuesta porque no existe una única versión vigente de cada documento legal.',
+                ]);
+            }
+
             $purposes = [
                 'call_rules' => ['accepted' => true, 'document' => 'mechanics'],
                 'terms' => ['accepted' => true, 'document' => 'terms'],
@@ -78,9 +92,9 @@ class FinalizeSubmission
             foreach ($purposes as $purpose => $meta) {
                 $document = $documents->get($meta['document']);
                 $actor->legalAcceptances()->create([
-                    'legal_document_id' => $document?->id,
+                    'legal_document_id' => $document->id,
                     'purpose' => $purpose,
-                    'document_version' => $document?->version ?? '1.0',
+                    'document_version' => $document->version,
                     'accepted' => $meta['accepted'],
                     'accepted_at' => now('UTC'),
                     'ip_address' => request()->ip(),

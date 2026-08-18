@@ -38,8 +38,19 @@ class ProfileEligibilityTest extends TestCase
 
         $this->actingAs($user)->put('/perfil', [...$payload, 'whatsapp_opt_in' => '1'])->assertSessionHasNoErrors();
         $this->assertTrue($user->fresh()->profile->whatsapp_opt_in);
+        $this->assertDatabaseHas('legal_acceptances', [
+            'user_id' => $user->id,
+            'purpose' => 'whatsapp_contact',
+            'document_version' => '1.1',
+            'accepted' => true,
+        ]);
         $this->actingAs($user)->put('/perfil', [...$payload, 'whatsapp_opt_in' => '0'])->assertSessionHasNoErrors();
         $this->assertFalse($user->fresh()->profile->whatsapp_opt_in);
         $this->assertSame('+526621234567', $user->fresh()->profile->mobile_e164);
+        $this->assertDatabaseMissing('legal_acceptances', [
+            'user_id' => $user->id,
+            'purpose' => 'whatsapp_contact',
+            'document_version' => 'draft-1.1',
+        ]);
     }
 }

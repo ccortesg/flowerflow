@@ -4,6 +4,36 @@ return [
     'canonical_url' => env('FLOWERFLOW_CANONICAL_URL', 'https://app.flowerflow.com.mx'),
     'timezone' => env('FLOWERFLOW_TIMEZONE', 'America/Hermosillo'),
     'submissions_close_at' => env('FLOWERFLOW_SUBMISSIONS_CLOSE_AT', '2026-08-23 23:59:59'),
+    'organization' => [
+        'legal_name' => 'FUNXT, A.C.',
+        'rfc' => 'FUN110208BT0',
+        'commercial_name' => 'FLORECE HERMOSILLO',
+        'citizen_movement' => 'FLOWER FLOW',
+        'address' => 'ESPOLI 6 TOSCANA, BLVD. MORELOS Y SANTA CECILIA, C.P. 83143, Hermosillo, Sonora, México.',
+    ],
+    'legal_documents' => [
+        'mechanics' => [
+            'title' => 'Mecánica y convocatoria',
+            'version' => '1.1',
+            'path' => 'documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026_v1.1.pdf',
+            'sha256' => '11c399ca84735d7dbcb17174e192582c93589afa5100c0250753ca15def4db36',
+            'effective_at' => '2026-08-14 00:00:00',
+        ],
+        'terms' => [
+            'title' => 'Términos y condiciones',
+            'version' => '1.1',
+            'path' => 'documentos/2026/02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026_v1.1.pdf',
+            'sha256' => '4e3e6c272f9459b934004168bfccc26d6759a4dbce6c804c03afbb86cda6b144',
+            'effective_at' => '2026-08-14 00:00:00',
+        ],
+        'privacy' => [
+            'title' => 'Aviso de privacidad integral',
+            'version' => '1.1',
+            'path' => 'documentos/2026/03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026_v1.1.pdf',
+            'sha256' => '041ae9704f80a0108ee69bb39b8646ee8098134573a730f801e4057642ae2da1',
+            'effective_at' => '2026-08-11 00:00:00',
+        ],
+    ],
     'flags' => [
         'public' => env('FLOWERFLOW_PUBLIC_ENABLED', true),
         'registration' => env('FLOWERFLOW_REGISTRATION_ENABLED', false),

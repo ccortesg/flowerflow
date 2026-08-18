@@ -1,5 +1,9 @@
 # UX/UI, accesibilidad e identidad — Flower Flow 2026
 
+> **Estado vigente — 2026-08-17:** público, acceso, participante, wizard, panel y admisibilidad tienen interfaces reales; jueces, resultados, privacidad y auditor dedicado no. El diagnóstico por superficie/rol y los pendientes de UAT del SHA actual están en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
+
+> **Sincronización v1.1, actualizada 2026-08-18:** landing, `/documentos`, registro, login, perfil, envío, footer y panel muestran vínculos v1.1; las superficies globales identifican a FUNXT, A.C. y su RFC/domicilio verificados. La fecha del 23 de agosto, cuatro categorías y máximo cuatro propuestas están confirmados. La UI conserva sus descripciones actuales y el propietario aceptó que el PDF mencione accesibilidad en Movilidad y Hermosillo sin Barreras, sin recategorización.
+
 ## Adenda Hermosillo sin Barreras — 2026-08-06
 
 - La landing obtiene sólo categorías activas de la convocatoria activa y conserva un fallback exacto de cuatro. Usa cuatro tarjetas en escritorio, dos en tablet y una en móvil; “Hermosillo Florece” y “Hermosillo sin Barreras” comparten el formato `.is-featured` por slug, alternados con las otras dos categorías y sin depender de posición.
@@ -7,7 +11,7 @@
 - El dashboard participante enumera las cuatro categorías activas. Creación y edición de borradores usan una cuadrícula de dos columnas que baja a una; listado, detalle y revisión conservan el nombre y el icono configurado. Una propuesta enviada permanece inmutable.
 - El dashboard administrativo limita “Enviadas por categoría” a categorías activas de la convocatoria activa e incluye conteo cero. El filtro/listado/detalle histórico conserva relaciones existentes y acepta `?category=hermosillo-sin-barreras`.
 - El correo de confirmación incluye la categoría, además de folio, título y fecha. El snapshot inmutable conserva `public_id`, slug y nombre de la nueva categoría.
-- La plataforma muestra estos cambios aunque la Mecánica v1.0 siga indicando tres categorías/propuestas; la interfaz no presenta esa contradicción como jurídicamente resuelta.
+- La Mecánica v1.1 corregida confirma cuatro categorías y máximo cuatro propuestas. La superposición temática de accesibilidad quedó aceptada por el propietario; la interfaz conserva sus textos y categorías sin cambios.
 
 ## Sistema visual Fase 01
 
@@ -92,20 +96,20 @@ Pruebas automatizadas: `ParticipantExperienceRedesignTest` cubre datos dinámico
 Pruebas automatizadas: `tests/Feature/SubmissionWizardTest.php` cubre renderizado/pasos, perfil, equipo, categoría ajena, preservación por sección, sanitización, guardado parcial, hosts, credenciales, cuota compartida, requisito documental, propietario y estado inmutable. `tests/Feature/SubmissionFlowTest.php` recorre creación, contenido, archivo y finalización mediante el nuevo contrato.
 
 **Fecha de corte:** 2026-07-16
-**Estado:** baseline histórica más landing pública V2 y experiencia participante implementadas; los módulos futuros permanecen como diseño de experiencia
+**Estado:** público/participante/admisibilidad implementados; los módulos futuros permanecen como diseño de experiencia
 **Etiquetas:** `DECISION` = confirmado; `ASSUMPTION` = dirección recomendada; `PENDING` = requiere insumo o aprobación.
 
 ## Limitación del insumo
 
 **PENDING:** el texto base comienza truncado y omite la introducción y los módulos 1–6. El mapa de páginas reconstruye esos módulos para poder planificar. Debe reconciliarse con la fuente completa antes de convertir wireframes o rutas propuestas en contrato.
 
-## Punto de partida comprobado
+## Punto de partida histórico comprobado (2026-07-15)
 
 - **DECISION:** el repositorio usa Materialize 3.0.0 con Bootstrap 5 y Vite.
 - **DECISION:** existen un layout público (`resources/views/layouts/layoutFront.blade.php`) y layouts administrativos, incluido el vertical.
 - **DECISION:** `config/custom.php` mantiene customizer activo y configuración demo; debe desactivarse en producción durante implementación aprobada.
 - **DECISION:** `resources/menu/verticalMenu.json` conserva navegación demo.
-- **DECISION:** las rutas actuales son páginas base/demo, idioma, error, login y registro; ningún flujo de negocio descrito aquí está implementado todavía.
+- **HISTÓRICO:** en el starter original las rutas eran páginas base/demo. Al corte 2026-08-17 existen 41 rutas propias de negocio; conservar esta línea sólo como baseline.
 - **PENDING:** confirmar starter kit/full version, licencia, componentes realmente autorizados y assets de marca.
 
 ## Principios de experiencia

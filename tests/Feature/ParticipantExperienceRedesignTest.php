@@ -71,7 +71,7 @@ class ParticipantExperienceRedesignTest extends TestCase
             ->assertSee('data-profile-cancel', false)
             ->assertSee('action="'.route('profile.update').'"', false)
             ->assertSee('name="mobile_national"', false)
-            ->assertSee('03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026.pdf', false)
+            ->assertSee('03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026_v1.1.pdf', false)
             ->assertDontSee('ri-notification', false);
 
         $incomplete = User::factory()->create(['email' => 'perfil-pendiente@example.test']);
@@ -272,9 +272,9 @@ class ParticipantExperienceRedesignTest extends TestCase
     {
         $this->get(route('documents'))
             ->assertOk()
-            ->assertSee('01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf', false)
-            ->assertSee('02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026.pdf', false)
-            ->assertSee('03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026.pdf', false);
+            ->assertSee('01_Mecanica_Convocatoria_Hermosillo_Florece_2026_v1.1.pdf', false)
+            ->assertSee('02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026_v1.1.pdf', false)
+            ->assertSee('03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026_v1.1.pdf', false);
 
         $this->get(route('landing'))
             ->assertOk()
