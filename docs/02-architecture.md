@@ -1,6 +1,8 @@
 # Arquitectura propuesta
 
-> **Adenda Fase 02B — 2026-08-18:** M1/M2 están implementados localmente. Sobre roles/gates exactos se añadió `JudgeProfile`, enums de estado y función, capacidad derivada, Actions transaccionales, Policy/Requests, listener de verificación, middleware `judge.active`, notificaciones cifradas y `/panel/jueces`. Las sesiones database permiten revocación dirigida fail-closed. M3–M10 no están implementados; `P2B-BLOCK-001` está resuelto y M4 requiere autorización posterior.
+> **Estado vigente M5 — 2026-08-18:** M4A conserva cuatro `primary` y dos `substitute` ilimitados. M5 está `GO LOCAL/TEST`: `BlindReviewPackageBuilder` proyecta sólo una allowlist desde el snapshot, una fila única por versión fija el hash canónico y un inventario separado sirve anexos privados con Policy ligada a la asignación activa. M6–M10 permanecen separados.
+
+> **Adenda Fase 02B — 2026-08-18:** M1–M5 están implementados localmente. M5 añade `BlindReviewPackage`/`BlindReviewPackageFile`, builder determinista, integridad binaria, panel explícito y consumo juez por asignación. M6–M10 no están implementados/no autorizados; `P2B-BLOCK-001` permanece resuelto.
 
 > **Implementación vigente — 2026-08-18:** monolito modular Laravel 12.64.0 con Fase 01/02A, exportaciones XLSX privadas y cierre ampliado. MySQL es el datastore local; timestamps se persisten UTC y el concurso conserva `America/Hermosillo`. Uploads usan discos privados y sólo salen por controller+Policy. El propietario registra `OWNER_CONFIRMED_DEPLOYED`; el SHA y la operación productiva siguen sin evidencia técnica independiente. Ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
@@ -15,6 +17,10 @@
 ## Decisión ejecutiva
 
 Se recomienda un **monolito modular Laravel 12 renderizado en servidor**, con Blade y el shell Materialize 3.0.0 existente. MySQL es el sistema de registro; las colas, sesiones y cache comienzan en base de datos; un worker persistente y el scheduler se administran con systemd o Supervisor/cron según el inventario real de la EC2.
+
+### Frontera implementada M4–M5
+
+`Assignments` consulta elegibilidad sin modificarla, fija `SubmissionVersion`+`RubricVersion` y deriva cobertura desde filas append-only. `Conflicts` bloquea la asignación y crea un reemplazo ligado. M5 nunca entrega el snapshot crudo: genera una proyección allowlist separada, canónica e inmutable, más un inventario técnico sin nombres/rutas originales. El juez obtiene contenido sólo si su asignación exacta y el paquete siguen `active`; el reemplazo comparte el mismo paquete por `submission_version_id`.
 
 La decisión minimiza piezas nuevas durante el plazo de 31 días. Mantiene las fronteras de dominio en código para poder extraer componentes después, sin pagar ahora el costo de una SPA, microservicios o Redis.
 
@@ -250,15 +256,16 @@ Estos objetivos son de aplicación; disponibilidad y recuperación requieren con
 5. Storage privado EBS frente a S3 para producción.
 6. Fecha/hora de apertura, correcciones/retiro/equipos colaborativos y reglas legales; el cierre inclusivo ya es `2026-08-23 23:59:59 America/Hermosillo`.
 7. RPO/RTO y propietario de operación.
-8. Ejecutar M4 sólo tras M3 verde y autorización separada: conservar cuatro principales sin límite fijo y quinto sustituto exclusivo con capacidad diez; `P2B-BLOCK-001` ya está resuelto.
+8. M4A `GO LOCAL/TEST`: cuatro principales y dos sustitutos exclusivos sin límite, con selección manual. M5 también está `GO LOCAL/TEST` y conserva ese contrato al proyectar el paquete; M6 debe verificar ambos antes de añadir captura.
 
 No se autoriza implementar los módulos o comportamientos aún pendientes ni desplegar hasta aprobar esas decisiones o aceptar los supuestos explícitos de un ExecPlan nuevo.
 
 ## Adenda arquitectónica Fase 02B aprobada — 2026-08-18
 
-- Identidad ya agrega el rol exclusivo `judge`; una cuenta sin rol o multirol falla cerrada mediante `EnsureExclusiveBusinessRole`. Alta directa por `admin`, sin invitaciones de juez, sigue pendiente de M2.
+- Identidad agrega el rol exclusivo `judge`; una cuenta sin rol o multirol falla cerrada mediante `EnsureExclusiveBusinessRole`. M2 implementó alta directa por `admin`, sin invitaciones de juez.
 - El shell juez ya está separado de participante y `/panel`; `FLOWERFLOW_EVALUATION_ENABLED=false` lo cierra por defecto y `/juez` sólo muestra un estado vacío sin propuestas ni PII.
-- El dominio futuro usa `judge_profiles`, paquetes ciegos estructurales, asignaciones manuales, conflictos, rúbrica/versiones, evaluaciones y revisiones append-only. No reusa el snapshot crudo como DTO de juez.
+- El dominio vigente usa `judge_profiles` y rúbrica/versiones M3; paquetes ciegos, asignaciones, conflictos, evaluaciones y revisiones append-only siguen futuros. Nunca reutilizará el snapshot crudo como DTO de juez.
+- M3 normaliza `rubric_versions`/`rubric_criteria`: versión positiva por competencia, estados `draft|active|superseded`, criterios exactos, descripciones nulas, checks/FKs/índices y una sola activa mediante transacción, locks y `active_slot`. Una activa/sustituida no se actualiza o elimina.
 - La proyección permite campos sustantivos y anexos evaluables, pero elimina PII estructurada, residencia, notas internas, aclaraciones, historial, nombres expuestos y metadatos técnicos. La autoidentificación dentro del contenido es un riesgo aceptado, no una promesa de anonimización total.
 - El servidor calcula y persiste puntajes; la consolidación sólo existe con cuatro evaluaciones válidas. Ganadores/resultados no forman parte del componente Evaluación.
 - La edición administrativa conserva actor real, juez sujeto, razón y revisión previa; no suplanta ni sobrescribe la autoría histórica.

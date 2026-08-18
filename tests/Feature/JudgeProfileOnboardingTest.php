@@ -68,7 +68,9 @@ class JudgeProfileOnboardingTest extends TestCase
         }
 
         $this->assertFalse(Schema::hasTable('judge_invitations'));
-        $this->assertFalse(Schema::hasTable('judge_assignments'));
+        $this->assertTrue(Schema::hasTable('judge_assignments'));
+        $this->assertDatabaseCount('judge_assignments', 0);
+        $this->assertDatabaseCount('judge_conflicts', 0);
     }
 
     public function test_only_admin_can_create_and_new_judge_has_secure_pending_profile_and_setup_mail(): void
@@ -119,7 +121,7 @@ class JudgeProfileOnboardingTest extends TestCase
         });
         $this->actingAs($admin)->get(route('panel.judges.index'))->assertOk()->assertSee('Jueza Sintética');
         $this->actingAs($admin)->get(route('panel.judges.create'))->assertOk()->assertSee('Alta directa');
-        $this->actingAs($admin)->get(route('panel.judges.show', $profile))->assertOk()->assertSee('Principal')->assertSee('Sin límite fijo');
+        $this->actingAs($admin)->get(route('panel.judges.show', $profile))->assertOk()->assertSee('Principal')->assertSee('Sin límite');
 
         $this->actingAs($admin)->post(route('panel.judges.store'), [
             'name' => 'Juez Sustituto Sintético',
@@ -128,7 +130,7 @@ class JudgeProfileOnboardingTest extends TestCase
         ])->assertRedirect();
         $substitute = User::query()->where('email', 'sustituto.m2@example.test')->firstOrFail()->judgeProfile;
         $this->assertSame(JudgeAssignmentRole::Substitute, $substitute->assignment_role);
-        $this->assertSame(10, $substitute->max_active_assignments);
+        $this->assertNull($substitute->max_active_assignments);
 
         foreach ([$this->participant(), $this->reviewer(), $this->activeJudge($admin)] as $unauthorized) {
             $this->actingAs($unauthorized)->get(route('panel.judges.index'))->assertForbidden();
@@ -386,7 +388,7 @@ class JudgeProfileOnboardingTest extends TestCase
         ]);
     }
 
-    public function test_database_enforces_primary_and_substitute_capacity_contract_and_mail_failure_does_not_rollback_account(): void
+    public function test_database_enforces_unlimited_capacity_for_both_judge_roles_and_mail_failure_does_not_rollback_account(): void
     {
         $admin = $this->adminWithPassword();
         $judge = $this->pendingJudge($admin, ['email' => 'capacity-m2@example.test']);
@@ -404,12 +406,12 @@ class JudgeProfileOnboardingTest extends TestCase
             'capacity-substitute-m2@example.test',
             JudgeAssignmentRole::Substitute,
         );
-        $this->assertSame(10, $substitute->max_active_assignments);
+        $this->assertNull($substitute->max_active_assignments);
         try {
             DB::table('judge_profiles')->where('id', $substitute->id)->update(['max_active_assignments' => 9]);
-            $this->fail('A substitute judge must have capacity ten.');
+            $this->fail('A substitute judge must not have a fixed capacity.');
         } catch (QueryException) {
-            $this->assertSame(10, $substitute->fresh()->max_active_assignments);
+            $this->assertNull($substitute->fresh()->max_active_assignments);
         }
 
         config(['flowerflow.mail.queue_connection' => 'missing-m2-connection']);

@@ -2,17 +2,17 @@
 
 **Fecha:** 2026-08-18 (`America/Hermosillo`)
 
-**Estado:** `DESIGN APPROVED — M1/M2 GO LOCAL/TEST — M3 READY FOR EXPLICIT AUTHORIZATION`
+**Estado:** `OWNER CONTRACT IMPLEMENTED THROUGH M5 — GO LOCAL/TEST — M6 NOT AUTHORIZED`
 
 **ExecPlan:** `.agent/execplans/flowerflow-phase-02b-evaluation-design.md`
 
 ## 1. Resumen ejecutivo
 
-La Fase 02B tiene **20 % de implementación funcional**, limitado a M1 y M2. Además del aislamiento base, el repositorio aporta `judge_profiles`, función `primary|substitute`, capacidad coherente, alta directa, credencial propia, activación derivada, suspensión/reactivación, revocación de sesiones y recovery administrativo 2FA. No aporta asignaciones, proyección ciega, conflictos, rúbricas, evaluaciones, puntuaciones ni pantallas operativas del flujo sustantivo.
+La Fase 02B conserva M1–M4A verdes y M5 materializa en local/test el paquete ciego estructural: proyección allowlist inmutable de la `submission_version`, inventario exacto de anexos, nombres neutros, descarga privada y acceso exclusivo mediante asignación activa. Tras los contratos históricos `4 primary + 1 substitute × 10` y `4 primary + 2 substitute × 30`, el contrato vigente conserva seis jueces operativos sin límite: los cuatro principales cubren todas las propuestas y los dos sustitutos sólo reciben reemplazos. Todavía no existe captura de evaluación, puntuación, consolidación o resultado.
 
-El propietario respondió las 21 decisiones el 2026-08-18 y después resolvió expresamente `P2B-BLOCK-001`: cuatro jueces principales evaluarán todas las propuestas elegibles sin límite fijo y un quinto juez, con capacidad máxima de diez, se reserva exclusivamente para sustituciones. M1 y M2 quedaron **`GO LOCAL/TEST`** y el perfil M2 fue alineado antes de su primer commit. Fase 02B permanece en **20 % funcional** y sube a **90 % de preparación**; M3–M10 no están implementados.
+El propietario respondió las 21 decisiones el 2026-08-18 y corrigió posteriormente composición y capacidad. La decisión final deja `P2B-BLOCK-001=RESOLVED` y M4A cierra `P2B-M4-CORRECTION-001` en local/test: exactamente cuatro `primary` y dos `substitute`, todos con `max_active_assignments=NULL`, sin carga inicial para sustitutos y con selección manual. M5 está `GO LOCAL/TEST`; M6–M10 no están implementados.
 
-La siguiente puerta es la autorización expresa y ejecución local/test del **Milestone 3 —rúbrica versionada—** mediante el prompt de la sección 21. El cierre local de M1/M2 no autoriza M3–M10, producción, ganadores o resultados. `P2B-BLOCK-001` está `RESOLVED BY OWNER`; M4 deja de tener un bloqueo decisorio, pero continúa no autorizado y debe esperar M3 verde y un prompt propio.
+La siguiente puerta es **M6 —evaluación en borrador y cálculo exclusivo en servidor**, mediante su prompt separado de la sección 21. Debe verificar primero M4A y M5 `GO LOCAL/TEST`, conservar el paquete ciego inmutable y no mezclar confirmación/envío/reapertura M7. Producción, ganadores y resultados permanecen fuera.
 
 ## 2. Estado productivo y alcance de evidencia
 
@@ -21,7 +21,7 @@ La siguiente puerta es la autorización expresa y ejecución local/test del **Mi
 | Cambios actuales instalados en producción y plataforma publicada con más de 50 propuestas reales | `OWNER_CONFIRMED_DEPLOYED` | Confirmación expresa del propietario del 2026-08-18. |
 | SHA productivo exacto | `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR` | El propietario no vinculó inequívocamente la instalación a un SHA en esta tarea. |
 | Migraciones, flags, workers, scheduler, SMTP, monitoreo, integridad, smoke y UAT productiva | `POR_CONFIRMAR` | No existe evidencia técnica independiente en este milestone. |
-| Baseline local | `VERIFIED` | Rama `codex/submission-deadline-extension`; local/remoto/merge-base en `e0fa0455e61afcb38593b62ae0d983f75a92b210`; árbol inicial limpio. |
+| Baseline local vigente M4 | `VERIFIED` | Rama `codex/submission-deadline-extension`; local/remoto/merge-base inicial M4 en `865059ad302ff4195ac18f671bd6fa13b99e398b`; se preservó el árbol M3 preexistente. El baseline anterior `e0fa0455…` permanece en la historia M1/M2. |
 
 Codex no accedió a la URL pública, producción, AWS, EC2, SSH/SSM, bases, logs ni servicios externos. No se consultó PII ni contenido de propuestas reales.
 
@@ -32,38 +32,38 @@ La preparación se evaluó por contrato, evidencia real, decisiones cerradas, se
 | Contrato | Preparación | Evidencia y brecha dominante |
 |---|---:|---|
 | Identidad/acceso | 100 % | M1/M2 implementaron roles exclusivos, gates, perfil, alta directa, credencial propia, activación, suspensión/reactivación y recovery 2FA sólo en local/test. |
-| Asignaciones | 90 % | Asignación manual, cuatro evaluaciones, cuatro principales sin límite y un sustituto exclusivo con capacidad diez ya están aprobados; falta implementar M4. |
-| Evaluación ciega | 80 % | Ceguera simple estructural y riesgo de autoidentificación aceptados; falta implementar la proyección. |
-| Rúbrica | 95 % | Cinco criterios, pesos, rangos, pasos y comentarios aprobados; falta versionar e implementar. |
-| Ciclo de evaluación | 85 % | Estados, conflicto, envío y reapertura append-only aprobados; falta código y QA. |
+| Asignaciones | 100 % LOCAL/TEST | M4/M4A implementan cuatro principales, dos sustitutos sin carga inicial, capacidad ilimitada y selección manual explícita. |
+| Evaluación ciega | 100 % LOCAL/TEST | M5 implementa proyección allowlist, hash canónico, anexos neutros, descarga privada y acceso por asignación activa; el riesgo de autoidentificación semántica permanece aceptado. |
+| Rúbrica | 100 % | M3 materializó y probó cinco criterios exactos, versionado, activación/sustitución, inmutabilidad y concurrencia sólo en local/test. |
+| Ciclo de evaluación | 90 % | M4 implementó declaración/resolución de conflicto append-only; envío y reapertura permanecen futuros. |
 | Cálculo/consolidación | 95 % | Fórmula, precisión, redondeo, media, faltantes y empate definidos. |
-| Seguridad/auditoría | 90 % | M1/M2 cerraron shells/estados y añadieron step-up, auditoría y revocación; 2FA opcional y edición admin futura de puntajes conservan riesgo. |
-| UX accesible | 90 % | Shell, estado seguro y gestión administrativa M2 pasaron QA responsive; superficies de rúbrica/asignación/evaluación aún no existen. |
-| Notificaciones/operación | 80 % | M2 implementó el subconjunto indispensable de cuenta con HTML+texto y fallo observable; eventos M4+ y recordatorios siguen futuros. |
-| Compatibilidad de datos | 95 % | Migraciones M1/M2 aditivas pasaron upgrade/rollback/forward sin cuentas/asignaciones automáticas; el perfil distingue función/capacidad y faltan esquemas M3+. |
-| **Promedio de preparación** | **90 %** | **Implementación funcional 20 %, limitada a M1/M2.** |
+| Seguridad/auditoría | 99 % | M1–M5 aplican permisos separados, ownership, locks, hashes, inmutabilidad, descargas privadas y auditoría redactada. 2FA opcional y edición admin futura de puntajes conservan riesgo. |
+| UX accesible | 99 % | Shell/estado, rúbricas, asignaciones/conflictos y paquete ciego pasaron QA Firefox responsive; la captura de evaluación aún no existe. |
+| Notificaciones/operación | 82 % | M2 implementó el subconjunto indispensable de cuenta con HTML+texto y fallo observable; notificaciones de asignación/evaluación y recordatorios siguen futuros. |
+| Compatibilidad de datos | 99 % | Migraciones M1–M5 aditivas pasaron upgrade/rollback/forward; M5 no genera paquetes automáticamente ni modifica snapshots o binarios fuente. |
+| **Puerta de preparación** | **M5 GO LOCAL/TEST** | **M1–M5 conformes; M6 continúa no implementado y requiere autorización separada.** |
 
 ## 4. Inventario reutilizable y brechas reales
 
 | Capacidad actual | Evidencia de código | Reutilización propuesta | Brecha 02B |
 |---|---|---|---|
 | Auth y correo verificado | Fortify, `DashboardController`, acciones M2 y gates `auth`/`verified` | Login, reset, verify, credencial propia y desafío TOTP | Alta/activación M2 completa; entregabilidad externa no acreditada. |
-| Roles/permisos | `BusinessRole`, `AssignExclusiveBusinessRole`, seeder y migraciones M1/M2 | Rol exacto, permisos separados y escritor fail-closed | Mantener invariantes al añadir permisos M3+. |
-| Gate de panel | `routes/web.php`, `EnsureExclusiveBusinessRole`, `JudgeProfilePolicy` | Panel sólo `reviewer|admin`; `/panel/jueces` sólo admin exacto con permisos M2 | No es shell de juez y no debe hospedar vistas de evaluación judge. |
-| Shells | Layout Flower Flow, `/cuenta/acceso`, `/juez` y `/juez/estado` | Marca, accesibilidad, flag, perfil activo y separación por rol exacto | `/juez` sólo es estado vacío; no existen datos/controles M3+. |
+| Roles/permisos | `BusinessRole`, `AssignExclusiveBusinessRole`, seeder y migraciones M1–M5 | Rol exacto, permisos separados y escritor fail-closed | Mantener invariantes al añadir permisos M6+. |
+| Gate de panel | `routes/web.php`, `EnsureExclusiveBusinessRole`, `JudgeProfilePolicy`, `RubricVersionPolicy` | Panel sólo `reviewer|admin`; `/panel/jueces` y `/panel/rubricas` sólo admin exacto con permisos separados | No es shell de juez y no debe hospedar vistas de evaluación judge. |
+| Shells | Layout Flower Flow, `/cuenta/acceso`, `/juez`, `/juez/estado` y `/juez/asignaciones` | Marca, accesibilidad, flag, perfil activo y separación por rol exacto | M5 expone sólo el paquete allowlist a la asignación activa; la captura pertenece a M6. |
 | Propiedad/descarga | `app/Policies/SubmissionPolicy.php:10-29` | Patrón Policy + comprobación de pertenencia | No sirve para juez: `view submissions` abre propuesta completa y PII. |
 | Snapshot inmutable | `app/Actions/FinalizeSubmission.php:39-69`, `app/Models/SubmissionVersion.php:10-31`, `app/Models/Concerns/ImmutableRecord.php:7-13` | Fuente versionada de contenido enviado | Incluye identidad, equipo, nombres de archivo y enlaces; no es ciego. |
 | Admisibilidad | `app/Models/EligibilityReview.php:11-61`, `app/Services/EligibilityReviewWorkflow.php:337-386` | `admitted` como precondición explícita | No crea estado de evaluación ni debe mutar propuestas por inferencia. |
-| Storage privado | `SubmissionFileStore`, discos privados y Policies | Descarga controlada y auditada | Falta allowlist específica de anexos para juez y derivados anonimizados. |
-| Auditoría | `AuditLogger`, eventos de envío/admisibilidad y acciones M2 | Actor, acción, sujeto técnico, transiciones redactadas y UTC | Falta catálogo de eventos M3+ y política de retención ejecutable. |
-| Concurrencia | transacciones, `lockForUpdate`, idempotencia de envío | Activar/asignar/enviar/reabrir de forma serializable | Falta versionado optimista o lock de borrador y doble envío de evaluación. |
+| Storage privado | `SubmissionFileStore`, `BlindReviewPackageBuilder`, `BlindReviewFileIntegrityVerifier` y Policies M5 | Inventario allowlist exacto, integridad binaria y descarga neutra auditada | Antivirus nuevo/derivados semánticos siguen fuera del contrato. |
+| Auditoría | `AuditLogger`, eventos de envío/admisibilidad, cuenta juez, rúbrica, asignaciones/conflictos y paquetes/descargas | Actor, acción, sujeto técnico, transiciones redactadas y UTC | Faltan eventos M6+ y política de retención ejecutable. |
+| Concurrencia | transacciones, `lockForUpdate`, unicidades e idempotencia M3/M4 | Rúbrica, cobertura y reemplazo ya se serializan; reutilizar para empaquetar/enviar/reabrir | Falta versionado optimista o lock de borrador y doble envío de evaluación. |
 | Correo resiliente | `ResilientMailDispatcher`, notificaciones M2 HTML/texto | Configuración de acceso, verificación y cambios de estado post-commit sin PII | Faltan eventos de asignación/evaluación/recordatorios y ledger/idempotencia M4+. |
 | 2FA/contraseña | `AccountSecurityController`, acciones M2 y rutas protegidas | Step-up, recuperación admin, limpieza TOTP y revocación de sesiones | 2FA sigue opcional por contrato; hardening futuro no debe convertirlo en obligatorio. |
-| Pruebas negativas | `JudgeRbacIsolationTest`, `JudgeProfileOnboardingTest` y suites vigentes | Matriz roles/estados/flag/función/capacidad/IDOR/mass assignment/sesiones | M1+M2 cubren 16 pruebas/267 aserciones; estados M3+ aún no existen. |
+| Pruebas negativas | suites M1–M5, incluidas concurrencia de rúbrica/asignación/paquete | Matriz roles/estados/flag/función/ownership/IDOR/mass assignment/inmutabilidad/concurrencia | Suite completa vigente: 150 pruebas/1,703 aserciones; estados M6+ aún no existen. |
 
 ### Riesgo de frontera actual
 
-M1 resolvió la frontera por descarte y M2 conservó sus invariantes: participante, panel y juez exigen roles exactos; una cuenta sin rol o multirol no recibe ningún shell de negocio; `/juez` exige además permiso exclusivo, correo verificado, perfil activo y flag. Pending/suspended reciben estado seguro, no datos de negocio.
+M1 resolvió la frontera por descarte y M2–M5 conservaron sus invariantes: participante, panel y juez exigen roles exactos; una cuenta sin rol o multirol no recibe ningún shell de negocio; `/juez` exige además permiso exclusivo, correo verificado, perfil activo y flag. Pending/suspended reciben estado seguro. M5 exige ownership de asignación activa y paquete activo, nunca sirve el snapshot crudo y corta inmediatamente el acceso tras conflicto o anulación.
 
 ## 5. Contratos aprobados y diseño futuro
 
@@ -82,7 +82,7 @@ M1 resolvió la frontera por descarte y M2 conservó sus invariantes: participan
 
 - roles `participant`, `reviewer`, `judge` y `admin` estrictamente excluyentes;
 - alta directa de jueces por `admin`; no se implementan invitaciones de juez en 02B;
-- asignación manual y cuatro evaluaciones por propuesta en las cuatro categorías; cuatro jueces principales evaluarán todas las propuestas elegibles sin límite fijo y un quinto juez sustituto, sin asignaciones iniciales, admite como máximo diez reasignaciones activas; no hay especialidad;
+- asignación manual y cuatro evaluaciones por propuesta en las cuatro categorías; cuatro jueces principales evaluarán todas las propuestas elegibles y dos jueces sustitutos sólo recibirán reemplazos; los seis son ilimitados y no hay especialidad;
 - ceguera simple estructural: se ocultan identidad estructurada, contacto, residencia, notas internas, aclaraciones e historial de admisibilidad; se muestran todos los campos sustantivos y anexos evaluables, aceptando el riesgo de identidad contenida en texto o archivos;
 - anonimización automática limitada a campos estructurados, nombres de archivo y metadatos técnicos; no se afirma anonimización semántica;
 - rúbrica global de cinco criterios, escala 0–10, paso 0.5, total ponderado 0–100, precisión interna de cuatro decimales y visual de dos, `HALF_UP`;
@@ -95,7 +95,7 @@ M1 resolvió la frontera por descarte y M2 conservó sus invariantes: participan
 - notificaciones mínimas de juez y recordatorios de participantes el 20 y 22 de agosto de 2026 a las 09:00, hora de Hermosillo;
 - retención uniforme de 24 meses desde el cierre administrativo del ciclo de evaluación.
 
-`P2B-BLOCK-001 — RESOLVED BY OWNER 2026-08-18`: el contrato anterior de cuatro jueces × ocho proyectos y ausencia de reserva queda sustituido. Los cuatro jueces principales no tienen límite fijo y cubren todas las propuestas elegibles; el quinto es sustituto exclusivo y admite hasta diez reasignaciones activas. El sistema debe impedir que el sustituto reciba asignaciones iniciales y rechazar la undécima sustitución activa. Superar ese límite exige una decisión operativa nueva, pero no bloquea el diseño ni la autorización futura de M4.
+`P2B-BLOCK-001 — OWNER FINAL/RESOLVED 2026-08-18`: el contrato vigente es cuatro jueces principales y dos sustitutos exclusivos, todos sin límite. Ningún sustituto recibe asignación inicial; `admin` selecciona manualmente uno de los dos operativos. M4A implementa capacidad `NULL` para ambos roles y demuestra más de treinta reemplazos sin rechazo por volumen. `P2B-M4-CORRECTION-001` está cerrado localmente.
 
 ## 6. Contrato 1 — identidad y acceso del juez
 
@@ -119,7 +119,7 @@ M1 resolvió la frontera por descarte y M2 conservó sus invariantes: participan
 ### Modelo propuesto
 
 - `users` conserva credenciales, correo verificado y TOTP; no duplicar secretos.
-- `judge_profiles` es uno-a-uno con `users`, con `public_id`, `assignment_role=primary|substitute`, estado operativo, capacidad `NULL` para principal o `10` para sustituto, alta/suspensión/reactivación, actores y timestamps. No tiene especialidad ni categorías asignadas.
+- `judge_profiles` es uno-a-uno con `users`, con `public_id`, `assignment_role=primary|substitute`, estado operativo, capacidad siempre `NULL`, alta/suspensión/reactivación, actores y timestamps. La composición vigente exige cuatro primary y dos substitute activos; no tiene especialidad ni categorías asignadas.
 - `judge_invitations` queda descartada por `P2B-DEC-002`; M2 no debe crear esa tabla, token o flujo.
 - El alta directa debe crear cuenta, rol único y perfil pendiente dentro de una transacción; nunca marca el correo como verificado por inferencia ni expone una contraseña inicial. La activación requiere correo verificado y contraseña propia establecida mediante el mecanismo seguro de recuperación/configuración.
 - Suspender bloquea rutas y mutaciones 02B y revoca sesiones. Dado que los roles son excluyentes, no existe una capacidad secundaria que deba conservar acceso a otro shell.
@@ -128,7 +128,7 @@ M1 resolvió la frontera por descarte y M2 conservó sus invariantes: participan
 ### Gate de rutas recomendado
 
 - Shell participante: `auth`, `verified`, rol/capacidad participante explícita.
-- Shell juez: `auth`, `verified`, `judge.active`, eventual `2fa.confirmed`, permiso base de juez.
+- Shell juez: `auth`, `verified`, `judge.active` y permiso base de juez; 2FA permanece opcional por decisión aprobada.
 - Shell administrativo: permisos actuales; acciones 02B con permisos propios y confirmación de contraseña cuando sean críticas.
 - Redirección post-login por capacidad explícita; usuario sin rol obtiene pantalla segura sin datos, no un shell por descarte.
 
@@ -139,10 +139,10 @@ M1 resolvió la frontera por descarte y M2 conservó sus invariantes: participan
 - La asignación es exclusivamente manual.
 - Cada propuesta elegible requiere cuatro evaluaciones, tanto en Movilidad con Flow como en Hermosillo Florece, Mi familia, mi mascota y Hermosillo sin Barreras.
 - Los cuatro jueces principales evaluarán todas las propuestas elegibles de las cuatro categorías; no existe especialidad, filtro temático ni límite fijo de asignaciones para ellos.
-- Un quinto juez será exclusivamente sustituto: no recibe asignaciones iniciales y admite como máximo diez reasignaciones activas. Para ese límite cuentan `assigned`, `in_progress`, `conflict_declared` pendiente de resolución y `reopened`; dejan de contar `submitted`, `voided`, `cancelled`, `replaced` y `expired`.
+- Dos jueces serán exclusivamente sustitutos: no reciben asignaciones iniciales y no tienen límite de reasignaciones activas.
 - El plazo global de envío es `2026-08-27 23:59:59 America/Hermosillo`.
 
-`P2B-BLOCK-001` quedó `RESOLVED BY OWNER`: la cobertura inicial no se limita por capacidad y existe una reserva explícita para hasta diez sustituciones activas. M4 continúa sujeto a autorización separada, no a una decisión adicional de capacidad.
+`P2B-BLOCK-001` quedó resuelto mediante dos sustitutos ilimitados. La implementación local M4A acredita composición `4+2`, capacidad nula y selección manual.
 
 ### Invariantes propuestos
 
@@ -150,9 +150,10 @@ M1 resolvió la frontera por descarte y M2 conservó sus invariantes: participan
 - La asignación se liga a `submission_version_id`, versión de rúbrica y paquete ciego exactos.
 - Una asignación queda activa únicamente después de validación completa y confirmación administrativa transaccional.
 - Unique lógico por `submission_version_id + judge_profile_id`; reintentos son idempotentes.
-- La cantidad requerida, funciones, capacidades, ausencia de especialidad y plazo son `OWNER_APPROVED`.
+- La cantidad requerida, funciones, ausencia de límites, ausencia de especialidad y plazo son `OWNER_APPROVED`.
 - Reasignar no borra: cancela/invalida la asignación original con razón y crea otra.
-- Un conflicto bloquea de inmediato la asignación original. `admin` decide; si lo confirma, la asignación se marca `voided` y crea manualmente otra para el juez sustituto. No se reasigna automáticamente, no reutiliza al juez conflictuado y la undécima sustitución activa falla cerrada.
+- Un conflicto bloquea de inmediato la asignación original. `admin` decide y selecciona manualmente uno de los dos sustitutos operativos; si confirma, la original queda `voided` y se crea otra. No existe selección automática, no se reutiliza al juez conflictuado ni se rechaza por volumen.
+- La decisión no define una cadena cuando el replacement ya asignado declara conflicto, es suspendido o deja de estar operativo. Hasta aprobación expresa, ese caso conserva historia, deja cobertura incompleta y falla cerrado; no consume automáticamente al segundo sustituto. Esta pregunta no impide que `admin` elija cualquiera de los dos para sustituir el conflicto original de un primary.
 - Una asignación incompleta no cambia `submissions.status`. El estado de cobertura se deriva del número de asignaciones activas y evaluaciones válidas frente al contrato aprobado.
 - Ninguna migración inicial crea asignaciones para las propuestas existentes.
 
@@ -203,27 +204,27 @@ El propietario acepta expresamente que texto, imágenes, enlaces o anexos puedan
 
 ### Rúbrica global aprobada
 
-| Código | Criterio | Descripción aprobada | Peso | Escala | Paso |
+| Código | Criterio | Descripción extensa | Peso | Escala | Paso |
 |---|---|---|---:|---:|---:|
-| `relevance` | Pertinencia | Correspondencia con la convocatoria y la categoría seleccionada. | 20 % | 0–10 | 0.5 |
-| `clarity` | Claridad | Definición comprensible del problema, objetivo y propuesta. | 20 % | 0–10 | 0.5 |
-| `feasibility` | Viabilidad | Factibilidad técnica, operativa y temporal. | 25 % | 0–10 | 0.5 |
-| `impact` | Impacto | Beneficio esperado y alcance para la población objetivo. | 25 % | 0–10 | 0.5 |
-| `coherence` | Coherencia | Consistencia integral y calidad de la presentación. | 10 % | 0–10 | 0.5 |
+| `pertinence` | Pertinencia | `POR_CONFIRMAR` / persistida `NULL` | 20 % | 0–10 | 0.5 |
+| `clarity` | Claridad | `POR_CONFIRMAR` / persistida `NULL` | 20 % | 0–10 | 0.5 |
+| `feasibility` | Viabilidad | `POR_CONFIRMAR` / persistida `NULL` | 25 % | 0–10 | 0.5 |
+| `impact` | Impacto | `POR_CONFIRMAR` / persistida `NULL` | 25 % | 0–10 | 0.5 |
+| `coherence` | Coherencia | `POR_CONFIRMAR` / persistida `NULL` | 10 % | 0–10 | 0.5 |
 |  | **Total** |  | **100 %** |  |  |
 
-La misma rúbrica aplica a las cuatro categorías. Su primera versión técnica será `1.0`; se activa antes de crear asignaciones y queda inmutable al activarse. No existe puntaje mínimo aprobado.
+La misma rúbrica aplica a las cuatro categorías. M3 implementó la versión entera positiva `1` como borrador canónico local/testing; la activación es administrativa y explícita. No existe puntaje mínimo aprobado. No existe texto extenso aprobado para los criterios y por ello no se inventó.
 
 ### Contrato aprobado
 
 - La rúbrica 02B pertenece a la convocatoria y es global para las cuatro categorías; no existen overrides por categoría en este alcance.
-- Una versión `draft` puede editarse; `active` exige validaciones; al activarse queda inmutable.
+- Una versión `draft` puede editarse dentro del contrato exacto; `active` exige validaciones, contraseña y razón; al activarse queda inmutable.
 - Sustituirla crea una versión nueva; nunca muta asignaciones o evaluaciones anteriores.
 - Cada asignación/evaluación guarda la versión exacta, no “la activa” por consulta tardía.
 - Criterios incluyen código estable, nombre, descripción, peso o máximo de puntos, mínimo, máximo, paso, orden y regla de comentario.
 - Rangos, pesos, precisión, redondeo y consolidación son `OWNER_APPROVED`; no existe mínimo total.
 - No usar `float`; persistir decimales con escala aprobada y cálculo reproducible.
-- La activación valida duplicados, rangos, pasos, cobertura de pesos/puntos y texto obligatorio; no inventa valores faltantes.
+- La activación valida duplicados, rangos, pasos y cobertura de pesos/puntos. Las descripciones se exigen nulas hasta recibir texto aprobado.
 
 ### Contrato técnico aprobado
 
@@ -231,9 +232,9 @@ La misma rúbrica aplica a las cuatro categorías. Su primera versión técnica 
 RUBRIC_SCOPE
 - competition_slug: hermosillo-florece-2026
 - category_slug: ALL
-- version_label: 1.0
+- version: 1
 - title_es: Rúbrica de evaluación Flower Flow 2026
-- instructions_es: Califica cada criterio de 0 a 10 en incrementos de 0.5. El sistema calcula y muestra el total ponderado; el comentario general es obligatorio.
+- criterion_descriptions: NULL / POR_CONFIRMAR
 - effective_from: al activarse administrativamente antes de asignar
 
 SCORING_CONTRACT
@@ -248,12 +249,16 @@ SCORING_CONTRACT
 - missing_evaluation_rule: bloquear consolidación definitiva hasta completar cuatro evaluaciones válidas
 
 CRITERIA
-1. relevance | Pertinencia | Correspondencia con la convocatoria y la categoría seleccionada | 20 | 0 | 10 | 0.5 | OPTIONAL | 1
-2. clarity | Claridad | Definición comprensible del problema, objetivo y propuesta | 20 | 0 | 10 | 0.5 | OPTIONAL | 2
-3. feasibility | Viabilidad | Factibilidad técnica, operativa y temporal | 25 | 0 | 10 | 0.5 | OPTIONAL | 3
-4. impact | Impacto | Beneficio esperado y alcance para la población objetivo | 25 | 0 | 10 | 0.5 | OPTIONAL | 4
-5. coherence | Coherencia | Consistencia integral y calidad de la presentación | 10 | 0 | 10 | 0.5 | OPTIONAL | 5
+1. pertinence | Pertinencia | NULL | 20 | 0 | 10 | 0.5 | OPTIONAL | 1
+2. clarity | Claridad | NULL | 20 | 0 | 10 | 0.5 | OPTIONAL | 2
+3. feasibility | Viabilidad | NULL | 25 | 0 | 10 | 0.5 | OPTIONAL | 3
+4. impact | Impacto | NULL | 25 | 0 | 10 | 0.5 | OPTIONAL | 4
+5. coherence | Coherencia | NULL | 10 | 0 | 10 | 0.5 | OPTIONAL | 5
 ```
+
+### Estado implementado M3
+
+`rubric_versions` y `rubric_criteria` están implementadas localmente con ULID público, checks/índices/FKs, permisos admin separados, modelos guarded, Actions/Requests/Policy, auditoría y UI `/panel/rubricas`. `active_slot`, la restricción única y el lock de competencia/versiones protegen la única activa. El provisionador sólo local/testing crea v1 draft exacta y falla cerrado ante divergencia. M3 quedó `GO LOCAL/TEST`; no está atribuido a producción.
 
 ## 10. Contrato 5 — ciclo de evaluación
 
@@ -444,7 +449,7 @@ Evaluaciones en borrador o enviadas, scores, comentarios, conflictos, reapertura
 
 | Tabla | Campos clave mínimos | Invariantes |
 |---|---|---|
-| `judge_profiles` | `public_id`, `user_id`, `assignment_role`, `status`, `max_active_assignments`, timestamps/actores | uno por usuario; principal=`NULL` sin límite fijo, sustituto=`10`; sin especialidad; estado gatea acceso. |
+| `judge_profiles` | `public_id`, `user_id`, `assignment_role`, `status`, `max_active_assignments`, timestamps/actores | uno por usuario; principal=`NULL` sin límite fijo, sustituto=`30`; cuatro primary + dos substitute activos; sin especialidad; estado gatea acceso. |
 | `rubrics` | convocatoria, versión, status, title/instructions | unique competition+version; global para las cuatro categorías; activa inmutable. |
 | `rubric_criteria` | rubric_id, code, text, range, step, weight/points, comment rule, order | unique code/order; restrict si usada. |
 | `blind_review_packages` | submission_version_id, version, status, generated_by/at, payload allowlist | generado automáticamente e inmutable al activar; sin certificación humana; original intacto. |
@@ -467,7 +472,7 @@ Se recomiendan Actions/Services para alta/activación directa, generar paquete e
 | P2B-DEC-002 | Alta directa por `admin`; sin invitación de juez. | M2 crea cuenta/perfil directamente y no tabla de invitaciones. | `OWNER_APPROVED 2026-08-18` |
 | P2B-DEC-003 | Cuatro jueces por propuesta en cada una de las cuatro categorías; los cuatro principales evalúan todas las propuestas elegibles. | Cobertura requerida = 4; sin límite fijo para principales. | `OWNER_APPROVED / UPDATED 2026-08-18` |
 | P2B-DEC-004 | Asignación manual. | Ningún algoritmo automático o semiautomático. | `OWNER_APPROVED 2026-08-18` |
-| P2B-DEC-005 | Cuatro principales sin límite fijo; quinto sustituto exclusivo con máximo diez reasignaciones activas; sin especialidad. | Perfil tipado y checks server-side; sustituto nunca recibe carga inicial. | `OWNER_APPROVED / SUPERSEDES LIMIT 8 — 2026-08-18` |
+| P2B-DEC-005 | Cuatro principales y dos sustitutos exclusivos, todos sin límite; seis jueces operativos y sin especialidad. | Perfil tipado/checks con capacidad `NULL`; sustitutos nunca reciben carga inicial. | `OWNER FINAL / M4A VERIFIED — 2026-08-18` |
 | P2B-DEC-006 | Ceguera simple estructural. | Identidad estructurada oculta; contenido evaluable visible. | `OWNER_APPROVED 2026-08-18` |
 | P2B-DEC-007 | Todos los campos sustantivos y anexos evaluables; nunca PII estructurada, residencia, notas, aclaraciones o historial. | Paquete allowlist y descargas propias; riesgo semántico aceptado. | `OWNER_APPROVED 2026-08-18` |
 | P2B-DEC-008 | Anonimización automática estructural; se acepta identidad dentro de texto/anexos sin bloqueo. | Sin certificación humana ni promesa de anonimización semántica. | `OWNER_APPROVED / RISK_ACCEPTED 2026-08-18` |
@@ -477,7 +482,7 @@ Se recomiendan Actions/Services para alta/activación directa, generar paquete e
 | P2B-DEC-012 | Media aritmética de cuatro totales válidos, igual peso. | Consolidado sólo cuando existe cobertura completa. | `OWNER_APPROVED 2026-08-18` |
 | P2B-DEC-013 | Bloquear consolidación si falta una evaluación; sin excepción. | Estado derivado `incomplete` y reasignación necesaria. | `OWNER_APPROVED 2026-08-18` |
 | P2B-DEC-014 | Catálogo cerrado: relación personal/familiar; profesional/económica; participación en propuesta; otro conflicto. | Código estable; “otro” exige explicación. | `OWNER_APPROVED 2026-08-18` |
-| P2B-DEC-015 | `admin` resuelve y reasigna al quinto juez sustituto; varios jueces pueden compartir propuesta mediante asignaciones independientes. | Asignación original `voided`; reemplazo manual, exclusivo y con límite diez activo. | `OWNER_APPROVED / UPDATED 2026-08-18` |
+| P2B-DEC-015 | `admin` resuelve y selecciona manualmente uno de los dos sustitutos operativos; varios jueces pueden compartir propuesta mediante asignaciones independientes. | Original `voided`; reemplazo manual; sin límite ni algoritmo automático. | `OWNER FINAL / M4A VERIFIED — 2026-08-18` |
 | P2B-DEC-016 | Cierre global `2026-08-27 23:59:59 America/Hermosillo`. | Desde el segundo siguiente se rechazan envíos/reenvíos. | `OWNER_APPROVED 2026-08-18` |
 | P2B-DEC-017 | `admin` reabre hasta `2026-08-27 20:00`; razón 20–1,000, password confirm, revisión nueva; juez o admin pueden editar hasta 23:59:59. | Actor real siempre auditable; no se sobrescribe envío previo. | `OWNER_APPROVED 2026-08-18` |
 | P2B-DEC-018 | 2FA opcional; recovery autorizado por `admin`. | Sin enforcement TOTP; recuperación con razón/auditoría/revocación. | `OWNER_APPROVED / SECURITY RISK ACCEPTED 2026-08-18` |
@@ -540,39 +545,39 @@ Las letras “Opción A/B/C” usadas por el propietario en su respuesta final c
 - Rollback: apagar alta/activación de jueces; conservar perfiles/evidencia.
 - Terminado: ciclo admin-create→password/verify→active, suspensión/reactivación, recovery y revocación demostrados con datos sintéticos; 2FA permanece opcional. Evidencia: `docs/19-phase-02b-m2-implementation-report-2026-08-18.md`.
 
-### M3. Rúbrica versionada
+### M3. Rúbrica versionada — `COMPLETE / GO LOCAL`
 
 - Objetivo: crear, validar, activar y fijar una versión inmutable aprobada.
 - Dependencias: P2B-DEC-009/010/011 ya aprobadas.
-- Archivos: rubric models/enums/actions/requests/policies/admin views/calculator contract.
-- Migraciones: rúbricas/criterios aditivos.
-- Pruebas: rangos, steps, suma, duplicados, activación, inmutabilidad y sustitución.
+- Archivos: modelos/enums/actions/requests/policy/servicio de contrato y vistas admin `/panel/rubricas`.
+- Migraciones: `rubric_versions`/`rubric_criteria` aditivas, permisos y restricciones de única activa.
+- Pruebas: M3 8/132; M1–M3 24/399; suite 133/1,448; rangos, pasos, suma, duplicados, permisos, activación, inmutabilidad, sustitución y concurrencia.
 - Riesgo: cambio retroactivo o fórmula ambigua.
 - Rollback: flag off; nunca borrar versión ya referenciada.
-- Terminado: plantilla aprobada se representa sin pérdida y una activa no puede mutarse.
+- Terminado: contrato aprobado se representa sin pérdida, descripciones no aprobadas quedan nulas, una activa no puede mutarse y la evidencia completa está en `docs/20-phase-02b-m3-implementation-report-2026-08-18.md`.
 
-### M4. Asignaciones y conflictos — `READY AFTER M3 — REQUIRES SEPARATE AUTHORIZATION`
+### M4/M4A. Asignaciones y conflictos — `GO LOCAL/TEST 4+2 UNLIMITED`
 
-- Objetivo futuro: asignar sólo propuestas admitidas a los cuatro principales y resolver/reemplazar conflictos mediante el quinto sustituto sin duplicidad.
+- Resultado vigente: asigna manualmente sólo propuestas admitidas a cuatro principales y resuelve conflictos mediante selección manual de uno de dos sustitutos ilimitados.
 - Dependencias: P2B-DEC-003/004/005/014/015/016.
-- Puerta: M3 debe quedar verde y el propietario debe autorizar un prompt M4 separado; `P2B-BLOCK-001` ya no bloquea.
+- Evidencia: migraciones/Actions/permisos/auditoría/UI/concurrencia/UAT verdes; informe histórico M4 en `docs/21-phase-02b-m4-implementation-report-2026-08-18.md` e informe vigente M4A en `docs/22-phase-02b-m4a-unlimited-judges-implementation-report-2026-08-18.md`.
 - Archivos: assignment/conflict domain, Actions, Policies, Requests, admin UX.
 - Migraciones: assignments/conflicts/eventos.
-- Pruebas: no admitida, duplicado, capacidad, plazo, carrera, conflicto, cancelación/reemplazo.
+- Pruebas: no admitida/versión obsoleta, composición inválida, duplicado, plazo fijado, carrera, catálogo/ownership de conflicto, cancelación/capacidad y reemplazo.
 - Riesgo: cobertura inconsistente.
 - Rollback: pausar activación; conservar filas y anular con razón.
-- Terminado: cuatro asignaciones principales válidas por propuesta, sustituto sin carga inicial, máximo diez reemplazos activos, reemplazo viable y ninguna propuesta cambia de estado por inferencia.
+- Corrección cerrada: conserva cuatro asignaciones principales, exige dos sustitutos sin carga inicial y selección manual, y permite más de treinta reemplazos sin rechazo por volumen, sin cambiar propuestas por inferencia.
 
-### M5. Vista ciega y anexos autorizados
+### M5. Vista ciega y anexos autorizados — `GO LOCAL/TEST`
 
-- Objetivo: generar automáticamente un paquete estructural versionado y servir sólo proyección/anexos allowlist.
+- Resultado: generación administrativa explícita de paquete estructural versionado y servicio exclusivo de proyección/anexos allowlist.
 - Dependencias: P2B-DEC-006/007/008.
 - Archivos: package models/services/DTOs/Policies/download controller/admin+judge views.
 - Migraciones: packages/package files/versiones.
-- Pruebas: payload sin canarios PII, archivos cruzados, nombres/EXIF, links, residencia/notas/aclaraciones.
+- Pruebas: payload/hash deterministas, canarios PII ausentes, archivos cruzados/drift, XSS, links HTTPS, residencia/notas/aclaraciones, IDOR, inmutabilidad y concurrencia.
 - Riesgo: autoidentificación semántica.
 - Rollback: revocar paquete/asignaciones; original intacto.
-- Terminado: proyección estructural automática versionada, campos prohibidos ausentes y riesgo semántico aceptado documentado; no se afirma revisión humana.
+- Terminado: proyección estructural explícita, versionada e inmutable; campos prohibidos ausentes, descargas privadas neutras y riesgo semántico aceptado documentado. Evidencia en `docs/23-phase-02b-m5-blind-package-implementation-report-2026-08-18.md`.
 
 ### M6. Borrador y cálculo servidor
 
@@ -637,8 +642,9 @@ Las letras “Opción A/B/C” usadas por el propietario en su respuesta final c
 - El snapshot actual contiene identidad/metadatos y no puede servirse directamente a jueces.
 - `admitted` es señal de elegibilidad, no transición automática de propuesta ni asignación.
 - 2FA funciona y el propietario decidió que sea opcional; este riesgo se acepta para el diseño, pero no elimina suspensión/revocación y recovery auditado.
-- `P2B-BLOCK-001` está `RESOLVED BY OWNER`: cuatro principales sin límite fijo y quinto sustituto exclusivo con capacidad diez. M4 sigue no implementado, pero ya no requiere una decisión de capacidad/cobertura.
-- Si existen más de diez conflictos/reasignaciones simultáneas, la undécima falla cerrada y requiere una nueva decisión operativa; este riesgo residual no autoriza sobreasignación silenciosa.
+- `P2B-BLOCK-001` está `OWNER FINAL/RESOLVED`: cuatro principales y dos sustitutos, todos ilimitados.
+- `P2B-M4-CORRECTION-001` está `RESOLVED LOCAL/TEST`: M4A exige `4+2`, capacidad nula y selección manual.
+- La elección entre sustitutos es siempre explícita; no existe balanceo automático ni contador de capacidad.
 - La ceguera simple no elimina identidad contenida en texto/anexos; el propietario aceptó expresamente ese riesgo. La aplicación no debe prometer anonimización total.
 - Permitir que `admin` cambie puntajes en nombre del juez exige revisión append-only y actor real visible en auditoría para no falsificar autoría.
 - La detección de empate permanece técnica y no puede convertirse en desempate, ganador o resultado.
@@ -653,7 +659,7 @@ Las 21 respuestas quedaron incorporadas en la matriz vigente de la sección 17. 
 2. Alta directa por admin; sin invitaciones de juez.
 3. Cuatro jueces por propuesta en las cuatro categorías; los cuatro disponibles evalúan todas.
 4. Asignación manual.
-5. Cuatro jueces principales sin límite fijo; quinto juez exclusivamente sustituto con máximo diez reasignaciones activas; sin especialidad.
+5. Cuatro jueces principales y dos jueces exclusivamente sustitutos, todos sin límite; seis jueces operativos y sin especialidad.
 6. Ceguera simple estructural.
 7. Todos los campos sustantivos y anexos evaluables; exclusión absoluta de PII estructurada, residencia, notas, aclaraciones e historial.
 8. Anonimización automática estructural; riesgo semántico aceptado.
@@ -663,7 +669,7 @@ Las 21 respuestas quedaron incorporadas en la matriz vigente de la sección 17. 
 12. Media aritmética de cuatro evaluaciones válidas con igual peso.
 13. Sin consolidación si falta una evaluación; sin excepción.
 14. Catálogo cerrado mínimo con “otro conflicto” y explicación obligatoria.
-15. Admin resuelve y reasigna a otro juez; múltiples asignaciones independientes por propuesta.
+15. Admin resuelve y selecciona manualmente uno de los dos sustitutos operativos; múltiples asignaciones independientes por propuesta.
 16. Cierre global 2026-08-27 23:59:59 America/Hermosillo.
 17. Admin reabre hasta 2026-08-27 20:00; razón 20–1,000, password confirm y revisión nueva; juez/admin editan hasta 23:59:59.
 18. 2FA opcional; recuperación por admin.
@@ -672,9 +678,269 @@ Las 21 respuestas quedaron incorporadas en la matriz vigente de la sección 17. 
 21. Empate por igualdad del consolidado redondeado a dos decimales; resolución fuera de 02B.
 ```
 
-Corrección posterior `OWNER_APPROVED` del 2026-08-18: la respuesta 5 anterior queda sustituida por cuatro jueces principales sin límite fijo y un quinto juez exclusivamente sustituto con capacidad máxima de diez reasignaciones activas. `P2B-BLOCK-001` queda `RESOLVED`; M4 sigue sin implementar y requiere autorización posterior propia.
+Corrección final vigente `OWNER_APPROVED` del 2026-08-18: las respuestas intermedias `1×10` y `2×30` quedan sustituidas por cuatro jueces principales y dos jueces exclusivamente sustitutos, todos sin límite. Son seis jueces operativos; `admin` selecciona manualmente al sustituto. `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` quedan resueltos en local/test por M4A.
 
-## 21. Siguiente prompt recomendado — implementar únicamente M3
+## 21. Siguiente prompt recomendado — implementar únicamente M6
+
+```text
+Trabaja exclusivamente en el repositorio local `/home/ccortesg/workspace/flowerflow`.
+
+Lee completamente antes de modificar: `AGENTS.md`, `.agent/PLANS.md`, los ExecPlans de diseño y M1–M5, `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`, los informes M2–M5, incluido `docs/23-phase-02b-m5-blind-package-implementation-report-2026-08-18.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/product-spec.md`, `docs/01-functional-scope.md`, `docs/02-architecture.md`, `docs/03-data-model.md`, `docs/04-security-privacy.md`, `docs/05-ux-ui.md`, `docs/06-roadmap-backlog.md`, `docs/08-testing-qa.md`, `docs/09-risk-register.md`, `docs/10-open-questions.md`, `docs/11-operations-handoff.md`, `docs/requirements-traceability.md` y ADR 0001/0003/0004/0005/0006/0007/0008.
+
+Objetivo: implementar exclusivamente el Milestone 6 de Fase 02B: apertura y guardado concurrente de la evaluación en borrador por el juez asignado, captura de puntajes/comentarios bajo la rúbrica fijada por la asignación y cálculo reproducible exclusivamente en servidor. Conserva sin regresión M1–M5.
+
+No implementes confirmación o envío final, estado `submitted`, reapertura, edición administrativa en nombre del juez, consolidación entre jueces, detección de empate, notificaciones M8, recordatorios masivos, retención/purga, ganadores, resultados o ranking. No cambies cuentas/perfiles de juez, composición `4+2`, capacidades ilimitadas, asignaciones, conflictos, rúbricas activas, paquetes ciegos, propuestas, snapshots, folios, admisibilidad, archivos o aceptaciones jurídicas. M6 no autoriza producción.
+
+Contratos `OWNER_APPROVED` obligatorios:
+1. La evaluación usa la `rubric_version_id` inmutable fijada en la asignación; nunca toma por inferencia la rúbrica activa actual.
+2. Criterios exactos y ordenados: `pertinence` 20 %, `clarity` 20 %, `feasibility` 25 %, `impact` 25 % y `coherence` 10 %.
+3. Cada puntaje usa escala decimal 0–10 y paso exacto 0.5.
+4. El total se calcula sólo en servidor como suma de `(score / 10) × weight`, en escala 0–100, con cuatro decimales internos, dos visibles y redondeo `HALF_UP`.
+5. El navegador nunca es fuente de verdad de pesos, total, precisión, redondeo, actor, assignment, rubric, estado o timestamps. Rechaza o ignora expresamente cualquier total/derivado hostil del request y nunca lo persistas como autoridad.
+6. En borrador se permiten criterios incompletos y comentario general vacío; cada valor presente debe ser válido. La obligación de los cinco criterios y comentario general de 100–2,000 caracteres se exigirá al enviar en M7, no en M6. Los comentarios por criterio son opcionales y de máximo 1,000 caracteres; el comentario general, cuando se captura en borrador, no puede exceder 2,000.
+7. Sólo el `judge` exacto, verified, con perfil active, flag encendido, asignación propia `active`, paquete ciego `active`, rúbrica fijada válida y plazo vigente puede abrir o guardar su borrador.
+8. `conflict_declared`, `voided`, `cancelled`, asignación ajena, paquete no activo, pending/suspended, sin rol o multirol bloquean lectura y mutación. Al declarar conflicto, el borrador existente se conserva como evidencia técnica pero deja de ser accesible o editable; no se copia al sustituto.
+9. Una asignación replacement activa crea su propio borrador y cálculo, ligado a su actor y assignment; comparte paquete y rúbrica, nunca borrador/puntajes del juez sustituido.
+10. El cierre global es `2026-08-27 23:59:59 America/Hermosillo`; desde el instante siguiente M6 rechaza nuevas mutaciones. M6 no realiza envíos ni reaperturas.
+11. Los borradores pueden editarse; deben protegerse contra pérdida silenciosa entre pestañas mediante versión optimista explícita y transacción. No aceptes last-write-wins oculto.
+12. M5 permanece inmutable: la captura M6 sólo referencia package/assignment/rubric y no inserta puntajes, comentarios o totales en payloads o inventarios ciegos.
+13. El contrato operativo vigente conserva exactamente cuatro `primary` y dos `substitute`, todos ilimitados; los sustitutos sólo reciben reemplazos manuales. `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` permanecen resueltos.
+
+Antes de modificar:
+1. confirma `pwd`, Git toplevel, rama, SHA local/remoto, ancestro común, `git status --short`, `git diff` y archivos preexistentes;
+2. preserva todo cambio preexistente; no hagas stage, commit, push, reset, clean ni checkout destructivo;
+3. crea `.agent/execplans/flowerflow-phase-02b-m6-draft-evaluation-server-scoring.md` con baseline, alcance, modelo, fórmula, máquina de estados M6, invariantes, pasos, pruebas, resultados, riesgos y rollback;
+4. usa sólo MySQL local `flowerflow_testing`, usuario `flowerflow_testing_user`, host loopback y datos sintéticos;
+5. antes de migrar/sembrar/probar esquema demuestra sin secretos `APP_ENV=testing`, driver MySQL, host loopback, base/usuario exactos y `SELECT DATABASE()=flowerflow_testing`; detente si difiere;
+6. confirma mediante código, migraciones, pruebas y ExecPlans que M4A y M5 están `GO LOCAL/TEST`: composición `4+2`, capacidad nula, selección manual, assignment/rubric fijadas, paquete único activo por `submission_version`, payload allowlist, descargas neutras, pérdida de acceso por conflicto y suite M5 verde. Si M5 no está íntegro, detente y no mezcles su reparación con M6;
+7. no accedas a producción, URL pública, AWS, EC2, SSH/SSM, servicios externos, MySQL/logs/datos productivos.
+
+Implementación autorizada M6:
+- crea migraciones aditivas y reversibles para `evaluations`, `evaluation_revisions` y `evaluation_scores`, o nombres equivalentes coherentes con `docs/03-data-model.md`; usa ULID público, una evaluación por `judge_assignment`, referencia inmutable a assignment/rubric/package, revisión actual, estado M6 respaldado únicamente `draft`, `lock_version`, actores/fechas UTC y timestamps;
+- cada revisión de borrador debe conservar número positivo, comentario general nullable, total calculado nullable y completitud derivada. Cada score liga la revisión con el `rubric_criterion_id`, conserva score decimal nullable y comentario nullable. Protege con FKs, índices, unicidades y checks MySQL compatibles, además de validación server-side;
+- no implementes todavía estados `submitted`, `reopened`, `voided` ni revisión administrativa. Diseña el esquema de forma compatible con que M7 convierta el último borrador en evidencia append-only sin reescribir historia, pero no inventes transiciones M7;
+- crea un `EvaluationScoreCalculator` puro y determinista con aritmética decimal, nunca float binario como autoridad. Carga criterios desde la versión fijada, valida códigos/orden/pesos/escala/paso y calcula sólo con valores persistidos/validados en servidor. El total del borrador es `NULL` mientras falte cualquier criterio; cuando los cinco existen, calcula cuatro decimales y presenta dos con `HALF_UP`;
+- añade un permiso mínimo y exclusivo para gestionar el borrador propio sólo a `judge`; no concedas permisos de panel, rúbrica administrativa, paquete administrativo, asignación administrativa o evaluación ajena. `admin`, reviewer y participant no pueden editar ni suplantar al juez en M6;
+- crea Actions/Services transaccionales y Form Requests/Policies para abrir idempotentemente un borrador y guardar una revisión. La creación sólo puede ocurrir por acceso explícito del juez autorizado; no crees borradores por migración, seeder, asignación, activación de paquete, scheduler o batch;
+- el primer acceso converge a una sola evaluación/revisión draft por assignment aun con dos requests concurrentes. Cada guardado exige `lock_version` recibido del formulario, bloquea evaluación/revisión, valida que no cambió assignment/package/rubric/estado/plazo y crea o actualiza el estado de borrador conforme al diseño documentado. Un token de versión obsoleto devuelve conflicto accesible y conserva ambos datos sin sobrescritura silenciosa;
+- permite guardado parcial: cada score presente debe pertenecer exactamente a uno de los cinco criterios fijados, estar entre 0 y 10 y ser múltiplo exacto de 0.5; rechaza criterios duplicados, extraños, de otra rúbrica, NaN, notación no admitida, negativos y sobre-rango. Un score omitido queda incompleto, no se convierte en cero;
+- normaliza comentarios como texto plano UTF-8, conserva saltos razonables, no interpreta HTML y escapa siempre en salida. Rechaza límites excedidos. No copies comentarios o puntajes a logs, audit metadata, URLs, atributos HTML o paquete ciego;
+- amplía `/juez/asignaciones/{judgeAssignment}` con una sección de rúbrica y formulario de borrador sólo bajo todas las precondiciones. Muestra criterios, pesos, escala, comentarios, progreso, total servidor cuando esté completo y estado de guardado; no muestres consolidado, otros jueces, ranking, resultado o botones de envío/reapertura;
+- usa HTML semántico, labels, fieldsets, mensajes por campo, resumen de errores, foco restaurado, teclado y reflow. El JS puede mejorar cálculo visual/progreso, pero la respuesta del servidor reemplaza cualquier preview y la página debe funcionar sin JavaScript;
+- el endpoint nunca acepta public IDs alternativos para rubric/package/criterion fuera de la asignación cargada. Policy y queries deben quedar scoped; ULID alterado, assignment ajeno y criterio cruzado devuelven 403/404 sin filtrar existencia;
+- registra auditoría redactada de `draft_opened`, `draft_saved`, `draft_save_rejected_stale` y rechazos de autorización/invariante con actor, IDs técnicos, revisión, lock_version, completitud y total técnico si procede; nunca comentarios, URLs, contenido de propuesta, nombres de archivos o PII;
+- conserva el paquete M5 y sus descargas sin mutación. Declarar/resolver conflicto o reasignar no mueve el borrador; el juez original pierde acceso y el sustituto comienza uno independiente;
+- actualiza ADR-0008, diagnóstico, producto, alcance, arquitectura, datos, seguridad, UX, roadmap, QA, riesgos, preguntas, handoff, trazabilidad y ExecPlans con conducta real. M7–M10 siguen `NOT IMPLEMENTED / NOT AUTHORIZED`.
+
+Pruebas mínimas:
+- migración/rollback/forward preserva usuarios, perfiles, rúbricas, asignaciones/conflictos, paquetes/archivos, propuestas, snapshots, admisibilidad y aceptaciones; no crea evaluaciones o scores automáticamente;
+- sólo judge exacto/active/verified con assignment active, package active, flag y plazo puede abrir/guardar. Matriz negativa para visitor, participant, reviewer, admin, otro judge, no asignado, pending, suspended, roleless, multirol, conflict_declared, voided, cancelled, paquete draft/invalidated/ausente y plazo vencido;
+- apertura repetida y concurrente produce una sola evaluación y revisión inicial sin filas parciales;
+- guardado parcial conserva nulos como incompletos; score cero es distinto de ausente. Validación rechaza rango, paso, duplicado, extra, otra rúbrica, NaN y mass assignment de total/estado/actores/assignment/rubric/package/versión/timestamps;
+- vectores exactos de cálculo: todos 0 = 0.0000/0.00, todos 10 = 100.0000/100.00 y combinaciones que ejerciten cuatro decimales y `HALF_UP`; el total hostil enviado por navegador nunca gobierna;
+- dos pestañas con el mismo `lock_version`: la primera guarda y la segunda recibe conflicto sin sobrescribir; dos guardados concurrentes no pierden datos ni duplican revisiones/scores;
+- comentarios límite 2,000/1,000, Unicode y saltos válidos; HTML/script se muestra escapado y nunca ejecuta XSS ni llega a auditoría/logs;
+- conflicto posterior conserva filas pero bloquea acceso; replacement activo abre borrador independiente con misma rubric/package. El juez voided no puede leer ni mutar inmediatamente;
+- M1–M5 completos continúan verdes: composición `4+2`, ilimitados, selección manual, paquete/hash inmutables, canarios PII ausentes, enlaces/descargas neutras y concurrencia. No aparecen envío, confirmación final, reapertura, consolidación, empate, ranking o resultado.
+
+Validación final sólo después del guard:
+- forward/rollback/forward M6 en `flowerflow_testing` con datos sintéticos preexistentes;
+- pruebas dirigidas M6/M5/M4A/M4/M3/M2/M1 y `php artisan test` completo;
+- `vendor/bin/pint --test`;
+- Composer validate/platform/audit y Yarn audit, manteniendo visible el advisory bajo de Quill si continúa;
+- `scripts/build_frontend_production.sh`, validación JSON, rutas, schedule, migrate status, `git diff --check`, enlaces Markdown y scan de secretos/PII;
+- UAT Firefox local judge en 1440×900, 1024×768 y 390×844: apertura, parcial, completo, recálculo servidor, refresh, dos pestañas/stale, teclado/foco/reflow/zoom, consola, XSS, conflicto/pérdida inmediata, replacement con borrador independiente y 403/404/IDOR. Usa sólo correo array y datos/archivos sintéticos.
+
+No hagas stage, commit, push ni despliegue. No toques producción/AWS/Apache/PHP-FPM/Supervisor/MySQL productivo/DNS/TLS/SMTP real.
+
+Entrega:
+1. resumen y `GO/NO-GO` local M6;
+2. baseline y guard;
+3. modelo/estado/invariantes y compatibilidad futura append-only;
+4. fórmula decimal y vectores de cálculo;
+5. archivos y comandos/resultados;
+6. matriz efectiva por rol/assignment/package/plazo;
+7. evidencia de apertura idempotente, guardado parcial/completo, concurrencia optimista, XSS y cálculo servidor;
+8. evidencia de aislamiento tras conflicto/reemplazo y no regresión M1–M5;
+9. migración/compatibilidad/rollback;
+10. riesgos/auditoría/documentación;
+11. siguiente prompt exacto limitado a M7 —confirmación, envío inmutable y reapertura append-only— sólo si M6 queda completamente verde. Generarlo no autoriza ejecutarlo ni permite mezclar M8+.
+```
+
+## 21A. Prompt histórico ejecutado — implementar únicamente M5
+
+```text
+Trabaja exclusivamente en el repositorio local `/home/ccortesg/workspace/flowerflow`.
+
+Lee completamente antes de modificar: `AGENTS.md`, `.agent/PLANS.md`, los ExecPlans de diseño, M1–M4 y `.agent/execplans/flowerflow-phase-02b-m4a-two-substitutes-reconciliation.md`, `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`, los informes M2/M3/M4 y `docs/22-phase-02b-m4a-unlimited-judges-implementation-report-2026-08-18.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/product-spec.md`, `docs/01-functional-scope.md`, `docs/02-architecture.md`, `docs/03-data-model.md`, `docs/04-security-privacy.md`, `docs/05-ux-ui.md`, `docs/06-roadmap-backlog.md`, `docs/08-testing-qa.md`, `docs/09-risk-register.md`, `docs/10-open-questions.md`, `docs/11-operations-handoff.md`, `docs/requirements-traceability.md` y ADR 0001/0003/0004/0005/0006/0007/0008.
+
+Objetivo: implementar exclusivamente el Milestone 5 de Fase 02B: paquete ciego estructural, inmutable y versionado de la `submission_version` ya asignada; proyección allowlist para el juez; enlaces externos autorizados; inventario de anexos evaluables y descargas privadas con nombres neutros. Conserva sin regresión M1–M4A.
+
+No implementes rúbrica visible en el shell juez, captura o guardado de evaluación, criterios, scores, comentarios, totales, cálculo, consolidación, envío, reapertura, notificaciones M8, retención/purga, ganadores o resultados. No cambies asignaciones, conflictos, perfiles/capacidades, propuestas, snapshots, folios, admisibilidad, archivos originales, aceptaciones jurídicas ni la rúbrica activa. M5 no corrige M4A y no autoriza producción.
+
+Contratos `OWNER_APPROVED` obligatorios:
+1. Ceguera simple estructural y anonimización automática estructural, no revisión humana.
+2. El juez asignado puede ver todos los campos sustantivos de la versión enviada: categoría, tipo de participación, título, resumen, descripción sanitizada y enlaces externos capturados; puede abrir todos los anexos evaluables capturados por esa versión.
+3. Siempre se ocultan usuario/representante, nombres e emails de integrantes, teléfono, fecha de nacimiento, colonia, folio, fechas de envío/captura, PII estructurada, residencia, notas internas, aclaraciones, historial/razón de admisibilidad, otros jueces, auditoría, rutas internas y nombres originales/almacenados de archivos.
+4. El propietario acepta el riesgo de que el participante se identifique dentro de título, resumen, texto, imágenes, URLs o binarios. La UI debe comunicar “anonimización estructural” y no prometer anonimato semántico. No bloquees ni alteres contenido por inferencia.
+5. Sólo una asignación `active`, propia de un judge exacto/verified/perfil active, puede abrir el paquete. `conflict_declared`, `voided`, `cancelled`, no asignado, pending, suspended, sin rol o multirol no acceden al contenido ni anexos.
+6. Una asignación replacement activa recibe exactamente el mismo paquete de `submission_version` y rúbrica fijadas; la reasignación no regenera, copia o muta contenido.
+7. El snapshot original y los archivos privados son evidencia inmutable. El paquete es una proyección separada allowlist; nunca se sirve el JSON crudo de `submission_versions.snapshot`.
+8. Contrato vigente: exactamente cuatro jueces `primary` activos y dos `substitute` activos, todos sin límite (`max_active_assignments=NULL`); los sustitutos no reciben asignaciones iniciales. `admin` selecciona manualmente el reemplazo y no existe balanceo automático.
+9. M4A está `GO LOCAL/TEST` antes de M5: composición `4+2`, capacidad nula para ambos roles, más de treinta reemplazos aceptados, selección manual, plazo `2026-08-27 23:59:59 America/Hermosillo`, conflicto y cobertura son invariantes. Los contratos históricos `1×10` y `2×30` no satisfacen esta precondición.
+
+Antes de modificar:
+1. confirma `pwd`, Git toplevel, rama, SHA local/remoto, ancestro común, `git status --short`, `git diff` y archivos preexistentes;
+2. preserva todo cambio preexistente; no hagas stage, commit, push, reset, clean ni checkout destructivo;
+3. crea `.agent/execplans/flowerflow-phase-02b-m5-blind-package.md` con baseline, alcance, matriz de campos, modelo, invariantes, pasos, pruebas, resultados, riesgos y rollback;
+4. usa sólo MySQL local `flowerflow_testing`, usuario `flowerflow_testing_user`, host loopback y datos sintéticos;
+5. antes de migrar/sembrar/probar esquema demuestra sin secretos `APP_ENV=testing`, driver MySQL, host loopback, base/usuario exactos y `SELECT DATABASE()=flowerflow_testing`; detente si difiere;
+6. confirma mediante código, migraciones, pruebas y estado del ExecPlan M4A que `JudgeAssignmentRole::maxActiveAssignments()` devuelve `NULL` para ambos roles, la base sólo acepta capacidad nula, la composición operativa es exactamente cuatro primary y dos substitute, la resolución exige selección manual y más de treinta reemplazos individuales no fallan por volumen. Si cualquier elemento vigente conserva un límite `10` o `30`, detente: no implementes M5 ni mezcles la corrección M4A;
+7. no accedas a producción, URL pública, AWS, EC2, SSH/SSM, servicios externos, MySQL/logs/datos productivos.
+
+Implementación autorizada M5:
+- crea migraciones aditivas y reversibles para `blind_review_packages` y `blind_review_package_files`; usa ULID público, `submission_version_id` único, `schema_version`, estado respaldado `draft|active|invalidated`, payload JSON allowlist, hash canónico del payload, actor/fecha/razón de generación/activación/invalidación y timestamps UTC;
+- cada fila de archivo liga el paquete a un `submission_file_id` capturado por el snapshot, conserva orden, clase `document|editor_image`, etiqueta neutra determinística, MIME/extensión/tamaño/SHA esperados y estado; nunca persiste nombre original, `path`, `stored_name`, actor o PII dentro del paquete;
+- protege con FKs, índices, unicidades/checks MySQL y validación server-side. Paquete `active`/`invalidated` y sus archivos son inmutables/no eliminables. Un draft sólo puede reemplazarse antes de activar y sin mutar snapshot/archivo;
+- añade permisos separados `view blind review packages` y `manage blind review packages` sólo para admin. El acceso juez al paquete se deriva de rol exacto + perfil activo + asignación propia activa + Policy; no concedas permisos admin/panel/archivos existentes al judge;
+- crea un `BlindReviewPackageBuilder` determinista que lea exclusivamente la `submission_version.snapshot`, valide `schema_version`, y construya payload exacto: `category.slug|name`, `submission.participation_type|title|summary|description_html|description_text` y `external_links.kind|url|normalized_host`. Excluye por allowlist todo campo no enumerado, incluidos `public_id` de propuesta, folio, `captured_at_utc`, `submitted_at`, competition, participant y team;
+- sanitiza otra vez el HTML mediante el servicio vigente y reescribe referencias a imágenes del editor para usar únicamente la ruta privada M5 ligada al package file. No emitas rutas participante, `storage` público, nombres internos, query strings sensibles ni HTML oculto con datos excluidos;
+- el builder compara cada entrada `snapshot.files` con el `SubmissionFile` real por `public_id`, `kind`, MIME, extensión, bytes y SHA-256. Incluye exactamente los archivos capturados en esa versión. Si falta, sobra, cambió o no pertenece a la propuesta/versión, falla cerrado y marca el draft inválido o deja evidencia operativa; nunca sustituye el archivo ni usa el estado vivo por inferencia;
+- excluye siempre `residency_documents`, `clarification_response_files` y cualquier archivo no enumerado en `snapshot.files`. No agregues residencia/aclaraciones aunque sus binarios compartan disk;
+- crea Actions/Services transaccionales, Form Requests y Policies para listar paquetes, generar/regenerar draft y activar. Generación/activación es una acción administrativa explícita por propuesta cubierta, con admin exacto, permiso, confirmación de contraseña y razón 20–1,000; no generes todos por lote, migración, seeder, scheduler o primer acceso del juez;
+- activación exige propuesta aún enviada/admitida en la misma versión, cobertura M4 existente, paquete íntegro y hash reproducible. Usa locks de versión, paquete, archivos y asignaciones. La activación repetida idéntica converge; divergencia falla sin sobrescribir;
+- crea `/panel/paquetes-ciegos` para admin: listado paginado de propuestas con cobertura, estado del paquete, validación/generación, preview estrictamente estructural, activación y errores operativos. No muestres PII, residencia, aclaraciones o nombres originales innecesarios;
+- amplía `/juez/asignaciones/{judgeAssignment}` sólo cuando la asignación esté activa y el paquete activo exista: muestra los campos allowlist, aviso honesto de ceguera estructural, enlaces externos seguros y anexos con etiquetas neutras. Si no hay paquete activo, conserva el estado mínimo M4 y no genera nada;
+- crea una ruta de descarga juez separada, autenticada y no adivinable, ligada a `judgeAssignment + blindReviewPackageFile`. La Policy exige ownership, assignment active, package active, misma version y archivo allowlisted. Sirve desde disk privado con `X-Content-Type-Options: nosniff`, Content-Disposition seguro con nombre neutro y extensión aprobada; nunca revela `original_name`, `stored_name`, path o URL de participante;
+- valida al descargar que tamaño/SHA/MIME/firma siguen coincidiendo. Ante drift/missing, rechaza sin filtrar path y audita IDs técnicos/razón, no contenido. No implementes antivirus nuevo ni dependencia sin ADR/aprobación;
+- los enlaces externos sólo usan los valores inmutables capturados, protocolo HTTPS y hosts ya validados; usa `rel="noopener noreferrer"` y no hace fetch server-side ni previsualización remota;
+- registra auditoría redactada de draft generado/validado/activado/invalidado, acceso a paquete y descarga/rechazo, con actor, assignment/package/file IDs, schema/hash/estado y timestamps; no copies título, resumen, texto, URL, nombre de archivo, PII o contenido;
+- actualiza ADR-0008, diagnóstico, producto, alcance, arquitectura, datos, seguridad, UX, roadmap, QA, riesgos, preguntas, handoff, trazabilidad y ExecPlans. M6–M10 siguen `NOT IMPLEMENTED / NOT AUTHORIZED`.
+
+Pruebas mínimas:
+- migración/rollback/forward preserva usuarios, perfiles, rúbricas, asignaciones/conflictos, propuestas, snapshots, archivos, admisibilidad y aceptaciones; no genera paquetes automáticamente;
+- sólo admin exacto lista/genera/activa; sólo judge activo dueño de assignment active consume. Matriz negativa completa para visitor, participant, reviewer, admin como judge, judge no asignado, otro judge, pending, suspended, roleless, multirol, conflict_declared, voided y cancelled;
+- builder exacto acepta snapshot v1 válido y produce payload/hash determinista; rechaza schema desconocido, campos faltantes, archivo missing/drift, duplicado, extra o cruzado sin mutación parcial;
+- pruebas canary colocan PII en participant/team/folio/fechas/residencia/notas/aclaraciones/nombres de archivo y comprueban ausencia en modelo serializado, HTML, atributos, URL, headers, audit y logs;
+- título/resumen/texto/URL/binario con autoidentificación permanecen visibles como contenido aprobado y el aviso no promete anonimato total;
+- todos los archivos snapshot se incluyen una vez, con etiqueta neutra; residencia/aclaración/no-snapshot nunca se incluyen. Descarga propia funciona; assignment/archivo/paquete/ULID alterado devuelve 403/404 sin existencia filtrada;
+- HTML sanitizado no ejecuta XSS y las imágenes usan sólo descarga M5 autorizada; URLs externas no disparan SSRF/fetch;
+- paquete activo queda inmutable; activar/reemplazar rúbrica, resolver conflicto o reasignar no modifica paquete. Replacement activo accede al mismo package; juez original voided pierde acceso inmediatamente;
+- activación repetida y dos procesos concurrentes convergen en un paquete activo; no hay dos paquetes activos ni filas parciales;
+- M1–M4A completos continúan verdes, incluida composición `4+2`, selección manual, capacidad ilimitada, más de treinta reemplazos por sustituto y concurrencia. No aparecen formularios, criterios, scores, comentarios, total o ranking en `/juez`.
+
+Validación final sólo después del guard:
+- forward/rollback/forward M5 en `flowerflow_testing` con datos sintéticos preexistentes;
+- pruebas dirigidas M5/M4A/M4/M3/M2/M1 y `php artisan test` completo;
+- `vendor/bin/pint --test`;
+- Composer validate/platform/audit y Yarn audit, manteniendo visible el advisory bajo de Quill si continúa;
+- `scripts/build_frontend_production.sh`, validación JSON, rutas, schedule, migrate status, `git diff --check`, enlaces Markdown y scan de secretos/PII;
+- UAT Firefox local admin/judge en 1440×900, 1024×768 y 390×844: sin paquete, generación/preview/activación, contenido allowlist, enlaces, descargas neutras, XSS, conflicto y pérdida inmediata de acceso, replacement seleccionado manualmente hacia cada uno de los dos sustitutos, 403/404/IDOR, teclado/foco/reflow/zoom y consola limpia. Sólo correo array y datos/archivos sintéticos.
+
+No hagas stage, commit, push ni despliegue. No toques producción/AWS/Apache/PHP-FPM/Supervisor/MySQL productivo/DNS/TLS/SMTP real.
+
+Entrega:
+1. resumen y `GO/NO-GO` local M5;
+2. baseline y guard;
+3. matriz campo por campo realmente expuesta/oculta;
+4. modelo/invariantes/versionado/hash;
+5. archivos y comandos/resultados;
+6. matriz efectiva por rol/estado;
+7. evidencia de builder, activación, inmutabilidad, concurrencia, descargas y drift fail-closed;
+8. evidencia canary de ausencia de PII y riesgo semántico aceptado;
+9. migración/compatibilidad/rollback;
+10. riesgos/auditoría/documentación;
+11. siguiente prompt exacto limitado a M6 —evaluación en borrador y cálculo servidor— sólo si M4A y M5 quedan completamente verdes. Generarlo no autoriza ejecutarlo ni permite mezclar M7+.
+```
+
+## 21B. Prompt histórico ejecutado — implementar únicamente M4
+
+```text
+Trabaja exclusivamente en el repositorio local `/home/ccortesg/workspace/flowerflow`.
+
+Lee completamente antes de modificar: `AGENTS.md`, `.agent/PLANS.md`, `.agent/execplans/flowerflow-phase-02b-evaluation-design.md`, `.agent/execplans/flowerflow-phase-02b-m1-judge-rbac.md`, `.agent/execplans/flowerflow-phase-02b-m2-judge-profile-onboarding.md`, `.agent/execplans/flowerflow-phase-02b-m3-versioned-rubric.md`, `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`, `docs/19-phase-02b-m2-implementation-report-2026-08-18.md`, `docs/20-phase-02b-m3-implementation-report-2026-08-18.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/product-spec.md`, `docs/01-functional-scope.md`, `docs/02-architecture.md`, `docs/03-data-model.md`, `docs/04-security-privacy.md`, `docs/05-ux-ui.md`, `docs/06-roadmap-backlog.md`, `docs/08-testing-qa.md`, `docs/09-risk-register.md`, `docs/10-open-questions.md`, `docs/11-operations-handoff.md`, `docs/requirements-traceability.md` y ADR 0001/0003/0004/0005/0006/0007/0008.
+
+Objetivo: implementar exclusivamente el Milestone 4 de Fase 02B: asignación manual y versionada de propuestas elegibles a los cuatro jueces principales, declaración de conflictos, resolución administrativa y reasignación al juez sustituto, con cobertura derivada, capacidad, concurrencia, auditoría y QA. Conserva sin regresión M1, M2 y M3.
+
+No implementes paquetes ciegos ni proyección de propuestas, acceso del juez al contenido o anexos, descarga de archivos, rúbrica visible en `/juez`, evaluaciones/borradores/puntajes/cálculo/consolidación, reapertura, notificaciones M8, recordatorios masivos, retención/purga, ganadores o resultados. No cambies propuestas, snapshots, folios, admisibilidad, aceptaciones jurídicas, perfiles/capacidades ni la rúbrica activa. M4 puede mostrar al juez únicamente un alias opaco de asignación, categoría, plazo y estado necesarios para declarar conflicto; ningún título, folio, texto, PII, archivo, enlace, residencia, aclaración, nota o historial.
+
+Contratos `OWNER_APPROVED` obligatorios:
+1. La asignación es manual; no existe algoritmo automático, sorteo ni especialidad.
+2. Cada propuesta elegible de cualquiera de las cuatro categorías requiere asignaciones iniciales a los cuatro jueces `primary` activos; los cuatro evalúan todas las propuestas elegibles y no tienen límite fijo.
+3. Debe existir exactamente un juez `substitute` activo para operar una sustitución. Nunca recibe asignaciones iniciales y admite como máximo diez reasignaciones activas. No crees cuentas ni impongas por migración un máximo global de perfiles; si la composición activa no es exactamente cuatro primary y un substitute, la activación manual de cobertura falla cerrada con mensaje operativo.
+4. Una propuesta es elegible sólo si está enviada, tiene una `submission_version` final vigente y su expediente de admisibilidad está `admitted`. M4 consulta esa elegibilidad; no cambia `submissions.status`, admisibilidad ni snapshots.
+5. Toda asignación fija `submission_version_id`, `judge_profile_id` y la `rubric_version_id` activa exacta al momento de activar cobertura. Una rúbrica draft/superseded o la ausencia/ambigüedad de activa bloquean la operación.
+6. Catálogo de conflictos exacto: `personal_or_family_relationship`, `professional_or_economic_relationship`, `participation_in_submission` y `other`; `other` exige explicación de 20–1,000 caracteres. La declaración bloquea inmediatamente la asignación.
+7. Sólo `admin` resuelve. Al confirmar el conflicto de un primary conserva la asignación original como evidencia no evaluable y crea una asignación de reemplazo independiente para el substitute, ligada mediante `replaces_assignment_id`, dentro de una transacción. Nunca mueve scores ni reutiliza al juez conflictuado.
+8. Varias asignaciones independientes pueden pertenecer a la misma propuesta; un mismo juez no puede tener dos asignaciones vigentes para la misma `submission_version`.
+9. Plazo global: `2026-08-27 23:59:59 America/Hermosillo`, persistido/contrastado en UTC. M4 no captura evaluaciones.
+10. `P2B-BLOCK-001=RESOLVED BY OWNER 2026-08-18`: cuatro principales sin límite fijo y quinto sustituto exclusivo con capacidad diez. La undécima sustitución activa falla cerrada. Si el sustituto declara conflicto o queda suspendido y no existe otro reemplazo aprobado, registra riesgo/bloqueo operativo y no reasignes por inferencia.
+
+Antes de modificar:
+1. confirma `pwd`, Git toplevel, rama, SHA local/remoto, ancestro común, `git status --short`, `git diff` y archivos preexistentes;
+2. preserva todo cambio preexistente; no hagas stage, commit, push, reset, clean ni checkout destructivo;
+3. crea `.agent/execplans/flowerflow-phase-02b-m4-assignments-conflicts.md` con baseline, alcance, modelo, invariantes, pasos, pruebas, resultados, riesgos y rollback;
+4. usa sólo MySQL local `flowerflow_testing`, usuario `flowerflow_testing_user`, host loopback y datos sintéticos;
+5. antes de migrar/sembrar/probar esquema demuestra sin secretos `APP_ENV=testing`, driver MySQL, host loopback, base/usuario exactos y `SELECT DATABASE()=flowerflow_testing`; detente si algo difiere;
+6. no accedas a producción, URL pública, AWS, EC2, SSH/SSM, servicios externos, MySQL/logs/datos productivos.
+
+Implementación autorizada M4:
+- crea migraciones aditivas y reversibles para `judge_assignments` y `judge_conflicts`, con ULID público, FKs/índices/checks MySQL, timestamps UTC y enums respaldados. Usa estados de asignación `active`, `conflict_declared`, `voided`, `cancelled`; tipo `initial|replacement`. Usa estados de conflicto `declared|resolved_reassigned`; no agregues rechazo/dismissal ni borrado silencioso sin una decisión aprobada;
+- `judge_assignments` debe incluir al menos competencia, `submission_version_id`, `judge_profile_id`, `rubric_version_id`, tipo, estado, plazo, `replaces_assignment_id` nullable, actores/fechas/razones de creación, void/cancelación y timestamps. Protege duplicados lógicos y cadenas de reemplazo con restricciones y validación server-side;
+- `judge_conflicts` debe conservar asignación, juez declarante, tipo exacto, explicación cuando aplique, declarado en, resolutor, fecha/razón de resolución y asignación sustituta creada. Nunca copies contenido de propuesta, PII o documentos a la declaración/auditoría;
+- añade permisos mínimos y separados para `view evaluation assignments`, `manage evaluation assignments`, `declare own evaluation conflicts` y `resolve evaluation conflicts`. Sólo admin recibe view/manage/resolve; sólo judge recibe declare-own, sin permisos de panel, propuesta, rúbrica administrativa o archivos;
+- crea modelos guarded, enums, Policies, Form Requests y Actions/Services transaccionales. Toda operación administrativa crítica exige admin exacto, permiso, confirmación de contraseña y razón de 20–1,000 caracteres; usa locks de propuesta/version, rúbrica, perfiles, asignaciones y contador del sustituto;
+- crea una acción manual por propuesta elegible que, tras selección/confirmación explícita del admin, genere de forma idempotente exactamente cuatro asignaciones `initial` activas, una por cada primary activo. Si falta/sobra un primary activo, falta/sobra un substitute activo, existe cobertura divergente, cambia la versión enviada o la rúbrica activa no es determinística, falla sin mutación parcial;
+- no recorras ni asignes automáticamente todas las propuestas desde migración/seeder/scheduler. Puede existir una acción administrativa explícita por propuesta y una vista de cobertura pendiente; cualquier operación por lote queda fuera salvo propuesta previa aprobada;
+- la declaración de conflicto sólo la realiza el judge dueño de una asignación activa y antes del plazo. Debe ser idempotente, bloquear la asignación de inmediato, no revelar datos adicionales y conservar el catálogo exacto;
+- la resolución administrativa confirmada conserva la asignación original como `voided`, marca el conflicto `resolved_reassigned` y crea el reemplazo `active` para el único substitute activo con la misma versión de propuesta/rúbrica y plazo. Si el substitute ya tiene esa propuesta, está inactivo/suspendido, llegó a diez reemplazos activos, declaró conflicto sobre el reemplazo o cambió la evidencia, falla cerrado y deja trazabilidad sin inventar otro juez;
+- define el conteo M4 de capacidad como asignaciones `replacement` en estado `active` o `conflict_declared`; dejan de contar `voided` y `cancelled`. No implementes `in_progress`, `submitted`, `reopened` o `completed`, que pertenecen a M6/M7; documenta cómo M6 ampliará el contador sin reinterpretar historia;
+- crea `/panel/asignaciones` para admin: listado paginado de propuestas elegibles/cobertura, detalle técnico, activación manual de cuatro asignaciones, conflictos pendientes y resolución/reasignación. Reutiliza Materialize/Pixinvent y no expongas PII innecesaria;
+- crea `/juez/asignaciones` y detalle mínimo sólo para judge activo/asignado con alias opaco, categoría, plazo, estado y declaración de conflicto. No muestres la propuesta ni anexos: M5 es el único milestone autorizado para la vista ciega;
+- deriva cobertura `0..4` desde asignaciones iniciales/reemplazos vigentes; no persistas ni cambies un estado de propuesta por inferencia. Un conflicto sin reemplazo deja cobertura incompleta y visible sólo operativamente;
+- registra auditoría redactada para cobertura creada, conflicto declarado, resolución, asignación anulada, reemplazo creado y operación rechazada por capacidad/concurrencia. Conserva actor real e IDs técnicos; no copies nombres, correos, títulos, folios, contenido, archivos o razones internas de admisibilidad;
+- no envíes correos reales ni implementes notificaciones M8. Si los eventos de dominio facilitan M8, deben ser internos, idempotentes y sin listeners de entrega todavía;
+- actualiza ADR-0008, diagnóstico, producto, alcance, arquitectura, datos, seguridad, UX, roadmap, QA, riesgos, preguntas, handoff, trazabilidad y ExecPlans. M5 debe seguir `NOT IMPLEMENTED / NOT AUTHORIZED` y `P2B-BLOCK-001` debe permanecer resuelto.
+
+Pruebas mínimas:
+- migración/rollback/forward preserva usuarios, `judge_profiles`, rúbricas, propuestas, snapshots, admisibilidad y aceptaciones; no crea asignaciones/conflictos automáticamente;
+- sólo admin exacto lista/activa/resuelve; sólo judge activo dueño declara conflicto. Participant, reviewer, judge no asignado, sin rol, multirol, pending y suspended reciben 403/404 sin existencia filtrada;
+- sólo una propuesta enviada+admitted con versión final y una rúbrica activa completa puede recibir cobertura; draft/no admitida/sin versión/sin rúbrica/doble activa simulada fallan sin filas parciales;
+- con exactamente cuatro primary activos y un substitute activo, la acción manual crea cuatro asignaciones iniciales distintas, idempotentes, sin límite primary y sin asignación inicial al substitute;
+- composición 3/5 primary, 0/2 substitute, perfil pending/suspended, request repetido y dos activaciones concurrentes fallan o convergen sin duplicados ni cobertura parcial;
+- cada asignación fija la versión de propuesta y rúbrica exactas; activar una rúbrica posterior no reescribe asignaciones existentes;
+- catálogo de conflicto exacto, `other` con explicación, ownership/fecha/estado y doble declaración; el conflicto bloquea de inmediato y no da acceso a contenido;
+- admin resuelve con contraseña/razón y crea reemplazo append-only; original voided, cadena correcta, mismo snapshot/rúbrica/plazo y actor auditado;
+- el sustituto nunca recibe iniciales; diez reemplazos activos se admiten y el undécimo se rechaza transaccionalmente. Void/cancel libera capacidad según contrato M4; conflicto del sustituto o suspensión deja cobertura incompleta sin reasignación inferida;
+- ULID alterado, IDOR, mass assignment, rutas directas y carreras no revelan PII ni permiten cambiar juez, versión, rúbrica, tipo, estado, capacidad, actores o timestamps;
+- M1/M2/M3 completos continúan verdes: roles/shell, alta/perfil/capacidad null|10, sesiones/2FA y rúbrica versionada/inmutable/concurrente sin regresión;
+- `/juez` y `/juez/asignaciones` no muestran título, folio, resumen, contenido, integrantes, enlaces, anexos, nombres de archivo, PII, residencia, notas, aclaraciones, admisibilidad, otros jueces, rúbrica, scores o ranking.
+
+Validación final sólo después del guard:
+- forward/rollback/forward M4 en `flowerflow_testing` con usuarios/perfiles/rúbrica/propuestas/admisibilidad sintéticos preexistentes;
+- pruebas dirigidas M4, M3, M2, M1 y `php artisan test` completo;
+- `vendor/bin/pint --test`;
+- Composer validate/platform/audit y Yarn audit, dejando visible el advisory bajo de Quill si continúa;
+- `scripts/build_frontend_production.sh`, JSON, rutas, schedule, migrate status, `git diff --check`, enlaces Markdown y scan de secretos/PII;
+- UAT Firefox local admin/judge en escritorio/tableta/móvil: cobertura manual, vacío, conflicto, reemplazo, capacidad diez/undécima rechazada, teclado/foco/reflow/consola/403/404 y ausencia de datos M5, con correo array y datos sintéticos.
+
+No hagas stage, commit, push ni despliegue. No toques producción/AWS/Apache/PHP-FPM/Supervisor/MySQL productivo/DNS/TLS/SMTP real.
+
+Entrega:
+1. resumen y `GO/NO-GO` local M4;
+2. baseline y guard;
+3. modelo/estados/invariantes de asignación/conflicto;
+4. archivos y comandos/resultados;
+5. matriz efectiva por rol/estado;
+6. evidencia de elegibilidad, cobertura de cuatro, versionado, idempotencia y concurrencia;
+7. evidencia de conflicto, resolución, sustitución, capacidad diez y undécima fail-closed;
+8. migración/compatibilidad/rollback;
+9. riesgos/auditoría y evidencia de `P2B-BLOCK-001=RESOLVED`, incluido el caso sin reemplazo aprobado;
+10. documentación/trazabilidad;
+11. siguiente prompt exacto limitado a M5 —paquete ciego y anexos autorizados— sólo si M4 queda completamente verde; generarlo no autoriza ejecutarlo ni permite mezclar M6+.
+```
+
+## 21C. Prompt histórico ejecutado — implementar únicamente M3
 
 ```text
 Trabaja exclusivamente en el repositorio local `/home/ccortesg/workspace/flowerflow`.
@@ -755,7 +1021,7 @@ Entrega:
 10. siguiente prompt exacto limitado a M4 —asignaciones y conflictos— sólo si M3 queda completamente verde; generarlo no autoriza ejecutarlo ni permite mezclar M5+.
 ```
 
-## 21A. Prompt histórico ejecutado — implementar únicamente M2
+## 21D. Prompt histórico ejecutado — implementar únicamente M2
 
 ```text
 Trabaja exclusivamente en el repositorio local `/home/ccortesg/workspace/flowerflow`.
@@ -839,7 +1105,7 @@ Entrega:
 10. siguiente prompt limitado a M3 —rúbrica versionada— sólo si M2 queda completamente verde. No autorices M4 mientras `P2B-BLOCK-001` siga abierto.
 ```
 
-## 21B. Prompt histórico ejecutado — implementar únicamente M1
+## 21E. Prompt histórico ejecutado — implementar únicamente M1
 
 ```text
 Trabaja exclusivamente en el repositorio local `/home/ccortesg/workspace/flowerflow`.
@@ -931,21 +1197,21 @@ Entrega:
 
 | Gate | Resultado |
 |---|---|
-| Baseline Git | `pwd`/toplevel correctos; rama `codex/submission-deadline-extension`; local/remoto/merge-base inicial `e0fa0455e61afcb38593b62ae0d983f75a92b210`. M2 preservó el diff M1/documental preexistente hasta que el propietario autorizó expresamente commit/push acumulado; no se autorizó despliegue. |
+| Baseline Git | `pwd`/toplevel correctos; rama `codex/submission-deadline-extension`; local/remoto/merge-base inicial M5 `865059ad302ff4195ac18f671bd6fa13b99e398b`; se preservó íntegramente el árbol M1–M4A preexistente. No se autorizó commit/push/despliegue. |
 | Guard MySQL | `APP_ENV=testing`, MySQL, loopback, `flowerflow_testing`, `flowerflow_testing_user` y `SELECT DATABASE()` exactos, sin exponer contraseña. |
-| Migración | M2 pasó forward/rollback/forward preservando un usuario sintético; estado final 14/14. Seeder idempotente no creó cuentas/perfiles juez, invitaciones ni asignaciones. |
-| Pruebas | M2 dirigido 10/175; M1+M2 16/267; suite completa 125/1,316, sin fallos. |
-| Calidad/dependencias/build | Pint, Composer validate/platform/audit, dos JSON de menú y build Vite (98 iconos, 784 módulos, tres assets) verdes. Yarn no presenta moderados+ y mantiene visible el advisory bajo conocido de Quill. |
-| QA real local | Firefox con admin y judge pending/active/suspended; alta, recovery, revocación/relogin, reactivación, flag, 1440/768/390, teclado/foco, reflow, CSS zoom 200 %, 403/404 y consola limpia. Tras la corrección se repitió alta principal en escritorio y sustituto en 390 px, con capacidades correctas, cero overflow y consola limpia. No se afirma zoom nativo. |
-| Enlaces Markdown locales | 12 destinos locales comprobados en el repositorio; cero rotos. |
-| Cobertura/contradicciones | 21 decisiones `OWNER_APPROVED`; 02B=20 % funcional/90 % preparación; M1/M2 locales separados de producción; M3 siguiente; `P2B-BLOCK-001` resuelto; M4–M10 no implementados/no autorizados; resultados fuera. |
+| Migración | 18/18 migraciones; M5 forward/rollback/forward preservó usuario sintético preexistente y todas las tablas M1–M4A. No creó paquetes/asignaciones/evaluaciones automáticamente. |
+| Pruebas | M5: 8 pruebas/119 aserciones; dirigidas M1–M5: 41/654; suite completa: 150/1,703. Builder, canarios, drift, permisos, inmutabilidad y concurrencia verdes. |
+| Calidad/dependencias/build | Pint, Composer validate/platform/audit, JSON y build Vite verdes en el cierre M5. Yarn conserva sólo el advisory bajo conocido de Quill; el resultado final detallado está en el informe M5. |
+| QA real local | Firefox local: generación/preview/activación, paquete allowlist, anexos neutros, descarga, conflicto con pérdida inmediata y reasignación manual independiente hacia ambos sustitutos. 1440×900, 1024×768, 390×844 y reflow equivalente a zoom sin overflow; teclado/foco y consola limpios. |
+| Enlaces Markdown locales | Destinos locales de archivos modificados comprobados; cero rotos. |
+| Cobertura/contradicciones | Decisión vigente `4 primary + 2 substitute`, todos ilimitados. `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` resueltos local/test; M5 verde. M6 sigue separado/no autorizado; producción/resultados fuera. |
 | Secretos/PII | Revisión de altas del diff sin claves privadas/cloud, asignaciones de secretos ni dominios de correo personales; código/pruebas/UAT usaron datos sintéticos. |
-| Prompt M3 | La sección 21 es la fuente canónica completa; `docs/16` la referencia y conserva un bloque operativo abreviado. No autoriza M4. |
-| Limpieza/alcance | `migrate:fresh --seed` tras guard dejó cero usuarios, perfiles y sesiones sintéticos; 14/14 migraciones, cuatro categorías y tres tipos jurídicos activos. Esta entrega puede finalizar con el commit/push expresamente solicitado, pero sin despliegue o acceso externo. |
+| Prompt M6 | La sección 21 es la fuente canónica condicionada. Verifica M4A/M5, autoriza sólo borrador y cálculo servidor y excluye envío/reapertura M7+. |
+| Limpieza/alcance | La base testing se reconstruyó mediante guard y se retiraron cuentas/archivos UAT sintéticos. M5 no autoriza commit/push/despliegue o acceso externo. |
 | Whitespace/Git | `git diff --check` verde; archivos preexistentes preservados. |
 
-Los resultados técnicos completos, hallazgos y rollback M2 se conservan en `.agent/execplans/flowerflow-phase-02b-m2-judge-profile-onboarding.md` y `docs/19-phase-02b-m2-implementation-report-2026-08-18.md`; el ExecPlan M1 permanece como historia.
+Los resultados históricos M4 `1×10` y M4A se conservan en sus ExecPlans/informes. La evidencia vigente del paquete ciego está en `.agent/execplans/flowerflow-phase-02b-m5-blind-package.md` y `docs/23-phase-02b-m5-blind-package-implementation-report-2026-08-18.md`.
 
 ## 23. Regla de actualización
 
-Las 21 filas vigentes están `OWNER_APPROVED` desde el 2026-08-18. Cualquier cambio posterior debe registrar fecha, texto exacto, decisión sustituida, consecuencias y actor, sin reescribir la historia. Una aprobación de diseño no equivale a implementación; cada milestone requiere prompt y ExecPlan propios. La respuesta expresa posterior del propietario resolvió `P2B-BLOCK-001` mediante cuatro principales sin límite fijo y un quinto sustituto exclusivo con capacidad diez; esta resolución no equivale a implementar ni autorizar M4.
+Las decisiones vigentes están `OWNER_APPROVED`; el contrato ilimitado sustituye expresamente `1×10` y `2×30` sin borrar historia. M1–M5 están verdes sólo en local/test. Una aprobación o una prueba local no acredita despliegue productivo. M6 requiere un prompt de implementación separado y no autoriza M7, ganadores o resultados.

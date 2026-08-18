@@ -44,7 +44,7 @@
               <td>{{ $profile->assignment_role->label() }}</td>
               <td>{{ $profile->user->hasVerifiedEmail() ? 'Verificado' : 'Pendiente' }}</td>
               <td>{{ $profile->password_initialized_at ? 'Establecida' : 'Pendiente' }}</td>
-              <td>{{ $profile->max_active_assignments ?? 'Sin límite fijo' }}</td>
+              <td>{{ $profile->max_active_assignments ?? 'Sin límite' }}</td>
               <td class="text-end"><a class="btn btn-sm btn-outline-dark" href="{{ route('panel.judges.show', $profile) }}">Ver detalle</a></td>
             </tr>
           @endforeach

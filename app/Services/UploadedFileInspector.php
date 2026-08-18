@@ -12,6 +12,13 @@ class UploadedFileInspector
         $extension = strtolower($file->getClientOriginalExtension());
         $path = $file->getRealPath();
 
+        return $this->inspectPath($path, $extension, $kind);
+    }
+
+    public function inspectPath(string $path, string $extension, string $kind): ?string
+    {
+        $extension = strtolower($extension);
+
         if ($kind === 'editor_image') {
             $info = @getimagesize($path);
             if (! $info || ! in_array($info['mime'], ['image/jpeg', 'image/png', 'image/webp'], true)) {

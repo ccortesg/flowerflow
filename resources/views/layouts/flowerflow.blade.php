@@ -140,6 +140,15 @@
         @if(auth()->user()->hasExactRoles(['admin']) && auth()->user()->can('view judges'))
           <a href="{{ route('panel.judges.index') }}" @if(request()->routeIs('panel.judges.*')) aria-current="page" @endif>Jueces</a>
         @endif
+        @if(auth()->user()->hasExactRoles(['admin']) && auth()->user()->can('view evaluation rubrics'))
+          <a href="{{ route('panel.rubrics.index') }}" @if(request()->routeIs('panel.rubrics.*')) aria-current="page" @endif>Rúbricas</a>
+        @endif
+        @if(auth()->user()->hasExactRoles(['admin']) && auth()->user()->can('view evaluation assignments'))
+          <a href="{{ route('panel.assignments.index') }}" @if(request()->routeIs('panel.assignments.*')) aria-current="page" @endif>Asignaciones</a>
+        @endif
+        @if(auth()->user()->hasExactRoles(['admin']) && auth()->user()->can('view blind review packages'))
+          <a href="{{ route('panel.blind-review-packages.index') }}" @if(request()->routeIs('panel.blind-review-packages.*')) aria-current="page" @endif>Paquetes ciegos</a>
+        @endif
         <a href="{{ route('panel.account') }}" @if(request()->routeIs('panel.account')) aria-current="page" @endif>Cuenta y seguridad</a>
         <form method="POST" action="{{ route('logout') }}" class="mt-4">@csrf<button class="btn btn-sm btn-outline-light w-100">Cerrar sesión</button></form>
       </aside>

@@ -68,7 +68,7 @@ class JudgeRbacIsolationTest extends TestCase
         $this->actingAs($judge)->get(route('judge.dashboard'))
             ->assertOk()
             ->assertSee('Área de evaluación')
-            ->assertSee('Todavía no hay proyectos ni evaluaciones disponibles')
+            ->assertSee('consultar tus asignaciones y declarar conflictos')
             ->assertDontSee('data-testid="participant-menu"', false)
             ->assertDontSee('Propuestas</a>', false)
             ->assertDontSee('Admisibilidad</a>', false);
@@ -183,7 +183,10 @@ class JudgeRbacIsolationTest extends TestCase
         $this->assertSame(1, Permission::query()->where('name', 'access judge workspace')->where('guard_name', 'web')->count());
         $this->assertTrue($participant->fresh()->hasExactRoles(['participant']));
         $this->assertSame(0, Role::findByName('judge')->users()->count());
-        $this->assertSame(['access judge workspace'], Role::findByName('judge')->permissions()->pluck('name')->all());
+        $this->assertSame(
+            ['access judge workspace', 'declare own evaluation conflicts'],
+            Role::findByName('judge')->permissions()->pluck('name')->sort()->values()->all(),
+        );
         $this->assertFalse(Role::findByName('participant')->hasPermissionTo('access judge workspace'));
         $this->assertFalse(Role::findByName('reviewer')->hasPermissionTo('access judge workspace'));
         $this->assertFalse(Role::findByName('admin')->hasPermissionTo('access judge workspace'));

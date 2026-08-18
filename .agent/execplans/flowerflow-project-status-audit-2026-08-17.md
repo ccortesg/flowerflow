@@ -65,7 +65,10 @@ No hay despliegue. El rollback documental consiste en revertir únicamente los a
 - [x] 2026-08-18 MST — Entrada histórica append-only: el propietario respondió las 21 decisiones de Fase 02B. La preparación documental/técnica cambia de 32 % a 78 % y la implementación funcional permanece en 0 %. M1 queda listo para autorización expresa; no se reinterpretan los porcentajes de módulos implementados.
 - [!] 2026-08-18 MST — `P2B-BLOCK-001`: cuatro jueces con máximo ocho proyectos aportan 32 cupos, suficientes sólo para ocho propuestas con cobertura de cuatro; más de 50 propuestas exigen al menos 204 asignaciones y no queda sustituto distinto ante conflicto. Bloquea M4, no M1.
 - [x] 2026-08-18 MST — `P2B-BLOCK-001 RESOLVED BY OWNER`: el contrato anterior queda sustituido por cuatro jueces principales que evaluarán todas las propuestas elegibles sin límite fijo y un quinto juez exclusivamente sustituto con máximo diez reasignaciones activas. M4 deja de estar bloqueado por esta decisión, pero sigue no implementado/no autorizado y debe esperar M3 verde.
+- [x] 2026-08-18 MST — Corrección posterior: el owner sustituye `1×10` por dos sustitutos con capacidad treinta cada uno, seis jueces operativos y selección manual. El antecedente se conserva; M4A queda requerido antes de M5.
+- [x] 2026-08-18 MST — Corrección final: el owner elimina todo límite para principales y sustitutos. M4A implementa `4+2`, capacidad `NULL`, selección manual y queda `GO LOCAL/TEST`; la entrada anterior permanece como historia append-only.
 - [x] 2026-08-18 MST — El propietario autoriza commit/push de todos los cambios acumulados para preparar su despliegue manual. La autorización no incluye despliegue, acceso a producción ni verificación del SHA productivo.
+- [x] 2026-08-18 MST — Entrada posterior: M1–M5 quedan `GO LOCAL/TEST`; M5 cierra paquete allowlist/hash/anexos neutros con 18 migraciones, suite 150/1,703 y UAT Firefox. El producto maestro se recalcula en 68 % y M6 queda como puerta separada, sin atribución productiva.
 
 ## Decision Log
 

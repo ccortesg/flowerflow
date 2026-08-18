@@ -1,8 +1,10 @@
 # Preguntas abiertas y decisiones — Flower Flow 2026
 
+> **Estado vigente M5 — 2026-08-18:** `P2B-DEC-005/015` permanecen cerradas mediante `4+2` ilimitado y selección manual. M5 materializa la ceguera estructural decidida, con riesgo semántico aceptado; M6 es la siguiente puerta separada.
+
 > **Decisiones del propietario — 2026-08-18:** se conserva sin cambios la superposición temática de accesibilidad de la Mecánica v1.1; las cuentas que aceptaron v1.0 se tratan operativamente como aceptantes de v1.1 sin forzar reaceptación ni alterar evidencia histórica; y el archivo físico v1.0 designado por el propietario es `public/documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf`. La discrepancia entre su SHA-256 actual `3bcf31…` y el hash histórico registrado `42bd5e…` se conserva documentada, no se oculta ni se corrige mediante backfill.
 
-> **Estado productivo y puerta actual — 2026-08-18:** el propietario registra `OWNER_CONFIRMED_DEPLOYED` y más de 50 propuestas reales. Sin evidencia externa en esta tarea, `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; M1/M2 se validaron sólo localmente y no se atribuyen a producción. Las decisiones 02B, incluida la corrección de capacidad/sustitución, están `OWNER_APPROVED`; M3 es la siguiente puerta. `P2B-BLOCK-001` está resuelto y M4 permanece no implementado/no autorizado.
+> **Estado productivo y puerta actual — 2026-08-18:** el propietario registra `OWNER_CONFIRMED_DEPLOYED` y más de 50 propuestas reales. Sin evidencia externa, `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`. M1–M5 están verdes sólo en local/test; M6 es el siguiente milestone separado.
 
 > **Auditoría integral 2026-08-17:** Fase 01/02A está implementada en repositorio, pero el runtime local primario no está alineado: límite tres frente a cuatro y cuatro migraciones funcionales pendientes. Jueces/evaluación y resultados siguen bloqueados por decisiones de negocio. Ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
@@ -57,8 +59,13 @@ Siguen abiertas: hora exacta de apertura; fecha de salida; licencia Pixinvent; a
 | D-027 | SUPERSEDED / RESOLVED 2026-08-18 | `P2B-BLOCK-001`: cobertura de cuatro evaluaciones, cuatro jueces disponibles, capacidad ocho y sustitución a otro juez eran incompatibles con más de 50 propuestas. | Sustituida por D-031; se conserva como hallazgo histórico. |
 | D-028 | VERIFIED LOCAL 2026-08-18 | M1 implementa rol `judge`, permiso exclusivo, gates exactos, flag fail-closed, redirección segura y shell vacío sin datos. | Se conserva como baseline de aislamiento; no demuestra despliegue productivo. |
 | D-029 | VERIFIED LOCAL 2026-08-18 | M2 implementa `judge_profiles`, alta directa admin, credencial propia, activación derivada, suspensión/reactivación, revocación de sesiones y recovery 2FA administrativo. | Sólo local/test; no crea asignaciones, no exige 2FA y no acredita producción. |
-| D-030 | READY FOR EXPLICIT AUTHORIZATION 2026-08-18 | La siguiente puerta propuesta es M3, limitada a la rúbrica global versionada aprobada. | Usar el prompt canónico de `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`; M4 espera M3 verde y autorización propia. |
-| D-031 | OWNER_APPROVED / `P2B-BLOCK-001 RESOLVED` 2026-08-18 | Cuatro jueces principales evaluarán todas las propuestas elegibles sin límite fijo; el quinto será exclusivamente sustituto con máximo diez reasignaciones activas. | Perfil M2 `primary=NULL`/`substitute=10`; M4 debe impedir carga inicial al sustituto y rechazar la undécima sustitución activa. |
+| D-030 | SUPERSEDED / M3 GO LOCAL 2026-08-18 | La siguiente puerta propuesta era M3, limitada a la rúbrica global versionada. | M3 se implementó y validó localmente; D-032 la sustituye. |
+| D-031 | SUPERSEDED 2026-08-18 | Cuatro principales + un sustituto × diez. | Sustituida por D-034; se conserva como historia M2/M4. |
+| D-032 | SUPERSEDED / M4 GO LOCAL 2026-08-18 | La siguiente puerta propuesta era M4, limitada a asignaciones manuales y conflictos. | M4 quedó implementado y verde localmente; D-033 la sustituye. |
+| D-033 | SUPERSEDED / M5 GO LOCAL 2026-08-18 | M5 permanecía limitado a paquete ciego y no incluía M6. | Se conserva como puerta histórica; D-036 registra el estado vigente. |
+| D-036 | M5 GO LOCAL/TEST 2026-08-18 | El paquete es único por versión, allowlist, hash canónico e inventario neutro; sólo assignment propia active consume. | M6 puede proponerse separado; no autoriza M7+, producción ni generación por lote. |
+| D-034 | OWNER FINAL / `P2B-BLOCK-001 RESOLVED` 2026-08-18 | Cuatro primary + dos substitute, todos ilimitados; seis jueces operativos; admin selecciona manualmente. | `P2B-M4-CORRECTION-001` cerrado local/test; sin reparto automático. |
+| D-035 | IMPLEMENTED LOCAL/TEST 2026-08-18 | `max_active_assignments=NULL` para ambos roles; sustitutos sin iniciales; 31 reemplazos aceptados. | M4A `GO LOCAL/TEST`; producción no acreditada. |
 
 ## Decisiones jurídicas prioritarias v1.1
 
@@ -79,7 +86,7 @@ Siguen abiertas: hora exacta de apertura; fecha de salida; licencia Pixinvent; a
 | Q-003 | PENDING | ¿Cuál es la fecha deseada de lanzamiento público? | Salir con margen de al menos 7–10 días antes del cierre, sujeto a la ruta crítica real. | **Crítico:** determina calendario, recortes y soporte. |
 | Q-004 | PENDING | ¿Cuál es la fecha/hora de apertura? | No abrir hasta completar UAT, backup/restauración y smoke test. | Alto: afecta estados, scheduler y comunicación. |
 | Q-005 | SUPERSEDED 2026-08-17 | ¿Cuál era la hora exacta de cierre del 2026-08-15? | `23:59:59 America/Hermosillo`, inclusivo; sustituido por la ampliación siguiente. | Se conserva como decisión histórica. |
-| Q-005-EXT | RESOLVED 2026-08-17 | ¿Cuál es el nuevo cierre de la convocatoria? | `2026-08-23 23:59:59 America/Hermosillo`, inclusivo; persistir `2026-08-24 06:59:59 UTC`. | Implementar config/base/UI y prueba de frontera; PDF jurídicos pendientes. |
+| Q-005-EXT | RESOLVED 2026-08-18 | ¿Cuál es el nuevo cierre de la convocatoria? | `2026-08-23 23:59:59 America/Hermosillo`, inclusivo; persistir `2026-08-24 06:59:59 UTC`. | Config/base/UI, prueba de frontera y PDF jurídicos v1.1 alineados y verificados en local/test; despliegue productivo sujeto al runbook autorizado. |
 | Q-006 | PENDING | ¿Habrá periodo de gracia o excepciones administrativas? | Sin gracia automática; sólo excepción individual, justificada, autorizada y auditada. | Alto: estados, permisos y legalidad operativa. |
 | Q-007 | PENDING | ¿Qué alcance puede recortarse si el calendario no es viable? | Recortar resultados públicos, CMS, dashboards, exports avanzados y colaboración compleja antes que seguridad/revisión/evaluación. | **Crítico:** viabilidad del MVP. |
 
@@ -120,13 +127,15 @@ Siguen abiertas: hora exacta de apertura; fecha de salida; licencia Pixinvent; a
 
 | ID | Estado | Pregunta | Recomendación / supuesto de trabajo | Impacto si cambia |
 | --- | --- | --- | --- | --- |
-| Q-026 | RESOLVED / OWNER_APPROVED | Rúbrica completa, escala, pesos y comentarios. | Pertinencia 20, Claridad 20, Viabilidad 25, Impacto 25, Coherencia 10; escala 0–10/paso 0.5; comentario general 100–2,000 y por criterio opcional hasta 1,000. | Contrato ADR-0008; implementación M3/M6. |
-| Q-027 | RESOLVED / UPDATED 2026-08-18 | Cuatro principales cubren todas las propuestas elegibles sin límite fijo; quinto sustituto exclusivo con máximo diez activas; sin especialidad. | Implementar exactamente en M4, sin carga inicial al sustituto. | Contrato compatible; flujo pendiente. |
-| Q-028 | RESOLVED / RISK ACCEPTED | Ceguera simple estructural; todos los campos sustantivos/anexos evaluables; PII estructurada/residencia/notas/aclaraciones/historial ocultos. | Automatización estructural y nombres/metadatos limpios; autoidentificación dentro del contenido aceptada sin bloqueo. | Implementación M5 y comunicación honesta del riesgo. |
-| Q-029 | PARTIAL RESOLVED / RESULTADOS FUERA DE ALCANCE | Conflictos con catálogo cerrado y reemplazo por admin al quinto sustituto; empate técnico por igualdad a dos decimales. | Resolución del empate/ganador queda fuera de 02B y nunca usa azar; reemplazo admite máximo diez activos. | Consolidación definida; ganador pendiente. |
+| Q-026 | RESOLVED / M3 IMPLEMENTED LOCAL | Rúbrica completa, escala, pesos y comentarios. | M3 implementa códigos/pesos/escala/versionado; descripciones extensas siguen `POR_CONFIRMAR`. Comentarios y cálculo pertenecen a M6. | ADR-0008, ExecPlan M3 y pruebas 8/132. |
+| Q-027 | OWNER FINAL / M4A VERIFIED 2026-08-18 | Cuatro principales cubren todas las elegibles; dos sustitutos exclusivos sin límite; sin especialidad. | Composición activa `4+2`; sustitutos sin carga inicial; no se rechaza por volumen. | Contrato/código local cerrados; producción no acreditada. |
+| Q-028 | RESOLVED / M5 VERIFIED LOCAL / RISK ACCEPTED | Ceguera simple estructural; todos los campos sustantivos/anexos evaluables; PII estructurada/residencia/notas/aclaraciones/historial ocultos. | Builder allowlist, inventario/descarga neutros y comunicación honesta; autoidentificación dentro del contenido aceptada sin bloqueo. | Mantener pruebas M5; no ampliar campos por inferencia. |
+| Q-029 | PARTIAL RESOLVED / M4A VERIFIED / RESULTADOS FUERA | Conflictos con catálogo cerrado; admin selecciona manualmente uno de dos sustitutos; empate técnico por igualdad a dos decimales. | M4A implementa selección ilimitada; desempate/ganador sigue fuera. | Conflicto base/corrección probados; consolidación pendiente. |
 | Q-030 | PENDING | ¿Se puede declarar una categoría desierta? | Permitirlo con permiso, razón y acta/registro. | Alto: estados y publicación. |
 | Q-031 | RESOLVED / OWNER_APPROVED | Reapertura por `admin` hasta 20:00, razón 20–1,000, password confirmation y revisión append-only editable hasta 23:59:59; admin puede editar en nombre del juez con actor real. | Implementar sin sobrescribir ni suplantar autoría. | Alto: integridad/auditoría en M7. |
-| Q-032 | RESOLVED / UPDATED 2026-08-18 | Catálogo personal/familiar, profesional/económico, participación u otro explicado; admin resuelve y reasigna manualmente al quinto sustituto. | Varias asignaciones por propuesta; sustituto sólo reemplaza y tiene máximo diez activas. | Alto de implementación/concurrencia; decisión cerrada. |
+| Q-032 | OWNER FINAL / M4A VERIFIED 2026-08-18 | Catálogo vigente; admin resuelve y selecciona manualmente uno de dos sustitutos. | Cada sustituto sólo reemplaza y es ilimitado; sin algoritmo automático. | Implementación/concurrencia verdes local/test; producción no acreditada. |
+| Q-032B | `POR_CONFIRMAR` / FAIL-CLOSED | ¿Qué ocurre si el sustituto ya asignado declara conflicto, es suspendido o deja de estar operativo? | M4A no debe crear cadenas por inferencia: conserva evidencia, marca cobertura incompleta y bloquea contenido/mutaciones. Definir después si `admin` puede crear un segundo replacement append-only hacia el otro sustituto. | Integridad de historial, capacidad, unicidad y operación ante contingencias; no impide seleccionar entre dos sustitutos para el conflicto original del primary. |
+| Q-060 | `POR_CONFIRMAR` / NO BLOQUEA M3 | ¿Cuál es la descripción extensa aprobada de cada criterio? | M3 conserva `description=NULL` y muestra `POR_CONFIRMAR`. Cuando exista texto aprobado se crea una versión nueva; nunca se muta una activa/sustituida. | UX/instrucciones M5/M6; no cambia pesos, escala o fórmula aprobados. |
 
 ### Premio, publicación y comunicación
 

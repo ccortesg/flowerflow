@@ -1,6 +1,8 @@
 # UX/UI, accesibilidad e identidad — Flower Flow 2026
 
-> **Estado vigente — 2026-08-18:** M2 añade `/panel/jueces` con listado, alta, función principal/sustituto, capacidad, detalle y acciones confirmadas, y `/juez/estado` para pending/suspended sin datos. UAT Firefox validó escritorio/tableta/móvil, teclado/foco, reflow, consola, 403/404, recovery con sesión invalidada y suspensión/reactivación. Rúbrica, asignaciones y evaluación siguen sin UI; `P2B-BLOCK-001` está resuelto y M4 permanece futuro.
+> **Contrato vigente M4A — 2026-08-18:** la resolución administrativa muestra y exige selección explícita entre dos sustitutos operativos, ambos rotulados `Sin límite`. No hay capacidad usada/disponible ni reparto automático. La UI fue verificada en Firefox local en escritorio, tableta y móvil.
+
+> **Estado vigente — 2026-08-18:** M5 está `GO LOCAL/TEST`. `/panel/paquetes-ciegos` permite generar, previsualizar y activar explícitamente; `/juez/asignaciones/{id}` muestra la allowlist sólo con asignación/paquete activos y ofrece anexos neutros. Ambas superficies comunican “anonimización estructural” sin prometer anonimato semántico. M6 no está implementado.
 
 > **Sincronización v1.1, actualizada 2026-08-18:** landing, `/documentos`, registro, login, perfil, envío, footer y panel muestran vínculos v1.1; las superficies globales identifican a FUNXT, A.C. y su RFC/domicilio verificados. La fecha del 23 de agosto, cuatro categorías y máximo cuatro propuestas están confirmados. La UI conserva sus descripciones actuales y el propietario aceptó que el PDF mencione accesibilidad en Movilidad y Hermosillo sin Barreras, sin recategorización.
 
@@ -12,6 +14,17 @@
 - El dashboard administrativo limita “Enviadas por categoría” a categorías activas de la convocatoria activa e incluye conteo cero. El filtro/listado/detalle histórico conserva relaciones existentes y acepta `?category=hermosillo-sin-barreras`.
 - El correo de confirmación incluye la categoría, además de folio, título y fecha. El snapshot inmutable conserva `public_id`, slug y nombre de la nueva categoría.
 - La Mecánica v1.1 corregida confirma cuatro categorías y máximo cuatro propuestas. La superposición temática de accesibilidad quedó aceptada por el propietario; la interfaz conserva sus textos y categorías sin cambios.
+
+## Superficies M4 implementadas
+
+| Superficie | Datos | Acciones | Estados |
+|---|---|---|---|
+| `/panel/asignaciones` | ID técnico, categoría, cobertura 0..4 | abrir propuesta elegible | vacío, paginado, cobertura/conflicto |
+| `/panel/asignaciones/{submission}` | versión, jueces, tipo/estado, rúbrica versionada y plazo | activar cuatro; resolver conflicto con contraseña/razón | 0/4, 3/4, 4/4, error de composición/capacidad |
+| `/juez/asignaciones` | alias opaco, categoría y estado propios | abrir | vacío/listado paginado |
+| `/juez/asignaciones/{assignment}` | alias, categoría, plazo y estado | declarar conflicto propio | activo, conflicto bloqueante, 403/404 |
+
+Sin paquete activo, el detalle conserva el estado mínimo M4 y no genera datos. Con paquete activo, M5 añade título/resumen/descripción/enlaces/anexos allowlist, pero nunca folio, PII, residencia, admisibilidad, otros jueces, rúbrica o controles de evaluación.
 
 ## Sistema visual Fase 01
 
@@ -200,7 +213,7 @@ La evaluación muestra los cinco criterios y pesos aprobados, escala 0–10/paso
 | Revisión de elegibilidad | `/admin/elegibilidad/{id}` | Revisor |
 | Jueces | `/admin/jueces` | Administrador |
 | Asignaciones | `/admin/asignaciones` | Administrador |
-| Rúbricas | `/admin/rubricas` | Administrador autorizado |
+| Rúbricas **(M3 real)** | `/panel/rubricas` | Admin exacto con permisos `view/manage evaluation rubrics` |
 | Evaluaciones | `/admin/evaluaciones` | Permiso explícito |
 | Ganadores | `/admin/ganadores` | Declarar/publicar con permisos separados |
 | Comunicaciones | `/admin/comunicaciones` | Permiso de envío |
@@ -209,6 +222,8 @@ La evaluación muestra los cinco criterios y pesos aprobados, escala 0–10/paso
 | Privacidad | `/admin/privacidad` | Soporte de privacidad |
 | Usuarios/roles | `/admin/acceso/*` | Superadministrador |
 | Configuración | `/admin/configuracion` | Permiso explícito |
+
+La superficie M3 muestra contrato numérico, criterios ordenados y `POR_CONFIRMAR` para descripciones nulas. Sólo los borradores ofrecen edición/activación; una activa o sustituida muestra un estado de inmutabilidad sin controles de cambio. No presenta propuestas, jueces, evaluaciones, puntajes o PII.
 
 ### Estados de sistema
 

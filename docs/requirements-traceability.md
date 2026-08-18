@@ -1,5 +1,7 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+> **Contrato vigente M5 — 2026-08-18:** M4A conserva cuatro principales y dos sustitutos ilimitados; M5 añade proyección allowlist única por versión, inventario neutro, descarga privada y acceso sólo por asignación activa. M6–M10 permanecen no implementados.
+
 ## Trazabilidad de reconciliación jurídica v1.1 — 2026-08-17
 
 | ID | Requisito | Implementación/evidencia | Estado |
@@ -23,8 +25,8 @@
 | AUDIT-001 | Diagnóstico por módulo y funcionalidad con porcentajes reproducibles | `docs/16-project-status-by-module-and-role-2026-08-17.md`, rúbrica de cinco dimensiones y pesos del plan maestro | VERIFIED documental |
 | AUDIT-002 | Diagnóstico por rol y acceso efectivo | roles/permisos del seeder, rutas, Policies, vistas y pruebas negativas contrastadas con la matriz planificada | VERIFIED documental/local |
 | AUDIT-003 | Separar código, runtime local y producción | estado de flags/config, migraciones de testing, `OWNER_CONFIRMED_DEPLOYED` y `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR` separados | VERIFIED documental; producción no verificada independientemente |
-| AUDIT-004 | Gate de código vigente | 125 pruebas/1,316 aserciones, Pint, Composer, JSON y build verdes; Quill bajo documentado | VERIFIED local |
-| AUDIT-005 | Próximo prompt exacto y acotado | prompt M3 sincronizado en diagnóstico/paquete; conserva M1/M2 y registra `P2B-BLOCK-001=RESOLVED` | READY FOR EXPLICIT OWNER AUTHORIZATION |
+| AUDIT-004 | Gate de código vigente | suite completa M1–M4A, Pint, Composer, JSON y build; conteos en informe M4A; Quill bajo documentado | VERIFIED local |
+| AUDIT-005 | Próximo prompt exacto y acotado | prompt M6 sincronizado en sección 21; preserva M4A/M5 | M5 GO / M6 SEPARATE |
 
 ## Trazabilidad del diseño Fase 02B — 2026-08-18
 
@@ -33,19 +35,75 @@
 | F2B-DES-001 | Baseline Git y código real antes de diseñar | ExecPlan 02B e inventario en paquete sección 4 | VERIFIED documental/local read-only |
 | F2B-DES-002 | Distinguir despliegue informado de evidencia técnica | diagnóstico, product spec y handoff con ambos estados | `OWNER_CONFIRMED_DEPLOYED` / SHA `POR_CONFIRMAR` |
 | F2B-DES-003 | Identidad/alta directa/perfil/gate de juez | M1: enum/Action/middleware/migración/rutas/shell; M2: `judge_profiles`, acciones, Policy/Requests, admin UI y middleware activo | M1/M2 VERIFIED LOCAL |
-| F2B-DES-004 | Asignación/reasignación/cobertura/plazo | paquete sección 7; decisiones 003–005/015/016 y corrección D-031 | OWNER_APPROVED / BLOCK RESOLVED / M4 NOT AUTHORIZED |
-| F2B-DES-005 | Matriz ciega campo por campo y anonimización | paquete sección 8; decisiones 006–008 | OWNER_APPROVED / SEMANTIC IDENTITY RISK ACCEPTED |
-| F2B-DES-006 | Rúbrica versionada y contrato exacto | paquete sección 9; decisiones 009–011 | OWNER_APPROVED / NOT IMPLEMENTED |
+| F2B-DES-004 | Asignación/reasignación/cobertura/plazo | M4A verifica `4+2`, capacidad nula, sustitutos sin iniciales y selección manual | OWNER FINAL / M4A VERIFIED LOCAL |
+| F2B-DES-005 | Matriz ciega campo por campo y anonimización | builder/payload/inventario/Policies M5; paquete sección 8; decisiones 006–008 | M5 VERIFIED LOCAL / SEMANTIC IDENTITY RISK ACCEPTED |
+| F2B-DES-006 | Rúbrica versionada y contrato exacto | `rubric_versions`, `rubric_criteria`, contrato/Actions/Policy/UI y pruebas M3; paquete sección 9 | M3 VERIFIED LOCAL |
 | F2B-DES-007 | Estados, envío inmutable y reapertura versionada | paquete sección 10; decisión 017 | OWNER_APPROVED / NOT IMPLEMENTED |
 | F2B-DES-008 | Cálculo sólo servidor, consolidación/faltantes/empate | paquete sección 11; decisiones 010/012/013/021 | OWNER_APPROVED / NOT IMPLEMENTED |
-| F2B-DES-009 | Matriz negativa, amenazas y auditoría | `JudgeRbacIsolationTest` + `JudgeProfileOnboardingTest` (16 pruebas/267 aserciones), suite completa y paquete sección 12 | M1/M2 VERIFIED; M3+ PENDING |
-| F2B-DES-010 | UX accesible mínima | `/juez`, `/juez/estado`, `/panel/jueces` y `/cuenta/acceso`; UAT Firefox desktop/tablet/mobile, teclado, foco, reflow, consola y 403/404 | M1/M2 VERIFIED; UX M3+ PENDING |
+| F2B-DES-009 | Matriz negativa, amenazas y auditoría | suites M1–M5; M5 añade canarios, IDOR, drift, neutralidad y concurrencia | M1–M5 VERIFIED LOCAL |
+| F2B-DES-010 | UX accesible mínima | `/panel/paquetes-ciegos` y detalle juez allowlist; UAT Firefox desktop/tablet/mobile, teclado, foco, reflow, consola y 403/404 | M1–M5 VERIFIED; UX M6+ PENDING |
 | F2B-DES-011 | Notificaciones idempotentes y operación | M2: configuración de acceso, verificación y estado/recovery con HTML+texto y dispatcher resiliente; paquete sección 14 para eventos futuros | M2 SUBSET VERIFIED / M3+ PENDING |
 | F2B-DES-012 | Compatibilidad con más de 50 propuestas | migración M2 aditiva, perfil primary/substitute, sin backfill/asignaciones; upgrade/rollback/forward preservó usuario sintético | M2 VERIFIED LOCAL / CAPACITY DECISION CLOSED |
-| F2B-DES-013 | Diez milestones futuros | paquete sección 18 | M1/M2 COMPLETE; M3 READY; M4 READY AFTER M3; M5–M10 NOT AUTHORIZED |
-| F2B-DES-014 | Bloque de 21 respuestas y siguiente prompt | paquete secciones 20–21; diagnóstico prompt vigente | 21/21 OWNER_APPROVED / M3 READY |
-| F2B-DES-015 | Resolver incompatibilidad de cobertura/capacidad/reemplazo | paquete secciones 5/7/19/20; ADR-0008; D-031; riesgo R76 | `P2B-BLOCK-001 RESOLVED BY OWNER` |
-| F2B-DES-016 | Contrato de QA por milestone | `JudgeRbacIsolationTest`, `JudgeProfileOnboardingTest`, `docs/08-testing-qa.md`; gates futuros de fórmula, reapertura, anonimización y retención | M1/M2 TESTS VERIFIED / M3+ PENDING |
+| F2B-DES-013 | Diez milestones y corrección | paquete sección 18 + ExecPlans M4A/M5 | M5 GO; M6 SEPARATE; M7–M10 NOT AUTHORIZED |
+| F2B-DES-014 | Bloque de 21 respuestas y siguiente prompt | paquete secciones 20–21; prompt M6 actualizado | OWNER FINAL / M5 GO BEFORE M6 |
+| F2B-DES-015 | Resolver incompatibilidad de cobertura/capacidad/reemplazo | ADR-0008; D-034/D-035; R76; ExecPlan/informe M4A | `P2B-BLOCK-001 RESOLVED LOCAL` |
+| F2B-DES-016 | Contrato de QA por milestone | suites M1–M5 + gates futuros | M5 VERIFIED / M6+ PENDING |
+
+## Trazabilidad de implementación Fase 02B M3 — 2026-08-18
+
+| ID | Requisito M3 | Implementación/evidencia | Estado |
+|---|---|---|---|
+| F2B-M3-001 | Versión global exacta por competencia | `RubricVersion`, `RubricCriterion`, `EvaluationRubricContract` y migración `2026_08_18_140000_create_rubric_versions_and_permissions.php` | VERIFIED local |
+| F2B-M3-002 | Cinco códigos/orden/pesos y contrato decimal exactos | validación de servicio/Requests, checks MySQL y `VersionedRubricTest`; descripciones nulas `POR_CONFIRMAR` | VERIFIED local |
+| F2B-M3-003 | Ciclo draft→active→superseded e inmutabilidad | Actions create/update/activate, modelos guarded, UI y auditoría | VERIFIED local |
+| F2B-M3-004 | Máximo una activa bajo concurrencia | lock de competencia/versiones, `active_slot`, unique/check y dos procesos MySQL en `RubricActivationConcurrencyTest` | VERIFIED local |
+| F2B-M3-005 | Permisos admin separados y matriz negativa | permisos `view/manage evaluation rubrics`, Policy/rutas y pruebas participant/reviewer/judge/sin rol/multirol | VERIFIED local |
+| F2B-M3-006 | Provisionamiento v1 idempotente sin datos funcionales | `ProvisionCanonicalRubricDraft`, seeder local/testing, divergencia fail-closed | VERIFIED local |
+| F2B-M3-007 | Compatibilidad/rollback | forward/rollback/forward; draft reversible, active/superseded protegidas; cero asignaciones/evaluaciones | VERIFIED local |
+| F2B-M3-008 | QA y UAT | M3 8/132; M1–M3 24/399; suite 133/1,448; Firefox responsive/teclado/reflow/consola/403/404/inmutabilidad | VERIFIED local |
+| F2B-M3-009 | Alcance y siguiente puerta | informe M3 y paquete sección 21; M4 limitado a asignaciones/conflictos, M5 excluido | GO LOCAL/TEST / M4 NOT AUTHORIZED |
+
+## Trazabilidad de implementación Fase 02B M4 — 2026-08-18
+
+| ID | Requisito M4 | Implementación/evidencia | Estado |
+|---|---|---|---|
+| F2B-M4-001 | Elegibilidad y cobertura manual exacta | `AssignmentEligibility`, `ActivateSubmissionCoverage`, cuatro `initial`, versión/rúbrica/plazo fijados | VERIFIED local |
+| F2B-M4-002 | Modelo append-only y restricciones | migración `2026_08_18_150000_create_judge_assignments_and_conflicts.php`, enums, modelos guarded/checks/FKs/índices | VERIFIED local |
+| F2B-M4-003 | Composición y capacidad histórica | cuatro primary activos sin límite, un substitute activo, máximo diez replacements activos/conflictuados | VERIFIED HISTORICAL / SUPERSEDED BY M4A |
+| F2B-M4-004 | Conflicto propio y resolución admin | catálogo exacto, explicación condicional, original voided, reemplazo ligado, contraseña/razón y auditoría | VERIFIED local |
+| F2B-M4-005 | Autorización y minimización | permisos separados, Policies/Requests, proyección juez sin contenido M5 y canarios de ausencia | VERIFIED local |
+| F2B-M4-006 | Idempotencia/concurrencia | repetición converge; dos procesos MySQL dejan cuatro asignaciones; cobertura divergente falla sin parcial | VERIFIED local |
+| F2B-M4-007 | Reversibilidad/compatibilidad | rollback/forward dirigido; seeder no crea filas M4; propuestas/snapshots/admisibilidad/rúbrica no se reescriben | VERIFIED local |
+| F2B-M4-008 | QA/UAT histórica | suites M4; Firefox 3 viewports, vacío, 0→4→3→4 y 10/11 | VERIFIED HISTORICAL 1×10 |
+| F2B-M4-009 | Alcance y siguiente puerta | informe M4 histórico; ExecPlan/informe M4A; prompt M5 actualizado | M4A GO / M5 SEPARATE |
+
+## Trazabilidad de corrección Fase 02B M4A — 2026-08-18
+
+| ID | Requisito M4A | Implementación/evidencia | Estado |
+|---|---|---|---|
+| F2B-M4A-001 | Seis jueces operativos | exactamente cuatro primary activos y dos substitute activos; históricos/suspendidos no cuentan | VERIFIED LOCAL |
+| F2B-M4A-002 | Capacidad ilimitada | `primary=NULL` y `substitute=NULL`; migración aditiva desde perfiles existentes `10→NULL`; check MySQL | VERIFIED LOCAL |
+| F2B-M4A-003 | Sin carga inicial a sustitutos | cobertura inicial conserva exactamente cuatro primary y cero substitute | VERIFIED LOCAL |
+| F2B-M4A-004 | Selección manual | admin elige por ULID uno de dos sustitutos operativos; no hay balanceo automático | VERIFIED LOCAL/UI |
+| F2B-M4A-005 | Sin límite y concurrencia | 31 replacements activos para un sustituto sin rechazo; segundo seleccionable; carreras sin duplicados | VERIFIED LOCAL |
+| F2B-M4A-006 | Preservar historia | original voided, replacement append-only, misma versión/rúbrica/plazo y auditoría del sustituto seleccionado | VERIFIED LOCAL |
+| F2B-M4A-007 | Puerta M5 | prompt sección 21 verifica capacidad `NULL`, `4+2`, selección manual y >30 | DOCUMENTED / M4A GO |
+| F2B-M4A-008 | Contingencia de replacement | conflicto/suspensión del sustituto asignado deja cobertura incompleta; no crea cadena automática sin decisión expresa | POR_CONFIRMAR / FAIL-CLOSED |
+
+## Trazabilidad de implementación Fase 02B M5 — 2026-08-18
+
+| ID | Requisito M5 | Implementación/evidencia | Estado |
+|---|---|---|---|
+| F2B-M5-001 | Paquete único/versionado por snapshot | `blind_review_packages`, `submission_version_id` único, schema v1, payload/hash y estados respaldados | VERIFIED local |
+| F2B-M5-002 | Allowlist sin snapshot crudo | `BlindReviewPackageBuilder`: category, campos sustantivos y external links exactos; canarios fuera de modelo/HTML/audit | VERIFIED local |
+| F2B-M5-003 | Inventario evaluable neutro | `blind_review_package_files`, comparación exacta contra snapshot/live, etiquetas deterministas y exclusión de no-snapshot | VERIFIED local |
+| F2B-M5-004 | Descarga privada e integridad | ruta assignment+file, Policy ownership/status/versión, `nosniff`, nombre neutro, tamaño/SHA/MIME/firma | VERIFIED local |
+| F2B-M5-005 | Activación explícita e inmutable | Actions/Requests admin, razón/password confirmation, locks, idempotencia, guarded/checks y auditoría redactada | VERIFIED local |
+| F2B-M5-006 | Replacement comparte paquete | misma `submission_version_id`; original voided pierde acceso y sustituto elegido consume la misma fila/binarios | VERIFIED local |
+| F2B-M5-007 | Seguridad y riesgo semántico | matriz negativa, XSS/SSRF sin fetch, canarios PII, aviso “anonimización estructural” y riesgo owner accepted | VERIFIED local / RISK ACCEPTED |
+| F2B-M5-008 | Concurrencia/rollback/compatibilidad | dos activaciones MySQL→una activa/un audit; forward/rollback/forward preserva usuario sintético y M4 | VERIFIED local |
+| F2B-M5-009 | QA y UAT | M5 8/119; M1–M5 dirigido 41/654; suite 150/1,703; Firefox tres viewports/teclado/reflow/consola/IDOR | VERIFIED local |
+| F2B-M5-010 | Alcance y siguiente puerta | ExecPlan/informe M5; prompt sección 21 limitado a borrador/cálculo M6, M7+ excluido | GO LOCAL/TEST / M6 NOT AUTHORIZED |
 
 ## Trazabilidad paginación y exportación privada — 2026-08-11
 
@@ -210,8 +268,8 @@
 | F2B-M1-005 | VERIFIED LOCAL | Shell juez mínimo no contiene datos ni controles futuros. | `/juez`, layout/vista/estado restringido | Sólo correo verificado+rol+permiso+flag; sin propuestas, PII o archivos. | Firefox 1440/768/360/320, teclado/zoom/consola | F2B-M1 |
 | F2B-M1-006 | VERIFIED LOCAL | Migración es aditiva, reversible y preserva roles/datos. | `2026_08_18_120000_add_judge_role_and_workspace_permission.php` | Forward/rollback/forward; down falla seguro si el rol/permiso tiene asignaciones. | `migrate`, rollback, 13/13 | F2B-M1 |
 | F2B-M1-007 | VERIFIED LOCAL | La suite y los gates de release local permanecen verdes. | ExecPlan M1 y QA | 115 pruebas/1,141; Pint, Composer, build, JSON, rutas y schedule verdes; Quill bajo visible. | gates automatizados/locales | F2B-M1 |
-| F2B-M2-001 | VERIFIED LOCAL | Perfil juez uno-a-uno, ULID, estados, función primary/substitute y capacidad derivada. | `JudgeProfile`, enums y migración M2 | Principal sin límite fijo (`NULL`), sustituto diez; checks/FKs/índices; sin especialidad, invitación, backfill, juez o asignación automática. | `JudgeProfileOnboardingTest` + forward/rollback/forward | F2B-M2 |
-| F2B-M2-002 | VERIFIED LOCAL | Sólo admin crea juez directamente con nombre/correo/función y rol exclusivo; capacidad derivada en servidor. | `CreateJudgeAccount`, Requests/Policy, `/panel/jueces` | Correo/rol/perfil duplicados o carreras fallan sin sustitución ni fila parcial; contraseña aleatoria nunca se expone; `primary=NULL`/`substitute=10`. | Feature positivo/negativo/concurrencia/DB checks | F2B-M2 |
+| F2B-M2-001 | VERIFIED HISTORICAL + M4A CLOSED | Perfil juez uno-a-uno, ULID, estados, función primary/substitute y capacidad derivada. | `JudgeProfile`, enums y migraciones M2/M4A | M2 prueba antecedente `primary=NULL`/`substitute=10`; M4A migra ambos a `NULL`. | M2 histórica + M4A | F2B-M2/M4A |
+| F2B-M2-002 | VERIFIED LOCAL + M4A CLOSED | Sólo admin crea juez directamente con nombre/correo/función y rol exclusivo; capacidad derivada. | `CreateJudgeAccount`, Requests/Policy, `/panel/jueces` | Seguridad de alta permanece; M4A muestra `Sin límite`, sin auto-crear seis cuentas. | Feature M2 + regresión M4A | F2B-M2/M4A |
 | F2B-M2-003 | VERIFIED LOCAL | El juez establece su credencial mediante broker seguro y se activa sólo con contraseña propia y correo verificado. | `InitializeJudgePassword`, `SynchronizeJudgeProfileActivation`, listener de verificación | `password_initialized_at` se fija una vez; ambos órdenes activan idempotentemente; 2FA permanece opcional. | Feature reset/verificación/activación | F2B-M2 |
 | F2B-M2-004 | VERIFIED LOCAL | Pending/suspended fallan cerrados y sólo active puede abrir el shell con flag. | middleware `judge.active`, `/juez/estado`, gate M1 | Ningún estado recibe rutas participant/panel/archivos; flag apagado sigue fail-closed. | M1+M2 matrix + Firefox | F2B-M2 |
 | F2B-M2-005 | VERIFIED LOCAL | Suspensión/reactivación requieren admin, permiso, razón y password confirmation; sesiones se revocan. | `SuspendJudge`, `ReactivateJudge`, `RevokeUserSessions` | Rol/perfil se conservan; reactivación vuelve a pending si faltan prerrequisitos. | Feature + UAT de sesión real | F2B-M2 |
@@ -219,9 +277,9 @@
 | F2B-M2-007 | VERIFIED LOCAL | Alta, setup, activación, estado y recovery quedan auditados/notificados sin secretos. | acciones M2, `ResilientMailDispatcher`, notificaciones duales | Actor/sujeto/transición/timestamps UTC; fallo de despacho observable y no revierte la cuenta. | Mail fake/array, fallo resiliente y scan | F2B-M2 |
 | F2B-M2-008 | VERIFIED LOCAL | Gates de release local y UX M2 están verdes. | ExecPlan/reporte M2 y QA | M1+M2 16/267 tras función/capacidad; suite completa y gates finales registrados en el reporte; Firefox desktop/tablet/mobile. | automatizado + UAT local | F2B-M2 |
 | JUD-001 | M1/M2 VERIFIED LOCAL | Shell exclusivo; roles excluyentes, alta directa, correo verificado, perfil activo y 2FA opcional. | `/juez`, `judge.active`, `/panel/jueces`, escritor exclusivo y flag | M1 aísla; M2 crea/activa/suspende/recupera sin conceder superficies ajenas. | suites M1/M2 + Firefox local | F2B |
-| JUD-002 | OWNER_APPROVED / NOT IMPLEMENTED | Ceguera simple estructural; todos los campos sustantivos/anexos evaluables; nunca PII estructurada/residencia/notas/aclaraciones/historial. | `/juez/asignaciones/{id}` futura | Allowlist elimina estructura/metadatos; riesgo de identidad en contenido aceptado y visible. | F payload + B + SEC | F2B |
-| JUD-003 | OWNER_APPROVED / NOT IMPLEMENTED | Catálogo cerrado de conflicto y resolución/reasignación manual por admin al quinto sustituto. | Conflicto/evaluación futura | Estado bloqueante, reemplazo, locks y máximo diez sustituciones activas. | U estados + F + B | F2B |
-| JUD-004 | OWNER_APPROVED / NOT IMPLEMENTED | Cuatro principales por propuesta sin límite fijo, asignación manual; quinto sólo sustituciones con capacidad diez; sin especialidad. | Admin asignaciones futura | Impedir carga inicial al sustituto y rechazar la undécima activa; no autoasignar. | U reglas/capacidad + F | F2B |
+| JUD-002 | OWNER_APPROVED / M5 VERIFIED LOCAL | Ceguera simple estructural; M5 sirve sólo payload allowlist y anexos neutros a la asignación propia activa. | `/juez/asignaciones/{id}` y descarga M5 | Mantener canarios; la autoidentificación semántica permanece como riesgo aceptado. | F payload + B + SEC | F2B |
+| JUD-003 | OWNER FINAL / M4A VERIFIED | Catálogo cerrado; admin selecciona manualmente uno de dos sustitutos. | `JudgeConflict`, Actions/UI M4A | Estado bloqueante, reemplazo y locks; sin contador de capacidad. | suites M4A + UAT | F2B |
+| JUD-004 | OWNER FINAL / M4A VERIFIED | Cuatro principales y dos sustitutos sólo reemplazos; los seis ilimitados. | `JudgeAssignment`, cobertura/admin selection | Sin iniciales a sustitutos; >30 permitidos; sin autoasignación. | suites M4A + concurrencia | F2B |
 | JUD-005 | OWNER_APPROVED / NOT IMPLEMENTED | Rúbrica 20/20/25/25/10, escala 0–10/paso 0.5, comentario general obligatorio y por criterio opcional. | Rúbrica/evaluación futura | Versión activada inmutable; evaluación conserva versión exacta. | U cálculo/versionado + F | F2B |
 | JUD-006 | OWNER_APPROVED / NOT IMPLEMENTED | Borrador, envío inmutable y reapertura append-only con ventanas, razón, password confirmation y actor real. | Evaluación futura | Admin no sobrescribe ni suplanta; cierre 27-ago 23:59:59. | F + B + A11Y + SEC | F2B |
 | JUD-007 | OWNER_APPROVED / NOT IMPLEMENTED | Total servidor 0–100, precisión 4/2 HALF_UP; media de cuatro; faltante bloquea; igualdad a dos decimales señala empate. | Evaluación/historial futura | Payload cliente no altera total; señal no declara ganador. | U cálculo + F payload + SEC | F2B |

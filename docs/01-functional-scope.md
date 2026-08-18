@@ -1,6 +1,8 @@
 # Alcance funcional — Flower Flow 2026
 
-> **Estado vigente — 2026-08-18:** además del alcance anterior, Fase 02B M1/M2 implementa localmente rol/gates y perfil operativo de juez, función primary/substitute, capacidad derivada, alta directa admin, credencial propia, activación, suspensión/reactivación, sesiones y recovery 2FA. M3–M10 siguen sin implementar; `P2B-BLOCK-001` está resuelto por decisión del propietario. Producción permanece `OWNER_CONFIRMED_DEPLOYED`/SHA `POR_CONFIRMAR`; M1/M2 no se atribuyen a ella.
+> **Estado vigente M5 — 2026-08-18:** M1–M5 están implementados y verificados sólo en local/test. Se conservan seis jueces operativos ilimitados; M5 expone únicamente la allowlist de la versión asignada y sus anexos evaluables con nombres neutros a una asignación propia `active`. M6–M10 y producción permanecen fuera.
+
+> **Estado vigente — 2026-08-18:** M1/M2 implementan rol/gates y ciclo operativo de juez; M3 la rúbrica global; M4/M4A cobertura/conflictos; M5 paquete ciego estructural y descargas privadas. Producción permanece `OWNER_CONFIRMED_DEPLOYED`/SHA `POR_CONFIRMAR`; ningún M1–M5 se atribuye a ella.
 
 > **Reconciliación jurídica v1.1, actualizada 2026-08-18:** las nuevas versiones identifican a `FUNXT, A.C.`, confirman el cierre del 23 de agosto, cuatro categorías y máximo cuatro propuestas. El propietario aceptó sin cambios la superposición de accesibilidad, aprobó continuidad operativa sin reaceptación forzada para cuentas v1.0 y designó el archivo físico v1.0 `3bcf31…` conservando el antecedente `42bd5e…`. Evidencia: `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
 
@@ -8,7 +10,7 @@
 
 > **Adenda funcional histórica de categoría, resuelta 2026-08-18:** la implementación opera con cuatro categorías activas y ordenadas y máximo cuatro propuestas, una por categoría. La plataforma conserva sus descripciones actuales; la referencia adicional a accesibilidad en Movilidad dentro de la Mecánica v1.1 fue aceptada por el propietario y no produce recategorización.
 
-> **Sustitución parcial aprobada, 2026-07-15 (histórica):** Fase 01 implementó sitio público, auth, perfil, borradores/envío, archivos y panel mínimo. La adenda Fase 02A al final de este documento autorizó e implementó después la revisión de admisibilidad; jueces, rúbrica, ganadores y resultados continúan sin implementar.
+> **Sustitución parcial aprobada, 2026-07-15 (histórica):** Fase 01 implementó sitio público, auth, perfil, borradores/envío, archivos y panel mínimo. La adenda Fase 02A autorizó después admisibilidad. El estado vigente posterior añade M1–M5 locales; evaluación, ganadores y resultados continúan sin implementar.
 
 ## Contrato Fase 01 vigente
 
@@ -209,17 +211,17 @@ El orden es ajustable tras conocer los campos finales.
 - Historial personal.
 - Cierre automático por calendario y excepción auditada.
 
-### Contrato 02B aprobado — todavía no implementado
+### Contrato 02B aprobado — M1–M4 implementados localmente
 
 - Roles estrictamente excluyentes y alta directa de juez por `admin`.
-- Asignación manual; cuatro principales evalúan todas las propuestas elegibles sin límite fijo; quinto sustituto exclusivo con máximo diez reasignaciones activas; sin especialidad.
+- Asignación manual; cuatro principales evalúan todas las propuestas elegibles; dos sustitutos exclusivos reciben sólo reemplazos; los seis son ilimitados y no hay especialidad.
 - Ceguera simple estructural, con todos los campos sustantivos y anexos evaluables, nunca PII estructurada/residencia/notas/aclaraciones/historial.
-- Rúbrica: Pertinencia 20 %, Claridad 20 %, Viabilidad 25 %, Impacto 25 % y Coherencia 10 %; escala 0–10/paso 0.5.
+- Rúbrica M3 implementada localmente: códigos exactos `pertinence`, `clarity`, `feasibility`, `impact`, `coherence`; pesos 20/20/25/25/10; escala 0–10/paso 0.5; descripciones nulas `POR_CONFIRMAR`; ciclo `draft|active|superseded` inmutable.
 - Total en servidor 0–100, precisión interna cuatro, visible dos y `HALF_UP`; media aritmética de cuatro evaluaciones; faltantes bloquean consolidación.
 - Comentario general obligatorio 100–2,000; comentarios por criterio opcionales hasta 1,000.
 - Cierre `2026-08-27 23:59:59 America/Hermosillo`; reapertura append-only por `admin` hasta las 20:00 con razón/password confirmation.
 - Retención 02B de 24 meses desde el cierre administrativo; empate por igualdad a dos decimales sin declarar ganador.
-- `P2B-BLOCK-001` está resuelto: la cobertura recae en cuatro principales sin límite fijo y el reemplazo en un quinto sustituto exclusivo con capacidad diez. M4 sigue sujeto a implementación y autorización separadas.
+- `P2B-BLOCK-001` está resuelto por cuatro principales y dos sustitutos ilimitados. M4A implementa selección manual y capacidad nula; el contrato histórico `1×10` y la decisión intermedia `2×30` permanecen sólo como historia.
 
 ### Excluido
 
@@ -473,4 +475,4 @@ La aprobación específica de Fase 02A sustituye, sólo para este milestone, los
 
 Los límites técnicos de archivos provienen del prompt autorizado. Edad, residencia, tipos de comprobante, alcance de aclaración y motivos de resolución provienen de los PDF canónicos. Continúan `PENDING` la antigüedad numérica de “reciente”, el catálogo cerrado de documentos equivalentes y el borrado posterior a ganadores.
 
-No se implementan jueces, asignación, evaluación, rúbrica, ganadores, publicación, campañas, ARCO completo, reportes avanzados ni producción.
+En el alcance histórico Fase 02A no se implementaron jueces, asignación, evaluación, rúbrica, ganadores, publicación, campañas, ARCO completo, reportes avanzados ni producción. El estado vigente posterior incorpora M1–M5 sólo localmente; M6+ y producción siguen fuera.

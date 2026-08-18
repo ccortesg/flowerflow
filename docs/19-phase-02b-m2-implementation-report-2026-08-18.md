@@ -1,5 +1,7 @@
 # Informe de implementación — Fase 02B M2
 
+> **Corrección final vigente — 2026-08-18:** este informe acredita históricamente `substitute=10`. El owner aprobó después dos sustitutos y finalmente eliminó el límite para ambos roles. M4A ya migró a `max_active_assignments=NULL`; los resultados M2 siguientes no se reescriben.
+
 **Fecha:** 2026-08-18 (`America/Hermosillo`)
 
 **Estado:** `COMPLETE — GO LOCAL/TEST — NO PRODUCTION AUTHORIZATION`
@@ -9,7 +11,7 @@
 
 M2 quedó implementado y validado exclusivamente en `flowerflow_testing`. Existe perfil operativo uno-a-uno de juez, alta directa por `admin`, establecimiento de contraseña propia mediante el broker de reset, activación derivada, suspensión/reactivación, revocación de sesiones database y recuperación administrativa de 2FA. M1 conserva su aislamiento: ningún juez entra a participante/panel ni ve propuestas, archivos, residencia o exportaciones.
 
-La decisión es **`GO LOCAL/TEST` para M2**. No acredita despliegue, runtime ni datos productivos. M3–M10 siguen sin implementar. `P2B-BLOCK-001` está resuelto: cuatro jueces principales sin límite fijo y un quinto sustituto exclusivo con capacidad diez; M4 sigue no implementado/no autorizado.
+La decisión histórica es **`GO LOCAL/TEST` para M2** bajo `substitute=10`. No acredita despliegue ni el contrato vigente `4+2` ilimitado; M4A lo reconcilió y M5 quedó verde en planes/informes posteriores.
 
 ## Baseline y guard
 

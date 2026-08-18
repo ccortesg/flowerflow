@@ -1,6 +1,8 @@
 # Seguridad y privacidad desde el diseño
 
-> **Adenda Fase 02B — 2026-08-18:** M1/M2 están probados fail-closed. Alta juez usa password aleatoria nunca expuesta, broker reset y función `primary|substitute` con capacidad validada; `/juez` exige rol/permiso/flag/correo/perfil activo. Suspensión y recovery 2FA requieren admin exacto, permiso, razón 20–1,000, contraseña y sesiones database; rotan `remember_token`, revocan sesiones y auditan sin secretos. 2FA del juez sigue opcional. No existe acceso a propuestas/PII; M3–M10 siguen futuros.
+> **Contrato vigente M4A — 2026-08-18:** dos sustitutos operativos sin límite y selección manual por `admin`. La seguridad valida bajo lock que el perfil seleccionado sea uno de los dos sustitutos activos, mantenga rol exclusivo y prerrequisitos, y no tenga ya la propuesta; no existe selección automática ni contador de capacidad.
+
+> **Adenda Fase 02B — 2026-08-18:** M1–M5 están probados fail-closed. M5 nunca serializa el snapshot crudo: sólo categoría, modalidad, título, resumen, descripciones y vínculos HTTPS capturados; archivos salen por ruta M5 con etiqueta neutra, `nosniff` y revalidación de tamaño/SHA/MIME/firma. Folio, fechas, participant/team, PII, residencia, notas, aclaraciones, admisibilidad, otros jueces, rutas y nombres originales permanecen excluidos. M6–M10 siguen futuros/no autorizados.
 
 > **Reconciliación jurídica v1.1 — 2026-08-18:** FUNXT, A.C. (RFC FUN110208BT0) es el responsable identificado; el Aviso v1.1 conserva las finalidades, retención de 24 meses/90 días y plazos ARCO descritos en v1.0, pero actualiza identidad y domicilio. El código local registra nuevas aceptaciones contra el documento activo v1.1 y conserva las v1.0. El propietario resolvió continuidad sin reaceptación forzada ni alteración de evidencia; ARCO completo sigue fuera de alcance.
 
@@ -14,6 +16,14 @@
 - Las mutaciones de admisibilidad usan un límite de 10 solicitudes/minuto por actor y ruta; iniciar revisión sólo admite `pending -> in_review`, con repetición idempotente en `in_review`.
 - Las descargas continúan protegidas por Policy y ahora tienen contratos positivos de admin/reviewer y negativos de ownership, permiso, propuesta y URL directa.
 - No se añadió antimalware ni se alteró la retención de IP/user-agent o el fallback legal. Son aceptaciones explícitas, no controles implementados.
+
+## Controles M4 implementados
+
+- Admin exacto + permisos separados + contraseña/razón para cobertura y reasignación; judge exacto/activo/verified sólo declara conflicto propio.
+- Locks de competencia/propuesta/versión/rúbrica/perfiles/asignaciones; unicidades/checks cierran carreras, duplicados y estados inválidos.
+- Juez M4 no recibe snapshot crudo: la consulta ORM selecciona sólo claves técnicas y categoría; los canarios verifican ausencia de título, folio, resumen, descripción y rúbrica.
+- Audits M4 guardan actor, IDs, estado y reason code; no guardan motivo completo de conflicto, contenido, PII, nombres de archivo o credenciales.
+- Si el sustituto seleccionado no está operativo, no pertenece al conjunto exacto de dos sustitutos o ya tiene la propuesta, la acción falla. `admin` puede escoger manualmente al otro sustituto si cumple el contrato; nunca se selecciona automáticamente.
 
 ## Controles Fase 01 ejecutados
 
@@ -76,7 +86,8 @@ Pendiente operativo: antivirus real, revisión de formatos Office binarios, CSP 
 | T17 | DoS cierre | carga o uploads agotan CPU/disco | alto | rate limits, cuotas, tamaños, capacidad y monitor | alarmas, modo degradado |
 | T18 | Repudio | actor niega cambio crítico | alto | actor, fecha, entidad, before/after redactado, request ID | export de auditoría inmutable |
 | T19 | Suplantación administrativa | admin modifica puntajes y la historia aparenta que actuó el juez | crítico | revisión append-only con actor admin, juez sujeto, razón y password confirmation | comparación de revisiones y alerta de override |
-| T20 | Cobertura o sustitución fuera de contrato | sustituto recibe carga inicial, principal se limita o se exceden diez reemplazos activos | alto | cuatro principales sin límite fijo; quinto sólo sustituciones; checks, conteo transaccional y fallo cerrado en M4 | reporte previo de cobertura/capacidad sin datos sensibles |
+| T20 | Cobertura o sustitución fuera de contrato | sustituto recibe carga inicial, se impone un límite o se omite selección manual | alto | seis jueces ilimitados; dos sustitutos exclusivos; checks, locks y fallo cerrado en M4A | reporte previo de composición sin datos sensibles |
+| T21 | Doble rúbrica activa o mutación retroactiva | carrera de activación, mass assignment o edición posterior | alto | lock de competencia/versiones, `active_slot`+unique/check, Policy/Requests, modelos guarded e inmutabilidad active/superseded | prueba concurrente real, negativos por rol/ULID y auditoría M3 |
 
 ## RBAC de mínimo privilegio
 

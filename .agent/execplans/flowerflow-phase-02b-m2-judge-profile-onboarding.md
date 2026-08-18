@@ -1,5 +1,7 @@
 # ExecPlan — Fase 02B M2: perfil y alta directa segura de juez
 
+> **Corrección final posterior — 2026-08-18:** el contrato `substitute=10` documentado y probado aquí es histórico; la decisión intermedia `2×30` también fue sustituida. M4A implementa dos sustitutos y capacidad `NULL` para ambos roles; este ExecPlan no debe citarse como evidencia de capacidad vigente.
+
 Estado: `COMPLETE — GO LOCAL/TEST — NO PRODUCTION AUTHORIZATION`
 
 Fecha de inicio: 2026-08-18 (`America/Hermosillo`)
@@ -137,6 +139,7 @@ Si un valor difiere, el trabajo se detendrá antes de mutar la base.
 - 2026-08-18: cierre posterior a la corrección verde: M2 10/175, M1+M2 16/267 y suite completa 125/1,316; Pint, Composer, build, rutas, schedule, migraciones, enlaces y diff check verdes. Yarn conserva sólo el advisory bajo conocido de Quill.
 - 2026-08-18: QA Firefox repitió el alta `primary` en escritorio y `substitute` en móvil 390 px; mostró `Sin límite fijo`/`10`, sin overflow horizontal ni mensajes de consola. El ambiente se limpió a cero usuarios/perfiles/sesiones con 14 migraciones.
 - 2026-08-18: el propietario autorizó expresamente agrupar los cambios acumulados, realizar commit y push de la rama para que él ejecute el despliegue; esta autorización no permite a Codex desplegar ni acceder a producción.
+- 2026-08-18: decisión posterior del propietario sustituye un `substitute=10` por dos sustitutos operativos con `max_active_assignments=30` cada uno. Se preservan resultados históricos M2 y se registra `P2B-M4-CORRECTION-001=IMPLEMENTATION_REQUIRED`; no se modifica código en la reconciliación documental.
 
 ## Hallazgos iniciales
 

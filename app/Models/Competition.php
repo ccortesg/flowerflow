@@ -21,4 +21,14 @@ class Competition extends Model
     {
         return $this->hasMany(Category::class)->orderBy('sort_order');
     }
+
+    public function rubricVersions(): HasMany
+    {
+        return $this->hasMany(RubricVersion::class)->orderByDesc('version');
+    }
+
+    public function judgeAssignments(): HasMany
+    {
+        return $this->hasMany(JudgeAssignment::class);
+    }
 }
