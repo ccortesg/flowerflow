@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\ImmutableRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SubmissionVersion extends Model
@@ -28,5 +29,15 @@ class SubmissionVersion extends Model
     public function eligibilityReview(): HasOne
     {
         return $this->hasOne(EligibilityReview::class);
+    }
+
+    public function judgeAssignments(): HasMany
+    {
+        return $this->hasMany(JudgeAssignment::class);
+    }
+
+    public function blindReviewPackage(): HasOne
+    {
+        return $this->hasOne(BlindReviewPackage::class);
     }
 }

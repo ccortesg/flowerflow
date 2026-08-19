@@ -7,6 +7,7 @@ use App\Enums\JudgeProfileStatus;
 use App\Models\Concerns\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class JudgeProfile extends Model
 {
@@ -45,6 +46,16 @@ class JudgeProfile extends Model
     public function reactivatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reactivated_by_user_id');
+    }
+
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(JudgeAssignment::class);
+    }
+
+    public function declaredConflicts(): HasMany
+    {
+        return $this->hasMany(JudgeConflict::class, 'declared_by_judge_profile_id');
     }
 
     public function isActive(): bool

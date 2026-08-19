@@ -1,6 +1,6 @@
 # Desarrollo local Flower Flow sobre WSL2 y MySQL
 
-> **Hallazgo vigente — 2026-08-18:** `flowerflow_testing`/`flowerflow_testing_user` sigue siendo el único ambiente autorizado para pruebas destructivas y quedó con 14/14 migraciones, seeders vigentes y cero usuarios/perfiles/sesiones sintéticos después de M2. Las migraciones M1/M2 pasaron forward/rollback/forward y el upgrade M2 preservó un usuario sintético preexistente. La base primaria `flowerflow` no se tocó: el diagnóstico previo registró migraciones funcionales pendientes y el `.env` local fija tres propuestas. No corregir, consultar destructivamente ni migrar esos recursos por inferencia; usar `scripts/serve_local_testing.sh` y seguir el próximo prompt M3 de `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`.
+> **Hallazgo vigente — 2026-08-18:** `flowerflow_testing`/`flowerflow_testing_user` sigue siendo el único ambiente autorizado para pruebas destructivas. M5 acreditó 18/18 migraciones y suite verde bajo el contrato final `4 primary + 2 substitute`, todos ilimitados. La base primaria `flowerflow` no se tocó. No corregir, consultar destructivamente ni migrar otros recursos por inferencia; M6 debe volver a demostrar el guard exacto.
 
 ## Contrato vigente de pruebas destructivas — 2026-08-06
 
@@ -22,7 +22,7 @@ scripts/quality_gate_local.sh
 
 El script se detiene en el primer fallo y ejecuta suite, Pint, Composer validate/platform/audit, Yarn audit con umbral moderado, build reproducible, rutas y `git diff --check`. No ejecuta `migrate:fresh`, `db:wipe` ni migraciones manuales. El comando `php artisan flowerflow:storage-audit --disk=<disk> --json` es de sólo lectura y nunca borra huérfanos.
 
-Para UAT autenticada M2, `scripts/serve_local_testing.sh` usa sesiones `database`, correo `array`, cola `sync`, resultados apagados y ejecuta `permission:cache-reset` después del guard/readiness. Esta limpieza evita reutilizar una matriz Spatie obsoleta entre procesos; no sustituye los clears del procedimiento de un release autorizado.
+Para UAT autenticada M2/M3, `scripts/serve_local_testing.sh` usa sesiones `database`, correo `array`, cola `sync`, resultados apagados y ejecuta `permission:cache-reset` después del guard/readiness. Esta limpieza evita reutilizar una matriz Spatie obsoleta entre procesos; no sustituye los clears del procedimiento de un release autorizado.
 
 > **Actualización Fase 01 — 2026-07-15:** el ExecPlan ya autorizó dependencias, `.env`, migraciones y pruebas locales. Se creó `.env` ignorado con MySQL `flowerflow`/`flowerflow_user`, pero la contraseña debe colocarse localmente por captura segura antes de ejecutar migraciones; nunca se documenta ni pasa como argumento. Laravel 12.64.0, PHP 8.3.31, Composer 2.10.2 y Yarn 1.22.22 están verificados. Las prohibiciones “fase 0” de las secciones históricas quedan sustituidas dentro de esta rama sólo para el alcance Fase 01.
 

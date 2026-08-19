@@ -1,5 +1,7 @@
 # ExecPlan — Fase 02B M1: RBAC y aislamiento base del juez
 
+> **Adenda final — 2026-08-18:** el análisis de capacidad de este ExecPlan es evidencia histórica de M1. El propietario resolvió `P2B-BLOCK-001` con cuatro primary y dos substitute, todos ilimitados; M4A ya lo implementa local/test. Esta adenda no modifica el resultado verde de M1.
+
 Estado: `COMPLETE — GO LOCAL/TEST — NO PRODUCTION AUTHORIZATION`
 
 Fecha de inicio: 2026-08-18 (`America/Hermosillo`)

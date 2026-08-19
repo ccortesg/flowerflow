@@ -1,6 +1,8 @@
 # Modelo de datos preliminar
 
-> **Estado vigente — 2026-08-18:** M2 añadió `judge_profiles` uno-a-uno con `users`, ULID público, estado enum `pending_setup|active|suspended`, función `primary|substitute`, capacidad `NULL` sin límite para principal o diez para sustituto y actores/fechas operativas. La migración es aditiva, no backfillea usuarios ni crea jueces/asignaciones y pasó forward/rollback/forward. Rúbricas, asignaciones y evaluaciones siguen sin tablas; `P2B-BLOCK-001` está resuelto y M4 permanece no implementado/no autorizado.
+> **Contrato vigente M4A — 2026-08-18:** `judge_profiles.max_active_assignments` es `NULL` tanto para `primary` como para `substitute`; la composición operativa es cuatro `primary` + dos `substitute`. La migración aditiva `2026_08_18_160000_make_all_judge_assignment_roles_unlimited.php` convierte el antecedente `substitute=10` y exige capacidad nula para cualquier función.
+
+> **Estado vigente — 2026-08-18:** M2 añadió `judge_profiles`; M3 `rubric_versions`/`rubric_criteria`; M4 `judge_assignments`/`judge_conflicts`; M5 `blind_review_packages`/`blind_review_package_files`. No existen tablas de evaluaciones/puntajes; M6–M10 siguen no implementados/no autorizados.
 
 ## Adenda Fase 01 implementada — 2026-07-15
 
@@ -15,6 +17,20 @@ El cierre sembrado es `2026-08-24 06:59:59 UTC`, equivalente a `2026-08-23 23:59
 **Estado de la sección histórica:** el diseño inicial ya se materializó parcialmente; el ERD mezcla tablas reales y futuras y debe leerse con la advertencia vigente anterior.
 **Motor:** MySQL 8, InnoDB, utf8mb4.  
 **Tiempo:** persistencia UTC; presentación y reglas en America/Hermosillo.
+
+## Adenda de modelo M4 implementada — 2026-08-18
+
+- `judge_assignments`: una fila por juez/versión, tipo `initial|replacement`, estado `active|conflict_declared|voided|cancelled`, slot vigente defensivo, rúbrica/plazo fijados, reemplazo y actores/razones. Cuatro iniciales forman cobertura; un original voided queda cubierto sólo por su replacement active.
+- `judge_conflicts`: uno por asignación, catálogo exacto, explicación sólo para `other`, estado `declared|resolved_reassigned`, resolutor/razón/reemplazo. No se borra ni copia contenido de propuesta.
+- `current_slot=1` participa en la unicidad de una asignación vigente por versión+juez; estados terminales usan `NULL`. No existe contador de capacidad: primary y substitute son ilimitados; se mantiene la prohibición de duplicar una asignación vigente para el mismo juez y propuesta.
+- No se persiste un estado de cobertura en `submissions`; no existen todavía `evaluations` o scores.
+
+## Adenda de modelo M5 implementada — 2026-08-18
+
+- `blind_review_packages`: una fila única por `submission_version_id`, ULID público, `schema_version=1`, estado `draft|active|invalidated`, payload JSON allowlist, SHA-256 canónico y actores/razones/fechas UTC. Un paquete activo/invalidado no se modifica ni borra.
+- `blind_review_package_files`: inventario del paquete por `submission_file_id`, orden, clase `document|editor_image`, etiqueta neutra, MIME/extensión/bytes/SHA esperados y estado. No persiste nombre original, stored name, disk/path, actor ni PII.
+- FKs `RESTRICT`, checks y unicidades impiden dos paquetes por versión, duplicar archivo/orden/etiqueta o aceptar estados/metadatos fuera de contrato. El rollback aborta si existe evidencia M5.
+- La reasignación no crea otra fila: original y replacement fijan la misma `submission_version_id` y consumen el mismo paquete activo.
 
 ## Criterios de diseño
 
@@ -40,7 +56,7 @@ erDiagram
     COMPETITIONS ||--o{ CATEGORIES : contains
     COMPETITIONS ||--o{ SUBMISSIONS : receives
     COMPETITIONS ||--o{ LEGAL_DOCUMENTS : governs
-    COMPETITIONS ||--o{ RUBRICS : defines
+    COMPETITIONS ||--o{ RUBRIC_VERSIONS : defines
 
     CATEGORIES ||--o{ SUBMISSIONS : classifies
     CATEGORIES ||--o{ WINNER_DECISIONS : awards
@@ -59,8 +75,8 @@ erDiagram
     JUDGE_PROFILES ||--o{ JUDGE_ASSIGNMENTS : receives
     JUDGE_ASSIGNMENTS ||--o| CONFLICT_DECLARATIONS : may_have
     JUDGE_ASSIGNMENTS ||--o| EVALUATIONS : produces
-    RUBRICS ||--o{ RUBRIC_CRITERIA : contains
-    RUBRICS ||--o{ EVALUATIONS : grades_with
+    RUBRIC_VERSIONS ||--o{ RUBRIC_CRITERIA : contains
+    RUBRIC_VERSIONS ||--o{ EVALUATIONS : grades_with
     EVALUATIONS ||--o{ EVALUATION_SCORES : contains
     RUBRIC_CRITERIA ||--o{ EVALUATION_SCORES : scores
 
@@ -79,7 +95,7 @@ Las tablas de roles y permisos de un paquete aprobado se conectan con users y no
 |---|---|---|---|
 | users | id, public_id, name, email, email_verified_at, password, status, suspended_at, last_login_at | unique public_id/email; index status | anonimizar tras cierre de retención; RESTRICT si hay evidencia |
 | participant_profiles | user_id, phone_encrypted, birth_date, municipality, privacy_flags | unique user_id; index municipality | ligado al proceso ARCO |
-| judge_profiles | user_id, status, capacity_limit, created_by, suspended_at | unique user_id; index status | conservar mínimo para trazabilidad; anonimizar después |
+| judge_profiles **(M2 real)** | public_id, user_id, status, assignment_role, max_active_assignments, created_by_user_id, password_initialized_at, activated/suspended/reactivated actor+fecha+razón | unique user_id/public_id; checks status/función/capacidad | conservar mínimo para trazabilidad; anonimizar después |
 | team_invitations | public_id, email, token_hash, expires_at, accepted_at, inviter_id | unique token_hash; index email/expires_at | contrato futuro sólo para integrantes; no se usa para juez |
 
 No guardar edad calculada; derivarla de birth_date en la fecha definida por las reglas.
@@ -122,15 +138,16 @@ El snapshot contiene sólo los campos de la versión; no duplica tokens, contras
 |---|---|---|---|
 | judge_assignments | public_id, submission_version_id, judge_profile_id, rubric_version_id, status, assigned_by, assigned_at, due_at, closed_at, voided_at | unique version+judge activa; index judge+status/due | void, no delete |
 | conflict_declarations | assignment_id, type, explanation_redacted, declared_at, resolution, resolved_by, resolved_at, replacement_assignment_id | unique assignment; index resolution | inmutable con resolución adicional |
-| rubrics | public_id, competition_id, version, name, status, total_weight, activated_at | unique competition+version; index status | inmutable al activarse |
-| rubric_criteria | rubric_id, code, name, description, weight, min_score, max_score, step, sort_order | unique rubric+code/order | RESTRICT con scores |
-| blind_review_packages | assignment_id, schema_version, payload, content_hash, generated_at | unique assignment; payload allowlist sin PII estructurada | inmutable; regenerar crea versión, no overwrite |
+| rubric_versions **(M3 real)** | public_id, competition_id, version, title, status, escala/paso/totales/precisión/redondeo/límites de comentarios, active_slot, actores/fechas/razón | unique competition+version y competition+active_slot; checks de contrato/ciclo | draft reversible; active/superseded inmutable y no eliminable |
+| rubric_criteria **(M3 real)** | rubric_version_id, code, label, description nullable, weight, min_score, max_score, score_step, sort_order | unique versión+code/order; checks exactos | CASCADE sólo con borrador retirado por rollback seguro; estados publicados protegidos |
+| blind_review_packages **(M5 real)** | public_id, submission_version_id, schema_version, status, payload, payload_sha256, actores/razones/fechas de generación/activación/invalidación | unique submission_version; payload allowlist sin PII estructurada | draft regenerable; active/invalidated inmutable y no eliminable |
+| blind_review_package_files **(M5 real)** | package_id, submission_file_id, sort_order, file_class, neutral_label, MIME/extensión/bytes/SHA esperados, status | unique paquete+archivo/orden/etiqueta; checks de metadata | sigue inmutabilidad terminal del paquete |
 | evaluations | public_id, assignment_id, rubric_id, status, current_revision_id, started_at, submitted_at | unique assignment; index status/submitted_at | void, no delete |
 | evaluation_revisions | evaluation_id, revision_no, status, general_comment, total_score, subject_judge_id, acted_by, reason, opened_at, submitted_at | unique evaluation+revision; index status/dates | append-only al enviar/reabrir |
 | evaluation_scores | evaluation_revision_id, criterion_id, score, comment | unique revision+criterion | ligado a revisión exacta |
 | winner_decisions | public_id, category_id, submission_id nullable, decision_type, justification, decided_by, decided_at, published_at | unique category+decision_type activo; index dates | revocar con nueva evidencia, no sobrescribir |
 
-`total_score` se recalcula en servidor desde scores, escala 0–10, paso 0.5 y pesos 20/20/25/25/10. Usa cuatro decimales internos, dos visibles y `HALF_UP`; nunca acepta el total del navegador. La media sólo se consolida con cuatro evaluaciones válidas. La asignación es manual: cuatro principales sin límite fijo cubren todas las propuestas elegibles y un quinto sustituto exclusivo admite máximo diez reasignaciones activas. `P2B-BLOCK-001` está resuelto; el flujo aún no está implementado.
+M3 sólo persiste el contrato que M6 consumirá: `pertinence|clarity|feasibility|impact|coherence`, pesos 20/20/25/25/10, escala 0–10, paso 0.5, precisión 4/2 y `HALF_UP`. No existe `total_score` de evaluación todavía. La asignación es manual: cuatro principales cubren todas las elegibles y dos sustitutos exclusivos reciben sólo reemplazos; los seis son ilimitados. M4A lo implementa local/test.
 
 ### Operación
 

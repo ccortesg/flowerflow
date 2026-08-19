@@ -1,13 +1,13 @@
 # ADR-0008: contrato de jueces y evaluación de Fase 02B
 
-- **Estado:** Accepted — M1/M2 implemented locally; M3–M10 pending
+- **Estado:** Accepted — M1–M5 verified local/test; M6–M10 not authorized
 - **Fecha:** 2026-08-18
 - **Decisor:** propietario de Flower Flow
 - **Alcance:** Fase 02B; no incluye ganadores ni resultados
 
 ## Contexto
 
-El propietario respondió las 21 decisiones del paquete `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`. Prompts posteriores autorizaron M1 y M2. El código local contiene el rol técnico `judge`, permiso exclusivo, gates exactos, flag fail-closed, `judge_profiles`, función de asignación, capacidad derivada, alta directa, credencial propia, activación por prerrequisitos, suspensión/reactivación, revocación de sesiones y recovery 2FA administrativo. No existen asignaciones, paquetes ciegos, conflictos, rúbricas ni evaluaciones. Este ADR fija el contrato restante sin autorizar por sí mismo M3–M10 o producción.
+El propietario respondió las 21 decisiones del paquete. Prompts posteriores autorizaron M1–M5. Tras los contratos históricos `1×10` y `2×30`, la decisión final exige cuatro principales y dos sustitutos ilimitados. El código local implementa identidad/perfil, rúbrica, asignaciones/conflictos `4+2` y paquete ciego estructural. No existen evaluaciones ni puntajes. Este ADR no autoriza por sí mismo M6–M10 o producción.
 
 Producción tiene más de 50 propuestas reales según `OWNER_CONFIRMED_DEPLOYED`. El SHA productivo y la evidencia técnica independiente permanecen `POR_CONFIRMAR` y no son objeto de esta decisión.
 
@@ -25,15 +25,18 @@ Producción tiene más de 50 propuestas reales según `OWNER_CONFIRMED_DEPLOYED`
 ### Asignación y conflicto
 
 - La asignación es manual y sin especialidad. Cada propuesta elegible de cualquiera de las cuatro categorías requiere cuatro evaluaciones de los cuatro jueces principales.
-- Los cuatro jueces principales evalúan todas las propuestas elegibles sin límite fijo. Un quinto juez es exclusivamente sustituto, no recibe asignaciones iniciales y admite máximo diez reasignaciones activas.
+- Los cuatro jueces principales evalúan todas las propuestas elegibles sin límite fijo. Dos jueces adicionales son exclusivamente sustitutos, no reciben asignaciones iniciales y tampoco tienen límite de reasignaciones. La composición operativa es seis perfiles activos: cuatro `primary` y dos `substitute`; todos usan `max_active_assignments=NULL`.
 - El catálogo de conflictos contiene relación personal/familiar, relación profesional/económica, participación en la propuesta y otro conflicto con explicación obligatoria.
-- `admin` resuelve y reasigna al juez sustituto. Una propuesta admite varias asignaciones independientes; la undécima sustitución activa falla cerrada.
+- `admin` resuelve y selecciona manualmente uno de los dos sustitutos operativos. Una propuesta admite varias asignaciones independientes, pero un mismo sustituto no recibe dos asignaciones vigentes de esa propuesta. No existe límite individual ni combinado por volumen; los rechazos se basan en identidad/estado/prerrequisitos, duplicidad o invariantes del conflicto.
 - El cierre global es `2026-08-27 23:59:59 America/Hermosillo`.
 
 ### Ceguera y datos
 
 - La modalidad es ceguera simple estructural.
 - El juez asignado ve todos los campos sustantivos y anexos evaluables de la propuesta.
+- M5 materializa una proyección separada y única por `submission_version`: payload allowlist con SHA-256 canónico e inventario técnico sin nombres/rutas originales. Nunca se sirve el snapshot crudo.
+- Sólo rol exacto, perfil activo y asignación propia `active` consumen un paquete `active`; conflicto/void/cancel, no asignado, pending/suspended, cero/multirol fallan cerrados. El replacement comparte el mismo paquete.
+- El anexo se entrega por ruta privada M5 con etiqueta neutra y revalidación de tamaño, SHA, MIME y firma; no existe fetch remoto ni preview de vínculos.
 - Siempre se excluyen PII estructurada de contacto, comprobantes de residencia, notas internas, aclaraciones e historial de admisibilidad.
 - La automatización sólo anonimiza campos estructurados, nombres de archivo expuestos y metadatos técnicos. No promete eliminar identidad escrita o incrustada en texto, imágenes, enlaces o anexos.
 - El propietario acepta el riesgo residual de autoidentificación en contenido evaluable sin bloquear la propuesta.
@@ -41,6 +44,7 @@ Producción tiene más de 50 propuestas reales según `OWNER_CONFIRMED_DEPLOYED`
 ### Rúbrica, cálculo y consolidación
 
 - Rúbrica global: Pertinencia 20 %, Claridad 20 %, Viabilidad 25 %, Impacto 25 % y Coherencia 10 %.
+- Los códigos estables implementados son `pertinence`, `clarity`, `feasibility`, `impact` y `coherence`, en ese orden. No existe descripción extensa aprobada: M3 persiste `NULL` y muestra `POR_CONFIRMAR`.
 - Cada criterio usa escala 0–10 y paso 0.5. El servidor calcula un total 0–100 con cuatro decimales internos, dos visibles y redondeo `HALF_UP`.
 - Se requiere comentario general de 100–2,000 caracteres; cada comentario por criterio es opcional y admite hasta 1,000.
 - La consolidación es la media aritmética con igual peso de cuatro evaluaciones válidas. Si falta una, no existe consolidado ni excepción administrativa.
@@ -66,13 +70,15 @@ Producción tiene más de 50 propuestas reales según `OWNER_CONFIRMED_DEPLOYED`
 - El total enviado por navegador se ignora y se recalcula en servidor.
 - La UI no puede afirmar anonimización total.
 - La combinación de edición administrativa, 2FA opcional y ceguera simple exige auditoría append-only, Policies, locks y pruebas negativas estrictas.
-- M1/M2 implementaron rol, gates, perfil y ciclo operativo de cuenta sólo en local/test. M3–M10 requieren autorización separada.
+- M1/M2 implementaron rol, gates, perfil y ciclo operativo de cuenta sólo en local/test. M3 implementó rúbrica versionada; M4/M4A el flujo `4+2` ilimitado; M5 el paquete allowlist y anexos privados. M6–M10 requieren autorización separada.
 
 ## Decisión que resolvió el bloqueo operativo
 
-`P2B-BLOCK-001 — RESOLVED BY OWNER 2026-08-18`: el contrato anterior de máximo ocho para todos no era compatible con al menos 204 asignaciones ni proporcionaba reemplazo. El propietario lo sustituyó por cuatro jueces principales sin límite fijo y un quinto juez exclusivamente sustituto con capacidad diez.
+`P2B-BLOCK-001 — OWNER FINAL/RESOLVED 2026-08-18`: el contrato original de máximo ocho para todos fue sustituido primero por `4+1` con diez para el sustituto, luego por `4+2` con treinta para cada sustituto y finalmente por seis jueces sin límite. Los dos sustitutos siguen siendo exclusivos para reemplazos y no reciben asignaciones iniciales.
 
-El perfil M2 registra `primary|substitute`; para `primary`, `max_active_assignments` es `NULL` y significa sin límite fijo, mientras que para `substitute` es exactamente `10`. Esto no crea asignaciones ni autoriza M4. M4 debe impedir carga inicial al sustituto, contar sólo sustituciones activas y fallar cerrado ante la undécima.
+El perfil conserva `primary|substitute`; `max_active_assignments` es `NULL` para ambos. M4A migra aditivamente los sustitutos históricos `10→NULL`, exige exactamente dos sustitutos operativos, impide su carga inicial, requiere selección manual del admin y no cuenta ni rechaza por volumen. `P2B-M4-CORRECTION-001` queda `RESOLVED LOCAL/TEST`.
+
+El límite de seis se aplica a perfiles activos operativos. Cuentas suspendidas o históricas pueden conservarse para no destruir auditoría. Esta corrección no autoriza balanceo automático ni una cadena de reemplazo cuando un sustituto declara conflicto.
 
 ## Alternativas descartadas
 
@@ -87,4 +93,4 @@ El perfil M2 registra `primary|substitute`; para `primary`, `max_active_assignme
 
 ## Validación
 
-El contrato completo y la matriz de evidencia/decisiones se mantienen en `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`. M1/M2 demostraron aislamiento, alta, función/capacidad, activación, suspensión, revocación y recovery sólo en local/test; el siguiente prompt sólo puede autorizar M3 —rúbrica global versionada—. M4 ya no tiene bloqueo decisorio, pero sigue no implementado y requiere autorización posterior propia.
+El contrato completo y la matriz de evidencia/decisiones se mantienen en `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`. M1–M5 demostraron aislamiento, cuenta, rúbrica, asignaciones/conflictos y paquete ciego. El prompt M6 conserva esas precondiciones. M6–M10 siguen no implementados y requieren autorización propia.

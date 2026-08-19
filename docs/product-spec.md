@@ -1,6 +1,8 @@
 # Especificación de producto — Flower Flow 2026
 
-> **Adenda de estado productivo y Fase 02B — 2026-08-18:** el propietario confirma el release anterior como `OWNER_CONFIRMED_DEPLOYED`, sin evidencia técnica independiente y con `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`. M1/M2 quedaron implementados y verdes exclusivamente en local/test; Fase 02B permanece en 20 % funcional y sube a 90 % de preparación. M3 es la siguiente puerta. `P2B-BLOCK-001` está resuelto mediante cuatro principales sin límite fijo y un quinto sustituto exclusivo con capacidad diez.
+> **Estado vigente M5 — 2026-08-18:** M4A y M5 están `GO LOCAL/TEST`. La operación conserva cuatro `primary` y dos `substitute` ilimitados; M5 añade un paquete ciego único por `submission_version`, payload allowlist con hash canónico, inventario neutro y descarga privada sólo para la asignación propia activa. El riesgo de autoidentificación dentro del contenido continúa aceptado. M6–M10 permanecen no implementados/no autorizados.
+
+> **Adenda de estado productivo y Fase 02B — 2026-08-18:** el propietario confirma el release anterior como `OWNER_CONFIRMED_DEPLOYED`, sin evidencia técnica independiente y con `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`. M1–M5 están conformes sólo en local/test; producción no se infiere.
 
 > **Decisiones jurídicas del propietario — 2026-08-18:** Mecánica, Términos y Aviso v1.1 permanecen vigentes con cuatro categorías, máximo cuatro propuestas y cierre al 23 de agosto. La superposición temática de accesibilidad se acepta sin cambios. Las cuentas con aceptación v1.0 continúan operativamente sin reaceptación forzada ni modificación de evidencia; las nuevas aceptaciones registran v1.1. El archivo físico v1.0 designado es `3bcf31…` y la discrepancia histórica `42bd5e…` se conserva visible. Ver `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
 
@@ -10,7 +12,7 @@
 
 > **Adenda autoritativa Fase 01 — 2026-07-15:** el alcance aprobado es recepción local/test, no el MVP completo histórico. Cierre inclusivo: 15 de agosto de 2026 a las 23:59:59 en `America/Hermosillo`; categorías exactas: Movilidad con Flow, Hermosillo Florece y Mi familia, mi mascota; participación individual/equipo hasta cinco; una propuesta por categoría y tres totales. Registro/recepción/resultados están apagados por defecto. Evaluación, jueces, ganadores y publicación permanecen fuera. Ver `docs/01-functional-scope.md` y `docs/legal-change-log.md`.
 
-> **Estado vigente de implementación — 2026-08-18:** además del alcance anterior, M1/M2 aportan RBAC y ciclo operativo de cuenta juez. La validación local cerró con 125 pruebas/1,316 aserciones; M1+M2 dirigido aporta 16/267. El producto maestro se estima en 63 % porque rúbrica, asignación/evaluación, ganadores/resultados y ARCO no están implementados, y producción no fue verificada independientemente.
+> **Estado vigente de implementación — 2026-08-18:** M1/M2 aportan RBAC/ciclo operativo de cuenta, M3 la rúbrica versionada/inmutable, M4/M4A asignaciones/conflictos y M5 la proyección ciega con anexos privados. La evidencia vigente se registra en `docs/23-phase-02b-m5-blind-package-implementation-report-2026-08-18.md`. El producto maestro se estima en 68 %: aún faltan evaluación/puntajes/consolidación, ganadores/resultados y ARCO, y producción no fue verificada independientemente.
 
 **Fecha de corte de la baseline:** 2026-07-15; **corte vigente:** 2026-08-18
 
@@ -26,11 +28,11 @@
 
 ## Integridad del insumo
 
-> **RESOLVED para Fase 01, Fase 02A, contrato 02B y M1/M2; PENDING para el producto maestro:** identidad/alta/función de juez ya están probadas. M3–M10 no están implementados; resolución de empates, ganadores, publicación y ARCO permanecen pendientes. `P2B-BLOCK-001` está resuelto.
+> **RESOLVED para Fase 01, Fase 02A y M1–M5 de 02B; PENDING para el producto maestro:** identidad/alta/función, rúbrica versionada, asignaciones/conflictos y paquete ciego están probados en local/test. M6–M10 no están implementados; resolución de empates, ganadores, publicación y ARCO permanecen pendientes. `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` están cerrados localmente.
 
 ## Resumen ejecutivo
 
-Flower Flow es la plataforma web de la convocatoria 2026. El repositorio ya registra participantes, recibe proyectos, verifica admisibilidad y gestiona anexos privados; asignación a jueces, evaluación con rúbrica y resultados continúan como objetivo futuro.
+Flower Flow es la plataforma web de la convocatoria 2026. El repositorio ya registra participantes, recibe proyectos, verifica admisibilidad, asigna propuestas y expone al juez asignado una proyección estructural ciega con anexos neutros. La captura/evaluación con rúbrica y los resultados continúan como objetivo futuro.
 
 El MVP se limita a lo indispensable para recibir, revisar y evaluar proyectos de forma segura antes del 15 de agosto de 2026. Desde la fecha de corte quedan 31 días calendario, de modo que seguridad, flujo de envío, revisión y evaluación tienen precedencia sobre funciones presentacionales. La publicación pública de ganadores se prepara con un interruptor desactivado por defecto; una galería enriquecida, marketing masivo y cualquier API o aplicación móvil quedan fuera del MVP.
 
@@ -63,19 +65,19 @@ La frase histórica “la primera fase es documental” quedó superada por las 
 | DEC-021 | DECISION OPERATIVA / OWNER CONFIRMED | Producción usa el checkout Git directo `/var/www/flowerflow`, sin `releases/current/shared`; el update inmediato se genera para esa topología y no cambia Apache ni dominios. |
 | DEC-022 | `OWNER_CONFIRMED_DEPLOYED` | El propietario confirma el 2026-08-18 que instaló los cambios actuales y que existen más de 50 propuestas reales. `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; no equivale a verificación técnica independiente. |
 | DEC-023 | SUPERSEDED 2026-08-18 | La espera de las 21 decisiones terminó con la respuesta expresa del propietario. |
-| DEC-024 | OWNER_APPROVED / M1-M2 IMPLEMENTED LOCAL | Las 21 decisiones quedan en ADR-0008; M1/M2 cerraron `GO LOCAL/TEST`. M3 queda listo para autorización y M4 queda no implementado/no autorizado. |
-| DEC-025 | RESOLVED / OWNER APPROVED 2026-08-18 | `P2B-BLOCK-001`: cuatro principales sin límite fijo cubren todas las propuestas elegibles; quinto sustituto exclusivo con capacidad diez. M4 requiere implementación/autorización, no otra decisión de capacidad. |
+| DEC-024 | OWNER_APPROVED / M1–M5 LOCAL | Las 21 decisiones quedan en ADR-0008; M1–M5 cerraron `GO LOCAL/TEST`. M6+ continúa no implementado y requiere alcance separado. |
+| DEC-025 | OWNER FINAL / IMPLEMENTED LOCAL 2026-08-18 | `P2B-BLOCK-001`: cuatro principales y dos sustitutos, todos ilimitados; seis jueces operativos. M4A exige selección manual y no rechaza por volumen. |
 
 ## Evidencia actual del repositorio
 
 | Elemento | Estado | Evidencia al 2026-08-17 |
 | --- | --- | --- |
-| Backend | VERIFIED | Laravel 12.64.0 sobre PHP 8.3.33; 125 pruebas/1,316 aserciones verdes en MySQL aislado. |
+| Backend | VERIFIED | Laravel 12.64.0 sobre PHP 8.3.33; 150 pruebas/1,703 aserciones verdes en MySQL aislado. |
 | Plantilla | DECISION | `package.json` declara Materialize `3.0.0` con licencia comercial. |
 | Frontend | DECISION | Bootstrap 5.3.6, Vite 6.3.5 y varios plugins de la plantilla están declarados; su presencia no autoriza usarlos todos. |
 | Layouts | VERIFIED | `layouts/flowerflow.blade.php` sirve público, participante y panel; layouts heredados se conservan sin ser el contrato principal. |
 | Navegación | VERIFIED / DEUDA | Navegación Flower Flow usa parciales/Blade por rol; los JSON heredados conservan demos no usados por este layout. |
-| Aplicación | VERIFIED | Hay 77 rutas registradas/52 propias y módulos de auth, perfil, propuestas, archivos, admisibilidad, panel, exportación y ciclo de cuenta juez. |
+| Aplicación | VERIFIED | Hay 66 rutas propias sin vendor y módulos de auth, perfil, propuestas, archivos, admisibilidad, panel, exportación, cuenta juez, rúbrica versionada, asignaciones y conflictos. |
 | Variante/licencia exacta | PENDING | Debe confirmarse si el paquete adquirido es starter kit o full version, y el alcance de su licencia para dominio/proyecto. |
 
 ## Objetivo del producto
@@ -166,13 +168,13 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 ### Jueces y evaluación
 
 - **JUD-001 — OWNER_APPROVED / PARTIAL — M1 VERIFIED:** rol `judge`, permiso mínimo exclusivo, correo verificado, gates y shell vacío detrás de flag están implementados/probados. M2 aborda perfil, alta directa por `admin`, activación, suspensión y recovery; no hay dashboard de asignaciones.
-- **JUD-002 — OWNER_APPROVED / NOT IMPLEMENTED:** ceguera simple estructural; todos los campos sustantivos y anexos evaluables son visibles, mientras PII estructurada, residencia, notas, aclaraciones e historial permanecen ocultos. El riesgo de autoidentificación dentro del contenido fue aceptado.
+- **JUD-002 — OWNER_APPROVED / M5 VERIFIED LOCAL:** ceguera simple estructural mediante paquete allowlist; todos los campos sustantivos y anexos evaluables capturados son visibles con nombres neutros, mientras PII estructurada, residencia, notas, aclaraciones e historial permanecen ocultos. El riesgo de autoidentificación dentro del contenido fue aceptado y se comunica en UI.
 - **JUD-003 — OWNER_APPROVED / NOT IMPLEMENTED:** catálogo cerrado de cuatro tipos de conflicto; `admin` resuelve y reasigna a otro juez mediante una asignación independiente.
-- **JUD-004 — OWNER_APPROVED / NOT IMPLEMENTED:** rúbrica global Pertinencia 20, Claridad 20, Viabilidad 25, Impacto 25 y Coherencia 10; escala 0–10/paso 0.5; comentario general 100–2,000 obligatorio y por criterio opcional hasta 1,000.
+- **JUD-004 — OWNER_APPROVED / M3 IMPLEMENTED LOCAL:** rúbrica global versionada con `pertinence`/Pertinencia 20, `clarity`/Claridad 20, `feasibility`/Viabilidad 25, `impact`/Impacto 25 y `coherence`/Coherencia 10; escala 0–10/paso 0.5; precisión 4/2 `HALF_UP`; comentarios futuros 100–2,000/1,000. Descripciones extensas `NULL`/`POR_CONFIRMAR`; no existe captura de evaluación.
 - **JUD-005 — OWNER_APPROVED / NOT IMPLEMENTED:** envío inmutable, reapertura append-only por `admin` hasta las 20:00 con razón/password confirmation y edición hasta las 23:59:59; toda edición administrativa conserva actor real y revisión previa.
 - **JUD-006 — OWNER_APPROVED / NOT IMPLEMENTED:** cierre global `2026-08-27 23:59:59 America/Hermosillo`; notificaciones mínimas de juez y recordatorios de participantes 20/22 de agosto a las 09:00.
 - **JUD-007 — OWNER_APPROVED / NOT IMPLEMENTED:** total sólo servidor, precisión 4/2 `HALF_UP`, media aritmética de cuatro evaluaciones, consolidación bloqueada ante faltantes y empate por igualdad a dos decimales. Ganador/desempate quedan fuera.
-- **JUD-008 — PENDING BLOCKER:** M4 no puede implementar las asignaciones mientras cuatro jueces × ocho proyectos sean incompatibles con más de 50 propuestas y con una sustitución por conflicto.
+- **JUD-008 — OWNER FINAL / M4A VERIFIED:** cuatro primary cubren todas las elegibles y dos substitute exclusivos reciben reemplazos; los seis son ilimitados. M4A aplica capacidad nula y selección manual, con más de treinta reemplazos probados.
 
 ### Ganadores y resultados
 
@@ -403,4 +405,4 @@ Esta adenda conserva el historial anterior y registra el alcance autorizado para
 - las notificaciones de aclaración, residencia, respuesta y resolución se encolan después del commit y una falla temporal no revierte datos;
 - el cálculo de retención registra una fecha candidata a 90 días, pero no borra mientras falte determinar ganadores.
 
-Jueces, evaluación, rúbricas, ganadores, comunicaciones masivas, ARCO completo, reportes avanzados y producción siguen fuera de alcance.
+En el alcance histórico de Fase 02A, jueces, evaluación, rúbricas, ganadores, comunicaciones masivas, ARCO completo, reportes avanzados y producción quedaron fuera. El estado vigente posterior es M1–M5 local bajo contrato `4+2` ilimitado; M6+ y producción permanecen fuera.

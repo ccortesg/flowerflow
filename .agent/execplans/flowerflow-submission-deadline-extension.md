@@ -2,6 +2,8 @@
 
 Este ExecPlan es un documento vivo y se rige por `.agent/PLANS.md`. La autorización proviene de la solicitud expresa del propietario del 2026-08-17. El trabajo es local/test: no autoriza stage, commit, push, acceso a AWS ni despliegue productivo.
 
+> **Adenda 2026-08-18:** la exclusión jurídica que rigió este milestone quedó superada por una autorización posterior e independiente. Los PDF v1.1, su catálogo, migración, vínculos y validaciones se documentan en `.agent/execplans/flowerflow-legal-v1-1-local-release-candidate.md`; v1.0 permanece únicamente como evidencia histórica. Esta adenda no reescribe las decisiones ni el alcance que aplicaron al ejecutar originalmente este plan.
+
 ## Purpose / Big Picture
 
 Ampliar el cierre inclusivo de `hermosillo-florece-2026` desde el 15 de agosto de 2026 hasta el 23 de agosto de 2026 a las 23:59:59 en `America/Hermosillo`, equivalente a `2026-08-24 06:59:59 UTC`. Backend, base de datos, portada, dashboard, configuración, pruebas y documentación operativa deben anunciar y aplicar el mismo instante.

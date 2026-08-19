@@ -3,12 +3,17 @@
 use App\Http\Controllers\AdmissibilityParticipantController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Judge\AccessStatusController as JudgeAccessStatusController;
+use App\Http\Controllers\Judge\AssignmentController as JudgeAssignmentController;
+use App\Http\Controllers\Judge\BlindReviewPackageFileController as JudgeBlindReviewPackageFileController;
 use App\Http\Controllers\Judge\DashboardController as JudgeDashboardController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Panel\AccountSecurityController;
+use App\Http\Controllers\Panel\AssignmentController as PanelAssignmentController;
+use App\Http\Controllers\Panel\BlindReviewPackageController as PanelBlindReviewPackageController;
 use App\Http\Controllers\Panel\DashboardController as PanelDashboardController;
 use App\Http\Controllers\Panel\EligibilityReviewController as PanelEligibilityReviewController;
 use App\Http\Controllers\Panel\JudgeController as PanelJudgeController;
+use App\Http\Controllers\Panel\RubricVersionController as PanelRubricVersionController;
 use App\Http\Controllers\Panel\SubmissionController as PanelSubmissionController;
 use App\Http\Controllers\Panel\SubmissionExportController as PanelSubmissionExportController;
 use App\Http\Controllers\ProfileController;
@@ -67,7 +72,16 @@ Route::prefix('juez')->name('judge.')->middleware([
     'evaluation.enabled',
 ])->group(function () {
     Route::get('/estado', JudgeAccessStatusController::class)->name('status');
-    Route::get('/', JudgeDashboardController::class)->middleware(['verified', 'judge.active'])->name('dashboard');
+    Route::middleware(['verified', 'judge.active'])->group(function () {
+        Route::get('/', JudgeDashboardController::class)->name('dashboard');
+        Route::get('/asignaciones', [JudgeAssignmentController::class, 'index'])->name('assignments.index');
+        Route::get('/asignaciones/{judgeAssignment}', [JudgeAssignmentController::class, 'show'])->name('assignments.show');
+        Route::get('/asignaciones/{judgeAssignment}/anexos/{blindReviewPackageFile}', JudgeBlindReviewPackageFileController::class)
+            ->name('assignments.packages.files.download');
+        Route::post('/asignaciones/{judgeAssignment}/conflicto', [JudgeAssignmentController::class, 'declare'])
+            ->middleware(['permission:declare own evaluation conflicts', 'throttle:panel-mutations'])
+            ->name('assignments.conflicts.store');
+    });
 });
 
 Route::get('/panel/login', fn () => view('auth.login', ['panel' => true]))
@@ -118,6 +132,38 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
             Route::post('/{judgeProfile}/recuperar-2fa', [PanelJudgeController::class, 'recoverTwoFactor'])
                 ->middleware('permission:recover judge two factor')->name('two-factor.recover');
         });
+    });
+    Route::prefix('rubricas')->name('rubrics.')->middleware(['business.role:admin', 'permission:view evaluation rubrics'])->group(function () {
+        Route::get('/', [PanelRubricVersionController::class, 'index'])->name('index');
+        Route::get('/nueva', [PanelRubricVersionController::class, 'create'])
+            ->middleware('permission:manage evaluation rubrics')->name('create');
+        Route::post('/', [PanelRubricVersionController::class, 'store'])
+            ->middleware(['permission:manage evaluation rubrics', 'throttle:panel-mutations'])->name('store');
+        Route::get('/{rubricVersion}', [PanelRubricVersionController::class, 'show'])->name('show');
+        Route::get('/{rubricVersion}/editar', [PanelRubricVersionController::class, 'edit'])
+            ->middleware('permission:manage evaluation rubrics')->name('edit');
+        Route::put('/{rubricVersion}', [PanelRubricVersionController::class, 'update'])
+            ->middleware(['permission:manage evaluation rubrics', 'throttle:panel-mutations'])->name('update');
+        Route::post('/{rubricVersion}/activar', [PanelRubricVersionController::class, 'activate'])
+            ->middleware(['permission:manage evaluation rubrics', 'throttle:panel-mutations'])->name('activate');
+    });
+    Route::prefix('asignaciones')->name('assignments.')->middleware(['business.role:admin', 'permission:view evaluation assignments'])->group(function () {
+        Route::get('/', [PanelAssignmentController::class, 'index'])->name('index');
+        Route::get('/{submission}', [PanelAssignmentController::class, 'show'])->name('show');
+        Route::post('/{submission}/activar', [PanelAssignmentController::class, 'activate'])
+            ->middleware(['permission:manage evaluation assignments', 'throttle:panel-mutations'])
+            ->name('activate');
+        Route::post('/conflictos/{judgeConflict}/resolver', [PanelAssignmentController::class, 'resolve'])
+            ->middleware(['permission:resolve evaluation conflicts', 'throttle:panel-mutations'])
+            ->name('conflicts.resolve');
+    });
+    Route::prefix('paquetes-ciegos')->name('blind-review-packages.')->middleware(['business.role:admin', 'permission:view blind review packages'])->group(function () {
+        Route::get('/', [PanelBlindReviewPackageController::class, 'index'])->name('index');
+        Route::get('/{submission}', [PanelBlindReviewPackageController::class, 'show'])->name('show');
+        Route::post('/{submission}/generar', [PanelBlindReviewPackageController::class, 'generate'])
+            ->middleware(['permission:manage blind review packages', 'throttle:panel-mutations'])->name('generate');
+        Route::post('/{submission}/activar', [PanelBlindReviewPackageController::class, 'activate'])
+            ->middleware(['permission:manage blind review packages', 'throttle:panel-mutations'])->name('activate');
     });
     Route::get('/cuenta', [AccountSecurityController::class, 'show'])->name('account');
     Route::prefix('cuenta/2fa')->name('account.two-factor.')->middleware('throttle:account-security')->group(function () {

@@ -1,5 +1,7 @@
 # Handoff operativo vigente — Flower Flow
 
+> **Estado vigente M5 — 2026-08-18:** M1–M5 están `GO LOCAL/TEST`; seis jueces ilimitados, asignación manual y paquete ciego único/allowlist con anexos neutros. No aplicar migraciones/seeders ni corregir producción por inferencia.
+
 **Fecha:** 2026-08-18 (`America/Hermosillo`)
 
 **Alcance:** estado documental y siguiente puerta; no es evidencia productiva independiente ni un runbook de despliegue.
@@ -14,35 +16,47 @@ Esta confirmación no acredita por sí misma SHA, migraciones, flags, workers, s
 
 `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`
 
-El baseline local verificado es la rama `codex/submission-deadline-extension`, con `HEAD`, remoto y ancestro común en `e0fa0455e61afcb38593b62ae0d983f75a92b210`. No se afirma que producción ejecute ese SHA.
+El baseline local verificado al iniciar M4 es la rama `codex/submission-deadline-extension`, con `HEAD`, remoto y ancestro común en `865059ad302ff4195ac18f671bd6fa13b99e398b`. Los cambios M3/M4 posteriores permanecen locales; no se afirma que producción ejecute ese SHA ni el diff actual.
+
+## Handoff M5 local
+
+M5 queda `GO LOCAL/TEST`: 18 migraciones; M4A `4+2` ilimitado y paquete ciego/descargas privadas probados. `FLOWERFLOW_EVALUATION_ENABLED=false` cierra el shell juez. No ejecutar seeders productivos ni borrar asignaciones, conflictos, paquetes o inventarios.
 
 ## Estado funcional transferido
 
 | Área | Estado local documentado | Estado productivo en este handoff |
 |---|---|---|
 | Fase 01 / 02A, cuarta categoría, plazo, legales v1.1, XLSX y 503/CSP | Implementado y validado localmente según diagnóstico/ExecPlans | Instalación confirmada sólo por el propietario. |
-| Jueces, asignaciones, conflictos, rúbrica y evaluación | 20 % funcional; M1 aislamiento y M2 perfil/alta/ciclo de cuenta verdes; M3–M10 no implementados | M1/M2 sólo locales; no atribuidos a producción. |
+| Jueces, asignaciones, conflictos, rúbrica y evaluación | M1–M5 conformes local/test; paquete ciego sí, evaluación/puntajes M6+ no | Nada de M1–M5 atribuido a producción. |
 | Ganadores/resultados | 0 %; fuera de Fase 02B | No implementado; resultados deben permanecer apagados. |
 | Operación externa | Runbooks y configuración documentados | Evidencia técnica independiente `POR_CONFIRMAR`. |
 
 ## Siguiente puerta
 
-Las decisiones de Fase 02B están `OWNER_APPROVED`, incluida la corrección que resolvió `P2B-BLOCK-001`. La preparación documental/técnica es 90 % y la implementación funcional alcanza 20 % por M1/M2. El paquete vigente es:
+Las decisiones de Fase 02B están `OWNER_APPROVED`; la corrección final resuelve `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` localmente mediante `4+2` ilimitado. El paquete vigente incluye:
 
 - `.agent/execplans/flowerflow-phase-02b-evaluation-design.md`;
 - `.agent/execplans/flowerflow-phase-02b-m1-judge-rbac.md`;
 - `.agent/execplans/flowerflow-phase-02b-m2-judge-profile-onboarding.md`;
+- `.agent/execplans/flowerflow-phase-02b-m3-versioned-rubric.md`;
+- `.agent/execplans/flowerflow-phase-02b-m4-assignments-conflicts.md`;
+- `.agent/execplans/flowerflow-phase-02b-m4a-two-substitutes-reconciliation.md`;
+- `.agent/execplans/flowerflow-phase-02b-m5-blind-package.md`;
 - `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`;
 - `docs/19-phase-02b-m2-implementation-report-2026-08-18.md`;
+- `docs/20-phase-02b-m3-implementation-report-2026-08-18.md`;
+- `docs/21-phase-02b-m4-implementation-report-2026-08-18.md`;
+- `docs/22-phase-02b-m4a-unlimited-judges-implementation-report-2026-08-18.md`;
+- `docs/23-phase-02b-m5-blind-package-implementation-report-2026-08-18.md`;
 - `docs/adr/0008-phase-02b-evaluation-contract.md`.
 
-La siguiente puerta es autorizar y ejecutar exclusivamente M3 —rúbrica global versionada— mediante el prompt sincronizado. El estado es:
+La siguiente puerta es autorizar y ejecutar exclusivamente M6. El prompt M6 queda sincronizado y condicionado. El estado es:
 
-`M1/M2 IMPLEMENTED AND GREEN LOCALLY — M3 READY FOR EXPLICIT AUTHORIZATION`
+`M1–M5 CONFORMANT LOCAL/TEST — BLIND PACKAGE ACTIVE — M6 SEPARATE`
 
-M1 evita que `judge`, cero roles o multirol caigan por descarte en participante o panel. M2 añade alta operativa, `judge_profiles`, función primary/substitute, capacidad `NULL|10`, credencial propia, activación, suspensión/reactivación, revocación de sesiones y recovery 2FA administrativo sin relajar ese aislamiento. No existen rúbricas, asignaciones o evaluaciones; M3–M10 requieren autorización separada.
+M1 evita el acceso por descarte; M2 añade cuenta; M3 rúbrica; M4/M4A asignación/conflicto `4+2`; M5 proyección ciega y anexos. M6–M10 requieren autorización separada.
 
-`P2B-BLOCK-001` está `RESOLVED BY OWNER`: cuatro jueces principales evaluarán todas las propuestas elegibles sin límite fijo y un quinto juez exclusivamente sustituto admite máximo diez reasignaciones activas. M4 ya no requiere una decisión adicional, pero sigue no implementado/no autorizado y debe esperar M3 verde.
+`P2B-BLOCK-001` está `OWNER RESOLVED / LOCAL VERIFIED`: cuatro principales cubren todas las elegibles y dos sustitutos exclusivos son ilimitados. `admin` selecciona manualmente uno; si el seleccionado no está operativo o ya tiene la propuesta, el flujo falla cerrado.
 
 ## Invariantes para cualquier handoff posterior
 

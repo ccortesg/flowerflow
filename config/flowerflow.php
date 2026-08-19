@@ -4,6 +4,7 @@ return [
     'canonical_url' => env('FLOWERFLOW_CANONICAL_URL', 'https://app.flowerflow.com.mx'),
     'timezone' => env('FLOWERFLOW_TIMEZONE', 'America/Hermosillo'),
     'submissions_close_at' => env('FLOWERFLOW_SUBMISSIONS_CLOSE_AT', '2026-08-23 23:59:59'),
+    'evaluation_close_at' => env('FLOWERFLOW_EVALUATION_CLOSE_AT', '2026-08-27 23:59:59'),
     'organization' => [
         'legal_name' => 'FUNXT, A.C.',
         'rfc' => 'FUN110208BT0',

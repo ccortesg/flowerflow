@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Actions\Rubrics\ProvisionCanonicalRubricDraft;
 use App\Models\Competition;
 use App\Models\LegalDocument;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -104,6 +106,14 @@ class FlowerFlowSeeder extends Seeder
             'view judges',
             'manage judges',
             'recover judge two factor',
+            'view evaluation rubrics',
+            'manage evaluation rubrics',
+            'view evaluation assignments',
+            'manage evaluation assignments',
+            'declare own evaluation conflicts',
+            'resolve evaluation conflicts',
+            'view blind review packages',
+            'manage blind review packages',
         ] as $name) {
             Permission::findOrCreate($name, 'web');
         }
@@ -120,9 +130,19 @@ class FlowerFlowSeeder extends Seeder
             'view residency documents',
             'download residency documents',
         ]);
-        Role::findOrCreate('judge', 'web')->syncPermissions(['access judge workspace']);
+        Role::findOrCreate('judge', 'web')->syncPermissions([
+            'access judge workspace',
+            'declare own evaluation conflicts',
+        ]);
         Role::findOrCreate('admin', 'web')->syncPermissions(
-            Permission::query()->where('name', '!=', 'access judge workspace')->get()
+            Permission::query()->whereNotIn('name', [
+                'access judge workspace',
+                'declare own evaluation conflicts',
+            ])->get()
         );
+
+        if (app()->environment(['local', 'testing']) && Schema::hasTable('rubric_versions')) {
+            app(ProvisionCanonicalRubricDraft::class)->execute($competition);
+        }
     }
 }

@@ -1,6 +1,8 @@
 # ExecPlan — Fase 02B: identidad de jueces y evaluación
 
-**Estado:** `DESIGN APPROVED — M1/M2 IMPLEMENTED LOCALLY — M3 READY FOR EXPLICIT AUTHORIZATION`
+**Estado:** `DESIGN UPDATED — M1–M5 GO LOCAL/TEST — M6 NEXT SEPARATE MILESTONE`
+
+> **Estado vigente — 2026-08-18:** el propietario reemplazó los contratos históricos `1 substitute × 10` y `2 substitutes × 30` por `4 primary + 2 substitute`, todos sin límite. M4A y el paquete ciego M5 quedaron verdes local/test; M6 conserva autorización y ejecución separadas.
 
 **Fecha de apertura:** 2026-08-18 (`America/Hermosillo`)
 
@@ -10,7 +12,7 @@
 
 Preparar un contrato implementable, seguro y trazable para identidad/acceso de jueces, alta directa, perfiles, asignaciones, evaluación ciega, conflictos, rúbrica versionada, borradores, cálculo en servidor, envío inmutable, reapertura administrativa, auditoría, notificaciones y QA. Este plan no autoriza código, migraciones, seeders, pruebas, instalaciones, bases de datos, servicios externos ni producción.
 
-El paquete de decisión autoritativo es `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`. El propietario respondió las 21 decisiones el 2026-08-18. Las opciones descartadas se conservan como historia; el contrato vigente está registrado como `OWNER_APPROVED`. M1 y M2 fueron autorizados posteriormente, se ejecutaron bajo ExecPlans propios y quedaron verdes sólo en local/test. M3 requiere un nuevo prompt de autorización expresa.
+El paquete de decisión autoritativo es `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`. El propietario respondió las 21 decisiones el 2026-08-18. Las opciones descartadas se conservan como historia. M1–M5 quedaron verdes sólo en local/test: M4A reconcilia la composición `4+2`, la selección manual y la capacidad ilimitada; M5 añade la proyección ciega allowlist. M6 exige su propio alcance y no se implementa en este plan.
 
 ## Límites e invariantes
 
@@ -57,11 +59,11 @@ Los siguientes puntos describen el SHA/árbol leído antes de implementar M1. Se
 
 ## Resultado de preparación
 
-- Implementación funcional Fase 02B: **20 %**; corresponde únicamente a M1 y M2 verdes.
-- Preparación documental/técnica para continuar implementación: **90 %**. La cifra combina inventario real, decisiones aprobadas, M1/M2 probados, resolución explícita de capacidad/sustitución, límites de seguridad y plan de prueba; no representa M3–M10 terminados.
-- Puerta actual: autorización expresa y ejecución local/test del Milestone 3 —rúbrica versionada— mediante el prompt sincronizado en el paquete y el diagnóstico.
-- `P2B-BLOCK-001` está `RESOLVED BY OWNER`: cuatro jueces principales evaluarán todas las propuestas elegibles sin límite fijo y un quinto juez será exclusivamente sustituto con máximo diez reasignaciones activas.
-- Puerta posterior: un nuevo prompt autorizará, como máximo, un milestone de implementación por vez. M3 ya puede proponerse porque M2 quedó verde; M4 deja de tener bloqueo decisorio, pero sólo podrá proponerse después de M3 verde y requerirá autorización propia.
+- Estado funcional: M1–M5 conformes local/test bajo el contrato final `4+2` ilimitado.
+- Preparación: migraciones/código/UI/pruebas M4A y M5 están verdes; no se atribuyen a producción.
+- Puerta actual: M6 como ejecución separada limitada al borrador y cálculo servidor.
+- `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` están resueltos local/test.
+- Puerta posterior: M6 sólo después de M5 verde y sin mezclar confirmación/envío/reapertura M7.
 
 ## Plan de este milestone documental
 
@@ -77,13 +79,13 @@ Los siguientes puntos describen el SHA/árbol leído antes de implementar M1. Se
 
 ## Milestones de implementación
 
-Cada milestone requiere un ExecPlan acotado, base local/test protegida, datos sintéticos, revisión de migraciones y aprobación expresa. M1 y M2 son los únicos milestones ya ejecutados y cerrados.
+Cada milestone requiere un ExecPlan acotado, base local/test protegida, datos sintéticos, revisión de migraciones y aprobación expresa. M1–M5 ya fueron ejecutados y cerrados exclusivamente en local/test.
 
 1. **Completado local/test:** roles, permisos, gate de rutas y seguridad base.
 2. **Completo local/test:** perfil de juez y alta directa administrativa.
-3. Rúbrica versionada.
-4. Asignaciones y conflictos.
-5. Proyección ciega y anexos autorizados.
+3. **Completo local/test:** rúbrica versionada.
+4. **Completo local/test:** asignaciones y conflictos, incluida reconciliación M4A ilimitada.
+5. **Completo local/test:** proyección ciega y anexos autorizados.
 6. Evaluación en borrador y cálculo servidor.
 7. Confirmación, envío inmutable y eventual reapertura.
 8. Notificaciones y auditoría.
@@ -109,7 +111,7 @@ Los nombres físicos finales y campos exactos deberán cerrarse en el ExecPlan d
 ## Validación documental prevista
 
 - Búsqueda de contradicciones sobre producción, siguiente puerta, autorización 02B, roles, ceguera, campos visibles, número de jueces, rúbrica, empates, ganadores y resultados.
-- Confirmar que las 21 decisiones vigentes estén marcadas `OWNER_APPROVED`, que las alternativas descartadas estén identificadas como históricas y que la resolución expresa de `P2B-BLOCK-001` no se confunda con implementación de M4.
+- Confirmar que las 21 decisiones vigentes estén marcadas `OWNER_APPROVED`, que las alternativas descartadas estén identificadas como históricas y que `P2B-BLOCK-001` se distinga de su implementación M4 local/test.
 - Revisión de enlaces Markdown locales.
 - Revisión de secretos, credenciales y PII en el diff.
 - `git diff --check`, `git diff --name-only` y `git status --short`.
@@ -130,7 +132,7 @@ Los cambios son exclusivamente documentales. El rollback futuro consiste en reve
 - `DECISION`: datos existentes se protegen con cambios aditivos y sin backfills inferidos.
 - `OWNER_APPROVED` 2026-08-18: las 21 decisiones del paquete quedaron respondidas; el contrato completo se conserva en la sección 17 del paquete y en ADR-0008.
 - `DECISION`: roles estrictamente excluyentes, alta directa, asignación manual, ceguera simple estructural, rúbrica/fórmula aprobadas, evaluación append-only, 2FA opcional, notificaciones mínimas, retención de 24 meses y empate por igualdad redondeada.
-- `RESOLVED — P2B-BLOCK-001`: el propietario sustituyó el contrato incompatible por cuatro principales sin límite fijo y un quinto sustituto exclusivo con capacidad diez. La undécima sustitución activa queda como riesgo operativo fail-closed, no como autorización para sobreasignar.
+- `OWNER FINAL — P2B-BLOCK-001`: cuatro principales y dos sustitutos exclusivos, todos ilimitados. Los antecedentes `1×10` y `2×30` se conservan como historia; M4A implementa capacidad nula y selección manual.
 
 ## Registro vivo
 
@@ -148,8 +150,13 @@ Los cambios son exclusivamente documentales. El rollback futuro consiste en reve
 - [x] 2026-08-18 MST — M1 queda `GO LOCAL/TEST`; se sincroniza el siguiente gate a M2. M3–M10 siguen sin autorización y `P2B-BLOCK-001` continúa bloqueando M4.
 - [x] 2026-08-18 MST — M2 queda `GO LOCAL/TEST`: 14/14 migraciones, 125 pruebas/1,306 aserciones, alta/activación/suspensión/recovery y UAT local verdes. M3 es la siguiente puerta; M4 continúa bloqueado.
 - [x] 2026-08-18 MST — El propietario resuelve `P2B-BLOCK-001`: cuatro principales sin límite fijo y quinto sustituto exclusivo con capacidad diez. Antes del primer commit M2 se alinea a `primary=NULL`/`substitute=10`; M4 queda no implementado/no autorizado, no bloqueado por capacidad.
+- [x] 2026-08-18 MST — M3 queda `GO LOCAL/TEST`: rúbrica global versionada, activación/sustitución e inmutabilidad verdes; M4 queda listo para autorización separada.
+- [x] 2026-08-18 MST — M4 queda `GO LOCAL/TEST`: cobertura manual de cuatro principales, conflicto propio, sustitución append-only y capacidad diez fail-closed; M5 es la siguiente puerta y permanece no autorizado.
+- [x] 2026-08-18 MST — Decisión posterior fija seis jueces operativos: cuatro primary sin límite y dos substitute con treinta activas cada uno. Se registra M4A como puerta correctiva previa a M5; no se presenta el código `1×10` como vigente.
+- [x] 2026-08-18 MST — M3 queda `GO LOCAL/TEST`: 15 migraciones, rúbrica global v1 draft idempotente, ciclo `draft|active|superseded`, permisos admin, concurrencia/inmutabilidad y UAT Firefox verdes; suite 133/1,448. M4 pasa a siguiente puerta separada.
 - [x] 2026-08-18 MST — La corrección queda validada con M2 10/175, M1+M2 16/267, suite completa 125/1,316, migración compatible y QA Firefox escritorio/móvil; `flowerflow_testing` vuelve a cero cuentas/perfiles/sesiones.
+- [x] 2026-08-18 MST — M4A cierra el contrato final `4+2` ilimitado y M5 queda `GO LOCAL/TEST`: 18 migraciones, paquete allowlist/hash, anexos neutros, permisos, drift fail-closed, UAT Firefox con ambos sustitutos y suite 150/1,703. M6 es la siguiente puerta separada.
 
 ## Cierre de este ExecPlan
 
-Este ExecPlan cerró el diseño y la reconciliación de decisiones. Las implementaciones posteriores de M1 y M2 se conservan en sus ExecPlans separados y no reescriben el alcance histórico de este documento. M3 queda listo para recibir autorización expresa mediante el prompt vigente; cada milestone posterior requerirá su propio ExecPlan. `P2B-BLOCK-001` está resuelto, pero M4 no puede iniciar antes de M3 verde ni sin autorización separada.
+Este ExecPlan cerró el diseño original y conserva su historia. Las implementaciones M1–M5 se mantienen en ExecPlans separados. La decisión ilimitada está reconciliada local/test por M4A y la ceguera estructural por M5; M6 sólo puede ejecutarse mediante su prompt separado. No acredita producción.

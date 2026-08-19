@@ -28,7 +28,7 @@
       @endforeach
     </select>
     @error('assignment_role')<div class="invalid-feedback">{{ $message }}</div>@enderror
-    <div class="form-text">Los cuatro jueces principales evaluarán todas las propuestas elegibles sin límite fijo. El juez sustituto sólo recibirá reasignaciones y tendrá máximo diez activas.</div>
+    <div class="form-text">Los cuatro jueces principales evaluarán todas las propuestas elegibles. Los dos sustitutos sólo recibirán reasignaciones. Ningún juez tiene límite de proyectos.</div>
   </div>
   <div class="alert alert-info" role="note">Después del alta se programará un enlace temporal para que el juez establezca su propia contraseña. El correo se verificará mediante el flujo firmado de Flower Flow.</div>
   <div class="d-flex flex-wrap gap-2">

@@ -22,7 +22,7 @@
         <dt class="col-7">Correo</dt><dd class="col-5">{{ $judgeProfile->user->hasVerifiedEmail() ? 'Verificado' : 'Pendiente' }}</dd>
         <dt class="col-7">Contraseña propia</dt><dd class="col-5">{{ $judgeProfile->password_initialized_at ? 'Establecida' : 'Pendiente' }}</dd>
         <dt class="col-7">2FA</dt><dd class="col-5">{{ $judgeProfile->user->hasEnabledTwoFactorAuthentication() ? 'Configurada' : 'Opcional / sin configurar' }}</dd>
-        <dt class="col-7">Capacidad futura</dt><dd class="col-5">{{ $judgeProfile->max_active_assignments ?? 'Sin límite fijo' }}</dd>
+        <dt class="col-7">Capacidad</dt><dd class="col-5">{{ $judgeProfile->max_active_assignments ?? 'Sin límite' }}</dd>
       </dl>
       <p class="small text-body-secondary mt-3 mb-0">La función y capacidad no crean asignaciones ni habilitan módulos de evaluación. El sustituto no recibe asignaciones iniciales.</p>
     </section>

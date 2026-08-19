@@ -17,10 +17,7 @@ enum JudgeAssignmentRole: string
 
     public function maxActiveAssignments(): ?int
     {
-        return match ($this) {
-            self::Primary => null,
-            self::Substitute => 10,
-        };
+        return null;
     }
 
     /** @return list<string> */

@@ -1,31 +1,35 @@
 # Estrategia de pruebas y calidad
 
-## Evidencia vigente — 2026-08-17
+> **Evidencia vigente M5 — 2026-08-18:** M1–M5 están verdes. M5 añade 8 pruebas/119 aserciones dirigidas, carrera real de dos activaciones, canarios de PII, inventario cruzado/duplicado/extra, descarga neutra y drift fail-closed. La suite completa quedó en 150 pruebas/1,703 aserciones; M6 sigue separado.
+
+## Evidencia vigente — 2026-08-18
+
+M4/M4A añaden pruebas dirigidas de asignación/conflicto y concurrencia MySQL: elegibilidad exacta, cuatro principales, dos sustitutos sin carga inicial, rúbrica/versión/plazo fijados, composiciones inválidas, idempotencia, catálogo/ownership, reemplazo append-only, selección manual, capacidad ilimitada, IDOR, mass assignment y canarios de ausencia. El UAT Firefox recorre cobertura, conflicto, reemplazo, tres viewports, teclado/foco, reflow y consola limpia. Los conteos finales están en `docs/22-phase-02b-m4a-unlimited-judges-implementation-report-2026-08-18.md`.
 
 La reconciliación jurídica v1.1 añade `LegalDocumentsV11Test`: valida existencia y SHA-256 de los tres PDF nuevos, una versión activa determinística por tipo, preservación de v1.0/aceptaciones durante rollback-forward, vínculos públicos/autenticados e identidad en superficies por rol. La inspección PDF combinó `pdfinfo`, extracción de texto y revisión visual de las 28 páginas de v1.0/v1.1. Los resultados finales del candidato se registran en el ExecPlan `.agent/execplans/flowerflow-legal-v1-1-local-release-candidate.md` y en `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
 
 | Gate | Resultado actual |
 |---|---|
 | Base/cuenta de tests | `flowerflow_testing` / `flowerflow_testing_user`, MySQL loopback, guard obligatorio |
-| Migraciones de test | 14/14 aplicadas; M2 pasó forward/rollback/forward preservando un usuario sintético después del guard exacto |
-| Suite | 125 pruebas/1,316 aserciones, verde; M1+M2 dirigido: 16 pruebas/267 aserciones |
+| Migraciones de test | 18/18 aplicadas; M5 pasó forward/rollback/forward, preservó usuario sintético/tablas M4 y no crea paquetes automáticamente |
+| Suite | Ver conteo final reproducible en el informe M4; suite completa y M1–M4 dirigidas verdes |
 | Pint | Verde |
 | Composer validate/platform/audit | Verde; cero advisories |
 | Yarn dependencies | Un advisory bajo de Quill 2.0.3 sin fix; cero moderados/altos/críticos |
 | Iconos/build | 98 iconos, 784 módulos y tres assets Vite, verde |
-| Browser | UAT previa más M1/M2 en Firefox: matriz visitante/participant/reviewer/admin/judge/sin rol/multirol/no verificado; alta y estados pending/active/suspended; 1440/768/390, reflow, simulación CSS zoom 200 %, teclado/foco, 403/404, revocación de sesión y consola limpia. No se afirma zoom nativo. |
+| Browser | UAT M4 Firefox: cobertura 0→4, conflicto 4→3, reemplazo 3→4, vacío, diez activas/undécima rechazada, canarios ausentes, 403/404, 1440×900/1024×768/390×844, teclado/foco, reflow y consola limpia. |
 
 La base local primaria no sustituye este ambiente y no está autorizada para esta ejecución. El único runtime destructivo permitido es `flowerflow_testing` con `flowerflow_testing_user`, MySQL loopback, datos sintéticos y guard probado antes de cada `migrate:fresh`. La auditoría vigente está en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
 ## Contrato de QA Fase 02B aprobado — 2026-08-18
 
-Fase 02B alcanza 20 % funcional y 90 % de preparación documental/técnica. Las matrices M1/M2 están ejecutadas y verdes; las pruebas M3–M10 siguen siendo contratos futuros. M3 es la siguiente puerta. `P2B-BLOCK-001` está resuelto mediante cuatro principales sin límite fijo y un quinto sustituto exclusivo con capacidad diez; M4 continúa no implementado/no autorizado.
+M1–M5 permanecen verdes. M4A prueba composición exacta/capacidad ilimitada y M5 demuestra proyección allowlist, hash reproducible, activación inmutable, descarga privada e IDOR. M6–M10 siguen futuros.
 
 - M1 — `VERIFIED LOCAL`: visitante, `participant`, `reviewer`, `admin`, `judge`, sin rol y multirol; roles estrictamente excluyentes, gates fail-closed, rutas directas/IDOR y flag de evaluación apagado/encendido.
 - M2 — `VERIFIED LOCAL`: alta directa por `admin`, función `primary|substitute`, capacidad `NULL|10`, correo verificado, primer cambio seguro de contraseña, activación idempotente en cualquier orden, suspensión/reactivación, revocación de sesiones y recovery administrativo. 2FA de juez es opcional y su ausencia no se trató como fallo.
-- M3/M6: rúbrica global 20/20/25/25/10, escala 0–10/paso 0.5, comentario general 100–2,000, comentarios por criterio opcionales hasta 1,000, total servidor 0–100 con precisión 4/2 y `HALF_UP`. Payload total hostil se ignora.
-- M4: ejecutar sólo mediante autorización posterior a M3 verde. Probar cuatro asignaciones iniciales exclusivamente a los principales, cobertura de todas las propuestas elegibles, sustituto sin carga inicial, máximo diez reemplazos activos, undécimo rechazado, catálogo de conflicto, carrera, void y reemplazo.
-- M5: proyección automática estructural y archivos con etiquetas/metadatos neutros; ausencia de PII estructurada, residencia, notas, aclaraciones e historial. La prueba no puede prometer eliminar identidad semántica de texto/imágenes/enlaces/anexos; ese riesgo está aceptado.
+- M3 `VERIFIED LOCAL`: rúbrica global 20/20/25/25/10, escala 0–10/paso 0.5, comentarios futuros 100–2,000/1,000, precisión 4/2 y `HALF_UP`; ciclo versionado/inmutable y concurrencia probados. M6 deberá demostrar cálculo servidor y rechazo/ignorancia de total hostil.
+- M4 — `HISTORICAL VERIFIED 1×10`: cuatro iniciales, conflicto/void/reemplazo y ausencia M5 probados. M4A — `VERIFIED UNLIMITED`: dos sustitutos sin iniciales, 31 reemplazos aceptados, selección manual y carreras cerradas.
+- M5 `VERIFIED LOCAL`: proyección estructural separada y archivos con etiquetas/metadatos neutros; ausencia comprobada de PII estructurada, residencia, notas, aclaraciones, historial, rutas/nombres originales. La UI no promete eliminar identidad semántica de texto/imágenes/enlaces/anexos; ese riesgo está aceptado.
 - M7: envío inmutable; reapertura sólo por `admin` hasta 20:00 Hermosillo con razón 20–1,000/password confirmation; revisión append-only editable hasta 23:59:59. Si admin edita en nombre del juez, se prueban actor real, juez sujeto y preservación de la revisión previa.
 - Consolidación: media aritmética sólo con cuatro evaluaciones válidas; cualquier faltante mantiene `incomplete`; empate técnico sólo por igualdad a dos decimales y nunca declara ganador.
 - M8: emails idempotentes de alta/asignación/conflicto resuelto/reasignación/envío/reapertura/cierre y recordatorios de participantes 20/22-ago 09:00 Hermosillo. Incluye cero propuestas, al menos un borrador, enviada+borrador, todas enviadas y duplicado de ventana.
@@ -52,7 +56,7 @@ La QA real de las páginas públicas comparó local contra producción en 360, 7
 
 La colisión entre la ruta Laravel `/documentos` y el directorio físico `public/documentos/` se corrigió para Apache mediante una regla exacta anterior a `-d` en `public/.htaccess`; los PDF anidados continúan estáticos. `apache2ctl configtest` devolvió `Syntax OK`. El servidor incorporado conserva su limitación de resolución de directorios físicos, pero la UAT del candidato validó la superficie dinámica mediante el runtime seguro y los contratos automatizados. No se hizo smoke autenticado sobre el VirtualHost primario porque su `.env` no usa la base/cuenta exclusiva y esa ejecución no estaba autorizada.
 
-El runtime UAT reproducible es `scripts/serve_local_testing.sh`: fija testing/MySQL loopback/base y usuario exclusivos, sesiones en base, cache en archivo, correo array, cola sync, flags autorizados y resultados apagados. Además falla cerrado si faltan esquema, roles, permisos, convocatoria, cuatro categorías o las tres versiones jurídicas activas, y limpia la cache de permisos de Spatie antes de servir para no reutilizar una matriz obsoleta entre procesos. La primera alta posterior a la suite evidenció que `RefreshDatabase` deja el esquema sin seeders; la transacción se revirtió al faltar el rol. Se añadió el readiness gate, se ejecutó el seeder autorizado y la repetición registró cuatro aceptaciones v1.1 exactas de Términos/Privacidad. Después de M2 se recrea y siembra la base para retirar todas las cuentas y sesiones sintéticas.
+El runtime UAT reproducible es `scripts/serve_local_testing.sh`: fija testing/MySQL loopback/base y usuario exclusivos, sesiones en base, cache en archivo, correo array, cola sync, flags autorizados y resultados apagados. Además falla cerrado si faltan esquema, roles, permisos, convocatoria, cuatro categorías o las tres versiones jurídicas activas, y limpia la cache de permisos de Spatie. Después de M3 se recreó y sembró la base para retirar cuentas/versiones/sesiones sintéticas; quedó v1 draft canónica, cero usuarios y ninguna asignación/evaluación.
 
 ## Suite Fase 01
 
@@ -121,7 +125,7 @@ La evidencia de cierre es la aceptación manual explícita del usuario. No se re
 | Idempotencia | mismo key devuelve resultado previo | keys concurrentes, mismo key distinto payload | Integration |
 | Corrección | solicitud y nueva versión | alterar snapshot anterior | Feature |
 | DataTables | filtro/paginación/orden | columna no permitida, N+1, filtro hostil | Integration/perf |
-| Asignación | proyecto admitido a cuatro principales por flujo manual; conflicto reasignado al sustituto | duplicada, juez inactivo, sustituto en carga inicial, undécimo reemplazo activo y concurrencia | Unit/feature |
+| Asignación | proyecto admitido a cuatro principales; admin selecciona manualmente uno de dos sustitutos; volumen ilimitado | duplicada, juez inactivo, sustituto en inicial, selección omitida/ajena, composición distinta de `4+2` y concurrencia | Unit/feature |
 | Conflicto | declaración bloquea evaluación | editar score tras conflicto | Feature/browser |
 | Evaluación | borrador, fórmula 20/20/25/25/10, comentario general, total servidor y submit | no asignado, score fuera rango/paso, comentario incompleto, payload total hostil, tardío | Unit/feature |
 | Reopen | admin crea revisión append-only antes de 20:00 con razón/password y actor real | juez se reabre; admin fuera de hora; overwrite; envío después de 23:59:59 | Feature/security |
