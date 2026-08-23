@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Middleware\EnsureActiveJudge;
+use App\Http\Middleware\EnsureAdministrativeFinalizationEnabled;
 use App\Http\Middleware\EnsureAdmissibilityReviewEnabled;
 use App\Http\Middleware\EnsureEvaluationEnabled;
 use App\Http\Middleware\EnsureExclusiveBusinessRole;
 use App\Http\Middleware\EnsurePanelEnabled;
+use App\Http\Middleware\EnsureSubmissionRemindersEnabled;
 use App\Http\Middleware\EnsureSubmissionsOpen;
 use App\Http\Middleware\LocaleMiddleware;
 use App\Http\Middleware\SecurityHeaders;
@@ -29,6 +31,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('web', SecurityHeaders::class);
         $middleware->alias([
             'submissions.open' => EnsureSubmissionsOpen::class,
+            'submission-reminders.enabled' => EnsureSubmissionRemindersEnabled::class,
+            'administrative-finalization.enabled' => EnsureAdministrativeFinalizationEnabled::class,
             'panel.enabled' => EnsurePanelEnabled::class,
             'admissibility.enabled' => EnsureAdmissibilityReviewEnabled::class,
             'evaluation.enabled' => EnsureEvaluationEnabled::class,

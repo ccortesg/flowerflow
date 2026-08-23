@@ -1,5 +1,7 @@
 # Estrategia de pruebas y calidad
 
+> **Adenda QA del panel — 2026-08-22:** las suites nuevas cubren columna/botones por rol/estado, recordatorio propietario-only, cooldown, lote completo independiente de filtros, mail dual y XSS, GET firmado puro, firmas alteradas/expiradas/cruzadas, POST sin archivo con legales, contenido mínimo, plazo inclusivo, excepción administrativa sin aceptaciones, password/razón/confirmación, idempotencia, auditoría redactada y diagnóstico/advertencia de exports. Los conteos finales y UAT local se registran en el ExecPlan y el informe de implementación de este milestone; no constituyen evidencia productiva.
+
 > **Evidencia vigente M6 — 2026-08-18:** M1–M6 están verdes. M6 añade 13 pruebas/228 aserciones dirigidas; M1–M6 suma 54/888 y la suite completa 163/1,937. Cubre GET puro, apertura concurrente, payload hostil, decimales, vencimiento, 409, conflicto/replacement y auditoría redactada.
 
 ## Evidencia vigente — 2026-08-18
@@ -337,3 +339,9 @@ Gate final local del 2026-07-16: 72 pruebas y 696 aserciones verdes; Pint sobre 
 El cierre de recepción y el modo mantenimiento usan ahora `resources/views/errors/503.blade.php`, con layout/recursos Vite normales y sin etiquetas `<style>` ni atributos `style=`. `SecurityAndFlagsTest` cubre estado 503, título/descripcion accesibles, enlaces de retorno/documentos y respuesta con CSP estricta; una prueba adicional renderiza la vista sin la bolsa de errores del middleware para representar `artisan down --render="errors::503"`.
 
 La vista se pre-renderizó localmente en mantenimiento y devolvió HTTP 503. Se revisó visualmente con Chrome a 1440×1000 y Firefox a 390×844: marca, jerarquía, alerta, acciones y reflow permanecen legibles y sin desbordamiento. El HTML renderizado conserva `aria-labelledby`/`aria-describedby`, orden DOM de teclado y cero estilos inline. No se usaron cuentas ni datos reales.
+
+## Acciones operativas del panel — 2026-08-22
+
+El milestone de recordatorios, confirmación firmada, finalización administrativa y diagnóstico de exports cerró `GO LOCAL/TEST` con 179 pruebas y 2,130 aserciones. Incluye concurrencia real MySQL, matriz de roles/permisos/flags/estados, fecha inclusiva, firmas 403/404/410, CSRF, cooldown, propietario único, XSS, auditoría redactada, idempotencia por modo y no regresión M1–M6.
+
+Firefox cubrió 1440×900, 1024×768 y 390×844 con teclado, foco, zoom, reflow y consola. Un worker local `database/exports --queue=exports --once` completó un XLSX privado sintético. Detalle y límites en `docs/25-panel-submission-actions-reminders-implementation-report-2026-08-22.md`.

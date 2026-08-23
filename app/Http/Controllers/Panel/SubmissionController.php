@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Panel;
 
+use App\Enums\SubmissionExportStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Submission;
@@ -21,8 +22,13 @@ class SubmissionController extends Controller
         $exports = request()->user()->can('export submissions')
             ? request()->user()->submissionExports()->latest()->limit(5)->get()
             : collect();
+        $staleBefore = now()->subMinutes((int) config('flowerflow.exports.stale_after_minutes'));
+        $hasStalledExports = $exports->contains(
+            fn ($export) => $export->status === SubmissionExportStatus::Queued
+                && $export->created_at->lessThanOrEqualTo($staleBefore),
+        );
 
-        return view('panel.submissions.index', compact('submissions', 'categories', 'exports'));
+        return view('panel.submissions.index', compact('submissions', 'categories', 'exports', 'hasStalledExports'));
     }
 
     public function show(Submission $submission, SubmissionContentSanitizer $sanitizer): View

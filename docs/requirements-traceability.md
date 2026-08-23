@@ -1,5 +1,17 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+> **Adenda de trazabilidad del panel — 2026-08-22:** este milestone local parte de `bffc7d7f4738e0937b276ea9d5d22e3744afe65c`; no altera M1–M6, M7–M10, PDFs jurídicos ni producción.
+
+| ID | Requisito del panel | Implementación/evidencia | Estado |
+|---|---|---|---|
+| PANEL-ACT-001 | Columna final Acciones y botones sólo por permiso/estado | `panel/submissions/index`, `SubmissionPolicy`, flags y `PanelSubmissionContractTest` | VERIFIED local/test |
+| PANEL-REM-001 | Individual y masivo a todos los drafts, sólo propietario, cooldown | tablas/actions/job/controlador/preview y `SubmissionReminderTest` | VERIFIED local/test |
+| PANEL-REM-002 | Correo HTML/texto con ambas marcas, CTA temporal y contenido escapado | `SubmissionDraftReminder`, layout dual y pruebas de render/XSS | VERIFIED local/test |
+| PANEL-REM-003 | GET firmado puro; POST sin login y sin archivo exige firma/CSRF/legales/plazo | rutas/controlador/eligibilidad/finalización modo `signed_reminder` y pruebas negativas | VERIFIED local/test |
+| PANEL-ADM-001 | Envío administrativo con mínimo, password, confirmación/razón y cero aceptaciones ajenas | request/policy/action/snapshot/event/audit/mail y `AdministrativeSubmissionFinalizationTest` | VERIFIED local/test |
+| PANEL-EXP-001 | Export sigue asíncrono/privado; diagnóstico read-only y alerta por espera | `DiagnoseSubmissionExports`, índice y `SubmissionExportTest` | VERIFIED local/test; entorno observado POR_CONFIRMAR |
+| PANEL-OPS-001 | Flags default-off y rollback que preserva evidencia | config/env/migración fail-closed/ExecPlan | VERIFIED local/test |
+
 > **Contrato vigente M6 — 2026-08-18:** M4A conserva cuatro principales y dos sustitutos ilimitados; M5 aporta la proyección ciega y M6 el borrador/cálculo servidor con lock optimista. M7–M10 permanecen no implementados/no autorizados.
 
 ## Trazabilidad de reconciliación jurídica v1.1 — 2026-08-17

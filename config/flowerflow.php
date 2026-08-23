@@ -43,6 +43,8 @@ return [
         'panel' => env('FLOWERFLOW_PANEL_ENABLED', true),
         'admissibility_review' => env('FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED', false),
         'evaluation' => env('FLOWERFLOW_EVALUATION_ENABLED', false),
+        'submission_reminders' => env('FLOWERFLOW_SUBMISSION_REMINDERS_ENABLED', false),
+        'administrative_finalization' => env('FLOWERFLOW_ADMIN_FINALIZATION_ENABLED', false),
     ],
     'security' => [
         'enforce_strict_csp' => env('FLOWERFLOW_CSP_ENFORCE_STRICT', false),
@@ -88,6 +90,11 @@ return [
         'tries' => (int) env('FLOWERFLOW_EXPORT_TRIES', 3),
         'timeout' => (int) env('FLOWERFLOW_EXPORT_JOB_TIMEOUT', 120),
         'backoff' => [60, 300],
+        'stalled_after_minutes' => (int) env('FLOWERFLOW_EXPORT_STALLED_AFTER_MINUTES', 5),
+    ],
+    'submission_reminders' => [
+        'link_ttl_minutes' => (int) env('FLOWERFLOW_REMINDER_LINK_TTL_MINUTES', 2880),
+        'cooldown_hours' => (int) env('FLOWERFLOW_REMINDER_COOLDOWN_HOURS', 24),
     ],
     'mail' => [
         'from' => env('MAIL_FROM_ADDRESS', 'notificaciones@flowerflow.com.mx'),

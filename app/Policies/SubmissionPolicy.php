@@ -27,4 +27,18 @@ class SubmissionPolicy
     {
         return $user->id === $submission->user_id && in_array($submission->status, ['draft', 'submitted'], true);
     }
+
+    public function sendReminder(User $user, Submission $submission): bool
+    {
+        return $user->hasExactRoles(['admin'])
+            && $user->can('send submission reminders')
+            && $submission->isDraft();
+    }
+
+    public function administrativelyFinalize(User $user, Submission $submission): bool
+    {
+        return $user->hasExactRoles(['admin'])
+            && $user->can('administratively finalize submissions')
+            && in_array($submission->status, ['draft', 'submitted'], true);
+    }
 }

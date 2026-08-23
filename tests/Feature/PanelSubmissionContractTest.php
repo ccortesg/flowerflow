@@ -77,7 +77,35 @@ class PanelSubmissionContractTest extends TestCase
             ->assertNotFound();
     }
 
-    private function submissionFor(User $user, string $title): Submission
+    public function test_actions_column_and_mutation_buttons_are_visible_only_to_authorized_admin_for_drafts(): void
+    {
+        config([
+            'flowerflow.flags.submission_reminders' => true,
+            'flowerflow.flags.administrative_finalization' => true,
+        ]);
+        $draft = $this->submissionFor($this->participant(), 'Borrador con acciones');
+        $submitted = $this->submissionFor(
+            $this->participant(),
+            'Enviada sin acciones',
+            'submitted',
+        );
+
+        $this->actingAs($this->admin())->get(route('panel.submissions.index'))
+            ->assertOk()
+            ->assertSee('Acciones')
+            ->assertSee(route('panel.submissions.reminders.submissions.store', $draft), false)
+            ->assertSee(route('panel.submissions.administrative-finalization.show', $draft), false)
+            ->assertDontSee(route('panel.submissions.reminders.submissions.store', $submitted), false)
+            ->assertDontSee(route('panel.submissions.administrative-finalization.show', $submitted), false);
+
+        $this->actingAs($this->reviewer())->get(route('panel.submissions.index'))
+            ->assertOk()
+            ->assertSee('Acciones')
+            ->assertDontSee(route('panel.submissions.reminders.submissions.store', $draft), false)
+            ->assertDontSee(route('panel.submissions.administrative-finalization.show', $draft), false);
+    }
+
+    private function submissionFor(User $user, string $title, string $status = 'draft'): Submission
     {
         $category = Category::query()->firstOrFail();
 
@@ -90,6 +118,9 @@ class PanelSubmissionContractTest extends TestCase
             'summary' => 'Resumen sintético del contrato de panel.',
             'description_html' => '<p>Descripción sintética.</p>',
             'description_text' => 'Descripción sintética.',
+            'status' => $status,
+            'submitted_at' => $status === 'submitted' ? now('UTC') : null,
+            'folio' => $status === 'submitted' ? 'HMO26-'.str_pad((string) fake()->unique()->numberBetween(1, 999999), 6, '0', STR_PAD_LEFT) : null,
         ]);
     }
 

@@ -6,11 +6,20 @@
     <p class="ff-kicker mb-1">Recepción</p>
     <h1>Propuestas</h1>
   </div>
-  @can('export submissions')
-    <a class="btn btn-flower" href="{{ route('panel.submissions.exports.create') }}">
-      <i class="ri-file-excel-2-line me-1" aria-hidden="true"></i> Exportar a Excel
-    </a>
-  @endcan
+  <div class="d-flex flex-wrap gap-2">
+    @if(config('flowerflow.flags.submission_reminders'))
+      @can('send submission reminders')
+        <a class="btn btn-outline-primary" href="{{ route('panel.submissions.reminders.create') }}">
+          <i class="ri-mail-send-line me-1" aria-hidden="true"></i> Enviar recordatorio
+        </a>
+      @endcan
+    @endif
+    @can('export submissions')
+      <a class="btn btn-flower" href="{{ route('panel.submissions.exports.create') }}">
+        <i class="ri-file-excel-2-line me-1" aria-hidden="true"></i> Exportar a Excel
+      </a>
+    @endcan
+  </div>
 </div>
 
 <form method="GET" class="card ff-card p-3 my-4" aria-label="Filtros de propuestas">
@@ -37,9 +46,10 @@
 </form>
 
 <div class="card ff-card">
+  <p class="small text-muted px-3 pt-3 mb-0">En Acciones, el sobre envía un recordatorio y el avión registra administrativamente una propuesta.</p>
   <div class="table-responsive">
     <table class="table mb-0">
-      <thead><tr><th>Folio</th><th>Proyecto</th><th>Participante</th><th>Categoría</th><th>Estado</th><th>Fecha</th></tr></thead>
+      <thead><tr><th>Folio</th><th>Proyecto</th><th>Participante</th><th>Categoría</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
       <tbody>
       @forelse($submissions as $item)
         <tr>
@@ -49,9 +59,42 @@
           <td>{{ $item->category->name }}</td>
           <td>{{ $item->statusLabel() }}</td>
           <td>{{ $item->created_at->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i') }}</td>
+          <td>
+            <div class="d-flex flex-wrap gap-1">
+              @if(config('flowerflow.flags.submission_reminders'))
+                @can('sendReminder', $item)
+                  <form method="POST" action="{{ route('panel.submissions.reminders.submissions.store', $item) }}">
+                    @csrf
+                    <button class="btn btn-sm btn-outline-primary" type="submit" aria-label="Enviar recordatorio de la propuesta {{ $item->title }}">
+                      <i class="ri-mail-send-line" aria-hidden="true"></i>
+                      <span class="d-none d-xl-inline ms-1">Recordar</span>
+                    </button>
+                  </form>
+                @endcan
+              @endif
+              @if(config('flowerflow.flags.administrative_finalization') && $item->isDraft())
+                @can('administrativelyFinalize', $item)
+                  @if($item->hasMinimumFinalizationContent())
+                    <a class="btn btn-sm btn-outline-success" href="{{ route('panel.submissions.administrative-finalization.show', $item) }}" aria-label="Registrar administrativamente la propuesta {{ $item->title }}">
+                      <i class="ri-send-plane-line" aria-hidden="true"></i>
+                      <span class="d-none d-xl-inline ms-1">Registrar</span>
+                    </a>
+                  @else
+                    <span class="btn btn-sm btn-outline-secondary disabled" aria-disabled="true" title="Requiere nombre, resumen y descripción">
+                      <i class="ri-send-plane-line" aria-hidden="true"></i>
+                      <span class="d-none d-xl-inline ms-1">Incompleta</span>
+                    </span>
+                  @endif
+                @endcan
+              @endif
+              @if(! config('flowerflow.flags.submission_reminders') && ! config('flowerflow.flags.administrative_finalization'))
+                <span aria-hidden="true">—</span><span class="visually-hidden">Sin acciones disponibles</span>
+              @endif
+            </div>
+          </td>
         </tr>
       @empty
-        <tr><td colspan="6" class="p-4">No hay resultados.</td></tr>
+        <tr><td colspan="7" class="p-4">No hay resultados.</td></tr>
       @endforelse
       </tbody>
     </table>
@@ -63,6 +106,11 @@
   <section class="card ff-card mt-4" aria-labelledby="recent-exports-title">
     <div class="card-body">
       <h2 class="h5" id="recent-exports-title">Exportaciones recientes</h2>
+      @if($hasStalledExports)
+        <div class="alert alert-warning" role="alert">
+          Hay una exportación que lleva más de {{ config('flowerflow.exports.stale_after_minutes') }} minutos en espera. Un administrador debe verificar el worker de la cola <code>{{ config('flowerflow.exports.queue') }}</code>; no generes duplicados mientras se diagnostica.
+        </div>
+      @endif
       <p class="text-muted">Cada archivo permanece disponible durante {{ config('flowerflow.exports.retention_hours') }} horas y sólo puede descargarlo quien lo solicitó.</p>
       <div class="table-responsive">
         <table class="table align-middle mb-0">

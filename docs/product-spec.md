@@ -1,5 +1,7 @@
 # Especificación de producto — Flower Flow 2026
 
+> **Adenda de operaciones de recepción — 2026-08-22, sólo local/test:** el panel permite a `admin` exacto recordar drafts al propietario y registrar una finalización administrativa antes del cierre. El enlace recordatorio es temporal/firma/GET puro + POST con legales y permite omitir sólo el archivo. La excepción administrativa exige contenido mínimo, password reciente, confirmación y razón; crea snapshot explícito sin fabricar aceptaciones. Ambos flags nacen apagados. La exportación sigue privada/asíncrona en `database/exports` y añade diagnóstico read-only/alerta de estancamiento. Producción no fue modificada ni verificada.
+
 > **Estado vigente M6 — 2026-08-18:** M4A–M6 están `GO LOCAL/TEST`. M6 añade evaluación draft propia, revisión 1, cinco scores, total BCMath sólo servidor y lock optimista/409, conservando el paquete M5. El riesgo semántico continúa aceptado. M7–M10 permanecen no implementados/no autorizados.
 
 > **Adenda de estado productivo y Fase 02B — 2026-08-18:** el propietario confirma el release anterior como `OWNER_CONFIRMED_DEPLOYED`, sin evidencia técnica independiente y con `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`. M1–M6 están conformes sólo en local/test; producción no se infiere.
@@ -158,6 +160,9 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 - **SUB-005 — DECISION:** una corrección posterior crea una nueva versión; no sobrescribe la enviada.
 - **SUB-006 — DECISION:** archivos privados se almacenan fuera del web root, con nombres aleatorios, allowlist, límites, validación MIME/firma y descarga autorizada.
 - **SUB-007 — DECISION/PENDING:** participación individual o equipo de máximo cinco; máximo cuatro propuestas por cuenta y una por categoría; límites de texto, tipos y cuota de anexos están configurados. Invitaciones de equipo y cualquier cambio jurídico posterior siguen pendientes.
+- **SUB-010 — OWNER APPROVED / IMPLEMENTED LOCAL:** recordatorio individual/masivo sólo a propietario de `draft`, con cooldown de 24 horas y selección masiva independiente de filtros/página.
+- **SUB-011 — OWNER APPROVED / IMPLEMENTED LOCAL:** confirmación firmada sin login, GET puro y POST con legales, contenido mínimo y plazo abierto; omite exclusivamente el archivo.
+- **SUB-012 — OWNER APPROVED / IMPLEMENTED LOCAL:** excepción administrativa con permiso separado, password reciente, confirmación y razón; omite archivo/perfil/equipo/legales, preserva actor/waivers/razón y no crea aceptaciones del participante.
 
 ### Elegibilidad administrativa
 
