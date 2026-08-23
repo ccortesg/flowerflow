@@ -2,7 +2,7 @@
 
 > **Contrato vigente M4A — 2026-08-18:** `judge_profiles.max_active_assignments` es `NULL` tanto para `primary` como para `substitute`; la composición operativa es cuatro `primary` + dos `substitute`. La migración aditiva `2026_08_18_160000_make_all_judge_assignment_roles_unlimited.php` convierte el antecedente `substitute=10` y exige capacidad nula para cualquier función.
 
-> **Estado vigente — 2026-08-18:** M2 añadió `judge_profiles`; M3 `rubric_versions`/`rubric_criteria`; M4 `judge_assignments`/`judge_conflicts`; M5 `blind_review_packages`/`blind_review_package_files`. No existen tablas de evaluaciones/puntajes; M6–M10 siguen no implementados/no autorizados.
+> **Estado vigente — 2026-08-18:** M2 añadió `judge_profiles`; M3 `rubric_versions`/`rubric_criteria`; M4 `judge_assignments`/`judge_conflicts`; M5 `blind_review_packages`/`blind_review_package_files`; M6 `evaluations`/`evaluation_revisions`/`evaluation_scores`. M7–M10 siguen no implementados/no autorizados.
 
 ## Adenda Fase 01 implementada — 2026-07-15
 
@@ -23,7 +23,7 @@ El cierre sembrado es `2026-08-24 06:59:59 UTC`, equivalente a `2026-08-23 23:59
 - `judge_assignments`: una fila por juez/versión, tipo `initial|replacement`, estado `active|conflict_declared|voided|cancelled`, slot vigente defensivo, rúbrica/plazo fijados, reemplazo y actores/razones. Cuatro iniciales forman cobertura; un original voided queda cubierto sólo por su replacement active.
 - `judge_conflicts`: uno por asignación, catálogo exacto, explicación sólo para `other`, estado `declared|resolved_reassigned`, resolutor/razón/reemplazo. No se borra ni copia contenido de propuesta.
 - `current_slot=1` participa en la unicidad de una asignación vigente por versión+juez; estados terminales usan `NULL`. No existe contador de capacidad: primary y substitute son ilimitados; se mantiene la prohibición de duplicar una asignación vigente para el mismo juez y propuesta.
-- No se persiste un estado de cobertura en `submissions`; no existen todavía `evaluations` o scores.
+- No se persiste un estado de cobertura en `submissions`; las evaluaciones M6 son agregados separados por asignación y nunca modifican el paquete M5.
 
 ## Adenda de modelo M5 implementada — 2026-08-18
 
@@ -31,6 +31,14 @@ El cierre sembrado es `2026-08-24 06:59:59 UTC`, equivalente a `2026-08-23 23:59
 - `blind_review_package_files`: inventario del paquete por `submission_file_id`, orden, clase `document|editor_image`, etiqueta neutra, MIME/extensión/bytes/SHA esperados y estado. No persiste nombre original, stored name, disk/path, actor ni PII.
 - FKs `RESTRICT`, checks y unicidades impiden dos paquetes por versión, duplicar archivo/orden/etiqueta o aceptar estados/metadatos fuera de contrato. El rollback aborta si existe evidencia M5.
 - La reasignación no crea otra fila: original y replacement fijan la misma `submission_version_id` y consumen el mismo paquete activo.
+
+## Adenda de modelo M6 implementada — 2026-08-18
+
+- `evaluations`: única por `judge_assignment_id`; fija `rubric_version_id` y `blind_review_package_id`, conserva revisión actual, `status=draft`, lock optimista, actor y `started_at` UTC.
+- `evaluation_revisions`: M6 sólo usa revisión positiva número 1, `status=draft`, comentario general nullable/máximo 2,000, `total_raw decimal(7,4)` nullable y actores reales. `source_revision_id` permanece nulo.
+- `evaluation_scores`: una fila por criterio fijado, `score decimal(6,4)` nullable, componente `decimal(7,4)` nullable y comentario máximo 1,000. `NULL` es ausente; cero es capturado.
+- FKs restrict, unicidades y checks protegen estado, rango, paso 0.5000 y pareja score/componente. La aplicación revalida además exactamente cinco códigos de la rúbrica fijada.
+- La migración no hace backfill. `down()` falla si existe cualquier fila o auditoría M6; sin evidencia retira sólo las tablas y el permiso de borrador.
 
 ## Criterios de diseño
 

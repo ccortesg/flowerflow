@@ -111,7 +111,7 @@ Riesgos residuales:
 
 - Quill 2.0.3 conserva un advisory XSS bajo sin versión corregida; la sanitización servidor sigue siendo defensa obligatoria.
 - Las descripciones extensas de los criterios permanecen `POR_CONFIRMAR`; no bloquean la estructura/pesos aprobados y no fueron inventadas.
-- Riesgo histórico del corte M3: entonces se planificaba un sustituto y rechazo 11. La corrección intermedia `2×30` también fue sustituida; el contrato vigente es `4+2` ilimitado, M4A/M5 verdes y M6 separado.
+- Riesgo histórico del corte M3: entonces se planificaba un sustituto y rechazo 11. La corrección intermedia `2×30` también fue sustituida; el contrato vigente es `4+2` ilimitado, M4A–M6 verdes y M7 separado/no autorizado.
 - La operación productiva, SHA, migraciones, flags, workers, scheduler, SMTP, smoke e integridad permanecen sin evidencia técnica independiente.
 
 ## 8. Archivos funcionales principales

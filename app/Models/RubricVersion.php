@@ -81,6 +81,11 @@ class RubricVersion extends Model
         return $this->hasMany(JudgeAssignment::class);
     }
 
+    public function evaluations(): HasMany
+    {
+        return $this->hasMany(Evaluation::class);
+    }
+
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_user_id');

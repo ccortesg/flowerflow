@@ -1,6 +1,6 @@
 # Roadmap y backlog
 
-> **Estado vigente — 2026-08-18:** Fase 01/02A, jurídicos v1.1 y M1–M5 permanecen conformes localmente. M5 implementa paquete ciego/allowlist/anexos privados; M6 —borrador de evaluación y cálculo servidor— es la siguiente puerta separada. El release anterior es `OWNER_CONFIRMED_DEPLOYED`, pero `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; nada de M1–M5 se atribuye a producción.
+> **Estado vigente — 2026-08-18:** Fase 01/02A, jurídicos v1.1 y M1–M6 permanecen conformes localmente. M6 implementa borrador, concurrencia optimista y cálculo servidor; M7 —envío inmutable/reapertura append-only— es la siguiente puerta potencial, aún no autorizada. `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; nada de M1–M6 se atribuye a producción.
 
 ## Estado Fase 01 — 2026-07-15
 
@@ -315,9 +315,9 @@ Contratos de modelos, enums, rutas y componentes se acuerdan antes del paralelo.
 | Cuarta categoría | Cerrada en código/test local | datos, límite cuatro, superficies públicas/participante/admin y concurrencia |
 | Exportación privada | Cerrada en código/test local | XLSX asíncrono privado, cinco hojas, permisos, auditoría y expiración; operación de worker/scheduler pendiente |
 | Ampliación de plazo y legales v1.1 | Cerrada en código/test local | cierre al 23-ago-2026, cuatro categorías/máximo cuatro y catálogo jurídico v1.1; continuidad histórica resuelta por owner |
-| Fase 02B evaluación | `M5 GO LOCAL/TEST; M6 NEXT` | M1–M5 conformes localmente; paquete ciego estructural activo sólo por acción admin y consumo por asignación propia activa |
+| Fase 02B evaluación | `M6 GO LOCAL/TEST; M7 NOT AUTHORIZED` | M1–M6 conformes localmente; paquete ciego por acción admin y borrador propio con cálculo servidor/lock optimista |
 | Resultados/retención ejecutable | No autorizado | ganadores, publicación y borrado condicionado |
 | Release candidate local previo | Cerrado localmente | validación/UAT documentadas; registro histórico conservado |
 | Producción de cambios actuales | `OWNER_CONFIRMED_DEPLOYED` | SHA, migraciones, flags, servicios y smoke siguen `POR_CONFIRMAR` sin evidencia independiente |
 
-La siguiente puerta separada es M6 —evaluación en borrador y cálculo exclusivamente servidor— conforme al prompt canónico. Debe preservar M4A/M5 y no puede mezclar envío/reapertura M7, notificaciones M8, consolidación, ganadores, resultados, ARCO o producción.
+La siguiente puerta potencial es M7 —envío inmutable y reapertura append-only—, pero permanece `NOT IMPLEMENTED / NOT AUTHORIZED`. Cualquier prompt futuro debe preservar M4A–M6 y no mezclar notificaciones M8, consolidación, ganadores, resultados, ARCO o producción.

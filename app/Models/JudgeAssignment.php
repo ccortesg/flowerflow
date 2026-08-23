@@ -69,4 +69,9 @@ class JudgeAssignment extends Model
     {
         return $this->hasOne(JudgeConflict::class);
     }
+
+    public function evaluation(): HasOne
+    {
+        return $this->hasOne(Evaluation::class);
+    }
 }

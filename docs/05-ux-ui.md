@@ -2,7 +2,7 @@
 
 > **Contrato vigente M4A — 2026-08-18:** la resolución administrativa muestra y exige selección explícita entre dos sustitutos operativos, ambos rotulados `Sin límite`. No hay capacidad usada/disponible ni reparto automático. La UI fue verificada en Firefox local en escritorio, tableta y móvil.
 
-> **Estado vigente — 2026-08-18:** M5 está `GO LOCAL/TEST`. `/panel/paquetes-ciegos` permite generar, previsualizar y activar explícitamente; `/juez/asignaciones/{id}` muestra la allowlist sólo con asignación/paquete activos y ofrece anexos neutros. Ambas superficies comunican “anonimización estructural” sin prometer anonimato semántico. M6 no está implementado.
+> **Estado vigente — 2026-08-18:** M6 está `GO LOCAL/TEST`. `/juez/asignaciones/{id}` mantiene la proyección M5 y añade inicio POST explícito, formulario draft accesible, progreso y total servidor sólo al completar cinco criterios. Después del plazo conserva vista sólo lectura. M7–M10 no están implementados.
 
 > **Sincronización v1.1, actualizada 2026-08-18:** landing, `/documentos`, registro, login, perfil, envío, footer y panel muestran vínculos v1.1; las superficies globales identifican a FUNXT, A.C. y su RFC/domicilio verificados. La fecha del 23 de agosto, cuatro categorías y máximo cuatro propuestas están confirmados. La UI conserva sus descripciones actuales y el propietario aceptó que el PDF mencione accesibilidad en Movilidad y Hermosillo sin Barreras, sin recategorización.
 
@@ -24,7 +24,7 @@
 | `/juez/asignaciones` | alias opaco, categoría y estado propios | abrir | vacío/listado paginado |
 | `/juez/asignaciones/{assignment}` | alias, categoría, plazo y estado | declarar conflicto propio | activo, conflicto bloqueante, 403/404 |
 
-Sin paquete activo, el detalle conserva el estado mínimo M4 y no genera datos. Con paquete activo, M5 añade título/resumen/descripción/enlaces/anexos allowlist, pero nunca folio, PII, residencia, admisibilidad, otros jueces, rúbrica o controles de evaluación.
+Sin paquete activo, el detalle conserva el estado mínimo M4 y no genera datos. Con paquete activo, M5 añade título/resumen/descripción/enlaces/anexos allowlist, pero nunca folio, PII, residencia, admisibilidad u otros jueces. M6 muestra sólo etiqueta/peso/rango/paso de la rúbrica fijada, no descripciones inventadas, y separa “Iniciar evaluación” de “Guardar borrador”. El formulario funciona sin JavaScript y después del vencimiento se sustituye por lectura semántica.
 
 ## Sistema visual Fase 01
 

@@ -46,4 +46,9 @@ class BlindReviewPackage extends Model
     {
         return $this->hasMany(BlindReviewPackageFile::class)->orderBy('display_order');
     }
+
+    public function evaluations(): HasMany
+    {
+        return $this->hasMany(Evaluation::class);
+    }
 }

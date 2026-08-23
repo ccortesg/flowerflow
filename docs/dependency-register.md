@@ -22,7 +22,9 @@ Este snapshot sustituye las afirmaciones de estado de las baselines históricas 
 | @popperjs/core | 2.11.8 | Runtime web | Conservado. |
 | quill | 2.0.3 | Runtime web | Conservado; Yarn reporta un advisory **bajo** sin versión corregida disponible. No hay avisos moderados, altos o críticos. |
 | @iconify/json / @iconify/utils | 2.2.348 / 2.3.0 | Build | Conservados para generar de forma determinista los 96 iconos `ri-*` alcanzables. |
-| laravel-vite-plugin / vite | 1.3.0 / 6.3.5 | Build | Conservados sin cambio major. |
+| laravel-vite-plugin / vite | 1.3.0 / 6.4.3 | Build | Vite subió de 6.3.5 a 6.4.3 en M6 para cerrar advisories transitivos sin cambiar major. |
+
+En M6 también se actualizaron transitivamente `postcss` a 8.5.26, `rollup` a 4.62.4 y `nanoid` a 3.3.18. `yarn audit` quedó con un único advisory bajo de Quill 2.0.3, sin moderados, altos o críticos. No se añadió ninguna dependencia de runtime ni de producción.
 
 Se retiraron del grafo instalado las dependencias demo no alcanzables, entre ellas Algolia, Bloodhound, jKanban, Mapbox, Swiper, DataTables y `@iconify/tools`. También se retiraron Axios y `resources/js/bootstrap.js` después de comprobar que el código activo no realiza llamadas AJAX. `lodash-es` queda resuelto a 4.18.1 y las instancias de `picomatch` a 4.0.5 o 2.3.2 según el rango compatible de su consumidor.
 

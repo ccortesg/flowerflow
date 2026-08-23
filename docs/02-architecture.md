@@ -1,8 +1,8 @@
 # Arquitectura propuesta
 
-> **Estado vigente M5 — 2026-08-18:** M4A conserva cuatro `primary` y dos `substitute` ilimitados. M5 está `GO LOCAL/TEST`: `BlindReviewPackageBuilder` proyecta sólo una allowlist desde el snapshot, una fila única por versión fija el hash canónico y un inventario separado sirve anexos privados con Policy ligada a la asignación activa. M6–M10 permanecen separados.
+> **Estado vigente M6 — 2026-08-18:** M4A conserva cuatro `primary` y dos `substitute` ilimitados; M5 conserva el paquete allowlist inmutable. M6 añade el agregado `Evaluation`/revisión 1/scores, Actions transaccionales, lock optimista y cálculo BCMath fijado a la rúbrica de la asignación. M7–M10 permanecen separados.
 
-> **Adenda Fase 02B — 2026-08-18:** M1–M5 están implementados localmente. M5 añade `BlindReviewPackage`/`BlindReviewPackageFile`, builder determinista, integridad binaria, panel explícito y consumo juez por asignación. M6–M10 no están implementados/no autorizados; `P2B-BLOCK-001` permanece resuelto.
+> **Adenda Fase 02B — 2026-08-18:** M1–M6 están implementados localmente. M6 conserva GET puro y separa apertura POST de guardado PATCH, resuelve siempre assignment/rubric/package del servidor y responde 409 ante lock stale. M7–M10 no están implementados/no autorizados; `P2B-BLOCK-001` permanece resuelto.
 
 > **Implementación vigente — 2026-08-18:** monolito modular Laravel 12.64.0 con Fase 01/02A, exportaciones XLSX privadas y cierre ampliado. MySQL es el datastore local; timestamps se persisten UTC y el concurso conserva `America/Hermosillo`. Uploads usan discos privados y sólo salen por controller+Policy. El propietario registra `OWNER_CONFIRMED_DEPLOYED`; el SHA y la operación productiva siguen sin evidencia técnica independiente. Ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
@@ -23,6 +23,10 @@ Se recomienda un **monolito modular Laravel 12 renderizado en servidor**, con Bl
 `Assignments` consulta elegibilidad sin modificarla, fija `SubmissionVersion`+`RubricVersion` y deriva cobertura desde filas append-only. `Conflicts` bloquea la asignación y crea un reemplazo ligado. M5 nunca entrega el snapshot crudo: genera una proyección allowlist separada, canónica e inmutable, más un inventario técnico sin nombres/rutas originales. El juez obtiene contenido sólo si su asignación exacta y el paquete siguen `active`; el reemplazo comparte el mismo paquete por `submission_version_id`.
 
 La decisión minimiza piezas nuevas durante el plazo de 31 días. Mantiene las fronteras de dominio en código para poder extraer componentes después, sin pagar ahora el costo de una SPA, microservicios o Redis.
+
+### Frontera implementada M6
+
+`JudgeAssignment` continúa como raíz autoritativa y fija versión, rúbrica y vencimiento; el paquete M5 se resuelve por esa misma versión. `OpenEvaluationDraft` crea de forma explícita e idempotente un agregado único con revisión 1 y cinco scores nulos. `SaveEvaluationDraft` aplica allowlist, locks y `lock_version`, recalcula componentes/total mediante BCMath y escribe auditoría redactada. GET no invoca Actions ni escribe. El contrato termina en estado `draft`: envío/reapertura/consolidación pertenecen a M7+.
 
 ## Estado de partida histórico (2026-07-15)
 

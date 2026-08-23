@@ -7,7 +7,7 @@
   <div class="card ff-card p-4 p-lg-5">
     <p class="ff-kicker mb-2">Área de evaluación</p>
     <h1 id="assignments-title" class="h2">Mis asignaciones</h1>
-    <p class="text-secondary">Abre una asignación activa para consultar su paquete ciego cuando esté disponible. La captura de evaluación permanece cerrada.</p>
+    <p class="text-secondary">Abre una asignación activa para consultar su paquete ciego e iniciar o continuar tu evaluación en borrador. El envío final permanece cerrado.</p>
     @if($assignments->isEmpty())
       <div class="alert alert-info" role="status">No tienes asignaciones disponibles.</div>
     @else

@@ -1,8 +1,8 @@
 # Alcance funcional — Flower Flow 2026
 
-> **Estado vigente M5 — 2026-08-18:** M1–M5 están implementados y verificados sólo en local/test. Se conservan seis jueces operativos ilimitados; M5 expone únicamente la allowlist de la versión asignada y sus anexos evaluables con nombres neutros a una asignación propia `active`. M6–M10 y producción permanecen fuera.
+> **Estado vigente M6 — 2026-08-18:** M1–M6 están implementados y verificados sólo en local/test. M6 permite al juez dueño abrir explícitamente y guardar una revisión draft con cinco criterios y total decimal exclusivamente servidor; no implementa envío. M7–M10 y producción permanecen fuera.
 
-> **Estado vigente — 2026-08-18:** M1/M2 implementan rol/gates y ciclo operativo de juez; M3 la rúbrica global; M4/M4A cobertura/conflictos; M5 paquete ciego estructural y descargas privadas. Producción permanece `OWNER_CONFIRMED_DEPLOYED`/SHA `POR_CONFIRMAR`; ningún M1–M5 se atribuye a ella.
+> **Estado vigente — 2026-08-18:** M1/M2 implementan rol/gates y ciclo operativo de juez; M3 la rúbrica global; M4/M4A cobertura/conflictos; M5 paquete ciego estructural; M6 borrador/concurrencia/cálculo servidor. Producción permanece `OWNER_CONFIRMED_DEPLOYED`/SHA `POR_CONFIRMAR`; ningún M1–M6 se atribuye a ella.
 
 > **Reconciliación jurídica v1.1, actualizada 2026-08-18:** las nuevas versiones identifican a `FUNXT, A.C.`, confirman el cierre del 23 de agosto, cuatro categorías y máximo cuatro propuestas. El propietario aceptó sin cambios la superposición de accesibilidad, aprobó continuidad operativa sin reaceptación forzada para cuentas v1.0 y designó el archivo físico v1.0 `3bcf31…` conservando el antecedente `42bd5e…`. Evidencia: `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
 
@@ -10,7 +10,7 @@
 
 > **Adenda funcional histórica de categoría, resuelta 2026-08-18:** la implementación opera con cuatro categorías activas y ordenadas y máximo cuatro propuestas, una por categoría. La plataforma conserva sus descripciones actuales; la referencia adicional a accesibilidad en Movilidad dentro de la Mecánica v1.1 fue aceptada por el propietario y no produce recategorización.
 
-> **Sustitución parcial aprobada, 2026-07-15 (histórica):** Fase 01 implementó sitio público, auth, perfil, borradores/envío, archivos y panel mínimo. La adenda Fase 02A autorizó después admisibilidad. El estado vigente posterior añade M1–M5 locales; evaluación, ganadores y resultados continúan sin implementar.
+> **Sustitución parcial aprobada, 2026-07-15 (histórica):** Fase 01 implementó sitio público, auth, perfil, borradores/envío, archivos y panel mínimo. La adenda Fase 02A autorizó después admisibilidad. El estado vigente posterior añade M1–M6 locales; el envío final de evaluación, ganadores y resultados continúan sin implementar.
 
 ## Contrato Fase 01 vigente
 
@@ -475,4 +475,4 @@ La aprobación específica de Fase 02A sustituye, sólo para este milestone, los
 
 Los límites técnicos de archivos provienen del prompt autorizado. Edad, residencia, tipos de comprobante, alcance de aclaración y motivos de resolución provienen de los PDF canónicos. Continúan `PENDING` la antigüedad numérica de “reciente”, el catálogo cerrado de documentos equivalentes y el borrado posterior a ganadores.
 
-En el alcance histórico Fase 02A no se implementaron jueces, asignación, evaluación, rúbrica, ganadores, publicación, campañas, ARCO completo, reportes avanzados ni producción. El estado vigente posterior incorpora M1–M5 sólo localmente; M6+ y producción siguen fuera.
+En el alcance histórico Fase 02A no se implementaron jueces, asignación, evaluación, rúbrica, ganadores, publicación, campañas, ARCO completo, reportes avanzados ni producción. El estado vigente posterior incorpora M1–M6 sólo localmente; M7+ y producción siguen fuera.

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\RubricVersionStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 
 class RubricCriterion extends Model
@@ -44,5 +45,10 @@ class RubricCriterion extends Model
     public function rubricVersion(): BelongsTo
     {
         return $this->belongsTo(RubricVersion::class);
+    }
+
+    public function evaluationScores(): HasMany
+    {
+        return $this->hasMany(EvaluationScore::class);
     }
 }

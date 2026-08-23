@@ -1,10 +1,10 @@
 # Preguntas abiertas y decisiones — Flower Flow 2026
 
-> **Estado vigente M5 — 2026-08-18:** `P2B-DEC-005/015` permanecen cerradas mediante `4+2` ilimitado y selección manual. M5 materializa la ceguera estructural decidida, con riesgo semántico aceptado; M6 es la siguiente puerta separada.
+> **Estado vigente M6 — 2026-08-18:** `P2B-DEC-005/015` permanecen cerradas mediante `4+2` ilimitado y selección manual. M5 materializa la ceguera estructural y M6 el borrador/cálculo servidor. M7–M10 permanecen no implementados/no autorizados.
 
 > **Decisiones del propietario — 2026-08-18:** se conserva sin cambios la superposición temática de accesibilidad de la Mecánica v1.1; las cuentas que aceptaron v1.0 se tratan operativamente como aceptantes de v1.1 sin forzar reaceptación ni alterar evidencia histórica; y el archivo físico v1.0 designado por el propietario es `public/documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf`. La discrepancia entre su SHA-256 actual `3bcf31…` y el hash histórico registrado `42bd5e…` se conserva documentada, no se oculta ni se corrige mediante backfill.
 
-> **Estado productivo y puerta actual — 2026-08-18:** el propietario registra `OWNER_CONFIRMED_DEPLOYED` y más de 50 propuestas reales. Sin evidencia externa, `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`. M1–M5 están verdes sólo en local/test; M6 es el siguiente milestone separado.
+> **Estado productivo y puerta actual — 2026-08-18:** el propietario registra `OWNER_CONFIRMED_DEPLOYED` y más de 50 propuestas reales. Sin evidencia externa, `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`. M1–M6 están verdes sólo en local/test; M7 requeriría autorización separada.
 
 > **Auditoría integral 2026-08-17:** Fase 01/02A está implementada en repositorio, pero el runtime local primario no está alineado: límite tres frente a cuatro y cuatro migraciones funcionales pendientes. Jueces/evaluación y resultados siguen bloqueados por decisiones de negocio. Ver `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
@@ -66,6 +66,7 @@ Siguen abiertas: hora exacta de apertura; fecha de salida; licencia Pixinvent; a
 | D-036 | M5 GO LOCAL/TEST 2026-08-18 | El paquete es único por versión, allowlist, hash canónico e inventario neutro; sólo assignment propia active consume. | M6 puede proponerse separado; no autoriza M7+, producción ni generación por lote. |
 | D-034 | OWNER FINAL / `P2B-BLOCK-001 RESOLVED` 2026-08-18 | Cuatro primary + dos substitute, todos ilimitados; seis jueces operativos; admin selecciona manualmente. | `P2B-M4-CORRECTION-001` cerrado local/test; sin reparto automático. |
 | D-035 | IMPLEMENTED LOCAL/TEST 2026-08-18 | `max_active_assignments=NULL` para ambos roles; sustitutos sin iniciales; 31 reemplazos aceptados. | M4A `GO LOCAL/TEST`; producción no acreditada. |
+| D-037 | M6 GO LOCAL/TEST 2026-08-18 | Borrador explícito por assignment propio, revisión 1, cinco scores, cálculo BCMath, lock optimista/409, vencimiento y auditoría redactada. | No incluye envío, reapertura, consolidación ni producción; M7–M10 requieren autorización propia. |
 
 ## Decisiones jurídicas prioritarias v1.1
 

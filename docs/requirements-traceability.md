@@ -1,6 +1,6 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
-> **Contrato vigente M5 — 2026-08-18:** M4A conserva cuatro principales y dos sustitutos ilimitados; M5 añade proyección allowlist única por versión, inventario neutro, descarga privada y acceso sólo por asignación activa. M6–M10 permanecen no implementados.
+> **Contrato vigente M6 — 2026-08-18:** M4A conserva cuatro principales y dos sustitutos ilimitados; M5 aporta la proyección ciega y M6 el borrador/cálculo servidor con lock optimista. M7–M10 permanecen no implementados/no autorizados.
 
 ## Trazabilidad de reconciliación jurídica v1.1 — 2026-08-17
 
@@ -26,7 +26,7 @@
 | AUDIT-002 | Diagnóstico por rol y acceso efectivo | roles/permisos del seeder, rutas, Policies, vistas y pruebas negativas contrastadas con la matriz planificada | VERIFIED documental/local |
 | AUDIT-003 | Separar código, runtime local y producción | estado de flags/config, migraciones de testing, `OWNER_CONFIRMED_DEPLOYED` y `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR` separados | VERIFIED documental; producción no verificada independientemente |
 | AUDIT-004 | Gate de código vigente | suite completa M1–M4A, Pint, Composer, JSON y build; conteos en informe M4A; Quill bajo documentado | VERIFIED local |
-| AUDIT-005 | Próximo prompt exacto y acotado | prompt M6 sincronizado en sección 21; preserva M4A/M5 | M5 GO / M6 SEPARATE |
+| AUDIT-005 | Prompt M6 exacto y acotado | sección 21 sustituida por el contrato ejecutado; preserva M4A/M5 | M6 GO LOCAL/TEST |
 
 ## Trazabilidad del diseño Fase 02B — 2026-08-18
 
@@ -39,15 +39,15 @@
 | F2B-DES-005 | Matriz ciega campo por campo y anonimización | builder/payload/inventario/Policies M5; paquete sección 8; decisiones 006–008 | M5 VERIFIED LOCAL / SEMANTIC IDENTITY RISK ACCEPTED |
 | F2B-DES-006 | Rúbrica versionada y contrato exacto | `rubric_versions`, `rubric_criteria`, contrato/Actions/Policy/UI y pruebas M3; paquete sección 9 | M3 VERIFIED LOCAL |
 | F2B-DES-007 | Estados, envío inmutable y reapertura versionada | paquete sección 10; decisión 017 | OWNER_APPROVED / NOT IMPLEMENTED |
-| F2B-DES-008 | Cálculo sólo servidor, consolidación/faltantes/empate | paquete sección 11; decisiones 010/012/013/021 | OWNER_APPROVED / NOT IMPLEMENTED |
+| F2B-DES-008 | Cálculo sólo servidor, consolidación/faltantes/empate | cálculo draft M6 implementado; consolidación/empate siguen en paquete sección 11 | M6 VERIFIED / CONSOLIDATION NOT IMPLEMENTED |
 | F2B-DES-009 | Matriz negativa, amenazas y auditoría | suites M1–M5; M5 añade canarios, IDOR, drift, neutralidad y concurrencia | M1–M5 VERIFIED LOCAL |
-| F2B-DES-010 | UX accesible mínima | `/panel/paquetes-ciegos` y detalle juez allowlist; UAT Firefox desktop/tablet/mobile, teclado, foco, reflow, consola y 403/404 | M1–M5 VERIFIED; UX M6+ PENDING |
+| F2B-DES-010 | UX accesible mínima | detalle juez M6, tres viewports, teclado/foco/zoom/reflow, consola, 409, 403/404 | M1–M6 VERIFIED; UX M7+ PENDING |
 | F2B-DES-011 | Notificaciones idempotentes y operación | M2: configuración de acceso, verificación y estado/recovery con HTML+texto y dispatcher resiliente; paquete sección 14 para eventos futuros | M2 SUBSET VERIFIED / M3+ PENDING |
 | F2B-DES-012 | Compatibilidad con más de 50 propuestas | migración M2 aditiva, perfil primary/substitute, sin backfill/asignaciones; upgrade/rollback/forward preservó usuario sintético | M2 VERIFIED LOCAL / CAPACITY DECISION CLOSED |
-| F2B-DES-013 | Diez milestones y corrección | paquete sección 18 + ExecPlans M4A/M5 | M5 GO; M6 SEPARATE; M7–M10 NOT AUTHORIZED |
-| F2B-DES-014 | Bloque de 21 respuestas y siguiente prompt | paquete secciones 20–21; prompt M6 actualizado | OWNER FINAL / M5 GO BEFORE M6 |
+| F2B-DES-013 | Diez milestones y corrección | paquete sección 18 + ExecPlans M4A/M5/M6 | M6 GO; M7–M10 NOT AUTHORIZED |
+| F2B-DES-014 | Bloque de 21 respuestas y prompt ejecutado | paquete secciones 20–21; contrato M6 corregido | OWNER FINAL / M6 VERIFIED |
 | F2B-DES-015 | Resolver incompatibilidad de cobertura/capacidad/reemplazo | ADR-0008; D-034/D-035; R76; ExecPlan/informe M4A | `P2B-BLOCK-001 RESOLVED LOCAL` |
-| F2B-DES-016 | Contrato de QA por milestone | suites M1–M5 + gates futuros | M5 VERIFIED / M6+ PENDING |
+| F2B-DES-016 | Contrato de QA por milestone | suites M1–M6 + gates futuros | M6 VERIFIED / M7+ PENDING |
 
 ## Trazabilidad de implementación Fase 02B M3 — 2026-08-18
 
@@ -103,7 +103,22 @@
 | F2B-M5-007 | Seguridad y riesgo semántico | matriz negativa, XSS/SSRF sin fetch, canarios PII, aviso “anonimización estructural” y riesgo owner accepted | VERIFIED local / RISK ACCEPTED |
 | F2B-M5-008 | Concurrencia/rollback/compatibilidad | dos activaciones MySQL→una activa/un audit; forward/rollback/forward preserva usuario sintético y M4 | VERIFIED local |
 | F2B-M5-009 | QA y UAT | M5 8/119; M1–M5 dirigido 41/654; suite 150/1,703; Firefox tres viewports/teclado/reflow/consola/IDOR | VERIFIED local |
-| F2B-M5-010 | Alcance y siguiente puerta | ExecPlan/informe M5; prompt sección 21 limitado a borrador/cálculo M6, M7+ excluido | GO LOCAL/TEST / M6 NOT AUTHORIZED |
+| F2B-M5-010 | Alcance y puerta histórica | ExecPlan/informe M5; el prompt posterior limitó M6 a borrador/cálculo | M5 GO / M6 EXECUTED LATER |
+
+## Trazabilidad de implementación Fase 02B M6 — 2026-08-18
+
+| ID | Requisito M6 | Implementación/evidencia | Estado |
+|---|---|---|---|
+| F2B-M6-001 | GET sin efectos y apertura explícita | GET de detalle sólo carga; POST idempotente crea evaluación/revisión 1/cinco scores | VERIFIED local/UAT |
+| F2B-M6-002 | Rúbrica/package/assignment fijados | `EnsureEvaluationDraftContext` revalida IDs server-side, contrato exacto y drift fail-closed | VERIFIED local |
+| F2B-M6-003 | Cálculo decimal servidor | BCMath, 4 decimales, total NULL incompleto y display HALF_UP; vectores exactos | VERIFIED local |
+| F2B-M6-004 | Payload cerrado | Request+Action rechazan extras, IDs, códigos duplicados/extraños, notación hostil y step/rango | VERIFIED local |
+| F2B-M6-005 | Concurrencia optimista | `lock_version`, locks transaccionales, incremento único y HTTP 409 sin overwrite | VERIFIED local/UAT |
+| F2B-M6-006 | Ownership y matriz negativa | permiso exclusivo judge, Policy por assignment, exact-role/verified/active/flag/package/plazo | VERIFIED local |
+| F2B-M6-007 | Conflicto y replacement | conflicto conserva filas y revoca acceso; replacement abre agregado independiente sin copia | VERIFIED local/UAT |
+| F2B-M6-008 | Auditoría redactada | open/save/stale/rechazos con metadata técnica allowlist; scan sin contenido/PII | VERIFIED local |
+| F2B-M6-009 | Migración y rollback | aditiva, sin backfill; forward/rollback/forward y negativa con evidencia | VERIFIED local |
+| F2B-M6-010 | QA, UAT y alcance | M6 13/228; M1–M6 54/888; suite 163/1,937; Firefox tres viewports; M7–M10 ausentes | GO LOCAL/TEST |
 
 ## Trazabilidad paginación y exportación privada — 2026-08-11
 
