@@ -37,6 +37,96 @@
       <div class="alert alert-info">El paquete ciego activo todavía no está disponible. No se genera automáticamente desde este acceso.</div>
     @endif
 
+    @if($evaluationUnavailable)
+      <section class="mt-4" aria-labelledby="evaluation-title">
+        <h2 id="evaluation-title" class="h4">Evaluación</h2>
+        <div class="alert alert-warning" role="alert">El borrador no está disponible porque una invariante de asignación, rúbrica o paquete dejó de cumplirse. No se modificó ningún dato.</div>
+      </section>
+    @elseif($evaluation)
+      @php($revision = $evaluation->currentRevision)
+      @php($scoresByCriterion = $revision->scores->keyBy('rubric_criterion_id'))
+      @php($capturedCriteria = $revision->scores->whereNotNull('score')->count())
+      <section class="mt-4" aria-labelledby="evaluation-title">
+        <h2 id="evaluation-title" class="h4">Evaluación en borrador</h2>
+        <div class="alert alert-info" role="status">
+          Este borrador aún no se ha enviado. M6 sólo permite capturarlo y guardarlo.
+        </div>
+        <dl class="row">
+          <dt class="col-sm-4">Estado</dt><dd class="col-sm-8">{{ $evaluation->status->label() }}</dd>
+          <dt class="col-sm-4">Progreso</dt><dd class="col-sm-8"><progress value="{{ $capturedCriteria }}" max="5">{{ $capturedCriteria }} de 5</progress> {{ $capturedCriteria }} de 5 criterios capturados</dd>
+          <dt class="col-sm-4">Total del servidor</dt>
+          <dd class="col-sm-8">{{ $evaluationTotalDisplay === null ? 'Disponible al capturar los cinco criterios.' : $evaluationTotalDisplay.' de 100.00' }}</dd>
+        </dl>
+
+        @if($evaluationReadOnly)
+          <div class="alert alert-warning" role="status">El plazo terminó. El borrador se conserva sólo para lectura y ya no puede modificarse.</div>
+          @foreach($evaluation->rubricVersion->criteria as $criterion)
+            @php($scoreRow = $scoresByCriterion->get($criterion->id))
+            <section class="border rounded p-3 mb-3" aria-labelledby="criterion-read-{{ $criterion->code }}">
+              <h3 id="criterion-read-{{ $criterion->code }}" class="h5">{{ $criterion->label }} — {{ $criterion->weight }} %</h3>
+              <p class="mb-1">Rango 0.0000–10.0000; paso 0.5000.</p>
+              <p class="mb-1"><strong>Puntaje:</strong> {{ $scoreRow->score ?? 'Sin capturar' }}</p>
+              <p class="mb-0 text-break"><strong>Comentario:</strong> {{ $scoreRow->comment ?? 'Sin comentario' }}</p>
+            </section>
+          @endforeach
+          <h3 class="h5">Comentario general</h3>
+          <p class="text-break">{{ $revision->general_comment ?? 'Sin comentario general' }}</p>
+        @else
+          <form method="POST" action="{{ route('judge.assignments.evaluation.update', $assignment) }}">
+            @csrf
+            @method('PATCH')
+            <input type="hidden" name="lock_version" value="{{ $evaluation->lock_version }}">
+
+            @foreach($evaluation->rubricVersion->criteria as $criterion)
+              @php($scoreRow = $scoresByCriterion->get($criterion->id))
+              @php($scoreError = "criteria.{$loop->index}.score")
+              @php($commentError = "criteria.{$loop->index}.comment")
+              <fieldset class="border rounded p-3 mb-3">
+                <legend class="h5 px-2">{{ $criterion->label }} — {{ $criterion->weight }} %</legend>
+                <p id="criterion-help-{{ $criterion->code }}" class="text-secondary">Rango 0.0000–10.0000; paso exacto 0.5000.</p>
+                <input type="hidden" name="criteria[{{ $loop->index }}][code]" value="{{ $criterion->code }}">
+                <div class="mb-3">
+                  <label class="form-label" for="score-{{ $criterion->code }}">Puntaje</label>
+                  <input class="form-control @error($scoreError) is-invalid @enderror" type="number" inputmode="decimal" min="0" max="10" step="0.5" id="score-{{ $criterion->code }}" name="criteria[{{ $loop->index }}][score]" value="{{ old("criteria.{$loop->index}.score", $scoreRow->score) }}" aria-describedby="criterion-help-{{ $criterion->code }} @error($scoreError) score-error-{{ $criterion->code }} @enderror">
+                  @error($scoreError)<div class="invalid-feedback" id="score-error-{{ $criterion->code }}">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                  <label class="form-label" for="comment-{{ $criterion->code }}">Comentario del criterio (opcional)</label>
+                  <textarea class="form-control @error($commentError) is-invalid @enderror" id="comment-{{ $criterion->code }}" name="criteria[{{ $loop->index }}][comment]" maxlength="1000" rows="3" aria-describedby="comment-help-{{ $criterion->code }} @error($commentError) comment-error-{{ $criterion->code }} @enderror">{{ old("criteria.{$loop->index}.comment", $scoreRow->comment) }}</textarea>
+                  <small id="comment-help-{{ $criterion->code }}" class="text-secondary">Máximo 1,000 caracteres.</small>
+                  @error($commentError)<div class="invalid-feedback" id="comment-error-{{ $criterion->code }}">{{ $message }}</div>@enderror
+                </div>
+              </fieldset>
+            @endforeach
+
+            <div class="mb-3">
+              <label class="form-label" for="general-comment">Comentario general (opcional en borrador)</label>
+              <textarea class="form-control @error('general_comment') is-invalid @enderror" id="general-comment" name="general_comment" maxlength="2000" rows="5" aria-describedby="general-comment-help @error('general_comment') general-comment-error @enderror">{{ old('general_comment', $revision->general_comment) }}</textarea>
+              <small id="general-comment-help" class="text-secondary">Puede quedar vacío en M6; máximo 2,000 caracteres.</small>
+              @error('general_comment')<div class="invalid-feedback" id="general-comment-error">{{ $message }}</div>@enderror
+            </div>
+
+            <button class="btn btn-flower" type="submit">Guardar borrador</button>
+            <p class="mt-2 mb-0 text-secondary" aria-live="polite">El servidor es la única autoridad de componentes, progreso y total.</p>
+          </form>
+        @endif
+      </section>
+    @elseif($canStartEvaluation)
+      <section class="mt-4" aria-labelledby="evaluation-title">
+        <h2 id="evaluation-title" class="h4">Evaluación</h2>
+        <p>La evaluación todavía no existe. Iníciala explícitamente para crear el borrador con los cinco criterios fijados.</p>
+        <form method="POST" action="{{ route('judge.assignments.evaluation.store', $assignment) }}">
+          @csrf
+          <button class="btn btn-flower" type="submit">Iniciar evaluación</button>
+        </form>
+      </section>
+    @elseif($package && $assignment->status === \App\Enums\JudgeAssignmentStatus::Active)
+      <section class="mt-4" aria-labelledby="evaluation-title">
+        <h2 id="evaluation-title" class="h4">Evaluación</h2>
+        <div class="alert alert-info" role="status">No es posible iniciar una evaluación con las condiciones actuales de plazo o integridad. Abrir o refrescar esta página no crea ningún borrador.</div>
+      </section>
+    @endif
+
     @if($assignment->conflict)
       <div class="alert alert-warning" role="status">Conflicto declarado: {{ $assignment->conflict->type->label() }}. La asignación permanece bloqueada.</div>
     @elseif($assignment->status === \App\Enums\JudgeAssignmentStatus::Active)

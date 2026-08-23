@@ -1,6 +1,6 @@
 # Estrategia de pruebas y calidad
 
-> **Evidencia vigente M5 — 2026-08-18:** M1–M5 están verdes. M5 añade 8 pruebas/119 aserciones dirigidas, carrera real de dos activaciones, canarios de PII, inventario cruzado/duplicado/extra, descarga neutra y drift fail-closed. La suite completa quedó en 150 pruebas/1,703 aserciones; M6 sigue separado.
+> **Evidencia vigente M6 — 2026-08-18:** M1–M6 están verdes. M6 añade 13 pruebas/228 aserciones dirigidas; M1–M6 suma 54/888 y la suite completa 163/1,937. Cubre GET puro, apertura concurrente, payload hostil, decimales, vencimiento, 409, conflicto/replacement y auditoría redactada.
 
 ## Evidencia vigente — 2026-08-18
 
@@ -11,25 +11,26 @@ La reconciliación jurídica v1.1 añade `LegalDocumentsV11Test`: valida existen
 | Gate | Resultado actual |
 |---|---|
 | Base/cuenta de tests | `flowerflow_testing` / `flowerflow_testing_user`, MySQL loopback, guard obligatorio |
-| Migraciones de test | 18/18 aplicadas; M5 pasó forward/rollback/forward, preservó usuario sintético/tablas M4 y no crea paquetes automáticamente |
-| Suite | Ver conteo final reproducible en el informe M4; suite completa y M1–M4 dirigidas verdes |
+| Migraciones de test | 19/19 aplicadas; M6 pasó forward/rollback/forward y su rollback rechazó evidencia M6 sin afectar M1–M5 |
+| Suite | M6 13/228; M1–M6 54/888; completa 163/1,937, verdes |
 | Pint | Verde |
 | Composer validate/platform/audit | Verde; cero advisories |
 | Yarn dependencies | Un advisory bajo de Quill 2.0.3 sin fix; cero moderados/altos/críticos |
 | Iconos/build | 98 iconos, 784 módulos y tres assets Vite, verde |
-| Browser | UAT M4 Firefox: cobertura 0→4, conflicto 4→3, reemplazo 3→4, vacío, diez activas/undécima rechazada, canarios ausentes, 403/404, 1440×900/1024×768/390×844, teclado/foco, reflow y consola limpia. |
+| Browser | UAT M6 Firefox: inicio explícito, parcial/completo 75.25, refresh, dos pestañas/409, XSS, vencimiento sólo lectura, conflicto, replacement independiente, 403/404, tres viewports, teclado/foco/zoom/reflow y consola limpia. |
 
 La base local primaria no sustituye este ambiente y no está autorizada para esta ejecución. El único runtime destructivo permitido es `flowerflow_testing` con `flowerflow_testing_user`, MySQL loopback, datos sintéticos y guard probado antes de cada `migrate:fresh`. La auditoría vigente está en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
 ## Contrato de QA Fase 02B aprobado — 2026-08-18
 
-M1–M5 permanecen verdes. M4A prueba composición exacta/capacidad ilimitada y M5 demuestra proyección allowlist, hash reproducible, activación inmutable, descarga privada e IDOR. M6–M10 siguen futuros.
+M1–M6 permanecen verdes. M4A prueba composición exacta/capacidad ilimitada, M5 la proyección ciega y M6 apertura/guardado/cálculo decimal con lock optimista. M7–M10 siguen futuros/no autorizados.
 
 - M1 — `VERIFIED LOCAL`: visitante, `participant`, `reviewer`, `admin`, `judge`, sin rol y multirol; roles estrictamente excluyentes, gates fail-closed, rutas directas/IDOR y flag de evaluación apagado/encendido.
 - M2 — `VERIFIED LOCAL`: alta directa por `admin`, función `primary|substitute`, capacidad `NULL|10`, correo verificado, primer cambio seguro de contraseña, activación idempotente en cualquier orden, suspensión/reactivación, revocación de sesiones y recovery administrativo. 2FA de juez es opcional y su ausencia no se trató como fallo.
-- M3 `VERIFIED LOCAL`: rúbrica global 20/20/25/25/10, escala 0–10/paso 0.5, comentarios futuros 100–2,000/1,000, precisión 4/2 y `HALF_UP`; ciclo versionado/inmutable y concurrencia probados. M6 deberá demostrar cálculo servidor y rechazo/ignorancia de total hostil.
+- M3 `VERIFIED LOCAL`: rúbrica global 20/20/25/25/10, escala 0–10/paso 0.5, comentarios futuros 100–2,000/1,000, precisión 4/2 y `HALF_UP`; ciclo versionado/inmutable y concurrencia probados.
 - M4 — `HISTORICAL VERIFIED 1×10`: cuatro iniciales, conflicto/void/reemplazo y ausencia M5 probados. M4A — `VERIFIED UNLIMITED`: dos sustitutos sin iniciales, 31 reemplazos aceptados, selección manual y carreras cerradas.
 - M5 `VERIFIED LOCAL`: proyección estructural separada y archivos con etiquetas/metadatos neutros; ausencia comprobada de PII estructurada, residencia, notas, aclaraciones, historial, rutas/nombres originales. La UI no promete eliminar identidad semántica de texto/imágenes/enlaces/anexos; ese riesgo está aceptado.
+- M6 `VERIFIED LOCAL`: GET no muta, POST converge en 1/1/5, PATCH valida allowlist y lock, total BCMath permanece nulo incompleto y produce los vectores exactos; total cliente/XSS/IDs/códigos hostiles se rechazan o quedan inertes. El segundo exacto es inclusivo y el siguiente bloquea mutaciones.
 - M7: envío inmutable; reapertura sólo por `admin` hasta 20:00 Hermosillo con razón 20–1,000/password confirmation; revisión append-only editable hasta 23:59:59. Si admin edita en nombre del juez, se prueban actor real, juez sujeto y preservación de la revisión previa.
 - Consolidación: media aritmética sólo con cuatro evaluaciones válidas; cualquier faltante mantiene `incomplete`; empate técnico sólo por igualdad a dos decimales y nunca declara ganador.
 - M8: emails idempotentes de alta/asignación/conflicto resuelto/reasignación/envío/reapertura/cierre y recordatorios de participantes 20/22-ago 09:00 Hermosillo. Incluye cero propuestas, al menos un borrador, enviada+borrador, todas enviadas y duplicado de ventana.

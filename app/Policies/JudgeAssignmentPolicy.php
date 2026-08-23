@@ -38,6 +38,29 @@ class JudgeAssignmentPolicy
             && in_array($assignment->status, [JudgeAssignmentStatus::Active, JudgeAssignmentStatus::ConflictDeclared], true);
     }
 
+    public function viewEvaluationDraft(User $user, JudgeAssignment $assignment): bool
+    {
+        return $this->canManageOwnEvaluationDraft($user, $assignment);
+    }
+
+    public function startEvaluationDraft(User $user, JudgeAssignment $assignment): bool
+    {
+        return $this->canManageOwnEvaluationDraft($user, $assignment);
+    }
+
+    public function updateEvaluationDraft(User $user, JudgeAssignment $assignment): bool
+    {
+        return $this->canManageOwnEvaluationDraft($user, $assignment);
+    }
+
+    private function canManageOwnEvaluationDraft(User $user, JudgeAssignment $assignment): bool
+    {
+        return $this->isOperationalJudge($user)
+            && $user->can('manage own evaluation drafts')
+            && $assignment->judge_profile_id === $user->judgeProfile?->id
+            && $assignment->status === JudgeAssignmentStatus::Active;
+    }
+
     private function isAdminWith(User $user, string $permission): bool
     {
         return $user->hasExactRoles(['admin']) && $user->can($permission);

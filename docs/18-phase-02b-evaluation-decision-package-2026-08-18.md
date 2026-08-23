@@ -12,7 +12,7 @@ La Fase 02B conserva M1–M4A verdes y M5 materializa en local/test el paquete c
 
 El propietario respondió las 21 decisiones el 2026-08-18 y corrigió posteriormente composición y capacidad. La decisión final deja `P2B-BLOCK-001=RESOLVED` y M4A cierra `P2B-M4-CORRECTION-001` en local/test: exactamente cuatro `primary` y dos `substitute`, todos con `max_active_assignments=NULL`, sin carga inicial para sustitutos y con selección manual. M5 está `GO LOCAL/TEST`; M6–M10 no están implementados.
 
-La siguiente puerta es **M6 —evaluación en borrador y cálculo exclusivo en servidor**, mediante su prompt separado de la sección 21. Debe verificar primero M4A y M5 `GO LOCAL/TEST`, conservar el paquete ciego inmutable y no mezclar confirmación/envío/reapertura M7. Producción, ganadores y resultados permanecen fuera.
+M6 —evaluación en borrador y cálculo exclusivo en servidor— quedó `GO LOCAL/TEST` mediante el prompt corregido de la sección 21. Conserva M4A/M5 y no mezcla confirmación/envío/reapertura M7. M7–M10, producción, ganadores y resultados permanecen fuera.
 
 ## 2. Estado productivo y alcance de evidencia
 
@@ -21,7 +21,8 @@ La siguiente puerta es **M6 —evaluación en borrador y cálculo exclusivo en s
 | Cambios actuales instalados en producción y plataforma publicada con más de 50 propuestas reales | `OWNER_CONFIRMED_DEPLOYED` | Confirmación expresa del propietario del 2026-08-18. |
 | SHA productivo exacto | `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR` | El propietario no vinculó inequívocamente la instalación a un SHA en esta tarea. |
 | Migraciones, flags, workers, scheduler, SMTP, monitoreo, integridad, smoke y UAT productiva | `POR_CONFIRMAR` | No existe evidencia técnica independiente en este milestone. |
-| Baseline local vigente M4 | `VERIFIED` | Rama `codex/submission-deadline-extension`; local/remoto/merge-base inicial M4 en `865059ad302ff4195ac18f671bd6fa13b99e398b`; se preservó el árbol M3 preexistente. El baseline anterior `e0fa0455…` permanece en la historia M1/M2. |
+| Baseline histórico M4 | `VERIFIED HISTORICAL` | Rama `codex/submission-deadline-extension`; local/remoto/merge-base inicial M4 en `865059ad302ff4195ac18f671bd6fa13b99e398b`. No es el baseline vigente M6. |
+| Baseline inicial M6 | `VERIFIED` | Rama `codex/submission-deadline-extension`; HEAD/upstream/merge-base `e4e4cd2ff7144cce5f9385f5f11c122cda80e7b8`; árbol inicial limpio. |
 
 Codex no accedió a la URL pública, producción, AWS, EC2, SSH/SSM, bases, logs ni servicios externos. No se consultó PII ni contenido de propuestas reales.
 
@@ -40,8 +41,8 @@ La preparación se evaluó por contrato, evidencia real, decisiones cerradas, se
 | Seguridad/auditoría | 99 % | M1–M5 aplican permisos separados, ownership, locks, hashes, inmutabilidad, descargas privadas y auditoría redactada. 2FA opcional y edición admin futura de puntajes conservan riesgo. |
 | UX accesible | 99 % | Shell/estado, rúbricas, asignaciones/conflictos y paquete ciego pasaron QA Firefox responsive; la captura de evaluación aún no existe. |
 | Notificaciones/operación | 82 % | M2 implementó el subconjunto indispensable de cuenta con HTML+texto y fallo observable; notificaciones de asignación/evaluación y recordatorios siguen futuros. |
-| Compatibilidad de datos | 99 % | Migraciones M1–M5 aditivas pasaron upgrade/rollback/forward; M5 no genera paquetes automáticamente ni modifica snapshots o binarios fuente. |
-| **Puerta de preparación** | **M5 GO LOCAL/TEST** | **M1–M5 conformes; M6 continúa no implementado y requiere autorización separada.** |
+| Compatibilidad de datos | 99 % | Migraciones M1–M6 aditivas pasaron forward/rollback/forward; M5 sólo genera paquete por acción administrativa explícita y M6 sólo abre por POST del juez. No hay backfill automático. |
+| **Puerta de preparación** | **M6 GO LOCAL/TEST** | **M1–M6 conformes; M7–M10 continúan no implementados/no autorizados.** |
 
 ## 4. Inventario reutilizable y brechas reales
 
@@ -680,10 +681,12 @@ Las 21 respuestas quedaron incorporadas en la matriz vigente de la sección 17. 
 
 Corrección final vigente `OWNER_APPROVED` del 2026-08-18: las respuestas intermedias `1×10` y `2×30` quedan sustituidas por cuatro jueces principales y dos jueces exclusivamente sustitutos, todos sin límite. Son seis jueces operativos; `admin` selecciona manualmente al sustituto. `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` quedan resueltos en local/test por M4A.
 
-## 21. Siguiente prompt recomendado — implementar únicamente M6
+## 21. Prompt canónico corregido y ejecutado — implementar únicamente M6
 
 ```text
 Trabaja exclusivamente en el repositorio local `/home/ccortesg/workspace/flowerflow`.
+
+Esta versión sustituye íntegramente las ambigüedades del prompt M6 anterior. Baseline obligatorio: rama `codex/submission-deadline-extension`; `HEAD`, upstream y merge-base `e4e4cd2ff7144cce5f9385f5f11c122cda80e7b8`; árbol limpio. Si diverge, documenta y detente antes de editar. La autorización se limita a código, migraciones, pruebas, documentación y UAT local sintético; no autoriza stage, commit, push, despliegue o producción.
 
 Lee completamente antes de modificar: `AGENTS.md`, `.agent/PLANS.md`, los ExecPlans de diseño y M1–M5, `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`, los informes M2–M5, incluido `docs/23-phase-02b-m5-blind-package-implementation-report-2026-08-18.md`, `docs/16-project-status-by-module-and-role-2026-08-17.md`, `docs/product-spec.md`, `docs/01-functional-scope.md`, `docs/02-architecture.md`, `docs/03-data-model.md`, `docs/04-security-privacy.md`, `docs/05-ux-ui.md`, `docs/06-roadmap-backlog.md`, `docs/08-testing-qa.md`, `docs/09-risk-register.md`, `docs/10-open-questions.md`, `docs/11-operations-handoff.md`, `docs/requirements-traceability.md` y ADR 0001/0003/0004/0005/0006/0007/0008.
 
@@ -716,19 +719,20 @@ Antes de modificar:
 7. no accedas a producción, URL pública, AWS, EC2, SSH/SSM, servicios externos, MySQL/logs/datos productivos.
 
 Implementación autorizada M6:
-- crea migraciones aditivas y reversibles para `evaluations`, `evaluation_revisions` y `evaluation_scores`, o nombres equivalentes coherentes con `docs/03-data-model.md`; usa ULID público, una evaluación por `judge_assignment`, referencia inmutable a assignment/rubric/package, revisión actual, estado M6 respaldado únicamente `draft`, `lock_version`, actores/fechas UTC y timestamps;
+- conserva `GET /juez/asignaciones/{judgeAssignment}` como lectura pura; añade exactamente `POST /juez/asignaciones/{judgeAssignment}/evaluacion` para iniciar y `PATCH /juez/asignaciones/{judgeAssignment}/evaluacion` para guardar. GET/refresh nunca crea evaluations, revisions o scores;
+- crea exactamente `evaluations`, `evaluation_revisions` y `evaluation_scores`; usa ULID público, una evaluación única por `judge_assignment`, referencia inmutable a assignment/rubric/package, revisión actual nullable sólo durante la apertura, estado único M6 `draft`, `lock_version=0`, actores/fechas UTC y timestamps;
 - cada revisión de borrador debe conservar número positivo, comentario general nullable, total calculado nullable y completitud derivada. Cada score liga la revisión con el `rubric_criterion_id`, conserva score decimal nullable y comentario nullable. Protege con FKs, índices, unicidades y checks MySQL compatibles, además de validación server-side;
 - no implementes todavía estados `submitted`, `reopened`, `voided` ni revisión administrativa. Diseña el esquema de forma compatible con que M7 convierta el último borrador en evidencia append-only sin reescribir historia, pero no inventes transiciones M7;
 - crea un `EvaluationScoreCalculator` puro y determinista con aritmética decimal, nunca float binario como autoridad. Carga criterios desde la versión fijada, valida códigos/orden/pesos/escala/paso y calcula sólo con valores persistidos/validados en servidor. El total del borrador es `NULL` mientras falte cualquier criterio; cuando los cinco existen, calcula cuatro decimales y presenta dos con `HALF_UP`;
 - añade un permiso mínimo y exclusivo para gestionar el borrador propio sólo a `judge`; no concedas permisos de panel, rúbrica administrativa, paquete administrativo, asignación administrativa o evaluación ajena. `admin`, reviewer y participant no pueden editar ni suplantar al juez en M6;
 - crea Actions/Services transaccionales y Form Requests/Policies para abrir idempotentemente un borrador y guardar una revisión. La creación sólo puede ocurrir por acceso explícito del juez autorizado; no crees borradores por migración, seeder, asignación, activación de paquete, scheduler o batch;
-- el primer acceso converge a una sola evaluación/revisión draft por assignment aun con dos requests concurrentes. Cada guardado exige `lock_version` recibido del formulario, bloquea evaluación/revisión, valida que no cambió assignment/package/rubric/estado/plazo y crea o actualiza el estado de borrador conforme al diseño documentado. Un token de versión obsoleto devuelve conflicto accesible y conserva ambos datos sin sobrescritura silenciosa;
+- sólo el POST explícito converge a una evaluación, revisión draft número 1 y cinco scores aun con dos requests concurrentes. M6 actualiza únicamente esa revisión 1. Cada PATCH exige `lock_version`, bloquea evaluación/revisión/scores y valida que no cambió assignment/package/rubric/estado/plazo. Un token obsoleto devuelve HTTP 409 accesible sin sobrescritura;
 - permite guardado parcial: cada score presente debe pertenecer exactamente a uno de los cinco criterios fijados, estar entre 0 y 10 y ser múltiplo exacto de 0.5; rechaza criterios duplicados, extraños, de otra rúbrica, NaN, notación no admitida, negativos y sobre-rango. Un score omitido queda incompleto, no se convierte en cero;
 - normaliza comentarios como texto plano UTF-8, conserva saltos razonables, no interpreta HTML y escapa siempre en salida. Rechaza límites excedidos. No copies comentarios o puntajes a logs, audit metadata, URLs, atributos HTML o paquete ciego;
 - amplía `/juez/asignaciones/{judgeAssignment}` con una sección de rúbrica y formulario de borrador sólo bajo todas las precondiciones. Muestra criterios, pesos, escala, comentarios, progreso, total servidor cuando esté completo y estado de guardado; no muestres consolidado, otros jueces, ranking, resultado o botones de envío/reapertura;
 - usa HTML semántico, labels, fieldsets, mensajes por campo, resumen de errores, foco restaurado, teclado y reflow. El JS puede mejorar cálculo visual/progreso, pero la respuesta del servidor reemplaza cualquier preview y la página debe funcionar sin JavaScript;
 - el endpoint nunca acepta public IDs alternativos para rubric/package/criterion fuera de la asignación cargada. Policy y queries deben quedar scoped; ULID alterado, assignment ajeno y criterio cruzado devuelven 403/404 sin filtrar existencia;
-- registra auditoría redactada de `draft_opened`, `draft_saved`, `draft_save_rejected_stale` y rechazos de autorización/invariante con actor, IDs técnicos, revisión, lock_version, completitud y total técnico si procede; nunca comentarios, URLs, contenido de propuesta, nombres de archivos o PII;
+- registra exactamente `evaluation.draft_opened`, `evaluation.draft_saved`, `evaluation.draft_save_rejected_stale` y rechazos relevantes. La metadata sólo admite IDs técnicos, `revision_number`, lock anterior/nuevo, cantidad capturada, `is_complete` y `reason_code`; nunca total, componentes, scores, comentarios, contenido, URLs, archivos, correo, nombres o PII;
 - conserva el paquete M5 y sus descargas sin mutación. Declarar/resolver conflicto o reasignar no mueve el borrador; el juez original pierde acceso y el sustituto comienza uno independiente;
 - actualiza ADR-0008, diagnóstico, producto, alcance, arquitectura, datos, seguridad, UX, roadmap, QA, riesgos, preguntas, handoff, trazabilidad y ExecPlans con conducta real. M7–M10 siguen `NOT IMPLEMENTED / NOT AUTHORIZED`.
 
@@ -737,7 +741,7 @@ Pruebas mínimas:
 - sólo judge exacto/active/verified con assignment active, package active, flag y plazo puede abrir/guardar. Matriz negativa para visitor, participant, reviewer, admin, otro judge, no asignado, pending, suspended, roleless, multirol, conflict_declared, voided, cancelled, paquete draft/invalidated/ausente y plazo vencido;
 - apertura repetida y concurrente produce una sola evaluación y revisión inicial sin filas parciales;
 - guardado parcial conserva nulos como incompletos; score cero es distinto de ausente. Validación rechaza rango, paso, duplicado, extra, otra rúbrica, NaN y mass assignment de total/estado/actores/assignment/rubric/package/versión/timestamps;
-- vectores exactos de cálculo: todos 0 = 0.0000/0.00, todos 10 = 100.0000/100.00 y combinaciones que ejerciten cuatro decimales y `HALF_UP`; el total hostil enviado por navegador nunca gobierna;
+- vectores exactos: todos 0→0.0000/0.00; todos 10→100.0000/100.00; sólo feasibility=0.5 y demás 0→1.2500/1.25; 7.5/8/6.5/9/5.5→75.2500/75.25; incompleto→NULL. Prueba directamente `HALF_UP`: 12.3449→12.34, 12.3450→12.35 y 99.9950→100.00. No inventes una combinación que produzca tercer decimal;
 - dos pestañas con el mismo `lock_version`: la primera guarda y la segunda recibe conflicto sin sobrescribir; dos guardados concurrentes no pierden datos ni duplican revisiones/scores;
 - comentarios límite 2,000/1,000, Unicode y saltos válidos; HTML/script se muestra escapado y nunca ejecuta XSS ni llega a auditoría/logs;
 - conflicto posterior conserva filas pero bloquea acceso; replacement activo abre borrador independiente con misma rubric/package. El juez voided no puede leer ni mutar inmediatamente;
@@ -764,7 +768,7 @@ Entrega:
 8. evidencia de aislamiento tras conflicto/reemplazo y no regresión M1–M5;
 9. migración/compatibilidad/rollback;
 10. riesgos/auditoría/documentación;
-11. siguiente prompt exacto limitado a M7 —confirmación, envío inmutable y reapertura append-only— sólo si M6 queda completamente verde. Generarlo no autoriza ejecutarlo ni permite mezclar M8+.
+11. riesgos residuales y documentación pendiente. M7–M10 deben permanecer `NOT IMPLEMENTED / NOT AUTHORIZED`; no generes ni ejecutes alcance posterior por inferencia.
 ```
 
 ## 21A. Prompt histórico ejecutado — implementar únicamente M5
@@ -1197,21 +1201,21 @@ Entrega:
 
 | Gate | Resultado |
 |---|---|
-| Baseline Git | `pwd`/toplevel correctos; rama `codex/submission-deadline-extension`; local/remoto/merge-base inicial M5 `865059ad302ff4195ac18f671bd6fa13b99e398b`; se preservó íntegramente el árbol M1–M4A preexistente. No se autorizó commit/push/despliegue. |
+| Baseline Git | `pwd`/toplevel correctos; rama `codex/submission-deadline-extension`; local/remoto/merge-base inicial M6 `e4e4cd2ff7144cce5f9385f5f11c122cda80e7b8`; árbol inicial limpio. No se autorizó commit/push/despliegue. |
 | Guard MySQL | `APP_ENV=testing`, MySQL, loopback, `flowerflow_testing`, `flowerflow_testing_user` y `SELECT DATABASE()` exactos, sin exponer contraseña. |
-| Migración | 18/18 migraciones; M5 forward/rollback/forward preservó usuario sintético preexistente y todas las tablas M1–M4A. No creó paquetes/asignaciones/evaluaciones automáticamente. |
-| Pruebas | M5: 8 pruebas/119 aserciones; dirigidas M1–M5: 41/654; suite completa: 150/1,703. Builder, canarios, drift, permisos, inmutabilidad y concurrencia verdes. |
-| Calidad/dependencias/build | Pint, Composer validate/platform/audit, JSON y build Vite verdes en el cierre M5. Yarn conserva sólo el advisory bajo conocido de Quill; el resultado final detallado está en el informe M5. |
-| QA real local | Firefox local: generación/preview/activación, paquete allowlist, anexos neutros, descarga, conflicto con pérdida inmediata y reasignación manual independiente hacia ambos sustitutos. 1440×900, 1024×768, 390×844 y reflow equivalente a zoom sin overflow; teclado/foco y consola limpios. |
+| Migración | 19/19 migraciones; M6 forward/rollback/forward preservó M1–M5, no hizo backfill y rechazó rollback con evidencia M6. |
+| Pruebas | M6: 13 pruebas/228 aserciones; dirigidas M1–M6: 54/888; suite completa: 163/1,937. Decimales, payload, locks, plazo, autorización y auditoría verdes. |
+| Calidad/dependencias/build | Pint, Composer validate/platform/audit, JSON y build Vite verdes. Vite 6.4.3 cerró advisories transitivos; Yarn conserva sólo Quill bajo. |
+| QA real local | Firefox: inicio, parcial/completo 75.25, refresh, 409, XSS, vencimiento sólo lectura, conflicto/replacement independiente e IDOR/404. 1440×900, 1024×768, 390×844, zoom/reflow, teclado/foco y consola limpios. |
 | Enlaces Markdown locales | Destinos locales de archivos modificados comprobados; cero rotos. |
-| Cobertura/contradicciones | Decisión vigente `4 primary + 2 substitute`, todos ilimitados. `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` resueltos local/test; M5 verde. M6 sigue separado/no autorizado; producción/resultados fuera. |
+| Cobertura/contradicciones | Decisión vigente `4 primary + 2 substitute`, todos ilimitados. M4A–M6 verdes local/test. M7–M10 siguen no implementados/no autorizados; producción/resultados fuera. |
 | Secretos/PII | Revisión de altas del diff sin claves privadas/cloud, asignaciones de secretos ni dominios de correo personales; código/pruebas/UAT usaron datos sintéticos. |
-| Prompt M6 | La sección 21 es la fuente canónica condicionada. Verifica M4A/M5, autoriza sólo borrador y cálculo servidor y excluye envío/reapertura M7+. |
-| Limpieza/alcance | La base testing se reconstruyó mediante guard y se retiraron cuentas/archivos UAT sintéticos. M5 no autoriza commit/push/despliegue o acceso externo. |
+| Prompt M6 | La sección 21 conserva el contrato canónico corregido que se ejecutó; baseline, rutas, modelo, auditoría y vectores coinciden con M6. |
+| Limpieza/alcance | La base testing se reconstruyó mediante guard y se retiraron cuentas/archivos UAT sintéticos. M6 no autoriza commit/push/despliegue o acceso externo. |
 | Whitespace/Git | `git diff --check` verde; archivos preexistentes preservados. |
 
-Los resultados históricos M4 `1×10` y M4A se conservan en sus ExecPlans/informes. La evidencia vigente del paquete ciego está en `.agent/execplans/flowerflow-phase-02b-m5-blind-package.md` y `docs/23-phase-02b-m5-blind-package-implementation-report-2026-08-18.md`.
+Los resultados históricos M4 `1×10` y M4A se conservan en sus ExecPlans/informes. La evidencia vigente M6 está en `.agent/execplans/flowerflow-phase-02b-m6-draft-evaluation-server-scoring.md` y `docs/24-phase-02b-m6-draft-evaluation-implementation-report-2026-08-18.md`.
 
 ## 23. Regla de actualización
 
-Las decisiones vigentes están `OWNER_APPROVED`; el contrato ilimitado sustituye expresamente `1×10` y `2×30` sin borrar historia. M1–M5 están verdes sólo en local/test. Una aprobación o una prueba local no acredita despliegue productivo. M6 requiere un prompt de implementación separado y no autoriza M7, ganadores o resultados.
+Las decisiones vigentes están `OWNER_APPROVED`; el contrato ilimitado sustituye expresamente `1×10` y `2×30` sin borrar historia. M1–M6 están verdes sólo en local/test. Una aprobación o una prueba local no acredita despliegue productivo. M7–M10 siguen no autorizados.

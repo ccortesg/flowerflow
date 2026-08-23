@@ -11,7 +11,7 @@
     <p id="judge-dashboard-description" class="lead">Tu acceso está habilitado para consultar tus asignaciones y declarar conflictos.</p>
     <div class="alert alert-info d-flex gap-3 align-items-start" role="status">
       <span class="ri ri-shield-check-line fs-4" aria-hidden="true"></span>
-      <p class="mb-0">Una asignación activa puede mostrar su paquete ciego estructural y anexos con nombres neutros cuando la administración lo haya activado. La captura de evaluación aún no está habilitada.</p>
+      <p class="mb-0">Una asignación activa puede mostrar su paquete ciego estructural y anexos con nombres neutros. Puedes iniciar y guardar una evaluación en borrador; el servidor calcula el total cuando capturas los cinco criterios. El envío final aún no está habilitado.</p>
     </div>
     <a class="btn btn-flower" href="{{ route('judge.assignments.index') }}">Ver mis asignaciones</a>
   </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Judge\AccessStatusController as JudgeAccessStatusContro
 use App\Http\Controllers\Judge\AssignmentController as JudgeAssignmentController;
 use App\Http\Controllers\Judge\BlindReviewPackageFileController as JudgeBlindReviewPackageFileController;
 use App\Http\Controllers\Judge\DashboardController as JudgeDashboardController;
+use App\Http\Controllers\Judge\EvaluationDraftController as JudgeEvaluationDraftController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Panel\AccountSecurityController;
 use App\Http\Controllers\Panel\AssignmentController as PanelAssignmentController;
@@ -81,6 +82,12 @@ Route::prefix('juez')->name('judge.')->middleware([
         Route::post('/asignaciones/{judgeAssignment}/conflicto', [JudgeAssignmentController::class, 'declare'])
             ->middleware(['permission:declare own evaluation conflicts', 'throttle:panel-mutations'])
             ->name('assignments.conflicts.store');
+        Route::post('/asignaciones/{judgeAssignment}/evaluacion', [JudgeEvaluationDraftController::class, 'store'])
+            ->middleware(['permission:manage own evaluation drafts', 'throttle:panel-mutations'])
+            ->name('assignments.evaluation.store');
+        Route::patch('/asignaciones/{judgeAssignment}/evaluacion', [JudgeEvaluationDraftController::class, 'update'])
+            ->middleware(['permission:manage own evaluation drafts', 'throttle:panel-mutations'])
+            ->name('assignments.evaluation.update');
     });
 });
 

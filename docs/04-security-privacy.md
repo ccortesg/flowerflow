@@ -2,7 +2,7 @@
 
 > **Contrato vigente M4A — 2026-08-18:** dos sustitutos operativos sin límite y selección manual por `admin`. La seguridad valida bajo lock que el perfil seleccionado sea uno de los dos sustitutos activos, mantenga rol exclusivo y prerrequisitos, y no tenga ya la propuesta; no existe selección automática ni contador de capacidad.
 
-> **Adenda Fase 02B — 2026-08-18:** M1–M5 están probados fail-closed. M5 nunca serializa el snapshot crudo: sólo categoría, modalidad, título, resumen, descripciones y vínculos HTTPS capturados; archivos salen por ruta M5 con etiqueta neutra, `nosniff` y revalidación de tamaño/SHA/MIME/firma. Folio, fechas, participant/team, PII, residencia, notas, aclaraciones, admisibilidad, otros jueces, rutas y nombres originales permanecen excluidos. M6–M10 siguen futuros/no autorizados.
+> **Adenda Fase 02B — 2026-08-18:** M1–M6 están probados fail-closed. M6 concede `manage own evaluation drafts` sólo a `judge`, revalida ownership/assignment/rubric/package/plazo dentro de Actions con locks, rechaza payload hostil y no copia evaluación al paquete M5. Auditoría y logs omiten scores, componentes, total, comentarios y PII. M7–M10 siguen futuros/no autorizados.
 
 > **Reconciliación jurídica v1.1 — 2026-08-18:** FUNXT, A.C. (RFC FUN110208BT0) es el responsable identificado; el Aviso v1.1 conserva las finalidades, retención de 24 meses/90 días y plazos ARCO descritos en v1.0, pero actualiza identidad y domicilio. El código local registra nuevas aceptaciones contra el documento activo v1.1 y conserva las v1.0. El propietario resolvió continuidad sin reaceptación forzada ni alteración de evidencia; ARCO completo sigue fuera de alcance.
 
@@ -24,6 +24,14 @@
 - Juez M4 no recibe snapshot crudo: la consulta ORM selecciona sólo claves técnicas y categoría; los canarios verifican ausencia de título, folio, resumen, descripción y rúbrica.
 - Audits M4 guardan actor, IDs, estado y reason code; no guardan motivo completo de conflicto, contenido, PII, nombres de archivo o credenciales.
 - Si el sustituto seleccionado no está operativo, no pertenece al conjunto exacto de dos sustitutos o ya tiene la propuesta, la acción falla. `admin` puede escoger manualmente al otro sustituto si cumple el contrato; nunca se selecciona automáticamente.
+
+## Controles M6 implementados
+
+- GET es de lectura; sólo POST/PATCH con CSRF, throttle y permiso exclusivo mutan el agregado.
+- La rúbrica se toma del `rubric_version_id` fijado, nunca de la activa actual; cualquier drift de assignment/rubric/package/due_at falla cerrado.
+- Allowlist estricta por códigos, cálculo BCMath servidor y lock optimista; una pestaña stale recibe 409 sin overwrite.
+- Conflicto/void/cancel revocan acceso conservando evidencia; replacement crea un borrador propio sin copiar contenido.
+- Comentarios son texto UTF-8 escapado; pruebas y UAT confirman XSS inerte. Auditoría sólo registra metadata técnica permitida.
 
 ## Controles Fase 01 ejecutados
 

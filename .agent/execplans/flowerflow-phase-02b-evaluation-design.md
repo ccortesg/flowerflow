@@ -1,8 +1,8 @@
 # ExecPlan — Fase 02B: identidad de jueces y evaluación
 
-**Estado:** `DESIGN UPDATED — M1–M5 GO LOCAL/TEST — M6 NEXT SEPARATE MILESTONE`
+**Estado:** `DESIGN UPDATED — M1–M6 GO LOCAL/TEST — M7 NOT AUTHORIZED`
 
-> **Estado vigente — 2026-08-18:** el propietario reemplazó los contratos históricos `1 substitute × 10` y `2 substitutes × 30` por `4 primary + 2 substitute`, todos sin límite. M4A y el paquete ciego M5 quedaron verdes local/test; M6 conserva autorización y ejecución separadas.
+> **Estado vigente — 2026-08-18:** el propietario reemplazó los contratos históricos `1 substitute × 10` y `2 substitutes × 30` por `4 primary + 2 substitute`, todos sin límite. M4A–M6 quedaron verdes local/test; M7 conserva autorización y ejecución separadas.
 
 **Fecha de apertura:** 2026-08-18 (`America/Hermosillo`)
 
@@ -12,7 +12,7 @@
 
 Preparar un contrato implementable, seguro y trazable para identidad/acceso de jueces, alta directa, perfiles, asignaciones, evaluación ciega, conflictos, rúbrica versionada, borradores, cálculo en servidor, envío inmutable, reapertura administrativa, auditoría, notificaciones y QA. Este plan no autoriza código, migraciones, seeders, pruebas, instalaciones, bases de datos, servicios externos ni producción.
 
-El paquete de decisión autoritativo es `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`. El propietario respondió las 21 decisiones el 2026-08-18. Las opciones descartadas se conservan como historia. M1–M5 quedaron verdes sólo en local/test: M4A reconcilia la composición `4+2`, la selección manual y la capacidad ilimitada; M5 añade la proyección ciega allowlist. M6 exige su propio alcance y no se implementa en este plan.
+El paquete de decisión autoritativo es `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`. El propietario respondió las 21 decisiones el 2026-08-18. Las opciones descartadas se conservan como historia. M1–M6 quedaron verdes sólo en local/test: M4A reconcilia `4+2`, M5 la proyección ciega y M6 el borrador/cálculo servidor. M7 exige alcance nuevo y no se implementa en este plan.
 
 ## Límites e invariantes
 
@@ -59,11 +59,11 @@ Los siguientes puntos describen el SHA/árbol leído antes de implementar M1. Se
 
 ## Resultado de preparación
 
-- Estado funcional: M1–M5 conformes local/test bajo el contrato final `4+2` ilimitado.
-- Preparación: migraciones/código/UI/pruebas M4A y M5 están verdes; no se atribuyen a producción.
-- Puerta actual: M6 como ejecución separada limitada al borrador y cálculo servidor.
+- Estado funcional: M1–M6 conformes local/test bajo el contrato final `4+2` ilimitado.
+- Preparación: migraciones/código/UI/pruebas M4A–M6 están verdes; no se atribuyen a producción.
+- Puerta actual: M7 no autorizado, limitado en diseño a envío/reapertura.
 - `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` están resueltos local/test.
-- Puerta posterior: M6 sólo después de M5 verde y sin mezclar confirmación/envío/reapertura M7.
+- Puerta posterior: cualquier M7 requiere prompt/ExecPlan separado y no puede mezclar M8+.
 
 ## Plan de este milestone documental
 
@@ -79,14 +79,14 @@ Los siguientes puntos describen el SHA/árbol leído antes de implementar M1. Se
 
 ## Milestones de implementación
 
-Cada milestone requiere un ExecPlan acotado, base local/test protegida, datos sintéticos, revisión de migraciones y aprobación expresa. M1–M5 ya fueron ejecutados y cerrados exclusivamente en local/test.
+Cada milestone requiere un ExecPlan acotado, base local/test protegida, datos sintéticos, revisión de migraciones y aprobación expresa. M1–M6 ya fueron ejecutados y cerrados exclusivamente en local/test.
 
 1. **Completado local/test:** roles, permisos, gate de rutas y seguridad base.
 2. **Completo local/test:** perfil de juez y alta directa administrativa.
 3. **Completo local/test:** rúbrica versionada.
 4. **Completo local/test:** asignaciones y conflictos, incluida reconciliación M4A ilimitada.
 5. **Completo local/test:** proyección ciega y anexos autorizados.
-6. Evaluación en borrador y cálculo servidor.
+6. **Completo local/test:** evaluación en borrador y cálculo servidor.
 7. Confirmación, envío inmutable y eventual reapertura.
 8. Notificaciones y auditoría.
 9. QA automatizada y UAT por rol.
@@ -155,8 +155,9 @@ Los cambios son exclusivamente documentales. El rollback futuro consiste en reve
 - [x] 2026-08-18 MST — Decisión posterior fija seis jueces operativos: cuatro primary sin límite y dos substitute con treinta activas cada uno. Se registra M4A como puerta correctiva previa a M5; no se presenta el código `1×10` como vigente.
 - [x] 2026-08-18 MST — M3 queda `GO LOCAL/TEST`: 15 migraciones, rúbrica global v1 draft idempotente, ciclo `draft|active|superseded`, permisos admin, concurrencia/inmutabilidad y UAT Firefox verdes; suite 133/1,448. M4 pasa a siguiente puerta separada.
 - [x] 2026-08-18 MST — La corrección queda validada con M2 10/175, M1+M2 16/267, suite completa 125/1,316, migración compatible y QA Firefox escritorio/móvil; `flowerflow_testing` vuelve a cero cuentas/perfiles/sesiones.
-- [x] 2026-08-18 MST — M4A cierra el contrato final `4+2` ilimitado y M5 queda `GO LOCAL/TEST`: 18 migraciones, paquete allowlist/hash, anexos neutros, permisos, drift fail-closed, UAT Firefox con ambos sustitutos y suite 150/1,703. M6 es la siguiente puerta separada.
+- [x] 2026-08-18 MST — M4A cierra el contrato final `4+2` ilimitado y M5 queda `GO LOCAL/TEST`: 18 migraciones, paquete allowlist/hash, anexos neutros, permisos, drift fail-closed, UAT Firefox con ambos sustitutos y suite 150/1,703. M6 era la siguiente puerta separada.
+- [x] 2026-08-18 MST — M6 queda `GO LOCAL/TEST`: baseline `e4e4cd2f…`, 19 migraciones, suite 163/1,937, cálculo BCMath, lock 409, rollback fail-closed y UAT Firefox. M7–M10 permanecen no autorizados.
 
 ## Cierre de este ExecPlan
 
-Este ExecPlan cerró el diseño original y conserva su historia. Las implementaciones M1–M5 se mantienen en ExecPlans separados. La decisión ilimitada está reconciliada local/test por M4A y la ceguera estructural por M5; M6 sólo puede ejecutarse mediante su prompt separado. No acredita producción.
+Este ExecPlan cerró el diseño original y conserva su historia. Las implementaciones M1–M6 se mantienen en ExecPlans separados. M4A reconcilia capacidad, M5 ceguera estructural y M6 borrador/cálculo. M7 requiere autorización propia. No acredita producción.

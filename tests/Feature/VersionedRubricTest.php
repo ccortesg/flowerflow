@@ -63,7 +63,10 @@ class VersionedRubricTest extends TestCase
         $this->assertTrue(Schema::hasTable('judge_assignments'));
         $this->assertDatabaseCount('judge_assignments', 0);
         $this->assertDatabaseCount('judge_conflicts', 0);
-        $this->assertFalse(Schema::hasTable('evaluations'));
+        $this->assertTrue(Schema::hasTable('evaluations'));
+        $this->assertDatabaseCount('evaluations', 0);
+        $this->assertDatabaseCount('evaluation_revisions', 0);
+        $this->assertDatabaseCount('evaluation_scores', 0);
 
         DB::table('rubric_versions')->where('id', $rubric->id)->update(['title' => 'Título divergente sintético']);
         try {
@@ -281,7 +284,10 @@ class VersionedRubricTest extends TestCase
         $this->assertTrue(Schema::hasTable('judge_assignments'));
         $this->assertDatabaseCount('judge_assignments', 0);
         $this->assertDatabaseCount('judge_conflicts', 0);
-        $this->assertFalse(Schema::hasTable('evaluations'));
+        $this->assertTrue(Schema::hasTable('evaluations'));
+        $this->assertDatabaseCount('evaluations', 0);
+        $this->assertDatabaseCount('evaluation_revisions', 0);
+        $this->assertDatabaseCount('evaluation_scores', 0);
 
         $auditPayload = AuditLog::query()->where('auditable_type', $rubric->getMorphClass())->get()->toJson();
         $this->assertStringNotContainsString('AdminPass1!', $auditPayload);

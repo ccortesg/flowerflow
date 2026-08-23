@@ -75,7 +75,7 @@ Por ello, M1–M3 permanecen `GO LOCAL/TEST`, pero M4 queda `GO HISTÓRICO BAJO 
 - [x] 2026-08-18 MST — Se comprueba que el código M2/M4 sigue en `1×10`; la actualización documental no se presenta como implementación.
 - [x] 2026-08-18 MST — Se conserva asignación/reasignación manual: admin deberá seleccionar explícitamente uno de los dos sustitutos; no se infiere un algoritmo automático.
 - [x] 2026-08-18 MST — Se sincronizan ADR, producto, alcance, arquitectura/datos, seguridad/UX, roadmap/QA, riesgos/preguntas, handoffs, diagnóstico, trazabilidad e informes históricos. Las referencias `1×10` conservadas quedan etiquetadas como evidencia sustituida.
-- [x] 2026-08-18 MST — La sección 21 del paquete queda como prompt M5 canónico condicionado: verifica enum/check/composición `4+2`/selección manual/límite 30–31 y se detiene si M4A no está verde.
+- [x] 2026-08-18 MST — La sección 21 del paquete quedó como prompt M5 canónico condicionado: verifica enum/check/composición `4+2`, selección manual y una prueba de 31 reemplazos sin límite; se detiene si M4A no está verde.
 - [x] 2026-08-18 MST — Validación documental: `git diff --check` y enlaces Markdown locales verdes; scan del diff documental sin material de credenciales de alta confianza y sin patrones de email/teléfono. No se ejecutan base, migraciones, suites o build porque esta reconciliación no modifica código.
 - [x] 2026-08-18 MST — El propietario elimina también el límite de los dos sustitutos. Contrato final: cuatro primary + dos substitute, todos ilimitados; sustitutos sin iniciales y selección manual.
 - [x] 2026-08-18 MST — Guard MySQL exacto verde y baseline M1–M4 verde: 33 pruebas/521 aserciones.

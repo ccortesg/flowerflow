@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\Judge;
 
 use App\Actions\Assignments\DeclareJudgeConflict;
+use App\Actions\Evaluations\EnsureEvaluationDraftContext;
 use App\Enums\BlindReviewPackageStatus;
 use App\Enums\JudgeAssignmentStatus;
 use App\Enums\JudgeConflictType;
+use App\Exceptions\EvaluationDraftRejected;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DeclareJudgeConflictRequest;
+use App\Models\Evaluation;
 use App\Models\JudgeAssignment;
 use App\Services\AuditLogger;
+use App\Services\EvaluationDraftCalculator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
@@ -33,8 +37,12 @@ class AssignmentController extends Controller
         return view('judge.assignments.index', compact('assignments'));
     }
 
-    public function show(JudgeAssignment $judgeAssignment, AuditLogger $audit): View
-    {
+    public function show(
+        JudgeAssignment $judgeAssignment,
+        AuditLogger $audit,
+        EnsureEvaluationDraftContext $evaluationContext,
+        EvaluationDraftCalculator $calculator,
+    ): View {
         Gate::authorize('view', $judgeAssignment);
         $judgeAssignment->load([
             'submissionVersion:id,submission_id',
@@ -58,10 +66,49 @@ class AssignmentController extends Controller
             ]);
         }
 
+        $evaluation = null;
+        $canStartEvaluation = false;
+        $evaluationReadOnly = false;
+        $evaluationUnavailable = false;
+        $evaluationTotalDisplay = null;
+        if ($package && Gate::allows('viewEvaluationDraft', $judgeAssignment)) {
+            $existing = Evaluation::query()
+                ->where('judge_assignment_id', $judgeAssignment->id)
+                ->first();
+            try {
+                $context = $evaluationContext->execute(
+                    $judgeAssignment,
+                    request()->user(),
+                    $existing === null,
+                    false,
+                );
+                if ($existing) {
+                    $evaluationContext->assertAggregate($existing, $context, false);
+                    $evaluation = $existing->load([
+                        'rubricVersion.criteria',
+                        'currentRevision.scores.criterion',
+                    ]);
+                    $evaluationReadOnly = now('UTC')->greaterThan($judgeAssignment->due_at);
+                    $evaluationTotalDisplay = $evaluation->currentRevision->total_raw === null
+                        ? null
+                        : $calculator->display($evaluation->currentRevision->total_raw);
+                } else {
+                    $canStartEvaluation = Gate::allows('startEvaluationDraft', $judgeAssignment);
+                }
+            } catch (EvaluationDraftRejected) {
+                $evaluationUnavailable = $existing !== null;
+            }
+        }
+
         return view('judge.assignments.show', [
             'assignment' => $judgeAssignment,
             'conflictTypes' => JudgeConflictType::cases(),
             'package' => $package,
+            'evaluation' => $evaluation,
+            'canStartEvaluation' => $canStartEvaluation,
+            'evaluationReadOnly' => $evaluationReadOnly,
+            'evaluationUnavailable' => $evaluationUnavailable,
+            'evaluationTotalDisplay' => $evaluationTotalDisplay,
         ]);
     }
 

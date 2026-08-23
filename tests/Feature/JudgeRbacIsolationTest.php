@@ -184,7 +184,7 @@ class JudgeRbacIsolationTest extends TestCase
         $this->assertTrue($participant->fresh()->hasExactRoles(['participant']));
         $this->assertSame(0, Role::findByName('judge')->users()->count());
         $this->assertSame(
-            ['access judge workspace', 'declare own evaluation conflicts'],
+            ['access judge workspace', 'declare own evaluation conflicts', 'manage own evaluation drafts'],
             Role::findByName('judge')->permissions()->pluck('name')->sort()->values()->all(),
         );
         $this->assertFalse(Role::findByName('participant')->hasPermissionTo('access judge workspace'));

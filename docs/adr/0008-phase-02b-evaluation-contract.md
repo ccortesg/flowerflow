@@ -1,13 +1,13 @@
 # ADR-0008: contrato de jueces y evaluación de Fase 02B
 
-- **Estado:** Accepted — M1–M5 verified local/test; M6–M10 not authorized
+- **Estado:** Accepted — M1–M6 verified local/test; M7–M10 not authorized
 - **Fecha:** 2026-08-18
 - **Decisor:** propietario de Flower Flow
 - **Alcance:** Fase 02B; no incluye ganadores ni resultados
 
 ## Contexto
 
-El propietario respondió las 21 decisiones del paquete. Prompts posteriores autorizaron M1–M5. Tras los contratos históricos `1×10` y `2×30`, la decisión final exige cuatro principales y dos sustitutos ilimitados. El código local implementa identidad/perfil, rúbrica, asignaciones/conflictos `4+2` y paquete ciego estructural. No existen evaluaciones ni puntajes. Este ADR no autoriza por sí mismo M6–M10 o producción.
+El propietario respondió las 21 decisiones del paquete. Prompts posteriores autorizaron M1–M6. Tras los contratos históricos `1×10` y `2×30`, la decisión final exige cuatro principales y dos sustitutos ilimitados. El código local implementa identidad/perfil, rúbrica, asignaciones/conflictos `4+2`, paquete ciego y evaluación draft con cálculo servidor. No existen envío final, reapertura o consolidación. Este ADR no autoriza por sí mismo M7–M10 o producción.
 
 Producción tiene más de 50 propuestas reales según `OWNER_CONFIRMED_DEPLOYED`. El SHA productivo y la evidencia técnica independiente permanecen `POR_CONFIRMAR` y no son objeto de esta decisión.
 
@@ -46,7 +46,7 @@ Producción tiene más de 50 propuestas reales según `OWNER_CONFIRMED_DEPLOYED`
 - Rúbrica global: Pertinencia 20 %, Claridad 20 %, Viabilidad 25 %, Impacto 25 % y Coherencia 10 %.
 - Los códigos estables implementados son `pertinence`, `clarity`, `feasibility`, `impact` y `coherence`, en ese orden. No existe descripción extensa aprobada: M3 persiste `NULL` y muestra `POR_CONFIRMAR`.
 - Cada criterio usa escala 0–10 y paso 0.5. El servidor calcula un total 0–100 con cuatro decimales internos, dos visibles y redondeo `HALF_UP`.
-- Se requiere comentario general de 100–2,000 caracteres; cada comentario por criterio es opcional y admite hasta 1,000.
+- En M6 el comentario general puede quedar vacío y admite máximo 2,000 caracteres; el mínimo 100 se exigirá al envío M7. Cada comentario por criterio es opcional y admite máximo 1,000.
 - La consolidación es la media aritmética con igual peso de cuatro evaluaciones válidas. Si falta una, no existe consolidado ni excepción administrativa.
 - Un empate técnico es igualdad del consolidado redondeado a dos decimales. Resolver el empate o declarar ganador queda fuera de Fase 02B.
 
@@ -67,10 +67,10 @@ Producción tiene más de 50 propuestas reales según `OWNER_CONFIRMED_DEPLOYED`
 ## Consecuencias
 
 - Las migraciones futuras serán aditivas y no modificarán folios, snapshots, aceptaciones jurídicas, estados o datos reales por inferencia.
-- El total enviado por navegador se ignora y se recalcula en servidor.
+- El total/componente enviado por navegador se rechaza; el servidor recalcula con BCMath usando la rúbrica fijada y conserva total `NULL` hasta cinco scores.
 - La UI no puede afirmar anonimización total.
 - La combinación de edición administrativa, 2FA opcional y ceguera simple exige auditoría append-only, Policies, locks y pruebas negativas estrictas.
-- M1/M2 implementaron rol, gates, perfil y ciclo operativo de cuenta sólo en local/test. M3 implementó rúbrica versionada; M4/M4A el flujo `4+2` ilimitado; M5 el paquete allowlist y anexos privados. M6–M10 requieren autorización separada.
+- M1/M2 implementaron rol, gates, perfil y ciclo operativo; M3 la rúbrica; M4/M4A el flujo `4+2`; M5 el paquete allowlist; M6 el borrador con lock/409 y cálculo servidor. M7–M10 requieren autorización separada.
 
 ## Decisión que resolvió el bloqueo operativo
 
@@ -93,4 +93,4 @@ El límite de seis se aplica a perfiles activos operativos. Cuentas suspendidas 
 
 ## Validación
 
-El contrato completo y la matriz de evidencia/decisiones se mantienen en `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`. M1–M5 demostraron aislamiento, cuenta, rúbrica, asignaciones/conflictos y paquete ciego. El prompt M6 conserva esas precondiciones. M6–M10 siguen no implementados y requieren autorización propia.
+El contrato completo y la matriz de evidencia/decisiones se mantienen en `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`. M1–M6 demostraron aislamiento, cuenta, rúbrica, asignaciones/conflictos, paquete ciego y evaluación draft. M7–M10 siguen no implementados y requieren autorización propia.
