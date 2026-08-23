@@ -9,6 +9,7 @@ use App\Http\Controllers\Judge\DashboardController as JudgeDashboardController;
 use App\Http\Controllers\Judge\EvaluationDraftController as JudgeEvaluationDraftController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Panel\AccountSecurityController;
+use App\Http\Controllers\Panel\AdministrativeSubmissionFinalizationController;
 use App\Http\Controllers\Panel\AssignmentController as PanelAssignmentController;
 use App\Http\Controllers\Panel\BlindReviewPackageController as PanelBlindReviewPackageController;
 use App\Http\Controllers\Panel\DashboardController as PanelDashboardController;
@@ -17,13 +18,22 @@ use App\Http\Controllers\Panel\JudgeController as PanelJudgeController;
 use App\Http\Controllers\Panel\RubricVersionController as PanelRubricVersionController;
 use App\Http\Controllers\Panel\SubmissionController as PanelSubmissionController;
 use App\Http\Controllers\Panel\SubmissionExportController as PanelSubmissionExportController;
+use App\Http\Controllers\Panel\SubmissionReminderController as PanelSubmissionReminderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\SubmissionReminderConfirmationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', LandingController::class)->name('landing');
 Route::view('/documentos', 'public.documents')->name('documents');
 Route::view('/correo-verificado', 'auth.email-verified')->name('verification.success');
+
+Route::middleware(['submission-reminders.enabled', 'signed', 'throttle:submission-reminders-public'])->group(function () {
+    Route::get('/propuestas/{submission}/recordatorio/{reminder}/confirmar', [SubmissionReminderConfirmationController::class, 'show'])
+        ->name('submissions.reminders.confirm');
+    Route::post('/propuestas/{submission}/recordatorio/{reminder}/enviar', [SubmissionReminderConfirmationController::class, 'store'])
+        ->name('submissions.reminders.submit');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/inicio', DashboardController::class)->name('dashboard');
@@ -98,6 +108,20 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
     Route::get('/', PanelDashboardController::class)->name('dashboard');
     Route::middleware('permission:view submissions')->group(function () {
         Route::get('/propuestas', [PanelSubmissionController::class, 'index'])->name('submissions.index');
+        Route::middleware(['submission-reminders.enabled', 'permission:send submission reminders'])->group(function () {
+            Route::get('/propuestas/recordatorios/nuevo', [PanelSubmissionReminderController::class, 'create'])
+                ->name('submissions.reminders.create');
+            Route::post('/propuestas/recordatorios', [PanelSubmissionReminderController::class, 'store'])
+                ->middleware('throttle:panel-mutations')->name('submissions.reminders.store');
+            Route::post('/propuestas/{submission}/recordatorios', [PanelSubmissionReminderController::class, 'storeForSubmission'])
+                ->middleware('throttle:panel-mutations')->name('submissions.reminders.submissions.store');
+        });
+        Route::middleware(['administrative-finalization.enabled', 'permission:administratively finalize submissions', 'password.confirm'])->group(function () {
+            Route::get('/propuestas/{submission}/envio-administrativo', [AdministrativeSubmissionFinalizationController::class, 'show'])
+                ->name('submissions.administrative-finalization.show');
+            Route::post('/propuestas/{submission}/envio-administrativo', [AdministrativeSubmissionFinalizationController::class, 'store'])
+                ->middleware('throttle:panel-mutations')->name('submissions.administrative-finalization.store');
+        });
         Route::middleware('permission:export submissions')->group(function () {
             Route::get('/propuestas/exportaciones/nueva', [PanelSubmissionExportController::class, 'create'])
                 ->middleware('password.confirm')->name('submissions.exports.create');

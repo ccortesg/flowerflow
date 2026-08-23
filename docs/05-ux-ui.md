@@ -1,5 +1,7 @@
 # UX/UI, accesibilidad e identidad — Flower Flow 2026
 
+> **Adenda UX del panel de propuestas — 2026-08-22, sólo local/test:** la tabla añade una séptima columna `Acciones`. Para borradores, el admin autorizado ve sobre/`Recordar` y avión/`Registrar`; el segundo queda visualmente inactivo si falta título, resumen o descripción, sin sustituir la validación servidor. El botón masivo `Enviar recordatorio` vive junto a `Exportar a Excel` y abre una confirmación con convocatoria, borradores, programables y omitidos independiente de filtros/página. El correo HTML/texto reutiliza ambos logotipos y footer institucional. La confirmación firmada funciona sin JavaScript y requiere tres checkboxes; GET nunca envía. Exportaciones con espera superior al umbral muestran advertencia operativa y desaconsejan duplicar la solicitud.
+
 > **Contrato vigente M4A — 2026-08-18:** la resolución administrativa muestra y exige selección explícita entre dos sustitutos operativos, ambos rotulados `Sin límite`. No hay capacidad usada/disponible ni reparto automático. La UI fue verificada en Firefox local en escritorio, tableta y móvil.
 
 > **Estado vigente — 2026-08-18:** M6 está `GO LOCAL/TEST`. `/juez/asignaciones/{id}` mantiene la proyección M5 y añade inicio POST explícito, formulario draft accesible, progreso y total servidor sólo al completar cinco criterios. Después del plazo conserva vista sólo lectura. M7–M10 no están implementados.

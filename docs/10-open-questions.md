@@ -2,6 +2,8 @@
 
 > **Estado vigente M6 — 2026-08-18:** `P2B-DEC-005/015` permanecen cerradas mediante `4+2` ilimitado y selección manual. M5 materializa la ceguera estructural y M6 el borrador/cálculo servidor. M7–M10 permanecen no implementados/no autorizados.
 
+> **Decisiones operativas del propietario — 2026-08-22:** `Q-006A RESOLVED / LOCAL IMPLEMENTED`: sólo `admin` exacto puede finalizar antes del cierre una propuesta con título/resumen/descripción, password reciente, confirmación y razón 20–1,000; omite archivo/perfil/equipo/legales y no crea aceptaciones ajenas. `Q-006B RESOLVED / LOCAL IMPLEMENTED`: el recordatorio se envía exclusivamente al propietario verificado; el CTA abre un GET firmado puro y un POST separado con las tres aceptaciones puede enviar sin archivo. Integrantes quedan excluidos. Activación/despliegue productivo no están autorizados.
+
 > **Decisiones del propietario — 2026-08-18:** se conserva sin cambios la superposición temática de accesibilidad de la Mecánica v1.1; las cuentas que aceptaron v1.0 se tratan operativamente como aceptantes de v1.1 sin forzar reaceptación ni alterar evidencia histórica; y el archivo físico v1.0 designado por el propietario es `public/documentos/2026/01_Mecanica_Convocatoria_Hermosillo_Florece_2026.pdf`. La discrepancia entre su SHA-256 actual `3bcf31…` y el hash histórico registrado `42bd5e…` se conserva documentada, no se oculta ni se corrige mediante backfill.
 
 > **Estado productivo y puerta actual — 2026-08-18:** el propietario registra `OWNER_CONFIRMED_DEPLOYED` y más de 50 propuestas reales. Sin evidencia externa, `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`. M1–M6 están verdes sólo en local/test; M7 requeriría autorización separada.

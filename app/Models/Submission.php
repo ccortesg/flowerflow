@@ -59,6 +59,18 @@ class Submission extends Model
         return $this->hasMany(SubmissionEvent::class);
     }
 
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(SubmissionReminder::class);
+    }
+
+    public function hasMinimumFinalizationContent(): bool
+    {
+        return filled(trim((string) $this->title))
+            && filled(trim((string) $this->summary))
+            && filled(trim((string) $this->description_text));
+    }
+
     public function eligibilityReview(): HasOne
     {
         return $this->hasOne(EligibilityReview::class);

@@ -1,5 +1,9 @@
 # Handoff operativo vigente — Flower Flow
 
+> **Milestone de acciones del panel — 2026-08-22, `GO LOCAL/TEST`:** partió de `bffc7d7f4738e0937b276ea9d5d22e3744afe65c` en `codex/submission-deadline-extension`. Añade recordatorios y finalización administrativa bajo flags default-off, más diagnóstico de exportaciones. Suite final 179/2,130, build y UAT Firefox verdes; 20 migraciones y 80 rutas propias. No hubo stage, commit, push, despliegue, SMTP real ni acceso productivo. El rollback primario es `FLOWERFLOW_SUBMISSION_REMINDERS_ENABLED=false` y `FLOWERFLOW_ADMIN_FINALIZATION_ENABLED=false`; una migración `down` no debe forzarse si existe evidencia. Ver `docs/25-panel-submission-actions-reminders-implementation-report-2026-08-22.md`.
+
+Para exports, `flowerflow:exports-diagnose --json` es de sólo lectura y no muestra secretos ni payloads. Una espera prolongada exige comprobar migración, configuración efectiva `database/exports`, antigüedad de `jobs`, `failed_jobs`, disco privado y el worker exclusivo Flower Flow con `--queue=high,exports,default,low`. No borrar jobs ni crear exportaciones duplicadas. Reinicios/cache/worker productivos requieren autorización separada.
+
 > **Estado vigente M6 — 2026-08-18:** M1–M6 están `GO LOCAL/TEST`; M6 añade borrador propio, cálculo BCMath y lock optimista sin envío final. No aplicar migraciones/seeders ni corregir producción por inferencia.
 
 **Fecha:** 2026-08-18 (`America/Hermosillo`)

@@ -2,6 +2,16 @@
 
 > **Estado vigente M6 — 2026-08-18:** M4A conserva `4+2` ilimitado, M5 mitiga fuga estructurada y M6 mitiga cálculo ambiguo/concurrencia mediante BCMath, lock optimista y auditoría redactada. Persisten autoidentificación semántica, producción no verificada y cadena de conflicto de replacement fail-closed.
 
+## Riesgos del milestone de acciones del panel — 2026-08-22
+
+| ID | Riesgo | Severidad/estado | Evidencia/mitigación | Acción pendiente |
+|---|---|---|---|---|
+| R90 | Un GET de recordatorio envía o crea evidencia sin consentimiento | **Mitigado local/test** | GET firmado es sólo lectura; POST separado exige CSRF, firma, legales y revalidación; pruebas comparan conteos antes/después | Repetir smoke en release autorizado |
+| R91 | El lote omite drafts por filtros/paginación o envía a integrantes | **Mitigado local/test** | Selección servidor de todos los drafts activos; destinatario exclusivo `submission.user`; preview y suites cubren ambos contratos | Vigilar volumen/cooldown y rebotes en operación autorizada |
+| R92 | Excepción administrativa aparenta aceptación del participante | **Mitigado local/test; riesgo legal residual** | Admin exacto, password reciente, confirmación/razón, snapshot modo/actor/waivers, evento/audit y cero `legal_acceptances` | Revisión jurídica/operativa antes de activar el flag en producción |
+| R93 | Reintento de correo entrega duplicado tras fallo entre SMTP y persistencia | **Residual operativo** | Cooldown, job único, estados y reintentos reducen duplicados, pero SMTP sigue siendo entrega al-menos-una-vez | Añadir message-id/provider receipt sólo con diseño autorizado |
+| R94 | Exportación permanece indefinidamente `queued` por worker/migración/config | **Diagnosticado local; producción POR_CONFIRMAR** | Comando read-only, alerta por umbral y job `database/exports`; generador sigue verde | Verificar migración/cache/jobs/failed_jobs/disco y worker Flower Flow en rollout autorizado; no duplicar/borrar jobs |
+
 ## Recalificación de auditoría integral y diseño Fase 02B — 2026-08-18
 
 | ID | Riesgo residual | Nivel actual | Evidencia/mitigación | Próxima puerta |

@@ -1,5 +1,7 @@
 # Modelo de datos preliminar
 
+> **Adenda operativa del panel — 2026-08-22, sólo local/test:** `submission_reminder_batches` conserva ULID, solicitante, alcance `single|all_drafts`, estado y conteos; `submission_reminders` conserva ULID, batch, propuesta, destinatario propietario, estado, fallo redactado, vencimiento, envío y consumo. Sus FKs son `RESTRICT`, existe unicidad batch+propuesta+destinatario y un índice de cooldown. Los modelos nuevos son guarded y no eliminables. La migración es aditiva, sin backfill, y `down()` se niega ante cualquier recordatorio, evento o audit de este milestone.
+
 > **Contrato vigente M4A — 2026-08-18:** `judge_profiles.max_active_assignments` es `NULL` tanto para `primary` como para `substitute`; la composición operativa es cuatro `primary` + dos `substitute`. La migración aditiva `2026_08_18_160000_make_all_judge_assignment_roles_unlimited.php` convierte el antecedente `substitute=10` y exige capacidad nula para cualquier función.
 
 > **Estado vigente — 2026-08-18:** M2 añadió `judge_profiles`; M3 `rubric_versions`/`rubric_criteria`; M4 `judge_assignments`/`judge_conflicts`; M5 `blind_review_packages`/`blind_review_package_files`; M6 `evaluations`/`evaluation_revisions`/`evaluation_scores`. M7–M10 siguen no implementados/no autorizados.
@@ -39,6 +41,12 @@ El cierre sembrado es `2026-08-24 06:59:59 UTC`, equivalente a `2026-08-23 23:59
 - `evaluation_scores`: una fila por criterio fijado, `score decimal(6,4)` nullable, componente `decimal(7,4)` nullable y comentario máximo 1,000. `NULL` es ausente; cero es capturado.
 - FKs restrict, unicidades y checks protegen estado, rango, paso 0.5000 y pareja score/componente. La aplicación revalida además exactamente cinco códigos de la rúbrica fijada.
 - La migración no hace backfill. `down()` falla si existe cualquier fila o auditoría M6; sin evidencia retira sólo las tablas y el permiso de borrador.
+
+## Adenda de finalización de propuestas — 2026-08-22
+
+- `submission_versions.snapshot.finalization.mode` distingue `participant|signed_reminder|administrative`; conserva actor técnico, requisito de archivo omitido, allowlist de requisitos omitidos y, sólo en modo administrativo, la razón de 20–1,000 caracteres.
+- `signed_reminder` consume `submission_reminders.consumed_at` dentro de la misma transacción que crea folio, versión y revisión de admisibilidad. `administrative` nunca crea `legal_acceptances` en nombre del propietario.
+- La propuesta mantiene el estado canónico `draft|submitted|withdrawn`; no se agregó un estado paralelo. Las unicidades ya existentes de folio, idempotency key y versión, junto con `lockForUpdate`, mantienen un único agregado ante repetición o carrera.
 
 ## Criterios de diseño
 

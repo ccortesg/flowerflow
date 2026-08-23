@@ -1,5 +1,7 @@
 # Alcance funcional — Flower Flow 2026
 
+> **Adenda operativa del panel — 2026-08-22, sólo local/test:** el listado de propuestas incorpora `Acciones`. Sólo el rol exacto `admin`, mediante permisos separados y flags apagados por defecto, puede enviar recordatorios al propietario de un borrador o registrar una excepción administrativa. El recordatorio abre una confirmación temporal firmada; su GET no escribe y el POST exige las tres aceptaciones vigentes, contenido mínimo y plazo abierto, pero permite omitir el archivo. La excepción administrativa exige contraseña reciente, confirmación y razón de 20–1,000 caracteres; no crea aceptaciones en nombre del participante. `reviewer` conserva lectura. No se modificaron PDFs, hashes ni aceptaciones históricas y no existe autorización productiva.
+
 > **Estado vigente M6 — 2026-08-18:** M1–M6 están implementados y verificados sólo en local/test. M6 permite al juez dueño abrir explícitamente y guardar una revisión draft con cinco criterios y total decimal exclusivamente servidor; no implementa envío. M7–M10 y producción permanecen fuera.
 
 > **Estado vigente — 2026-08-18:** M1/M2 implementan rol/gates y ciclo operativo de juez; M3 la rúbrica global; M4/M4A cobertura/conflictos; M5 paquete ciego estructural; M6 borrador/concurrencia/cálculo servidor. Producción permanece `OWNER_CONFIRMED_DEPLOYED`/SHA `POR_CONFIRMAR`; ningún M1–M6 se atribuye a ella.
@@ -21,6 +23,7 @@
 - Archivos: PDF, Office y ODF permitidos, más JPEG/PNG/WebP del editor; 10 MiB acumulados.
 - Enlaces: YouTube y carpeta pública en proveedores allowlist; nunca fetch server-side.
 - Finalización: correo verificado, perfil mínimo capturado desde registro, legales separados, snapshot/folio/idempotencia.
+- Finalización excepcional local: desde recordatorio firmado se omite sólo el archivo y se conservan identidad/elegibilidad/legales; el modo administrativo omite archivo, perfil/elegibilidad/equipo/legales, conserva actor/razón/requisitos omitidos en snapshot y envía un acuse específico al propietario.
 - Flags default: público/panel `true`; registro/recepción/resultados `false`.
 
 La descripción funcional vigente de “Movilidad con Flow” es “Ideas para mejorar la movilidad, la vialidad y la seguridad de los desplazamientos en la ciudad.” Accesibilidad e inclusión permanecen destacadas en “Hermosillo sin Barreras”; la referencia adicional de la Mecánica v1.1 en Movilidad se acepta como está y no cambia categorías, descripciones ni propuestas existentes.

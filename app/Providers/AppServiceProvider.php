@@ -49,6 +49,15 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(6)->by($user.'|'.$route);
         });
 
+        RateLimiter::for('submission-reminders-public', function (Request $request) {
+            $reminder = $request->route('reminder');
+            $reminderKey = is_object($reminder) && method_exists($reminder, 'getRouteKey')
+                ? $reminder->getRouteKey()
+                : (string) $reminder;
+
+            return Limit::perMinute(6)->by($reminderKey.'|'.$request->ip());
+        });
+
         Vite::useStyleTagAttributes(function (?string $src, string $url, ?array $chunk, ?array $manifest) {
             if ($src !== null) {
                 return [

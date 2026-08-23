@@ -15,6 +15,7 @@ use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Cell\FormulaCell;
@@ -35,6 +36,7 @@ class SubmissionExportTest extends TestCase
             'flowerflow.exports.queue_connection' => 'sync',
             'flowerflow.exports.disk' => 'exports',
             'flowerflow.exports.retention_hours' => 24,
+            'flowerflow.exports.stale_after_minutes' => 5,
         ]);
         Storage::fake('local');
         Storage::fake('exports');
@@ -209,6 +211,29 @@ class SubmissionExportTest extends TestCase
         $this->assertSame(SubmissionExportStatus::Failed, $export->status);
         $this->assertSame('RuntimeException', $export->failure_code);
         $this->assertDatabaseMissing('submission_exports', ['failure_code' => 'Synthetic queue detail must not persist']);
+    }
+
+    public function test_read_only_diagnostic_and_stalled_queue_warning_are_actionable(): void
+    {
+        $admin = $this->admin();
+        $export = $admin->submissionExports()->create([
+            'status' => SubmissionExportStatus::Queued,
+            'filters' => ['statuses' => ['draft', 'submitted']],
+            'disk' => 'exports',
+        ]);
+        $export->forceFill(['created_at' => now('UTC')->subHour()])->save();
+
+        $before = $export->fresh()->getRawOriginal();
+        $this->assertSame(0, Artisan::call('flowerflow:exports-diagnose', ['--json' => true]));
+        $diagnostic = Artisan::output();
+        $this->assertStringContainsString('"queue_name": "exports"', $diagnostic);
+        $this->assertStringContainsString('"stale_exports": 1', $diagnostic);
+        $this->assertSame($before, $export->fresh()->getRawOriginal());
+
+        $this->actingAs($admin)->get(route('panel.submissions.index'))
+            ->assertOk()
+            ->assertSee('lleva más de 5 minutos en espera')
+            ->assertSee('no generes duplicados');
     }
 
     /** @return array{Submission, SubmissionFile} */

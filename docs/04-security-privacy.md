@@ -1,5 +1,9 @@
 # Seguridad y privacidad desde el diseño
 
+> **Adenda de seguridad del panel — 2026-08-22, sólo local/test:** los permisos `send submission reminders` y `administratively finalize submissions` pertenecen únicamente al rol exacto `admin`; `reviewer`, `participant`, `judge`, visitantes, cuentas sin permiso y multirol fallan cerrados. Los endpoints mutantes usan CSRF y `panel-mutations`; la excepción administrativa añade `password.confirm`. El enlace público usa firma temporal, rate limit, asociación exacta propuesta/recordatorio, consumo transaccional y segundo clic POST. Auditoría y fallos no incluyen correo, nombres, contenido, archivos o URLs firmadas. Los flags default-off son el rollback operativo.
+
+El enlace firmado es una credencial temporal de capacidad: quien lo posea puede ver la confirmación, pero el servidor revalida estado, propietario verificado, rol exclusivo, perfil/equipo, convocatoria, fecha, contenido y documentos jurídicos al enviar. Una firma alterada, vencida, cruzada o consumida responde 403/404/410 sin crear evidencia. El modo administrativo es una excepción organizacional explícita: no suplanta al participante ni registra aceptaciones ajenas.
+
 > **Contrato vigente M4A — 2026-08-18:** dos sustitutos operativos sin límite y selección manual por `admin`. La seguridad valida bajo lock que el perfil seleccionado sea uno de los dos sustitutos activos, mantenga rol exclusivo y prerrequisitos, y no tenga ya la propuesta; no existe selección automática ni contador de capacidad.
 
 > **Adenda Fase 02B — 2026-08-18:** M1–M6 están probados fail-closed. M6 concede `manage own evaluation drafts` sólo a `judge`, revalida ownership/assignment/rubric/package/plazo dentro de Actions con locks, rechaza payload hostil y no copia evaluación al paquete M5. Auditoría y logs omiten scores, componentes, total, comentarios y PII. M7–M10 siguen futuros/no autorizados.

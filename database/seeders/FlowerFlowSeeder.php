@@ -115,6 +115,8 @@ class FlowerFlowSeeder extends Seeder
             'view blind review packages',
             'manage blind review packages',
             'manage own evaluation drafts',
+            'send submission reminders',
+            'administratively finalize submissions',
         ] as $name) {
             Permission::findOrCreate($name, 'web');
         }

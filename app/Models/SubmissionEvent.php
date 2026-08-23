@@ -22,6 +22,8 @@ class SubmissionEvent extends Model
             'draft_updated' => 'Borrador actualizado',
             'file_deleted' => 'Archivo eliminado',
             'submitted' => 'Propuesta enviada',
+            'submission.submitted_from_reminder' => 'Propuesta enviada desde recordatorio',
+            'submission.submitted_administratively' => 'Propuesta registrada administrativamente',
             default => 'Actividad registrada',
         };
     }
