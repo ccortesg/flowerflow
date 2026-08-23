@@ -11,3 +11,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('flowerflow:exports-purge')->hourly()->withoutOverlapping();
+Schedule::command('flowerflow:communications-reconcile')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('flowerflow:communications-purge-context')->hourly()->withoutOverlapping();

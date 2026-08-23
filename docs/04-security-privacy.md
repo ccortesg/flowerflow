@@ -1,5 +1,7 @@
 # Seguridad y privacidad desde el diseño
 
+> **Adenda de bitácora de comunicaciones — 2026-08-23, local/test:** `Notificaciones` exige rol exacto `admin` y permisos separados de lectura/gestión. Dirección, contexto y razón se cifran; la lista sólo usa máscara y referencias técnicas. El job cifrado recibe únicamente el ID del delivery y revalida evento/destinatario. No se muestran ni registran cuerpo, tokens, URLs, títulos, archivos, excepciones completas o PII. `unknown` nunca se reintenta automáticamente y exige reconocimiento de posible duplicado. GET es sólo lectura; POST exige CSRF, throttle, contraseña reciente y lock optimista.
+
 > **Adenda de seguridad del panel — 2026-08-22, sólo local/test:** los permisos `send submission reminders` y `administratively finalize submissions` pertenecen únicamente al rol exacto `admin`; `reviewer`, `participant`, `judge`, visitantes, cuentas sin permiso y multirol fallan cerrados. Los endpoints mutantes usan CSRF y `panel-mutations`; la excepción administrativa añade `password.confirm`. El enlace público usa firma temporal, rate limit, asociación exacta propuesta/recordatorio, consumo transaccional y segundo clic POST. Auditoría y fallos no incluyen correo, nombres, contenido, archivos o URLs firmadas. Los flags default-off son el rollback operativo.
 
 El enlace firmado es una credencial temporal de capacidad: quien lo posea puede ver la confirmación, pero el servidor revalida estado, propietario verificado, rol exclusivo, perfil/equipo, convocatoria, fecha, contenido y documentos jurídicos al enviar. Una firma alterada, vencida, cruzada o consumida responde 403/404/410 sin crear evidencia. El modo administrativo es una excepción organizacional explícita: no suplanta al participante ni registra aceptaciones ajenas.
@@ -262,8 +264,8 @@ Cada paso conserva fecha, actor, razón y evidencia mínima. Plazos, identidad a
 - El consentimiento para futuras actividades se captura desde registro, aparece marcado por defecto por decisión de producto, se guarda como propósito independiente y puede revertirse en perfil; no habilita envíos masivos sin flujo aprobado.
 - Jobs de correo cifrados y post-commit en `database/default`; timeout SMTP 10 segundos, timeout de job 30 segundos y backoff 60/300/900 con cuatro intentos totales.
 - Si falla la creación del job, registro/propuesta permanecen confirmados y la interfaz ofrece aviso/reenvío sin error 500. Si falla SMTP en el worker, se reintenta y termina observable en `failed_jobs`.
-- Delivery log registra tipo, destinatario interno, estado, intentos y error clasificado, no cuerpo completo.
-- Event ID único por usuario/tipo evita duplicados; backoff y failed_jobs para reintentos.
+- La bitácora real registra tipo, destinatario enmascarado, estado, intentos y códigos redactados, nunca cuerpo completo. `sent` significa aceptación del transporte, no entrega al buzón.
+- La idempotencia combina tipo, fingerprint del destinatario, evento origen opaco y versión de plantilla. `failed_jobs` permanece como diagnóstico técnico y nunca se expone al panel.
 - Marketing masivo y listas sin consentimiento quedan fuera.
 - Antes de go-live: SPF, DKIM, DMARC, bounce handling y pruebas de entregabilidad.
 

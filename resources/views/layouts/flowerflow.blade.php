@@ -149,6 +149,9 @@
         @if(auth()->user()->hasExactRoles(['admin']) && auth()->user()->can('view blind review packages'))
           <a href="{{ route('panel.blind-review-packages.index') }}" @if(request()->routeIs('panel.blind-review-packages.*')) aria-current="page" @endif>Paquetes ciegos</a>
         @endif
+        @if(config('flowerflow.flags.communication_ledger') && auth()->user()->hasExactRoles(['admin']) && auth()->user()->can('view communication deliveries'))
+          <a href="{{ route('panel.communication-deliveries.index') }}" @if(request()->routeIs('panel.communication-deliveries.*')) aria-current="page" @endif>Notificaciones</a>
+        @endif
         <a href="{{ route('panel.account') }}" @if(request()->routeIs('panel.account')) aria-current="page" @endif>Cuenta y seguridad</a>
         <form method="POST" action="{{ route('logout') }}" class="mt-4">@csrf<button class="btn btn-sm btn-outline-light w-100">Cerrar sesión</button></form>
       </aside>

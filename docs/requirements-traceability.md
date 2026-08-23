@@ -1,5 +1,7 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+> **Adenda de trazabilidad de comunicaciones — 2026-08-23:** milestone independiente local/test con ADR-0009, sin producción, SMTP real, M7/M8, campañas o resultados.
+
 > **Adenda de trazabilidad del panel — 2026-08-22:** este milestone local parte de `bffc7d7f4738e0937b276ea9d5d22e3744afe65c`; no altera M1–M6, M7–M10, PDFs jurídicos ni producción.
 
 | ID | Requisito del panel | Implementación/evidencia | Estado |
@@ -315,10 +317,13 @@
 | WIN-002 | DECISION | Declaración registra categoría, proyecto, actor, justificación y fecha. | Ganadores/auditoría | Decisión incompleta o sin permiso se rechaza. | F + SEC + UAT | MVP |
 | WIN-003 | PARTIAL | Empate técnico se detecta por igualdad del consolidado redondeado a dos decimales; resolución, categoría desierta y premio siguen pendientes. | Ganadores/reglas | 02B sólo emite señal; nunca elige ganador ni usa azar. | U reglas + F + UAT | MVP/FUTURE |
 | COM-001 | DECISION | Notificaciones transaccionales de eventos críticos en español, HTML/texto y marca dual. | `VerifyEmailNotification`, `ResetPasswordNotification`, `SubmissionReceived`, `resources/views/mail` | Verificación, reset y acuse generan plantilla profesional sin adjuntos/PII adicional. | `AuthMailHardeningTest` + revisión render | MVP |
-| COM-002 | DECISION | Cola cifrada post-commit, reintento y recuperación de correo. | `ResilientMailDispatcher`, `database/default`, `failed_jobs`, reenvíos | Cuatro intentos con 60/300/900; falla de enqueue avisa sin 500 y permite reintentar; fallo SMTP queda observable. | Feature con dispatcher/Mail fake + OPS worker | MVP |
+| COM-002 | VERIFIED LOCAL | Cola cifrada post-commit, reintento y recuperación de correo. | `ResilientMailDispatcher`, `DeliverCommunication`, `database/default`, bitácora común | Cuatro intentos con 60/300/900; cada transición e intento queda correlacionado; una falla no revierte el evento de negocio. | `CommunicationDeliveryLedgerTest`, suites auth/admisibilidad/recordatorios | MVP |
 | COM-003 | DECISION | Usar `convocatoria@flowerflow.com.mx` para convocatoria y `privacidad@flowerflow.com.mx` para privacidad. | Plantillas/configuración | Remitente/reply-to y canal corresponden al propósito sin mezclar casos. | F con mail fake + revisión de configuración | MVP |
 | COM-004 | PENDING | SMTP y entregabilidad SPF/DKIM/DMARC. | Configuración/runbook AWS | Dominio autentica envío y se monitorean rebotes. | OPS DNS + smoke correo | MVP |
 | COM-005 | DECISION | Marketing masivo no está aprobado. | Comunicaciones | No existe envío promocional/masivo en MVP. | Revisión de rutas/permisos | OUT |
+| COM-006 | VERIFIED LOCAL | Bitácora administrativa de las nueve familias existentes, sin cuerpo ni PII completa. | `/panel/notificaciones`, delivery/attempt models, ADR-0009 | Sólo admin exacto; GET no muta; máscara, timeline y `sent=aceptado por transporte`. | Feature permisos/HTML/cifrado + UAT local | Milestone independiente |
+| COM-007 | VERIFIED LOCAL | Recuperación individual segura de queued/failed/unknown. | `ForceCommunicationDelivery`, cola high, lock_version | Password reciente, CSRF, throttle, razón cifrada; unknown exige ack de duplicado; sent/cancelled no actúan. | Feature lock 409/riesgo/concurrencia | Milestone independiente |
+| COM-008 | VERIFIED LOCAL | Backfill sólo desde recordatorios confiables y reconciliación de processing vencido. | comandos `communications-*`, scheduler | Dry-run por defecto e idempotente; no reconstruye logs/jobs; reconciliación pasa a unknown sin enviar. | Feature comandos + schedule:list | Milestone independiente |
 | PRV-001 | ASSUMPTION | Bandeja mínima de solicitudes de privacidad. | `/admin/privacidad` | Soporte registra solicitud, evidencia, responsable y cierre. | F + B + SEC + UAT | MVP-R |
 | PRV-002 | DECISION | Exportar, rectificar y eliminar de forma controlada. | Privacidad/políticas de datos | Acción aplica permisos, retención y auditoría; no promete revisión legal. | F + SEC + OPS | MVP-R |
 | RPT-001 | DECISION | Reportes por categoría, estado, elegibilidad y evaluación. | `/admin/reportes` | Usuario autorizado filtra métricas definidas y consistentes. | U agregados + F + UAT | MVP |

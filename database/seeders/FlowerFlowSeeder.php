@@ -117,6 +117,8 @@ class FlowerFlowSeeder extends Seeder
             'manage own evaluation drafts',
             'send submission reminders',
             'administratively finalize submissions',
+            'view communication deliveries',
+            'manage communication deliveries',
         ] as $name) {
             Permission::findOrCreate($name, 'web');
         }

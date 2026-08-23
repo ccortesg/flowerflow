@@ -1,5 +1,7 @@
 # Handoff actual — Flower Flow
 
+> **Milestone independiente de comunicaciones — 2026-08-23, `GO LOCAL/TEST`:** el árbol local añade ADR-0009, tablas de deliveries/intentos, job central, panel admin `Notificaciones` y recuperación individual de correo existente. Suite final 191/2,255, 21 migraciones, 84 rutas, build y UAT Firefox verdes. No implementa M7/M8, campañas, resultados o producción. Rollback: `FLOWERFLOW_COMMUNICATION_LEDGER_ENABLED=false`; conservar evidencia. Ver `.agent/execplans/flowerflow-communication-delivery-ledger.md` y `docs/26-communication-delivery-ledger-implementation-report-2026-08-23.md`.
+
 > **Adenda local del panel — 2026-08-22, `GO LOCAL/TEST`:** sobre baseline `bffc7d7f4738e0937b276ea9d5d22e3744afe65c` se implementaron recordatorios de borradores, confirmación firmada sin archivo, excepción administrativa sin aceptaciones ajenas y diagnóstico de exports. Suite final 179/2,130, build y UAT Firefox verdes. Los flags nacen apagados. No hubo stage/commit/push, producción, PDFs ni datos reales; resultados finales viven en `.agent/execplans/flowerflow-panel-submission-actions-reminders.md` y `docs/25-panel-submission-actions-reminders-implementation-report-2026-08-22.md`.
 
 > **Adenda vigente M6 — 2026-08-18:** el estado canónico está en `docs/11-operations-handoff.md`. M1–M6 quedaron verdes local/test. M6 añade apertura explícita, guardado optimista y cálculo decimal servidor; M7–M10 permanecen separados/no autorizados.

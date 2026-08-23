@@ -432,10 +432,12 @@ final class EligibilityReviewWorkflow
     private function send(EligibilityReview $review, string $kind): void
     {
         $review->loadMissing('submission.user');
+        $eventId = $review->events()->latest('id')->value('id') ?? 'none';
         $this->mailDispatcher->queue(
             $review->submission->user,
             new AdmissibilityUpdate($review, $kind),
-            'La actualización quedó guardada, pero no pudimos programar el correo. La información permanece disponible dentro de Flower Flow.'
+            'La actualización quedó guardada, pero no pudimos programar el correo. La información permanece disponible dentro de Flower Flow.',
+            'admissibility:'.$review->public_id.':'.$kind.':'.$eventId,
         );
     }
 }

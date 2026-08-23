@@ -1,5 +1,7 @@
 # Estrategia de pruebas y calidad
 
+> **Gate de bitácora de comunicaciones — 2026-08-23:** usar exclusivamente `flowerflow_testing`, Mail/Notification/Queue fake y datos `example.test`. Cubrir nueve familias, payload de job sólo con ID, cifrado crudo, idempotencia, GET sin mutación, permisos negativos, fallo/cancelación/unknown, lock 409, riesgo de duplicado, sincronización de recordatorios, backfill dry-run/idempotente, reconciliación sin envío y ausencia de PII en HTML/log/auditoría. UAT en Firefox verifica filtros, lista, detalle, confirmaciones, teclado, foco, zoom y reflow.
+
 > **Adenda QA del panel — 2026-08-22:** las suites nuevas cubren columna/botones por rol/estado, recordatorio propietario-only, cooldown, lote completo independiente de filtros, mail dual y XSS, GET firmado puro, firmas alteradas/expiradas/cruzadas, POST sin archivo con legales, contenido mínimo, plazo inclusivo, excepción administrativa sin aceptaciones, password/razón/confirmación, idempotencia, auditoría redactada y diagnóstico/advertencia de exports. Los conteos finales y UAT local se registran en el ExecPlan y el informe de implementación de este milestone; no constituyen evidencia productiva.
 
 > **Evidencia vigente M6 — 2026-08-18:** M1–M6 están verdes. M6 añade 13 pruebas/228 aserciones dirigidas; M1–M6 suma 54/888 y la suite completa 163/1,937. Cubre GET puro, apertura concurrente, payload hostil, decimales, vencimiento, 409, conflicto/replacement y auditoría redactada.

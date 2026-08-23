@@ -224,6 +224,8 @@ Bloqueos externos de la ruta: licencia Materialize, textos legales, reglas de el
 
 ### M8 — Decisiones, comunicaciones, reportes y auditoría
 
+> **Separación vigente 2026-08-23:** el milestone independiente de bitácora centraliza y recupera exclusivamente las nueve comunicaciones ya existentes. No implementa ganadores, resultados, nuevas campañas ni los recordatorios programados de M8; esas partes permanecen `NOT IMPLEMENTED / NOT AUTHORIZED`.
+
 - **Objetivo/valor:** cerrar operación sin publicar prematuramente.
 - **Actores:** admin, auditor, participantes.
 - **Historias:** declarar ganador con razón; enviar notificaciones críticas; consultar bitácora.

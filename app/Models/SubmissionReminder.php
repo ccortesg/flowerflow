@@ -44,4 +44,9 @@ class SubmissionReminder extends Model
     {
         return $this->belongsTo(User::class, 'recipient_user_id');
     }
+
+    public function communicationDelivery(): BelongsTo
+    {
+        return $this->belongsTo(CommunicationDelivery::class);
+    }
 }
