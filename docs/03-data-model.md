@@ -172,10 +172,13 @@ M3 sólo persiste el contrato que M6 consumirá: `pertinence|clarity|feasibility
 | audit_logs | occurred_at, actor_id nullable, action, entity_type/id, request_id, ip_hash_or_prefix, before_redacted, after_redacted, metadata_redacted | índices occurred_at, actor+date, entity+id, action | append-only; retención aprobada |
 | privacy_requests | public_id, requester_id nullable, channel, request_type, status, received_at, due_at, closed_at, evidence_path | index status/due/type | política legal PENDING |
 | contact_messages | public_id, email, subject, body_encrypted, status, assigned_to, received_at | index status/date | sólo si se aprueba formulario |
-| communication_deliveries | notification_type, recipient_user_id, event_id, channel, status, attempts, provider_id, sent_at, failed_at, error_code | unique event+recipient+type; index status/date | no guardar cuerpo completo |
+| communication_deliveries **(bitácora real 2026-08-23)** | public_id, notification_type/variant/template_version, source_event_key e idempotency_key opacas, recipient_user_id, dirección cifrada/máscara/fingerprint HMAC, contexto cifrado, referencia técnica, status, queue, attempts_count, lock_version, failure stage/code y timestamps UTC | unique idempotency_key; índices status+queued, tipo+fecha y destinatario+fecha; checks email/status/contadores | modelos guarded; no delete; contexto/dirección se purgan en sent/cancelled y vencen en failed/unknown |
+| communication_delivery_attempts **(bitácora real 2026-08-23)** | delivery_id, attempt_number, source automatic/admin_forced, actor, razón cifrada, status, queue, job UUID, failure stage/code, duplicate-risk ack y timestamps | unique delivery+attempt; checks source/status/número positivo | append operational history; no delete |
 | export_jobs | public_id, requested_by, report_type, filters_redacted, status, path, expires_at, completed_at | index user/status/expires | purgar archivo pronto; conservar evento |
 
 Laravel aporta notifications, jobs, job_batches, failed_jobs, sessions, cache y cache_locks. Sus payloads también deben evitar PII innecesaria.
+
+`submission_reminders.communication_delivery_id` enlaza de forma opcional la evidencia histórica confiable con el outbox. La migración no ejecuta backfill; el comando explícito es dry-run por defecto e idempotente.
 
 ## Máquinas de estado
 

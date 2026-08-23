@@ -25,7 +25,8 @@ final class SendJudgeAccountStatusNotification
         $sent = $this->mail->notify(
             $profile->user,
             new JudgeAccountStatusNotification($event),
-            'La operación se completó, pero no pudimos programar su notificación por correo.'
+            'La operación se completó, pero no pudimos programar su notificación por correo.',
+            'judge-status:'.$profile->public_id.':'.$event.':'.$profile->updated_at?->getTimestamp(),
         );
 
         $this->audit->record(

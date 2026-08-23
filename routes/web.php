@@ -12,6 +12,7 @@ use App\Http\Controllers\Panel\AccountSecurityController;
 use App\Http\Controllers\Panel\AdministrativeSubmissionFinalizationController;
 use App\Http\Controllers\Panel\AssignmentController as PanelAssignmentController;
 use App\Http\Controllers\Panel\BlindReviewPackageController as PanelBlindReviewPackageController;
+use App\Http\Controllers\Panel\CommunicationDeliveryController as PanelCommunicationDeliveryController;
 use App\Http\Controllers\Panel\DashboardController as PanelDashboardController;
 use App\Http\Controllers\Panel\EligibilityReviewController as PanelEligibilityReviewController;
 use App\Http\Controllers\Panel\JudgeController as PanelJudgeController;
@@ -195,6 +196,18 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
             ->middleware(['permission:manage blind review packages', 'throttle:panel-mutations'])->name('generate');
         Route::post('/{submission}/activar', [PanelBlindReviewPackageController::class, 'activate'])
             ->middleware(['permission:manage blind review packages', 'throttle:panel-mutations'])->name('activate');
+    });
+    Route::prefix('notificaciones')->name('communication-deliveries.')->middleware([
+        'communication-ledger.enabled',
+        'business.role:admin',
+        'permission:view communication deliveries',
+    ])->group(function () {
+        Route::get('/', [PanelCommunicationDeliveryController::class, 'index'])->name('index');
+        Route::get('/{communicationDelivery}', [PanelCommunicationDeliveryController::class, 'show'])->name('show');
+        Route::get('/{communicationDelivery}/procesar', [PanelCommunicationDeliveryController::class, 'process'])
+            ->middleware(['permission:manage communication deliveries', 'password.confirm'])->name('process');
+        Route::post('/{communicationDelivery}/procesar', [PanelCommunicationDeliveryController::class, 'store'])
+            ->middleware(['permission:manage communication deliveries', 'password.confirm', 'throttle:panel-mutations'])->name('store');
     });
     Route::get('/cuenta', [AccountSecurityController::class, 'show'])->name('account');
     Route::prefix('cuenta/2fa')->name('account.two-factor.')->middleware('throttle:account-security')->group(function () {

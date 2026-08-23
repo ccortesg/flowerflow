@@ -224,7 +224,12 @@ class FinalizeSubmission
                     ? 'La propuesta quedó registrada administrativamente, pero no pudimos programar el aviso al participante.'
                     : 'Tu propuesta quedó registrada, pero no pudimos programar el correo de confirmación. Conserva el folio y vuelve a intentarlo desde la propuesta más tarde.';
 
-                $this->mailDispatcher->queue($owner, $mail, $warning);
+                $this->mailDispatcher->queue(
+                    $owner,
+                    $mail,
+                    $warning,
+                    'submission-finalized:'.$locked->public_id.':'.$mode->value.':'.$locked->submission_idempotency_key,
+                );
             });
 
             return $locked;

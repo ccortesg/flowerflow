@@ -21,11 +21,13 @@ export SESSION_DRIVER=database
 export CACHE_STORE=file
 export MAIL_MAILER=array
 export QUEUE_CONNECTION=sync
+export FLOWERFLOW_MAIL_QUEUE_CONNECTION=sync
 export FLOWERFLOW_REGISTRATION_ENABLED=true
 export FLOWERFLOW_SUBMISSIONS_ENABLED=true
 export FLOWERFLOW_PANEL_ENABLED=true
 export FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED=true
 export FLOWERFLOW_EVALUATION_ENABLED=true
+export FLOWERFLOW_COMMUNICATION_LEDGER_ENABLED=true
 export FLOWERFLOW_RESULTS_ENABLED=false
 export FLOWERFLOW_SUBMISSIONS_CLOSE_AT="${FLOWERFLOW_SUBMISSIONS_CLOSE_AT:-2026-08-23T23:59:59-07:00}"
 
@@ -62,7 +64,7 @@ fi
 php artisan permission:cache-reset >/dev/null
 
 php artisan tinker --execute='
-$requiredTables = ["roles", "permissions", "competitions", "categories", "legal_documents", "judge_profiles", "sessions"];
+$requiredTables = ["roles", "permissions", "competitions", "categories", "legal_documents", "judge_profiles", "communication_deliveries", "communication_delivery_attempts", "sessions"];
 $missingTables = array_values(array_filter(
     $requiredTables,
     static fn (string $table): bool => ! Illuminate\Support\Facades\Schema::hasTable($table),
@@ -88,6 +90,7 @@ $facts = [
     "panel_enabled" => config("flowerflow.flags.panel"),
     "admissibility_enabled" => config("flowerflow.flags.admissibility_review"),
     "evaluation_enabled" => config("flowerflow.flags.evaluation"),
+    "communication_ledger_enabled" => config("flowerflow.flags.communication_ledger"),
     "judge_role" => $db->table("roles")->where("name", "judge")->where("guard_name", "web")->count(),
     "judge_profiles" => $db->table("judge_profiles")->count(),
     "results_enabled" => config("flowerflow.flags.results"),
@@ -103,6 +106,7 @@ if (
     || $facts["panel_enabled"] !== true
     || $facts["admissibility_enabled"] !== true
     || $facts["evaluation_enabled"] !== true
+    || $facts["communication_ledger_enabled"] !== true
     || $facts["judge_role"] !== 1
     || $facts["results_enabled"] !== false
 ) {

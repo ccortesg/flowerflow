@@ -45,6 +45,7 @@ return [
         'evaluation' => env('FLOWERFLOW_EVALUATION_ENABLED', false),
         'submission_reminders' => env('FLOWERFLOW_SUBMISSION_REMINDERS_ENABLED', false),
         'administrative_finalization' => env('FLOWERFLOW_ADMIN_FINALIZATION_ENABLED', false),
+        'communication_ledger' => env('FLOWERFLOW_COMMUNICATION_LEDGER_ENABLED', false),
     ],
     'security' => [
         'enforce_strict_csp' => env('FLOWERFLOW_CSP_ENFORCE_STRICT', false),
@@ -106,5 +107,11 @@ return [
         'tries' => (int) env('FLOWERFLOW_MAIL_TRIES', 4),
         'timeout' => (int) env('FLOWERFLOW_MAIL_JOB_TIMEOUT', 30),
         'backoff' => [60, 300, 900],
+    ],
+    'communication_ledger' => [
+        'template_version' => 'v1',
+        'force_queue' => env('FLOWERFLOW_COMMUNICATION_FORCE_QUEUE', 'high'),
+        'stalled_after_minutes' => (int) env('FLOWERFLOW_COMMUNICATION_STALLED_AFTER_MINUTES', 5),
+        'failed_context_retention_days' => (int) env('FLOWERFLOW_COMMUNICATION_CONTEXT_FAILED_RETENTION_DAYS', 90),
     ],
 ];

@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureActiveJudge;
 use App\Http\Middleware\EnsureAdministrativeFinalizationEnabled;
 use App\Http\Middleware\EnsureAdmissibilityReviewEnabled;
+use App\Http\Middleware\EnsureCommunicationLedgerEnabled;
 use App\Http\Middleware\EnsureEvaluationEnabled;
 use App\Http\Middleware\EnsureExclusiveBusinessRole;
 use App\Http\Middleware\EnsurePanelEnabled;
@@ -33,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'submissions.open' => EnsureSubmissionsOpen::class,
             'submission-reminders.enabled' => EnsureSubmissionRemindersEnabled::class,
             'administrative-finalization.enabled' => EnsureAdministrativeFinalizationEnabled::class,
+            'communication-ledger.enabled' => EnsureCommunicationLedgerEnabled::class,
             'panel.enabled' => EnsurePanelEnabled::class,
             'admissibility.enabled' => EnsureAdmissibilityReviewEnabled::class,
             'evaluation.enabled' => EnsureEvaluationEnabled::class,

@@ -1,5 +1,7 @@
 # Especificación de producto — Flower Flow 2026
 
+> **Adenda de bitácora de comunicaciones — 2026-08-23, local/test:** el módulo administrativo centraliza exclusivamente las nueve familias de correo existentes. Sólo el rol exacto `admin` consulta la bitácora o solicita recuperación individual; no agrega campañas, evaluación, resultados, ganadores o marketing. El resultado SMTP se describe como aceptación del transporte, no entrega.
+
 > **Adenda de operaciones de recepción — 2026-08-22, sólo local/test:** el panel permite a `admin` exacto recordar drafts al propietario y registrar una finalización administrativa antes del cierre. El enlace recordatorio es temporal/firma/GET puro + POST con legales y permite omitir sólo el archivo. La excepción administrativa exige contenido mínimo, password reciente, confirmación y razón; crea snapshot explícito sin fabricar aceptaciones. Ambos flags nacen apagados. La exportación sigue privada/asíncrona en `database/exports` y añade diagnóstico read-only/alerta de estancamiento. Producción no fue modificada ni verificada.
 
 > **Estado vigente M6 — 2026-08-18:** M4A–M6 están `GO LOCAL/TEST`. M6 añade evaluación draft propia, revisión 1, cinco scores, total BCMath sólo servidor y lock optimista/409, conservando el paquete M5. El riesgo semántico continúa aceptado. M7–M10 permanecen no implementados/no autorizados.
@@ -198,6 +200,8 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 - **COM-002 — DECISION:** colas, idempotencia, reintentos y registro de resultado sin contenido sensible innecesario.
 - **COM-003 — DECISION:** usar `convocatoria@flowerflow.com.mx` como remitente o reply-to funcional y `privacidad@flowerflow.com.mx` para privacidad; credenciales SMTP permanecen pendientes y no deben inventarse.
 - **COM-004 — DECISION:** no construir marketing masivo sin consentimiento y alcance explícitos.
+- **COM-006 — VERIFIED LOCAL:** bitácora `/panel/notificaciones` para las nueve familias existentes; rol exacto `admin`, estados e intentos sin cuerpo/PII completa y `sent` presentado como aceptación del servidor de correo.
+- **COM-007 — VERIFIED LOCAL:** recuperación individual de `queued|failed|unknown` con revalidación en worker, lock optimista, contraseña reciente, razón cifrada y reconocimiento adicional de posible duplicado para `unknown`.
 - **PRV-001 — ASSUMPTION:** bandeja administrativa para solicitudes recibidas por correo o formulario, sin afirmar que sustituye revisión legal.
 - **PRV-002 — DECISION:** conservar evidencia de atención y cierre, con exportación, rectificación, retención y eliminación controladas.
 - **RPT-001 — DECISION:** reportes por categoría, estado, elegibilidad y evaluación, sujetos a permiso.

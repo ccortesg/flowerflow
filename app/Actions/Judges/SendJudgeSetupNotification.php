@@ -29,7 +29,8 @@ final class SendJudgeSetupNotification
             $sent = $this->mail->notify(
                 $profile->user,
                 new JudgeAccountSetupNotification($token),
-                'La cuenta se creó, pero no pudimos programar el correo de configuración. Puedes reintentarlo desde el detalle del juez.'
+                'La cuenta se creó, pero no pudimos programar el correo de configuración. Puedes reintentarlo desde el detalle del juez.',
+                'judge-setup:'.$profile->public_id.':'.hash('sha256', $token),
             );
 
             if (! $sent) {

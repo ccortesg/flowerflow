@@ -6,11 +6,13 @@ use App\Enums\SubmissionReminderBatchScope;
 use App\Enums\SubmissionReminderBatchStatus;
 use App\Enums\SubmissionReminderStatus;
 use App\Jobs\SendSubmissionDraftReminder;
+use App\Mail\SubmissionDraftReminder;
 use App\Models\Submission;
 use App\Models\SubmissionReminder;
 use App\Models\SubmissionReminderBatch;
 use App\Models\User;
 use App\Services\AuditLogger;
+use App\Services\ResilientMailDispatcher;
 use App\Services\SubmissionFinalizationEligibility;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +25,7 @@ final class QueueSubmissionReminders
         private SubmissionFinalizationEligibility $eligibility,
         private RefreshSubmissionReminderBatch $refreshBatch,
         private AuditLogger $auditLogger,
+        private ResilientMailDispatcher $mailDispatcher,
     ) {}
 
     public function execute(User $actor, ?Submission $target = null): SubmissionReminderBatch
@@ -121,7 +124,17 @@ final class QueueSubmissionReminders
 
         foreach ($batch->reminders()->pluck('id') as $reminderId) {
             try {
-                SendSubmissionDraftReminder::dispatch($reminderId);
+                if (config('flowerflow.flags.communication_ledger')) {
+                    $reminder = SubmissionReminder::query()->with('recipient')->findOrFail($reminderId);
+                    $this->mailDispatcher->queue(
+                        $reminder->recipient,
+                        new SubmissionDraftReminder($reminder),
+                        'El recordatorio quedó registrado, pero no pudimos programar su correo.',
+                        'submission-reminder:'.$reminder->public_id,
+                    );
+                } else {
+                    SendSubmissionDraftReminder::dispatch($reminderId);
+                }
             } catch (Throwable $exception) {
                 $reminder = SubmissionReminder::query()->find($reminderId);
                 if ($reminder) {
