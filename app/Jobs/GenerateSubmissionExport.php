@@ -2,9 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Enums\SubmissionExportKind;
 use App\Enums\SubmissionExportStatus;
 use App\Models\SubmissionExport;
 use App\Services\AuditLogger;
+use App\Services\SubmissionContactsWorkbookWriter;
 use App\Services\SubmissionWorkbookWriter;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -44,8 +46,11 @@ class GenerateSubmissionExport implements ShouldBeEncrypted, ShouldBeUnique, Sho
         return (string) $this->submissionExportId;
     }
 
-    public function handle(SubmissionWorkbookWriter $workbookWriter, AuditLogger $auditLogger): void
-    {
+    public function handle(
+        SubmissionWorkbookWriter $workbookWriter,
+        SubmissionContactsWorkbookWriter $contactsWorkbookWriter,
+        AuditLogger $auditLogger,
+    ): void {
         $export = SubmissionExport::query()->findOrFail($this->submissionExportId);
         if ($export->status === SubmissionExportStatus::Completed || $export->status === SubmissionExportStatus::Expired) {
             return;
@@ -63,8 +68,16 @@ class GenerateSubmissionExport implements ShouldBeEncrypted, ShouldBeUnique, Sho
         }
 
         try {
-            $counts = $workbookWriter->write($temporaryPath);
-            $fileName = 'flower-flow-propuestas-'.now(config('flowerflow.timezone'))->format('Ymd-His').'.xlsx';
+            $kind = $export->kind();
+            $counts = match ($kind) {
+                SubmissionExportKind::Full => $workbookWriter->write($temporaryPath),
+                SubmissionExportKind::SubmittedContacts => $contactsWorkbookWriter->write($temporaryPath),
+            };
+            $filePrefix = match ($kind) {
+                SubmissionExportKind::Full => 'flower-flow-propuestas-',
+                SubmissionExportKind::SubmittedContacts => 'flower-flow-contactos-enviados-',
+            };
+            $fileName = $filePrefix.now(config('flowerflow.timezone'))->format('Ymd-His').'.xlsx';
             $path = "submission-exports/{$export->public_id}/{$fileName}";
             $stream = fopen($temporaryPath, 'rb');
             if ($stream === false) {
@@ -94,6 +107,7 @@ class GenerateSubmissionExport implements ShouldBeEncrypted, ShouldBeUnique, Sho
                     ])->save();
 
                     $auditLogger->record('submission_export.completed', $export, $export->requestedBy, [
+                        'kind' => $export->kind()->value,
                         ...$counts,
                         'expires_at' => $export->expires_at?->utc()->toIso8601String(),
                     ]);
@@ -124,6 +138,7 @@ class GenerateSubmissionExport implements ShouldBeEncrypted, ShouldBeUnique, Sho
         ])->save();
 
         app(AuditLogger::class)->record('submission_export.failed', $export, $export->requestedBy, [
+            'kind' => $export->kindValueForAudit(),
             'failure_code' => class_basename($exception),
         ]);
     }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\SubmissionExportKind;
 use App\Enums\SubmissionExportStatus;
 use App\Jobs\GenerateSubmissionExport;
 use App\Models\AuditLog;
@@ -22,6 +23,7 @@ use OpenSpout\Common\Entity\Cell\FormulaCell;
 use OpenSpout\Reader\XLSX\Reader;
 use RuntimeException;
 use Tests\TestCase;
+use ValueError;
 use ZipArchive;
 
 class SubmissionExportTest extends TestCase
@@ -57,6 +59,8 @@ class SubmissionExportTest extends TestCase
 
         $export = SubmissionExport::query()->sole();
         $this->assertSame(SubmissionExportStatus::Completed, $export->status);
+        $this->assertSame(SubmissionExportKind::Full, $export->kind());
+        $this->assertSame(['kind' => 'full', 'statuses' => ['draft', 'submitted']], $export->filters);
         $this->assertSame(2, $export->proposal_count);
         $this->assertSame(2, $export->contact_count);
         $this->assertSame(1, $export->team_member_count);
@@ -87,6 +91,194 @@ class SubmissionExportTest extends TestCase
         $this->assertFalse($allValues->contains('1990-01-01'));
         $this->assertDatabaseHas('audit_logs', ['action' => 'submission_export.requested', 'actor_user_id' => $admin->id]);
         $this->assertDatabaseHas('audit_logs', ['action' => 'submission_export.completed', 'actor_user_id' => $admin->id]);
+    }
+
+    public function test_admin_can_generate_submitted_contacts_workbook_from_immutable_snapshots(): void
+    {
+        $this->draftProposal('Borrador excluido');
+        [$submitted] = $this->submittedProposal(
+            profile: [
+                'first_names' => '  María   José ',
+                'last_names' => "Núñez\nLópez  ",
+                'mobile_e164' => '+526621111111',
+                'whatsapp_opt_in' => true,
+                'birth_date' => '1990-01-01',
+                'neighborhood' => 'Centro snapshot',
+            ],
+            snapshotTitle: '=PROYECTO INMUTABLE',
+            snapshotDescription: "@Descripción inmutable\ncon Unicode: áéíóú",
+        );
+        $withdrawn = $this->proposalFor($this->participant(), 'Retirada excluida', 'withdrawn');
+        $submitted->forceFill([
+            'title' => 'Título vivo que no debe exportarse',
+            'description_text' => 'Descripción viva que no debe exportarse',
+        ])->save();
+        $submitted->user->forceFill(['email' => 'correo-vivo@example.test'])->save();
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get(route('panel.submissions.index', ['status' => 'draft']))
+            ->assertOk()
+            ->assertSeeInOrder(['Exportar a Excel', 'Exportar Contactos']);
+
+        $this->actingAs($admin)
+            ->withSession(['auth.password_confirmed_at' => time()])
+            ->get(route('panel.submissions.exports.contacts.create', ['status' => 'draft']))
+            ->assertOk()
+            ->assertSee('las <strong>1</strong> propuestas enviadas', false);
+
+        $this->actingAs($admin)
+            ->withSession(['auth.password_confirmed_at' => time()])
+            ->post(route('panel.submissions.exports.contacts.store'))
+            ->assertRedirect(route('panel.submissions.index'));
+
+        $export = SubmissionExport::query()->sole();
+        $this->assertSame(SubmissionExportStatus::Completed, $export->status);
+        $this->assertSame(SubmissionExportKind::SubmittedContacts, $export->kind());
+        $this->assertSame(['kind' => 'submitted_contacts', 'statuses' => ['submitted']], $export->filters);
+        $this->assertSame(1, $export->proposal_count);
+        $this->assertSame(1, $export->contact_count);
+        $this->assertSame(0, $export->team_member_count);
+        $this->assertSame(0, $export->file_count);
+        $this->assertSame(0, $export->external_link_count);
+        $this->assertMatchesRegularExpression('/^flower-flow-contactos-enviados-\d{8}-\d{6}\.xlsx$/', $export->file_name);
+        Storage::disk('exports')->assertExists($export->path);
+
+        $workbook = $this->readWorkbook(Storage::disk('exports')->path($export->path));
+        $this->assertSame(['Contactos'], array_keys($workbook));
+        $this->assertSame([
+            'Nombre completo',
+            'Correo electrónico',
+            'Teléfono de contacto',
+            'Nombre del proyecto',
+            'Descripción del proyecto',
+        ], array_map(fn (Cell $cell) => $cell->getValue(), $workbook['Contactos'][0]));
+        $this->assertSame([
+            'María José Núñez López',
+            'contacto.snapshot@example.test',
+            '+526621111111',
+            '=PROYECTO INMUTABLE',
+            "@Descripción inmutable\ncon Unicode: áéíóú",
+        ], array_map(fn (Cell $cell) => $cell->getValue(), $workbook['Contactos'][1]));
+        $this->assertCount(2, $workbook['Contactos']);
+
+        $sheetXml = $this->xlsxEntry(Storage::disk('exports')->path($export->path), 'xl/worksheets/sheet1.xml');
+        $this->assertStringContainsString('<autoFilter ref="A1:E2"', $sheetXml);
+        $this->assertStringContainsString('topLeftCell="A2"', $sheetXml);
+        $this->assertStringNotContainsString('<f>', $sheetXml);
+        $this->assertStringNotContainsString($withdrawn->title, $sheetXml);
+        $this->assertStringNotContainsString('Título vivo que no debe exportarse', $sheetXml);
+
+        $auditMetadata = AuditLog::query()
+            ->whereIn('action', ['submission_export.requested', 'submission_export.completed'])
+            ->pluck('metadata');
+        $this->assertTrue($auditMetadata->every(fn (array $metadata) => $metadata['kind'] === 'submitted_contacts'));
+        $encodedAudit = $auditMetadata->toJson(JSON_UNESCAPED_UNICODE);
+        $this->assertStringNotContainsString('contacto.snapshot@example.test', $encodedAudit);
+        $this->assertStringNotContainsString('PROYECTO INMUTABLE', $encodedAudit);
+    }
+
+    public function test_contacts_export_keeps_administrative_profile_absence_blank_and_labels_historical_exports(): void
+    {
+        $this->submittedProposal(profile: null);
+        $admin = $this->admin();
+        $historicalExport = $admin->submissionExports()->create([
+            'status' => SubmissionExportStatus::Queued,
+            'filters' => ['statuses' => ['draft', 'submitted']],
+            'disk' => 'exports',
+        ]);
+
+        $this->assertSame(SubmissionExportKind::Full, $historicalExport->kind());
+        $this->assertSame('Completa', $historicalExport->kindLabel());
+
+        $this->actingAs($admin)
+            ->withSession(['auth.password_confirmed_at' => time()])
+            ->post(route('panel.submissions.exports.contacts.store'))
+            ->assertRedirect(route('panel.submissions.index'));
+
+        $export = SubmissionExport::query()->whereKeyNot($historicalExport->id)->sole();
+        $workbook = $this->readWorkbook(Storage::disk('exports')->path($export->path));
+        $this->assertSame('', $workbook['Contactos'][1][0]->getValue());
+        $this->assertSame('contacto.snapshot@example.test', $workbook['Contactos'][1][1]->getValue());
+        $this->assertSame('', $workbook['Contactos'][1][2]->getValue());
+
+        $this->actingAs($admin)->get(route('panel.submissions.index'))
+            ->assertOk()
+            ->assertSee('Completa')
+            ->assertSee('Contactos enviados');
+    }
+
+    public function test_contacts_routes_require_existing_export_permission_and_recent_password(): void
+    {
+        $admin = $this->admin();
+        $reviewer = $this->reviewer();
+        $viewOnly = User::factory()->create();
+        $viewOnly->givePermissionTo(['view panel', 'view submissions']);
+
+        $this->get(route('panel.submissions.exports.contacts.create'))->assertRedirect(route('login'));
+        $this->actingAs($reviewer)->get(route('panel.submissions.exports.contacts.create'))->assertForbidden();
+        $this->actingAs($viewOnly)->get(route('panel.submissions.exports.contacts.create'))->assertForbidden();
+        $this->actingAs($admin)->get(route('panel.submissions.exports.contacts.create'))
+            ->assertRedirect(route('password.confirm'));
+        $this->actingAs($admin)->post(route('panel.submissions.exports.contacts.store'))
+            ->assertRedirect(route('panel.submissions.exports.contacts.create'));
+
+        $this->actingAs($reviewer)->get(route('panel.submissions.index'))
+            ->assertOk()
+            ->assertDontSee('Exportar Contactos');
+    }
+
+    public function test_contacts_export_fails_closed_for_invalid_or_unknown_snapshot_contracts(): void
+    {
+        $invalid = $this->proposalFor($this->participant(), 'Enviada sin snapshot', 'submitted', [
+            'folio' => 'HMO26-799999',
+            'submitted_at' => now('UTC'),
+        ]);
+        $admin = $this->admin();
+        $export = $admin->submissionExports()->create([
+            'status' => SubmissionExportStatus::Queued,
+            'filters' => ['kind' => 'submitted_contacts', 'statuses' => ['submitted']],
+            'disk' => 'exports',
+        ]);
+        $job = new GenerateSubmissionExport($export->id);
+
+        try {
+            $this->app->call([$job, 'handle']);
+            $this->fail('An invalid submitted snapshot must fail closed.');
+        } catch (RuntimeException $exception) {
+            $job->failed($exception);
+        }
+
+        $export->refresh();
+        $this->assertSame(SubmissionExportStatus::Failed, $export->status);
+        $this->assertSame('RuntimeException', $export->failure_code);
+        $this->assertNull($export->path);
+        $this->assertSame([], Storage::disk('exports')->allFiles());
+        $this->assertDatabaseMissing('audit_logs', ['metadata->proposal_id' => $invalid->id]);
+
+        $unknown = $admin->submissionExports()->create([
+            'status' => SubmissionExportStatus::Queued,
+            'filters' => ['kind' => 'not_allowlisted', 'statuses' => ['submitted']],
+            'disk' => 'exports',
+        ]);
+        $unknownJob = new GenerateSubmissionExport($unknown->id);
+
+        try {
+            $this->app->call([$unknownJob, 'handle']);
+            $this->fail('An unknown export kind must fail closed.');
+        } catch (ValueError $exception) {
+            $unknownJob->failed($exception);
+        }
+
+        $unknown->refresh();
+        $this->assertSame(SubmissionExportStatus::Failed, $unknown->status);
+        $this->assertSame('ValueError', $unknown->failure_code);
+        $this->assertSame('Desconocida', $unknown->kindLabel());
+        $unknownAudit = AuditLog::query()
+            ->where('action', 'submission_export.failed')
+            ->where('auditable_id', $unknown->id)
+            ->sole();
+        $this->assertSame(['kind' => 'unknown', 'failure_code' => 'ValueError'], $unknownAudit->metadata);
     }
 
     public function test_export_and_attachment_downloads_require_authentication_permissions_and_ownership(): void
@@ -190,7 +382,7 @@ class SubmissionExportTest extends TestCase
         $this->assertSame('RuntimeException', $export->failure_code);
         $this->assertDatabaseMissing('submission_exports', ['failure_code' => 'Synthetic secret must not persist']);
         $audit = AuditLog::query()->where('action', 'submission_export.failed')->sole();
-        $this->assertSame(['failure_code' => 'RuntimeException'], $audit->metadata);
+        $this->assertSame(['kind' => 'full', 'failure_code' => 'RuntimeException'], $audit->metadata);
     }
 
     public function test_queue_dispatch_failure_is_redacted_and_returns_an_actionable_warning(): void
@@ -252,8 +444,18 @@ class SubmissionExportTest extends TestCase
     }
 
     /** @return array{Submission, SubmissionFile} */
-    private function submittedProposal(): array
-    {
+    private function submittedProposal(
+        ?array $profile = [
+            'first_names' => 'Contacto Enviado',
+            'last_names' => 'Snapshot',
+            'mobile_e164' => '+526621111111',
+            'whatsapp_opt_in' => true,
+            'birth_date' => '1990-01-01',
+            'neighborhood' => 'Centro snapshot',
+        ],
+        string $snapshotTitle = 'Título inmutable enviado',
+        string $snapshotDescription = 'Descripción inmutable enviada',
+    ): array {
         $owner = $this->participant(['email' => 'submitted@example.test']);
         $teamModel = Team::query()->create([
             'owner_user_id' => $owner->id,
@@ -282,9 +484,9 @@ class SubmissionExportTest extends TestCase
                     'public_id' => $submission->public_id,
                     'folio' => $submission->folio,
                     'participation_type' => 'team',
-                    'title' => 'Título inmutable enviado',
+                    'title' => $snapshotTitle,
                     'summary' => 'Resumen inmutable enviado',
-                    'description_text' => 'Descripción inmutable enviada',
+                    'description_text' => $snapshotDescription,
                     'submitted_at' => $submission->submitted_at->toIso8601String(),
                 ],
                 'competition' => $competition->only(['public_id', 'slug', 'name']),
@@ -292,14 +494,7 @@ class SubmissionExportTest extends TestCase
                 'participant' => [
                     'public_id' => $owner->public_id,
                     'email' => 'contacto.snapshot@example.test',
-                    'profile' => [
-                        'first_names' => 'Contacto Enviado',
-                        'last_names' => 'Snapshot',
-                        'mobile_e164' => '+526621111111',
-                        'whatsapp_opt_in' => true,
-                        'birth_date' => '1990-01-01',
-                        'neighborhood' => 'Centro snapshot',
-                    ],
+                    'profile' => $profile,
                 ],
                 'team' => [
                     'name' => 'Equipo de snapshot',

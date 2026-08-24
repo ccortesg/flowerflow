@@ -128,6 +128,10 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
                 ->middleware('password.confirm')->name('submissions.exports.create');
             Route::post('/propuestas/exportaciones', [PanelSubmissionExportController::class, 'store'])
                 ->middleware('throttle:panel-mutations')->name('submissions.exports.store');
+            Route::get('/propuestas/exportaciones/contactos/nueva', [PanelSubmissionExportController::class, 'createContacts'])
+                ->middleware('password.confirm')->name('submissions.exports.contacts.create');
+            Route::post('/propuestas/exportaciones/contactos', [PanelSubmissionExportController::class, 'storeContacts'])
+                ->middleware('throttle:panel-mutations')->name('submissions.exports.contacts.store');
             Route::get('/propuestas/exportaciones/{submissionExport}/descargar', [PanelSubmissionExportController::class, 'download'])
                 ->middleware('password.confirm')->name('submissions.exports.download');
         });

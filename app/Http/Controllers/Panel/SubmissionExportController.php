@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Panel;
 
+use App\Enums\SubmissionExportKind;
 use App\Enums\SubmissionExportStatus;
 use App\Http\Controllers\Controller;
 use App\Jobs\GenerateSubmissionExport;
@@ -27,24 +28,59 @@ class SubmissionExportController extends Controller
         ]);
     }
 
+    public function createContacts(): View
+    {
+        $this->authorize('create', SubmissionExport::class);
+
+        return view('panel.submissions.exports.contacts-create', [
+            'proposalCount' => Submission::query()->where('status', 'submitted')->count(),
+        ]);
+    }
+
     public function store(Request $request, AuditLogger $auditLogger): RedirectResponse
     {
+        return $this->storeExport($request, $auditLogger, SubmissionExportKind::Full);
+    }
+
+    public function storeContacts(Request $request, AuditLogger $auditLogger): RedirectResponse
+    {
+        return $this->storeExport($request, $auditLogger, SubmissionExportKind::SubmittedContacts);
+    }
+
+    private function storeExport(
+        Request $request,
+        AuditLogger $auditLogger,
+        SubmissionExportKind $kind,
+    ): RedirectResponse {
         $this->authorize('create', SubmissionExport::class);
         $confirmedAt = (int) $request->session()->get('auth.password_confirmed_at', 0);
         if ($confirmedAt < time() - (int) config('auth.password_timeout', 10800)) {
-            return redirect()->route('panel.submissions.exports.create')
+            $confirmationRoute = $kind === SubmissionExportKind::Full
+                ? 'panel.submissions.exports.create'
+                : 'panel.submissions.exports.contacts.create';
+
+            return redirect()->route($confirmationRoute)
                 ->with('warning', 'Confirma nuevamente tu contraseña antes de generar la exportación.');
         }
 
-        $export = DB::transaction(function () use ($request, $auditLogger): SubmissionExport {
+        $statuses = match ($kind) {
+            SubmissionExportKind::Full => ['draft', 'submitted'],
+            SubmissionExportKind::SubmittedContacts => ['submitted'],
+        };
+
+        $export = DB::transaction(function () use ($request, $auditLogger, $kind, $statuses): SubmissionExport {
             $export = $request->user()->submissionExports()->create([
                 'status' => SubmissionExportStatus::Queued,
-                'filters' => ['statuses' => ['draft', 'submitted']],
+                'filters' => [
+                    'kind' => $kind->value,
+                    'statuses' => $statuses,
+                ],
                 'disk' => config('flowerflow.exports.disk'),
             ]);
 
             $auditLogger->record('submission_export.requested', $export, $request->user(), [
-                'statuses' => ['draft', 'submitted'],
+                'kind' => $kind->value,
+                'statuses' => $statuses,
             ]);
 
             return $export;
@@ -59,6 +95,7 @@ class SubmissionExportController extends Controller
                 'failure_code' => class_basename($exception),
             ])->save();
             $auditLogger->record('submission_export.failed', $export, $request->user(), [
+                'kind' => $kind->value,
                 'failure_code' => class_basename($exception),
             ]);
             report($exception);
@@ -79,6 +116,7 @@ class SubmissionExportController extends Controller
         abort_unless(Storage::disk($submissionExport->disk)->exists($submissionExport->path), 404);
 
         $auditLogger->record('submission_export.downloaded', $submissionExport, $request->user(), [
+            'kind' => $submissionExport->kindValueForAudit(),
             'proposal_count' => $submissionExport->proposal_count,
         ]);
 

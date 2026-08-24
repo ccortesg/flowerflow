@@ -18,6 +18,9 @@
       <a class="btn btn-flower" href="{{ route('panel.submissions.exports.create') }}">
         <i class="ri-file-excel-2-line me-1" aria-hidden="true"></i> Exportar a Excel
       </a>
+      <a class="btn btn-outline-success" href="{{ route('panel.submissions.exports.contacts.create') }}">
+        <i class="ri-contacts-book-3-line me-1" aria-hidden="true"></i> Exportar Contactos
+      </a>
     @endcan
   </div>
 </div>
@@ -114,11 +117,12 @@
       <p class="text-muted">Cada archivo permanece disponible durante {{ config('flowerflow.exports.retention_hours') }} horas y sólo puede descargarlo quien lo solicitó.</p>
       <div class="table-responsive">
         <table class="table align-middle mb-0">
-          <thead><tr><th>Solicitud</th><th>Estado</th><th>Propuestas</th><th>Vigencia</th><th></th></tr></thead>
+          <thead><tr><th>Solicitud</th><th>Tipo</th><th>Estado</th><th>Propuestas</th><th>Vigencia</th><th></th></tr></thead>
           <tbody>
           @forelse($exports as $export)
             <tr>
               <td>{{ $export->created_at->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i') }}</td>
+              <td>{{ $export->kindLabel() }}</td>
               <td>{{ $export->status->label() }}</td>
               <td>{{ $export->proposal_count }}</td>
               <td>{{ $export->expires_at?->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i') ?: '—' }}</td>
@@ -133,7 +137,7 @@
               </td>
             </tr>
           @empty
-            <tr><td colspan="5">Aún no has generado exportaciones.</td></tr>
+            <tr><td colspan="6">Aún no has generado exportaciones.</td></tr>
           @endforelse
           </tbody>
         </table>

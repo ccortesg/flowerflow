@@ -1,5 +1,7 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+> **Adenda de exportación de contactos — 2026-08-24:** extensión local/test del ADR 0007 sobre baseline `9df0828a41733cd0b35128f71698fee6f3cfd1ab`; no añade migraciones, permisos, dependencias, workers ni acceso productivo.
+
 > **Adenda de trazabilidad de comunicaciones — 2026-08-23:** milestone independiente local/test con ADR-0009, sin producción, SMTP real, M7/M8, campañas o resultados.
 
 > **Adenda de trazabilidad del panel — 2026-08-22:** este milestone local parte de `bffc7d7f4738e0937b276ea9d5d22e3744afe65c`; no altera M1–M6, M7–M10, PDFs jurídicos ni producción.
@@ -12,6 +14,7 @@
 | PANEL-REM-003 | GET firmado puro; POST sin login y sin archivo exige firma/CSRF/legales/plazo | rutas/controlador/eligibilidad/finalización modo `signed_reminder` y pruebas negativas | VERIFIED local/test |
 | PANEL-ADM-001 | Envío administrativo con mínimo, password, confirmación/razón y cero aceptaciones ajenas | request/policy/action/snapshot/event/audit/mail y `AdministrativeSubmissionFinalizationTest` | VERIFIED local/test |
 | PANEL-EXP-001 | Export sigue asíncrono/privado; diagnóstico read-only y alerta por espera | `DiagnoseSubmissionExports`, índice y `SubmissionExportTest` | VERIFIED local/test; entorno observado POR_CONFIRMAR |
+| PANEL-EXP-002 | Exportar una fila por propuesta enviada con contacto y proyecto inmutables | `SubmissionExportKind`, `SubmissionContactsWorkbookWriter`, rutas/UI y `SubmissionExportTest` | VERIFIED local/test dirigido; gate completo en ExecPlan |
 | PANEL-OPS-001 | Flags default-off y rollback que preserva evidencia | config/env/migración fail-closed/ExecPlan | VERIFIED local/test |
 
 > **Contrato vigente M6 — 2026-08-18:** M4A conserva cuatro principales y dos sustitutos ilimitados; M5 aporta la proyección ciega y M6 el borrador/cálculo servidor con lock optimista. M7–M10 permanecen no implementados/no autorizados.
