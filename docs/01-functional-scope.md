@@ -1,5 +1,7 @@
 # Alcance funcional — Flower Flow 2026
 
+> **Contrato vigente M7 — 2026-08-24, local/test:** el juez confirma una evaluación completa con comentario general Unicode-trimmed de 100–2,000 caracteres; el servidor recalcula BCMath y sella la revisión vigente como inmutable. Un `admin` autorizado puede reabrir sólo la revisión enviada actual antes de las 20:00:00 Hermosillo, creando una copia append-only; juez o admin pueden editar/reenviar esa nueva revisión hasta 23:59:59. El juez sujeto nunca cambia y el usuario administrativo real queda persistido. No hay correos M8, consolidación, ranking o resultados. `NO-GO RELEASE/PRODUCTION — OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED`.
+
 > **Contrato vigente M6A — 2026-08-24, local/test:** el alta de juez puede emitir un enlace purpose-bound que configura contraseña y verifica el mismo correo en un único POST; el reset genérico no verifica. Las asignaciones son exclusivamente manuales por `admin`, sin mínimo ni máximo y sin restricciones operativas por `primary|substitute`; cancelar y reemplazar siempre requiere acción explícita. La rúbrica activa v2 conserva los cuatro criterios de la Mecánica con ponderación neutral 25 % y M6 usa dinámicamente cuatro o cinco criterios según la versión fijada. M7–M10 siguen fuera. La excepción frente a “al menos tres jueces” se registra `OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED`: `NO-GO RELEASE/PRODUCTION`.
 
 > **Adenda operativa del panel — 2026-08-22, sólo local/test:** el listado de propuestas incorpora `Acciones`. Sólo el rol exacto `admin`, mediante permisos separados y flags apagados por defecto, puede enviar recordatorios al propietario de un borrador o registrar una excepción administrativa. El recordatorio abre una confirmación temporal firmada; su GET no escribe y el POST exige las tres aceptaciones vigentes, contenido mínimo y plazo abierto, pero permite omitir el archivo. La excepción administrativa exige contraseña reciente, confirmación y razón de 20–1,000 caracteres; no crea aceptaciones en nombre del participante. `reviewer` conserva lectura. No se modificaron PDFs, hashes ni aceptaciones históricas y no existe autorización productiva.
@@ -14,7 +16,7 @@
 
 > **Adenda funcional histórica de categoría, resuelta 2026-08-18:** la implementación opera con cuatro categorías activas y ordenadas y máximo cuatro propuestas, una por categoría. La plataforma conserva sus descripciones actuales; la referencia adicional a accesibilidad en Movilidad dentro de la Mecánica v1.1 fue aceptada por el propietario y no produce recategorización.
 
-> **Sustitución parcial aprobada, 2026-07-15 (histórica):** Fase 01 implementó sitio público, auth, perfil, borradores/envío, archivos y panel mínimo. La adenda Fase 02A autorizó después admisibilidad. El estado vigente posterior añade M1–M6 locales; el envío final de evaluación, ganadores y resultados continúan sin implementar.
+> **Sustitución parcial aprobada, 2026-07-15 (histórica):** Fase 01 implementó sitio público, auth, perfil, borradores/envío, archivos y panel mínimo. La adenda Fase 02A autorizó después admisibilidad. El estado vigente posterior añade M1–M7 locales; consolidación, ganadores y resultados continúan sin implementar.
 
 ## Contrato Fase 01 vigente
 

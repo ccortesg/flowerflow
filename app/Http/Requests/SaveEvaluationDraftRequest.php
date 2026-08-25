@@ -55,6 +55,7 @@ class SaveEvaluationDraftRequest extends FormRequest
             'lock_version' => ['required', 'integer', 'min:0'],
             'general_comment' => ['present', 'nullable', 'string', 'max:2000'],
             'criteria' => ['present', 'array', 'max:'.$criterionCount],
+            'intent' => ['sometimes', 'string', 'in:save,review'],
             'criteria.*' => ['required', 'array:code,score,comment'],
             'criteria.*.code' => ['required', 'string'],
             'criteria.*.score' => [
@@ -75,7 +76,7 @@ class SaveEvaluationDraftRequest extends FormRequest
     public function after(): array
     {
         return [function (Validator $validator): void {
-            if (array_diff(array_keys($this->all()), ['_token', '_method', 'lock_version', 'general_comment', 'criteria']) !== []) {
+            if (array_diff(array_keys($this->all()), ['_token', '_method', 'lock_version', 'general_comment', 'criteria', 'intent']) !== []) {
                 $validator->errors()->add('evaluation', 'El borrador contiene campos no autorizados.');
             }
 

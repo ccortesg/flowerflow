@@ -2,6 +2,7 @@
 
 namespace App\Actions\Evaluations;
 
+use App\Enums\EvaluationRevisionStatus;
 use App\Enums\EvaluationStatus;
 use App\Exceptions\EvaluationDraftRejected;
 use App\Models\Evaluation;
@@ -53,10 +54,11 @@ final class OpenEvaluationDraft
                 $revision->forceFill([
                     'evaluation_id' => $evaluation->id,
                     'revision_number' => 1,
-                    'status' => EvaluationStatus::Draft->value,
+                    'status' => EvaluationRevisionStatus::Draft->value,
                     'general_comment' => null,
                     'total_raw' => null,
                     'source_revision_id' => null,
+                    'subject_judge_profile_id' => $context['profile']->id,
                     'created_by_user_id' => $actor->id,
                     'last_saved_by_user_id' => $actor->id,
                 ])->save();

@@ -1,12 +1,14 @@
 # Diagnóstico vigente por módulo y rol — 2026-08-17
 
+> **Adenda M7 — validación final 2026-08-25:** el corte vigente local incorpora confirmación del juez, comentario mínimo, sellado inmutable, historial y reapertura administrativa append-only con actor real. El panel admin añade Evaluaciones; el juez ve enviado sólo lectura y reapertura genérica. Resultado final: 208 pruebas/2,385 aserciones, 23 migraciones, 104 rutas y UAT Firefox verde. M8–M10 y producción permanecen fuera; la divergencia “al menos tres jueces” sigue bloqueando release.
+
 > **Adenda M6A — 2026-08-24:** el corte histórico inferior queda superado para operaciones de jueces. El árbol local parte de `d3f616c…` y reconcilia setup inicial, asignación manual sin mínimos/límites, rúbrica v2 de cuatro criterios y UX juez; v1/4+2/cinco criterios permanecen sólo como historia o evidencia fijada. No existe autorización productiva y la divergencia “al menos tres jueces” impone `NO-GO RELEASE/PRODUCTION`.
 
-**Corte de evidencia:** 2026-08-18 MST (`America/Hermosillo`)
+**Corte de evidencia canónico:** 2026-08-25 MST (`America/Hermosillo`)
 
 **Checkout:** `/home/ccortesg/workspace/flowerflow`
 
-**Rama/SHA auditados:** `codex/submission-deadline-extension` / `e4e4cd2ff7144cce5f9385f5f11c122cda80e7b8` (baseline M6; diff M6 local no publicado por esta tarea)
+**Rama/SHA auditados:** `codex/submission-deadline-extension` / `8da3ed0cb19e3548380ca0732db11d3d205e4612` (baseline M7; diff M7 local no publicado por esta tarea)
 **Naturaleza:** auditoría local de código, documentación y configuración. El propietario confirmó la instalación productiva de los cambios actuales, pero no vinculó esa instalación a un SHA verificable.
 
 **Estado productivo informado:** `OWNER_CONFIRMED_DEPLOYED`
@@ -25,28 +27,28 @@ Este documento es la fuente vigente para responder “qué existe hoy”. Los do
 
 | Lectura | Avance | Interpretación correcta |
 |---|---:|---|
-| Producto maestro completo | **70 %** | M6 cierra borrador/cálculo; faltan envío/reapertura, consolidación, ganadores/resultados, ARCO y operación productiva verificada. |
-| Alcance local expresamente aprobado | **100 %** | Fase 01/02A, jurídicos v1.1 y M1–M6 están conformes; M7 continúa fuera de este alcance. |
-| Runtime aislado del release candidate | **100 %** | Guard/base correctos, 19 migraciones, M4A–M6, suite completa y UAT local verdes. |
+| Producto maestro completo | **70 %** | M7 cierra envío/reapertura; faltan M8–M10, consolidación, ganadores/resultados, ARCO y operación productiva verificada. |
+| Alcance local expresamente aprobado | **100 %** | Fase 01/02A, jurídicos v1.1 y M1–M7 están conformes; M8–M10 continúan fuera. |
+| Runtime aislado del release candidate | **100 %** | Guard/base correctos, 23 migraciones, M5–M7, suite completa y UAT local verdes. |
 | Disponibilidad del runtime local primario | **42 %** | Se preservó sin tocarlo: el baseline previo tenía registro/recepción/admisibilidad apagados, cuatro migraciones funcionales pendientes y límite local de tres; el árbol agrega además la migración v1.1. No es el runtime autoridad del RC. |
 | Preparación técnica independiente de la rama para producción | **34 %** | Sin cambio: hay código, documentos v1.1, suite y UAT local, pero no evidencia independiente de SHA/migraciones/flags, worker/scheduler, SMTP, integridad, smoke, capacidad o monitoreo productivos. |
 | Paso de instalación productiva informado por el propietario | **100 % testimonial** | `OWNER_CONFIRMED_DEPLOYED`: el propietario confirma instalación y más de 50 propuestas reales. No se incorpora al porcentaje funcional ni sustituye evidencia técnica. |
 | Verificación técnica independiente de producción en esta tarea | **0 %** | No hubo acceso a URL pública, AWS, EC2, SSH/SSM, APIs, MySQL, logs o servicios externos; `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`. |
 
-La cifra maestra usa el contrato vigente hasta M6. El 100 % local mide exclusivamente el alcance autorizado hasta M6; la confirmación productiva previa no acredita M1–M6 ni aumenta envío final, ganadores o resultados.
+La cifra maestra usa el contrato vigente hasta M7. El 100 % local mide exclusivamente el alcance autorizado hasta M7; la confirmación productiva previa no acredita M1–M7 ni aumenta consolidación, ganadores o resultados.
 
 ## Evidencia verificada en este corte
 
-- Baseline M6 confirmado limpio en rama `codex/submission-deadline-extension`; `HEAD`, remoto y ancestro común coincidían en `e4e4cd2ff7144cce5f9385f5f11c122cda80e7b8` antes de editar.
+- Baseline M7 confirmado limpio en rama `codex/submission-deadline-extension`; `HEAD`, remoto y ancestro común coincidían en `8da3ed0cb19e3548380ca0732db11d3d205e4612` antes de editar.
 - El propietario confirma el 2026-08-18 que los cambios actuales fueron instalados, la plataforma sigue publicada y contiene más de 50 propuestas reales: `OWNER_CONFIRMED_DEPLOYED`. Codex no obtuvo evidencia productiva independiente y conserva `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`.
 - Stack efectivo: Laravel 12.64.0, PHP 8.3.33, Node 22.23.1, Yarn 1.22.22 y MySQL client 8.0.46.
-- 73 rutas propias al excluir rutas de paquetes; M6 añade POST/PATCH de borrador y conserva GET puro.
-- `flowerflow_testing`: 19/19 migraciones; M6 pasó forward/rollback/forward y rechazó rollback con evidencia.
-- Suite completa 163/1,937; M1–M6 dirigidas 54/888 y M6 final 13/228 verdes. Evidencia en `docs/24-phase-02b-m6-draft-evaluation-implementation-report-2026-08-18.md`.
+- 104 rutas propias al excluir rutas de paquetes; M7 añade confirmación/envío juez y listado, reapertura, edición y reenvío administrativos con GET puros.
+- `flowerflow_testing`: 23/23 migraciones; M7 pasó forward/rollback/forward y rechazó rollback preservando evidencia enviada.
+- Suite completa 208/2,385; M5–M7 dirigidas 60/847 y M7 final 5/165 verdes. Evidencia en `docs/28-phase-02b-m7-evaluation-submission-reopening-report-2026-08-24.md`.
 - Pint, Composer validate, requisitos de plataforma, Composer audit, JSON de menús y build Vite: verdes.
 - Build: 784 módulos y tres assets; catálogo de 98 iconos verificado.
 - Yarn: un advisory **bajo** en Quill 2.0.3 (`GHSA-v3m3-f69x-jf25`), sin versión corregida publicada. La sanitización servidor reduce el vector, pero no elimina la deuda de dependencia.
-- UAT Firefox M6: apertura, parcial/completo, refresh, total servidor 75.25, dos pestañas/409, XSS, vencimiento, conflicto, replacement independiente, IDOR/404 y tres viewports; teclado/foco/zoom/reflow/consola limpios.
+- UAT Firefox M7: confirmación, mínimo 100, sellado, sólo lectura, reaperturas 2/3/4, edición y reenvío por juez/admin, actor real, aviso diferenciado, dos pestañas/409, XSS, IDOR/403/404 y tres viewports; teclado/foco/zoom/reflow/consola limpios.
 - Scheduler de código: sólo purga horaria de XLSX. Se validó manualmente su comando en local; la ejecución real mediante cron/worker externo no fue verificada.
 
 ## Cómo se calcularon los porcentajes
@@ -145,7 +147,7 @@ El runtime aislado valida cuatro propuestas y rechaza la quinta. El `.env` prima
 | Exportación XLSX privada | 97 % | Cinco hojas, snapshots, links autenticados, ownership/password, UAT de generación/descarga/expiración/purga. | Worker/scheduler real y prueba de volumen externa. |
 | Auditoría consultable | 35 % | Los eventos y `audit_logs` existen y son inmutables. | Rol/vista/búsqueda/export redactado para auditor. |
 | Excepciones/reapertura | 10 % | Idempotencia de transiciones finales, sin flujo de reapertura. | Permisos, motivos, eventos, UI y notificación. |
-| Asignación y paquetes de jueces | 100 % | `/panel/asignaciones` y `/panel/paquetes-ciegos`, cobertura `4+2`, conflicto/reemplazo, activación explícita y auditoría local. | Reportes y operación productiva acreditada. |
+| Asignación y paquetes de jueces | 100 % | `/panel/asignaciones` y `/panel/paquetes-ciegos`, selección manual sin mínimos/límites, conflicto/reemplazo explícito, activación de paquete sin cobertura mínima y auditoría local. | Reportes y operación productiva acreditada. |
 
 ### 6. Legal, contenido y configuración — 84 %
 
@@ -165,14 +167,14 @@ El runtime aislado valida cuatro propuestas y rechaza la quinta. El `.env` prima
 | Rol, permiso y exclusividad M1 | 100 % | Migración/seeder idempotentes; `AssignExclusiveBusinessRole`; admin no hereda el permiso exclusivo. | Reutilizar el contrato en todo escritor futuro. |
 | Gates, redirección y shell mínimo M1 | 100 % | Participant/panel/judge separados; cero/multirol fail-closed; `/juez` vacío detrás de flag. | Mantener invariantemente en M4+. |
 | Perfil y alta directa M2/M4A | 100 % | Cuenta/estados/seguridad verdes; capacidad derivada/check son `NULL` para ambos roles. | Operación productiva no acreditada; no auto-crear seis cuentas. |
-| Rúbrica M3 | 100 % | `rubric_versions`/`rubric_criteria`, contrato exacto, permisos admin, v1 draft local/testing, activación/sustitución, inmutabilidad, concurrencia, auditoría y UAT. | Operación productiva no acreditada; consumo por juez pertenece a M5/M6. |
-| Asignaciones/conflictos M4/M4A | 100 % | Flujo append-only, permisos, locks, `4+2`, selección manual y capacidad ilimitada verdes local/test. | Mantener regresión; definir por separado cadena de conflicto de replacement. |
+| Rúbrica M3/M6A | 100 % | V1 histórica de cinco criterios y v2 activa de cuatro×25 %, permisos admin, activación/sustitución, inmutabilidad, concurrencia, auditoría y UAT. | Operación productiva no acreditada. |
+| Asignaciones/conflictos M4/M6A | 100 % | Flujo append-only, permisos, locks, selección administrativa manual sin mínimos/máximos, roles informativos y cadenas explícitas verdes local/test. | Mantener regresión y reconciliar el mínimo jurídico antes de release. |
 | Paquete ciego y anexos M5 | 100 % | Paquete único por versión, payload allowlist/hash, inventario neutro, activación explícita, Policy por asignación, integridad en descarga, canarios y concurrencia verdes. | Acreditar operación productiva sólo mediante tarea autorizada; conservar riesgo semántico aceptado. |
 | Evaluación en borrador/cálculo M6 | 100 % | Agregado/revisión/scores, apertura explícita, guardado parcial, total BCMath, lock 409, plazo, auditoría y UAT. | Operación productiva no acreditada. |
-| Envío/reapertura M7 | 0 % | No existen confirmación, `submitted`, reapertura ni revisión posterior. | Milestone separado/no autorizado; preservar historia append-only. |
+| Envío/reapertura M7 | 100 % local/test | Confirmación, mínimo 100, `submitted` inmutable, reapertura/reenvío append-only, actor real, ventanas y 409 verificados. | M8, operación productiva y reconciliación jurídica. |
 | Notificaciones/QA/RC M8–M10 | 0 % | Sólo contrato documental. | Implementar y validar por milestone. |
 
-M5 da acceso únicamente a contenido allowlist y M6 permite un borrador propio sin envío. `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` permanecen resueltos; M7 requiere autorización separada.
+M5 da acceso únicamente a contenido allowlist, M6 permite borrador/cálculo y M7 sella/reabre sin alterar fuentes. La operación vigente M6A no exige cobertura mínima; la contradicción jurídica permanece abierta y bloquea release. M8–M10 requieren autorización separada.
 
 ### 8. Ganadores y resultados públicos — 0 %
 
@@ -187,7 +189,7 @@ Pendientes: empate, categoría desierta, premio exacto, datos publicables, conse
 | Verificación/reset | 90 % | HTML/texto en español, cola cifrada, retries y respuesta resiliente. | SMTP/entregabilidad y operación de fallos real. |
 | Acuse de propuesta | 90 % | Folio/categoría, sin adjuntos, reenvío limitado y post-commit. | Métrica de entrega e idempotencia operativa por evento. |
 | Admisibilidad | 90 % | Cinco variantes, sin contenido sensible, sin rollback ante falla y UAT con correo array. | Worker/SMTP, rebotes y buzón staging. |
-| Alta/asignaciones/evaluación/resultados | 0 % | La alta existe; asignaciones/evaluación/resultados no. Las invitaciones de juez fueron descartadas. | Implementar por milestone; M4 ya tiene contrato de capacidad, pero no autorización. |
+| Alta/asignaciones/evaluación/resultados | 75 % local/test | Alta purpose-bound, notificación opcional, asignación manual, borrador y envío/reapertura existen; resultados no. | M8–M10, SMTP/operación productiva y resultados autorizados. |
 | Comunicaciones administrativas | 10 % | Sólo mailto/contacto; no hay módulo. | Permisos, plantillas, audiencia, auditoría y anti-duplicado. |
 
 ### 10. Reportes, auditoría y privacidad — 42 %
@@ -205,7 +207,7 @@ Pendientes: empate, categoría desierta, premio exacto, datos publicables, conse
 
 | Funcionalidad principal | Avance | Estado/evidencia | Falta para 100 % |
 |---|---:|---|---|
-| Pruebas automatizadas locales | 99 % | 163/1,937, MySQL protegido, legales v1.1, 503/CSP, M1–M6, permisos, decimales, fechas y concurrencia. | Cobertura de M7–M10 y CI permanente. |
+| Pruebas automatizadas locales | 99 % | 208/2,385, MySQL protegido, legales v1.1, M1–M7, permisos, decimales, fechas, inmutabilidad y concurrencia. | Cobertura de M8–M10 y CI permanente. |
 | QA navegador | 95 % | UAT Firefox actual por cuatro roles, tres viewports, teclado/foco/zoom, IDOR, 2FA, XLSX y cierre. | Matriz multi-browser permanente y UAT firmada por owner. |
 | Dependencias/build | 90 % | Locks, build reproducible, Composer limpio. | Resolver Quill bajo y automatizar el gate en CI. |
 | Staging/producción actual | 10 % | `OWNER_CONFIRMED_DEPLOYED` acredita testimonialmente la instalación; no existe evidencia técnica independiente del SHA, migraciones, flags o smoke. | Evidencia separada de SHA/runtime, integridad, smoke/UAT por rol, servicios y monitoreo. |
@@ -214,16 +216,16 @@ Pendientes: empate, categoría desierta, premio exacto, datos publicables, conse
 
 ## Estado por rol de usuario
 
-El seeder actual crea `participant`, `reviewer`, `judge` y `admin`. `judge` sólo tiene el permiso mínimo de shell y no se crean cuentas juez automáticamente; los demás actores del plan maestro no son cuentas operables.
+El seeder actual crea `participant`, `reviewer`, `judge` y `admin`, con permisos M1–M7 según rol; no crea cuentas juez ni asignaciones automáticamente. Los demás actores del plan maestro no son cuentas operables.
 
 | Rol planificado | Avance funcional | Disponibilidad local actual | Acceso que sí existe | Pendientes para acceso completo |
 |---|---:|---:|---|---|
 | Visitante | 90 % | 96 % | Landing, cuatro categorías, FAQ, documentos v1.1, login, recuperación y registro UAT. | Resultados fuera de alcance, sitemap/OG y decisiones jurídicas residuales. |
 | Participante | 82 % | 96 % | Auth, verificación controlada, perfil, cuatro propuestas, archivo privado, envío/folio, aceptaciones v1.1 y seguimiento de admisibilidad. | Corrección versionada, retiro, colaboración por cuentas y resultados futuros. |
 | Revisor de elegibilidad | 90 % | 96 % | Panel, listado/detalle/descargas, aclaración, residencia, resolución y aislamiento de nota interna verificados. | Reapertura/SLA, 2FA obligatoria y password confirmation ampliada. |
-| Administrador de convocatoria | 86 % | 96 % | Gestiona jueces, rúbrica, cobertura `4+2`, conflictos y paquetes ciegos por propuesta. | M7+, resultados y operación productiva acreditada. |
+| Administrador de convocatoria | 90 % | 98 % | Gestiona jueces, rúbrica v2, asignación manual sin mínimos, conflictos, paquetes y reapertura/reenvío con actor real. | M8–M10, resultados y operación productiva acreditada. |
 | Integrante de equipo | 5 % | 0 % | Se guarda como fila dentro del equipo, sin identidad propia. | Invitación, cuenta, aceptación, permisos, acceso y baja. |
-| Juez | 78 % | 88 % con flag test | Cuenta/perfil, asignaciones, paquete propio y evaluación draft con cálculo servidor/409; sustitutos sólo reciben reemplazos. | Envío/reapertura M7, M8/M10 y operación productiva. |
+| Juez | 90 % | 98 % con flags test | Cuenta/perfil, asignaciones manuales sin límite, paquete propio, borrador, cálculo, confirmación, envío sólo lectura y reenvío tras reapertura. | M8/M10 y operación productiva. |
 | Soporte de privacidad | 0 % | 0 % | Ninguno. | Rol/permisos y módulo ARCO aprobado. |
 | Auditor | 10 % | 0 % | Existen datos de auditoría, no acceso dedicado. | Rol read-only, UI, scopes, masking y export. |
 | Superadministrador | 32 % | 25 % | Comando seguro de admin, RBAC base y 2FA opcional. | Rol diferenciado, gestión de permisos/configuración, 2FA obligatoria, password confirm, break-glass y auditoría reforzada. |
@@ -358,7 +360,7 @@ No hagas stage, commit, push ni despliegue. No toques EC2, DNS, TLS, SMTP real, 
 
 ## Prompt histórico M5 — milestone ejecutado
 
-M5 verificó M4A `4+2`, capacidad `NULL` y selección manual, e implementó paquete ciego/allowlist/descargas. Se conserva como historia; M6 fue el milestone posterior y M7 sigue no autorizado.
+M5 verificó el contrato histórico M4A `4+2`, capacidad `NULL` y selección manual, e implementó paquete ciego/allowlist/descargas. Se conserva como historia; M6, M6A y M7 fueron milestones posteriores y M8 sigue no autorizado.
 
 ## Prompt histórico ejecutado — Milestone 3
 

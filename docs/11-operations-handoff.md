@@ -1,5 +1,7 @@
 # Handoff operativo vigente — Flower Flow
 
+> **M7 `GO LOCAL/TEST` — validación final 2026-08-25:** añade `FLOWERFLOW_EVALUATION_FINALIZATION_ENABLED=false` y `FLOWERFLOW_EVALUATION_REOPEN_CLOSE_AT="2026-08-27 20:00:00"`; conserva cierre de evaluación `2026-08-27 23:59:59`. La migración 23 amplía estados/revisiones, hace backfill del juez sujeto y crea reaperturas. Suite final 208/2,385, 23 migraciones, 104 rutas y UAT Firefox verdes. Rollback operativo: apagar el flag; con evidencia M7 no ejecutar `down()` ni desplegar código M6 incompatible. No se requieren workers nuevos porque M7 no envía correo. Producción no está autorizada.
+
 > **M6A `GO LOCAL/TEST` — 2026-08-24:** baseline `d3f616c86d72bfd32c1545205df057e19cf765ea`; suite final 203/2,220, 22 migraciones y 95 rutas. Añade onboarding purpose-bound, rúbrica v2 activa, asignación manual ilimitada/sin mínimos, cancelación, cadenas explícitas de reemplazo, notificación opcional y shell responsive de juez. Flags nuevos: `FLOWERFLOW_JUDGE_ACCOUNT_SETUP_NOTIFICATION_ENABLED`, `FLOWERFLOW_JUDGE_SETUP_LINK_TTL_MINUTES` y `FLOWERFLOW_JUDGE_ASSIGNMENT_NOTIFICATION_ENABLED`. No aplicar en producción: `OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED` mantiene `NO-GO RELEASE/PRODUCTION`. M7–M10 siguen fuera. Evidencia: `docs/27-phase-02b-m6a-judge-operations-reconciliation-report-2026-08-24.md`.
 
 > **Bitácora de comunicaciones — 2026-08-23, `GO LOCAL/TEST`:** se añadió un outbox común para las nueve familias existentes, panel `Notificaciones`, recuperación individual, backfill de recordatorios y comandos de diagnóstico/reconciliación/purga. Suite final 191/2,255, 21 migraciones, 84 rutas, build y UAT Firefox verdes. El flag default-off `FLOWERFLOW_COMMUNICATION_LEDGER_ENABLED=false` es el rollback funcional. El worker existente `--queue=high,exports,default,low` cubre recuperación y correo normal; no se requiere otro proceso. La activación productiva, migración, scheduler, cache, reinicio y smoke SMTP requieren autorización separada. `sent` acredita sólo aceptación del transporte. Ver `docs/26-communication-delivery-ledger-implementation-report-2026-08-23.md`.
@@ -26,22 +28,22 @@ Esta confirmación no acredita por sí misma SHA, migraciones, flags, workers, s
 
 El baseline local verificado al iniciar M6 es la rama `codex/submission-deadline-extension`, con `HEAD`, remoto y ancestro común en `e4e4cd2ff7144cce5f9385f5f11c122cda80e7b8`. El diff M6 permanece local; no se afirma que producción ejecute ese SHA ni el diff actual. `865059a…` queda únicamente como baseline histórico de milestones previos.
 
-## Handoff M6 local
+## Handoff M7 local
 
-M6 queda `GO LOCAL/TEST`: 19 migraciones, suite completa 163/1,937, M4A `4+2` ilimitado, paquete ciego M5 y borrador/concurrencia/cálculo servidor probados. `FLOWERFLOW_EVALUATION_ENABLED=false` es el rollback operativo y conserva evidencia. No ejecutar seeders productivos ni borrar asignaciones, conflictos, paquetes, inventarios o borradores.
+M7 queda `GO LOCAL/TEST`: 23 migraciones, suite completa 208/2,385, asignación manual M6A sin mínimos/límites, paquete ciego M5, borrador/cálculo M6 y sellado/reapertura/concurrencia M7 probados. `FLOWERFLOW_EVALUATION_FINALIZATION_ENABLED=false` es el rollback funcional M7 y conserva evidencia. No ejecutar seeders productivos ni borrar asignaciones, conflictos, paquetes, revisiones, reaperturas o auditoría.
 
 ## Estado funcional transferido
 
 | Área | Estado local documentado | Estado productivo en este handoff |
 |---|---|---|
 | Fase 01 / 02A, cuarta categoría, plazo, legales v1.1, XLSX y 503/CSP | Implementado y validado localmente según diagnóstico/ExecPlans | Instalación confirmada sólo por el propietario. |
-| Jueces, asignaciones, conflictos, rúbrica y evaluación | M1–M6 conformes local/test; paquete ciego y borrador/cálculo sí; envío M7 no | Nada de M1–M6 atribuido a producción. |
+| Jueces, asignaciones, conflictos, rúbrica y evaluación | M1–M7 conformes local/test; paquete ciego, borrador/cálculo, envío inmutable y reapertura append-only | Nada de M1–M7 atribuido a producción. |
 | Ganadores/resultados | 0 %; fuera de Fase 02B | No implementado; resultados deben permanecer apagados. |
 | Operación externa | Runbooks y configuración documentados | Evidencia técnica independiente `POR_CONFIRMAR`. |
 
 ## Siguiente puerta
 
-Las decisiones de Fase 02B están `OWNER_APPROVED`; la corrección final resuelve `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` localmente mediante `4+2` ilimitado. El paquete vigente incluye:
+Las decisiones de Fase 02B hasta M7 están implementadas local/test. M6A sustituyó el contrato `4+2` por selección manual sin mínimos/límites; la divergencia con “al menos tres jueces” permanece `LEGAL_RECONCILIATION_REQUIRED`. El paquete vigente incluye:
 
 - `.agent/execplans/flowerflow-phase-02b-evaluation-design.md`;
 - `.agent/execplans/flowerflow-phase-02b-m1-judge-rbac.md`;
@@ -51,6 +53,8 @@ Las decisiones de Fase 02B están `OWNER_APPROVED`; la corrección final resuelv
 - `.agent/execplans/flowerflow-phase-02b-m4a-two-substitutes-reconciliation.md`;
 - `.agent/execplans/flowerflow-phase-02b-m5-blind-package.md`;
 - `.agent/execplans/flowerflow-phase-02b-m6-draft-evaluation-server-scoring.md`;
+- `.agent/execplans/flowerflow-phase-02b-m6a-judge-operations-reconciliation.md`;
+- `.agent/execplans/flowerflow-phase-02b-m7-immutable-submission-append-only-reopening.md`;
 - `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`;
 - `docs/19-phase-02b-m2-implementation-report-2026-08-18.md`;
 - `docs/20-phase-02b-m3-implementation-report-2026-08-18.md`;
@@ -58,15 +62,19 @@ Las decisiones de Fase 02B están `OWNER_APPROVED`; la corrección final resuelv
 - `docs/22-phase-02b-m4a-unlimited-judges-implementation-report-2026-08-18.md`;
 - `docs/23-phase-02b-m5-blind-package-implementation-report-2026-08-18.md`;
 - `docs/24-phase-02b-m6-draft-evaluation-implementation-report-2026-08-18.md`;
-- `docs/adr/0008-phase-02b-evaluation-contract.md`.
+- `docs/27-phase-02b-m6a-judge-operations-reconciliation-report-2026-08-24.md`;
+- `docs/28-phase-02b-m7-evaluation-submission-reopening-report-2026-08-24.md`;
+- `docs/adr/0008-phase-02b-evaluation-contract.md`;
+- `docs/adr/0010-m6a-judge-operations-reconciliation.md`;
+- `docs/adr/0011-m7-immutable-evaluation-submission-reopening.md`.
 
-La siguiente puerta potencial es diseñar y autorizar exclusivamente M7. El estado es:
+La siguiente puerta potencial es diseñar y autorizar exclusivamente M8. El estado es:
 
-`M1–M6 CONFORMANT LOCAL/TEST — DRAFT/SERVER SCORE ACTIVE — M7 NOT AUTHORIZED`
+`M1–M7 CONFORMANT LOCAL/TEST — IMMUTABLE SUBMISSION/REOPENING ACTIVE — M8–M10 NOT AUTHORIZED`
 
-M1 evita el acceso por descarte; M2 añade cuenta; M3 rúbrica; M4/M4A asignación/conflicto `4+2`; M5 proyección ciega/anexos; M6 borrador y cálculo. M7–M10 requieren autorización separada.
+M1 evita el acceso por descarte; M2 añade cuenta; M3 rúbrica; M6A fija asignación manual sin mínimos/límites y rúbrica v2; M5 conserva proyección ciega/anexos; M6 borrador/cálculo; M7 sellado y reapertura append-only. M8–M10 requieren autorización separada.
 
-`P2B-BLOCK-001` está `OWNER RESOLVED / LOCAL VERIFIED`: cuatro principales cubren todas las elegibles y dos sustitutos exclusivos son ilimitados. `admin` selecciona manualmente uno; si el seleccionado no está operativo o ya tiene la propuesta, el flujo falla cerrado.
+La asignación vigente es exclusivamente administrativa y explícita, sin mínimo/máximo ni sustitutos exclusivos. `P2B-BLOCK-001` queda superado operacionalmente por M6A, pero la contradicción jurídica de mínimos impide release/producción.
 
 ## Invariantes para cualquier handoff posterior
 

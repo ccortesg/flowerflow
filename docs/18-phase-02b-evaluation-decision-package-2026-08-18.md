@@ -1,20 +1,22 @@
 # Paquete de decisiones Fase 02B — jueces y evaluación
 
+> **CONTRATO M7 — validación final 2026-08-25:** sellado inmutable y reapertura administrativa append-only quedaron `GO LOCAL/TEST`, con actor real, juez sujeto, ventanas exactas, 208 pruebas/2,385 aserciones y UAT Firefox. La sección 21 contiene el prompt canónico M7; los prompts inferiores se conservan como historia. M8–M10, comunicaciones de evaluación, consolidación, ranking, resultados y producción permanecen fuera. Continúa `NO-GO RELEASE/PRODUCTION — OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED`.
+
 > **CONTRATO SUPERADO POR M6A — 2026-08-24:** las referencias operativas inferiores a `4+2`, cuatro asignaciones automáticas/manuales en bloque, sustitutos exclusivos y rúbrica activa de cinco criterios son históricas. M6A establece selección administrativa explícita sin mínimo ni máximo, funciones informativas, v2 activa de cuatro criterios y v1 fijada sólo para evidencia previa. La Mecánica mantiene “al menos tres jueces”; el override del propietario es `LEGAL_RECONCILIATION_REQUIRED` y bloquea release/producción.
 
 **Fecha:** 2026-08-18 (`America/Hermosillo`)
 
-**Estado:** `OWNER CONTRACT IMPLEMENTED THROUGH M5 — GO LOCAL/TEST — M6 NOT AUTHORIZED`
+**Estado:** `M1–M7 GO LOCAL/TEST — M8–M10 NOT AUTHORIZED`
 
 **ExecPlan:** `.agent/execplans/flowerflow-phase-02b-evaluation-design.md`
 
 ## 1. Resumen ejecutivo
 
-La Fase 02B conserva M1–M4A verdes y M5 materializa en local/test el paquete ciego estructural: proyección allowlist inmutable de la `submission_version`, inventario exacto de anexos, nombres neutros, descarga privada y acceso exclusivo mediante asignación activa. Tras los contratos históricos `4 primary + 1 substitute × 10` y `4 primary + 2 substitute × 30`, el contrato vigente conserva seis jueces operativos sin límite: los cuatro principales cubren todas las propuestas y los dos sustitutos sólo reciben reemplazos. Todavía no existe captura de evaluación, puntuación, consolidación o resultado.
+La Fase 02B conserva M1–M5 verdes; M6A sustituyó los contratos históricos `4+1×10`, `4+2×30` y `4+2` ilimitado por selección administrativa explícita sin mínimo/máximo, roles informativos y rúbrica v2 de cuatro criterios. M5 materializa el paquete ciego estructural, M6 captura/calcula borradores y M7 sella/reabre revisiones append-only. No existe comunicación M8, consolidación o resultado.
 
-El propietario respondió las 21 decisiones el 2026-08-18 y corrigió posteriormente composición y capacidad. La decisión final deja `P2B-BLOCK-001=RESOLVED` y M4A cierra `P2B-M4-CORRECTION-001` en local/test: exactamente cuatro `primary` y dos `substitute`, todos con `max_active_assignments=NULL`, sin carga inicial para sustitutos y con selección manual. M5 está `GO LOCAL/TEST`; M6–M10 no están implementados.
+El propietario respondió las 21 decisiones el 2026-08-18 y autorizó después M6A/M7. `max_active_assignments=NULL` continúa, pero no hay composición mínima, cobertura ni exclusividad de sustitutos. M1–M7 están `GO LOCAL/TEST`; la discrepancia con el mínimo jurídico sigue abierta.
 
-M6 —evaluación en borrador y cálculo exclusivo en servidor— quedó `GO LOCAL/TEST` mediante el prompt corregido de la sección 21. Conserva M4A/M5 y no mezcla confirmación/envío/reapertura M7. M7–M10, producción, ganadores y resultados permanecen fuera.
+M6 —evaluación en borrador y cálculo exclusivo en servidor— y M7 —confirmación, envío inmutable y reapertura append-only— quedaron `GO LOCAL/TEST`. M8–M10, producción, ganadores y resultados permanecen fuera.
 
 ## 2. Estado productivo y alcance de evidencia
 
@@ -44,7 +46,7 @@ La preparación se evaluó por contrato, evidencia real, decisiones cerradas, se
 | UX accesible | 99 % | Shell/estado, rúbricas, asignaciones/conflictos y paquete ciego pasaron QA Firefox responsive; la captura de evaluación aún no existe. |
 | Notificaciones/operación | 82 % | M2 implementó el subconjunto indispensable de cuenta con HTML+texto y fallo observable; notificaciones de asignación/evaluación y recordatorios siguen futuros. |
 | Compatibilidad de datos | 99 % | Migraciones M1–M6 aditivas pasaron forward/rollback/forward; M5 sólo genera paquete por acción administrativa explícita y M6 sólo abre por POST del juez. No hay backfill automático. |
-| **Puerta de preparación** | **M6 GO LOCAL/TEST** | **M1–M6 conformes; M7–M10 continúan no implementados/no autorizados.** |
+| **Puerta de preparación** | **M7 GO LOCAL/TEST** | **M1–M7 conformes; M8–M10 continúan no implementados/no autorizados.** |
 
 ## 4. Inventario reutilizable y brechas reales
 
@@ -683,7 +685,37 @@ Las 21 respuestas quedaron incorporadas en la matriz vigente de la sección 17. 
 
 Corrección final vigente `OWNER_APPROVED` del 2026-08-18: las respuestas intermedias `1×10` y `2×30` quedan sustituidas por cuatro jueces principales y dos jueces exclusivamente sustitutos, todos sin límite. Son seis jueces operativos; `admin` selecciona manualmente al sustituto. `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` quedan resueltos en local/test por M4A.
 
-## 21. Prompt canónico vigente — implementar exclusivamente M6A previo a M7
+## 21. Prompt canónico vigente — implementar exclusivamente M7
+
+```text
+Implementa exclusivamente M7 —confirmación, comentario general 100–2,000, envío inmutable y reapertura administrativa append-only— en `/home/ccortesg/workspace/flowerflow`, limitado a código, migraciones, pruebas, documentación y UAT local sintético. No autoriza stage, commit, push, despliegue, producción, SMTP real o servicios externos.
+
+Baseline obligatorio: rama `codex/submission-deadline-extension`, HEAD/upstream/merge-base `8da3ed0cb19e3548380ca0732db11d3d205e4612`, árbol limpio, 22 migraciones, 95 rutas y M1–M6A GO LOCAL/TEST. Lee AGENTS, PLANS, ExecPlans/informes M1–M6A y comunicaciones, documentación canónica, ADR 0001/0003–0010 y Mecánica v1.1. Crea `flowerflow-phase-02b-m7-immutable-submission-append-only-reopening.md`. Antes de esquema/pruebas demuestra testing, MySQL loopback, `flowerflow_testing`, `flowerflow_testing_user` y SELECT DATABASE exacto.
+
+Conserva M6A: asignación sólo manual, sin mínimo/máximo, roles de juez informativos, paquete sin cobertura, v1 histórica de cinco criterios y v2 activa de cuatro. Mantén `NO-GO RELEASE/PRODUCTION — OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED` por “al menos tres jueces”. No modifiques PDF/hash/aceptaciones.
+
+Configura flag M7 default-off, reapertura `2026-08-27 20:00:00` Hermosillo/`2026-08-28 03:00:00` UTC y mutaciones `2026-08-27 23:59:59`/`2026-08-28 06:59:59`; segundos inclusivos, deriva fail-closed y `due_at` exacto. El flag apagado cierra mutaciones M7 y conserva evidencia legible.
+
+Amplía `EvaluationStatus` a `draft|reopened|submitted` y crea `EvaluationRevisionStatus draft|submitted`. Añade a revisiones juez sujeto obligatorio con backfill M6, actor/fecha/modo de envío. Crea `evaluation_reopenings` append-only con fuente/destino únicos, juez sujeto, admin real, motivo cifrado 20–1,000 y UTC. Modelos guarded/no delete; reopening tampoco update. Checks de coherencia y `down()` fail-closed con cualquier evidencia M7.
+
+El juez confirma la revisión actual. Envío exige criterios completos exactos, score/step válidos, total/componentes recalculados con BCMath, comentario Unicode-trimmed 100–2,000, assignment/package/rubric/plazo íntegros, lock y confirmación. Revisión 1 se sella sin copia; actor real/mode judge; evaluación submitted; lock +1. Pestaña stale devuelve 409 y la revisión enviada nunca cambia.
+
+Admin exacto con permisos, password.confirm, current_password, throttle, lock, confirmación y razón puede reabrir sólo la revisión enviada vigente antes de las 20:00. Clona exactamente a revision+1, liga source, crea reopening, fija juez sujeto, admin creador/último actor, status reopened y lock +1 sin tocar fuente. Tras reenviar puede reabrirse otra vez. Nunca hay más de un draft vigente ni se reabre historia.
+
+Juez o admin pueden editar/reenviar exclusivamente la revisión reabierta; admin jamás el draft inicial. Envío administrativo conserva mode administrative, admin real y juez sujeto. Carrera juez/admin conserva un único actor final. Conflicto sólo antes de cualquier envío; después se rechaza. Replacement conserva agregado independiente.
+
+Añade rutas juez de confirmar/enviar y permiso exclusivo `submit own evaluations`. Añade menú/rutas admin Evaluaciones con permisos exclusivos `view evaluations`, `reopen evaluations`, `manage reopened evaluations`. GET es puro. Payloads allowlist rechazan total, componentes, actores, estados, timestamps e IDs gobernados por servidor.
+
+UX juez: Guardar borrador + Revisar y enviar; confirmación con valores persistidos, total servidor e inmutabilidad; enviado sólo lectura; reabierto con aviso genérico sin motivo/admin e historial. UX admin: juez sujeto, actores reales, razón escapada, historial, advertencia de actuación en nombre del juez. Funciona sin JS y cumple semántica, foco, teclado, contraste, zoom y reflow.
+
+Audita sólo IDs técnicos, revisiones, modo, estados, locks, conteo, completitud y reason codes para submitted/rejected/reopened/saves; nunca motivo, scores, componentes, total, comentarios, propuesta, nombres, correo, archivos, URLs o PII. No añadas CommunicationType/delivery/job: correos pertenecen a M8.
+
+Prueba GET puro; 99/100/2,000/2,001; Unicode/XSS; incompletitud/payload hostil; sellado/PATCH posterior; simultaneidad, idempotencia y 409; clon exacto/fuente intacta/revisiones 2 y 3; admin inicial prohibido; juez/admin y carrera; privacidad diferenciada; RBAC/IDOR; conflicto/replacement; v1/v2/HALF_UP; ventanas 19:59:59/20:00:00/20:00:01 y 23:59:58/23:59:59/00:00:00; drift; auditoría/logs; cero deliveries; regresión M1–M6A.
+
+Ejecuta forward/rollback/forward, suites dirigidas y completa, Pint, Composer validate/platform/audit, Yarn audit, build, JSON, rutas, schedule, migrate status, diff, enlaces y scans. UAT Firefox sintético 1440x900, 1024x768 y 390x844. Crea ADR-0011 e informe 28 y actualiza documentación vigente preservando historia. M8–M10 permanecen NOT IMPLEMENTED/NOT AUTHORIZED. No inventes evidencia ni toques producción.
+```
+
+## 21M6A. Prompt histórico ejecutado — M6A previo a M7
 
 ```text
 Implementa exclusivamente M6A — onboarding, asignación manual, rúbrica legal y experiencia del juez— en `/home/ccortesg/workspace/flowerflow`, limitado a código, migraciones, pruebas, documentación y UAT local sintético. No autoriza stage, commit, push, despliegue, producción, SMTP real o servicios externos.

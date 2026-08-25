@@ -84,7 +84,7 @@ class EvaluationDraftTest extends TestCase
         $this->assertSame(1, AuditLog::query()->where('action', 'evaluation.draft_opened')->count());
 
         foreach ([
-            fn () => DB::table('evaluations')->where('id', $evaluation->id)->update(['status' => 'submitted']),
+            fn () => DB::table('evaluations')->where('id', $evaluation->id)->update(['status' => 'hostile']),
             fn () => DB::table('evaluation_revisions')->where('id', $evaluation->current_revision_id)->update(['revision_number' => 0]),
             fn () => DB::table('evaluation_scores')->where('evaluation_revision_id', $evaluation->current_revision_id)->limit(1)->update(['score' => '0.1000', 'calculated_component' => '0.2000']),
             fn () => DB::table('evaluation_scores')->where('evaluation_revision_id', $evaluation->current_revision_id)->limit(1)->update(['calculated_component' => '1.0000']),

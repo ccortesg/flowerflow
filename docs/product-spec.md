@@ -1,5 +1,7 @@
 # Especificación de producto — Flower Flow 2026
 
+> **Contrato de producto M7 — validación final 2026-08-25, `GO LOCAL/TEST`:** evaluación completa + comentario general 100–2,000 + confirmación explícita sellan la revisión vigente. Reapertura administrativa hasta 20:00:00 crea una nueva revisión desde la enviada; juez o admin real pueden editar/reenviar hasta 23:59:59. La aplicación conserva juez sujeto, actor y modo, muestra información diferenciada y no crea comunicaciones M8. Resultado: 208 pruebas/2,385 aserciones y UAT Firefox. M8–M10 y producción siguen fuera.
+
 > **Contrato de producto M6A — 2026-08-24:** onboarding inicial purpose-bound verifica el correo al fijar contraseña; asignación sólo manual, sin mínimos/máximos y con `primary|substitute` informativo; paquete sin gate de cobertura; cancelación antes de evaluación y reemplazos explícitos. Rúbrica v2 activa: cuatro criterios de la Mecánica, pesos de producto 25/25/25/25, escala 0–10, paso .5 y HALF_UP 4/2. La notificación de alta y de asignación es configurable globalmente y por operación. M7–M10 permanecen fuera y la contradicción jurídica bloquea release.
 
 > **Adenda de bitácora de comunicaciones — 2026-08-23, local/test:** el módulo administrativo centraliza exclusivamente las nueve familias de correo existentes. Sólo el rol exacto `admin` consulta la bitácora o solicita recuperación individual; no agrega campañas, evaluación, resultados, ganadores o marketing. El resultado SMTP se describe como aceptación del transporte, no entrega.
@@ -34,11 +36,11 @@
 
 ## Integridad del insumo
 
-> **RESOLVED para Fase 01, Fase 02A y M1–M6 de 02B; PENDING para el producto maestro:** identidad, rúbrica, asignaciones/conflictos, paquete ciego y evaluación draft están probados en local/test. M7–M10, empate, ganadores, publicación y ARCO permanecen pendientes. `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` están cerrados localmente.
+> **RESOLVED para Fase 01, Fase 02A y M1–M7 de 02B; PENDING para el producto maestro:** identidad, rúbrica, asignaciones/conflictos, paquete ciego, evaluación draft, sellado y reapertura están probados en local/test. M8–M10, consolidación, empate, ganadores, publicación y ARCO permanecen pendientes. La contradicción jurídica del mínimo de jueces continúa bloqueando release.
 
 ## Resumen ejecutivo
 
-Flower Flow es la plataforma web de la convocatoria 2026. El repositorio ya registra participantes, recibe proyectos, verifica admisibilidad, asigna propuestas, expone una proyección ciega y permite al juez guardar evaluación draft con cálculo servidor. El envío de evaluación, la consolidación y los resultados continúan como objetivo futuro.
+Flower Flow es la plataforma web de la convocatoria 2026. El repositorio ya registra participantes, recibe proyectos, verifica admisibilidad, asigna propuestas, expone una proyección ciega y permite guardar, confirmar, sellar y reabrir evaluaciones con cálculo servidor e historial append-only. La consolidación, comunicaciones de evaluación y resultados continúan como objetivo futuro.
 
 El MVP se limita a lo indispensable para recibir, revisar y evaluar proyectos de forma segura antes del 15 de agosto de 2026. Desde la fecha de corte quedan 31 días calendario, de modo que seguridad, flujo de envío, revisión y evaluación tienen precedencia sobre funciones presentacionales. La publicación pública de ganadores se prepara con un interruptor desactivado por defecto; una galería enriquecida, marketing masivo y cualquier API o aplicación móvil quedan fuera del MVP.
 
@@ -71,20 +73,21 @@ La frase histórica “la primera fase es documental” quedó superada por las 
 | DEC-021 | DECISION OPERATIVA / OWNER CONFIRMED | Producción usa el checkout Git directo `/var/www/flowerflow`, sin `releases/current/shared`; el update inmediato se genera para esa topología y no cambia Apache ni dominios. |
 | DEC-022 | `OWNER_CONFIRMED_DEPLOYED` | El propietario confirma el 2026-08-18 que instaló los cambios actuales y que existen más de 50 propuestas reales. `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; no equivale a verificación técnica independiente. |
 | DEC-023 | SUPERSEDED 2026-08-18 | La espera de las 21 decisiones terminó con la respuesta expresa del propietario. |
-| DEC-024 | OWNER_APPROVED / M1–M6 LOCAL | Las 21 decisiones quedan en ADR-0008; M1–M6 cerraron `GO LOCAL/TEST`. M7+ continúa no implementado y requiere alcance separado. |
-| DEC-026 | IMPLEMENTED LOCAL / M6 | El borrador usa la rúbrica fijada, BCMath, total nulo incompleto, `lock_version`/409 y vencimiento exacto; GET no escribe. | No autoriza envío/reapertura M7 ni producción. |
+| DEC-024 | HISTÓRICA / SUPERADA POR M6A-M7 | Las 21 decisiones quedaron en ADR-0008; M1–M6 cerraron su corte. M6A sustituyó la operación `4+2` y M7 cerró `GO LOCAL/TEST`. |
+| DEC-026 | IMPLEMENTED LOCAL / M6 | El borrador usa la rúbrica fijada, BCMath, total nulo incompleto, `lock_version`/409 y vencimiento exacto; GET no escribe. M7 amplía sin sustituir esta evidencia; producción no está autorizada. |
+| DEC-027 | IMPLEMENTED LOCAL / M7 | La confirmación exige comentario de 100–2,000, sella la revisión vigente y toda reapertura crea otra revisión append-only con juez sujeto, actor real y ventanas exactas. |
 | DEC-025 | OWNER FINAL / IMPLEMENTED LOCAL 2026-08-18 | `P2B-BLOCK-001`: cuatro principales y dos sustitutos, todos ilimitados; seis jueces operativos. M4A exige selección manual y no rechaza por volumen. |
 
 ## Evidencia actual del repositorio
 
 | Elemento | Estado | Evidencia al 2026-08-17 |
 | --- | --- | --- |
-| Backend | VERIFIED | Laravel 12.64.0 sobre PHP 8.3.33; 163 pruebas/1,937 aserciones verdes en MySQL aislado. |
+| Backend | VERIFIED | Laravel 12.64.0 sobre PHP 8.3.33; 208 pruebas/2,385 aserciones verdes en MySQL aislado. |
 | Plantilla | DECISION | `package.json` declara Materialize `3.0.0` con licencia comercial. |
 | Frontend | DECISION | Bootstrap 5.3.6, Vite 6.4.3 y varios plugins de la plantilla están declarados; su presencia no autoriza usarlos todos. |
 | Layouts | VERIFIED | `layouts/flowerflow.blade.php` sirve público, participante y panel; layouts heredados se conservan sin ser el contrato principal. |
 | Navegación | VERIFIED / DEUDA | Navegación Flower Flow usa parciales/Blade por rol; los JSON heredados conservan demos no usados por este layout. |
-| Aplicación | VERIFIED | Hay 73 rutas propias sin vendor y módulos de auth, perfil, propuestas, admisibilidad, panel, exportación y Fase 02B M1–M6. |
+| Aplicación | VERIFIED | Hay 104 rutas propias sin vendor y módulos de auth, perfil, propuestas, admisibilidad, panel, exportación y Fase 02B M1–M7. |
 | Variante/licencia exacta | PENDING | Debe confirmarse si el paquete adquirido es starter kit o full version, y el alcance de su licencia para dominio/proyecto. |
 
 ## Objetivo del producto

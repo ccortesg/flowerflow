@@ -1,5 +1,7 @@
 # Informe de implementación — Fase 02B M6A
 
+> **Milestone posterior:** M7 fue autorizado e implementado separadamente el 2026-08-24. Este informe conserva la evidencia M6A y su baseline; envío/reapertura se documentan en el informe 28.
+
 **Fecha:** 2026-08-24 (`America/Hermosillo`)  
 **Milestone:** onboarding, asignación manual, rúbrica legal y experiencia del juez  
 **Resultado:** `GO LOCAL/TEST`  
@@ -151,4 +153,3 @@ La lista autoritativa del árbol no publicado es `git status --short`; no se rea
 3. El advisory bajo de Quill no tiene parche disponible; conservar sanitización servidor y no usar HTML cliente como autoridad.
 4. SMTP real, entregabilidad, workers, scheduler y producción siguen no verificados/no autorizados.
 5. M7–M10 continúan `NOT IMPLEMENTED / NOT AUTHORIZED`.
-

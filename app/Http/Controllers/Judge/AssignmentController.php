@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Judge;
 use App\Actions\Assignments\DeclareJudgeConflict;
 use App\Actions\Evaluations\EnsureEvaluationDraftContext;
 use App\Enums\BlindReviewPackageStatus;
+use App\Enums\EvaluationRevisionStatus;
+use App\Enums\EvaluationStatus;
 use App\Enums\JudgeAssignmentStatus;
 use App\Enums\JudgeConflictType;
 use App\Exceptions\EvaluationDraftRejected;
@@ -75,6 +77,7 @@ class AssignmentController extends Controller
         $evaluationReadOnly = false;
         $evaluationUnavailable = false;
         $evaluationTotalDisplay = null;
+        $hasSubmittedRevision = false;
         if ($package && Gate::allows('viewEvaluationDraft', $judgeAssignment)) {
             $existing = Evaluation::query()
                 ->where('judge_assignment_id', $judgeAssignment->id)
@@ -87,12 +90,26 @@ class AssignmentController extends Controller
                     false,
                 );
                 if ($existing) {
-                    $evaluationContext->assertAggregate($existing, $context, false);
+                    $evaluationContext->assertAggregate(
+                        $existing,
+                        $context,
+                        false,
+                        [$existing->status],
+                        [$existing->status === EvaluationStatus::Submitted
+                            ? EvaluationRevisionStatus::Submitted
+                            : EvaluationRevisionStatus::Draft],
+                    );
                     $evaluation = $existing->load([
                         'rubricVersion.criteria',
                         'currentRevision.scores.criterion',
+                        'revisions.scores.criterion',
                     ]);
-                    $evaluationReadOnly = now('UTC')->greaterThan($judgeAssignment->due_at);
+                    $hasSubmittedRevision = $evaluation->revisions
+                        ->contains(fn ($revision): bool => $revision->status === EvaluationRevisionStatus::Submitted);
+                    $evaluationReadOnly = $evaluation->status === EvaluationStatus::Submitted
+                        || now('UTC')->greaterThan($judgeAssignment->due_at)
+                        || ($evaluation->status === EvaluationStatus::Reopened
+                            && config('flowerflow.flags.evaluation_finalization') !== true);
                     $evaluationTotalDisplay = $evaluation->currentRevision->total_raw === null
                         ? null
                         : $calculator->display($evaluation->currentRevision->total_raw);
@@ -113,6 +130,8 @@ class AssignmentController extends Controller
             'evaluationReadOnly' => $evaluationReadOnly,
             'evaluationUnavailable' => $evaluationUnavailable,
             'evaluationTotalDisplay' => $evaluationTotalDisplay,
+            'hasSubmittedRevision' => $hasSubmittedRevision,
+            'finalizationEnabled' => config('flowerflow.flags.evaluation_finalization') === true,
         ]);
     }
 

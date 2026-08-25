@@ -58,6 +58,14 @@ class JudgeAssignmentPolicy
         return $this->canManageOwnEvaluationDraft($user, $assignment);
     }
 
+    public function submitEvaluation(User $user, JudgeAssignment $assignment): bool
+    {
+        return $this->isOperationalJudge($user)
+            && $user->can('submit own evaluations')
+            && $assignment->judge_profile_id === $user->judgeProfile?->id
+            && $assignment->status === JudgeAssignmentStatus::Active;
+    }
+
     private function canManageOwnEvaluationDraft(User $user, JudgeAssignment $assignment): bool
     {
         return $this->isOperationalJudge($user)

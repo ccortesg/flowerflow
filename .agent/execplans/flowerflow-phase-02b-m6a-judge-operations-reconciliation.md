@@ -1,5 +1,7 @@
 # Fase 02B M6A — reconciliación operativa de jueces previa a M7
 
+> **Contrato posterior:** M7 fue autorizado separadamente el 2026-08-24. Este ExecPlan conserva la evidencia M6A; envío/reapertura viven sólo en el ExecPlan M7 y no reescriben los resultados históricos inferiores.
+
 Este ExecPlan es un documento vivo. `Progreso`, `Hallazgos inesperados`, `Decisiones` y `Resultados` se actualizan durante la ejecución conforme a `.agent/PLANS.md`.
 
 ## Propósito

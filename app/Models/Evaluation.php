@@ -59,4 +59,9 @@ class Evaluation extends Model
     {
         return $this->belongsTo(User::class, 'started_by_user_id');
     }
+
+    public function reopenings(): HasMany
+    {
+        return $this->hasMany(EvaluationReopening::class)->orderBy('id');
+    }
 }

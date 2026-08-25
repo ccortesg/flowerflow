@@ -18,7 +18,7 @@ class DashboardController extends Controller
         $notStarted = (clone $base)->where('status', JudgeAssignmentStatus::Active)
             ->whereDoesntHave('evaluation')->count();
         $drafts = (clone $base)->where('status', JudgeAssignmentStatus::Active)
-            ->whereHas('evaluation')->count();
+            ->whereHas('evaluation', fn ($query) => $query->whereIn('status', ['draft', 'reopened']))->count();
         $dueSoon = (clone $base)->where('status', JudgeAssignmentStatus::Active)
             ->whereBetween('due_at', [now('UTC'), now('UTC')->addHours(48)])->count();
         $nextAssignment = (clone $base)->where('status', JudgeAssignmentStatus::Active)

@@ -2,9 +2,11 @@
 
 namespace App\Actions\Assignments;
 
+use App\Enums\EvaluationRevisionStatus;
 use App\Enums\JudgeAssignmentStatus;
 use App\Enums\JudgeConflictStatus;
 use App\Enums\JudgeConflictType;
+use App\Models\EvaluationRevision;
 use App\Models\JudgeAssignment;
 use App\Models\JudgeConflict;
 use App\Models\User;
@@ -53,6 +55,13 @@ final class DeclareJudgeConflict
 
             if ($locked->status !== JudgeAssignmentStatus::Active) {
                 throw ValidationException::withMessages(['conflict' => 'Sólo una asignación activa puede declarar conflicto.']);
+            }
+
+            if (EvaluationRevision::query()
+                ->whereHas('evaluation', fn ($query) => $query->where('judge_assignment_id', $locked->id))
+                ->where('status', EvaluationRevisionStatus::Submitted->value)
+                ->exists()) {
+                throw ValidationException::withMessages(['conflict' => 'No se puede declarar conflicto después de enviar una evaluación.']);
             }
 
             if (now('UTC')->greaterThan($locked->due_at)) {

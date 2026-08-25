@@ -1,5 +1,7 @@
 # Arquitectura propuesta
 
+> **Arquitectura M7 — 2026-08-24:** `EvaluationWindow` centraliza las dos ventanas exactas y falla cerrado ante deriva; `SubmitEvaluation`, `ReopenEvaluation` y `SaveEvaluationDraft` son las únicas fronteras transaccionales. `Evaluation` conserva el estado agregado y lock; cada `EvaluationRevision` separa juez sujeto, actor real y modo; `evaluation_reopenings` enlaza fuente/destino y cifra el motivo. La revisión enviada nunca se actualiza y el outbox no recibe tipos de evaluación hasta M8.
+
 > **Arquitectura vigente M6A — 2026-08-24:** `judge_setup_links` separa onboarding inicial del broker genérico; el catálogo inmutable valida rúbricas v1/v2; `AssignJudgesToSubmission`, `CancelJudgeAssignment` y `ResolveJudgeConflict` son las únicas fronteras de mutación manual. Paquetes ciegos no dependen de cobertura mínima. La notificación opcional de asignación reutiliza el outbox y el worker `database/default`. El shell Blade del juez es independiente y responsive. Todo es local/test y la divergencia jurídica mantiene `NO-GO RELEASE/PRODUCTION`.
 
 > **Estado vigente M6 — 2026-08-18:** M4A conserva cuatro `primary` y dos `substitute` ilimitados; M5 conserva el paquete allowlist inmutable. M6 añade el agregado `Evaluation`/revisión 1/scores, Actions transaccionales, lock optimista y cálculo BCMath fijado a la rúbrica de la asignación. M7–M10 permanecen separados.

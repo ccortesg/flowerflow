@@ -1,6 +1,8 @@
 # ExecPlan — Fase 02B: identidad de jueces y evaluación
 
-**Estado:** `DESIGN UPDATED — M1–M6 GO LOCAL/TEST — M7 NOT AUTHORIZED`
+**Estado:** `DESIGN UPDATED — M1–M7 GO LOCAL/TEST — M8–M10 NOT AUTHORIZED`
+
+> **Adenda M7 — validación final 2026-08-25:** la autorización separada M7 materializa confirmación, mínimo 100, revisión enviada inmutable y reapertura append-only con actor real y ventanas exactas. Quedó `GO LOCAL/TEST` con 208 pruebas/2,385 aserciones, 23 migraciones, 104 rutas y UAT Firefox. Su ejecución/evidencia vive en `flowerflow-phase-02b-m7-immutable-submission-append-only-reopening.md`; no incorpora M8+. El bloqueo jurídico de mínimos mantiene `NO-GO RELEASE/PRODUCTION`.
 
 > **Estado vigente — 2026-08-18:** el propietario reemplazó los contratos históricos `1 substitute × 10` y `2 substitutes × 30` por `4 primary + 2 substitute`, todos sin límite. M4A–M6 quedaron verdes local/test; M7 conserva autorización y ejecución separadas.
 
@@ -61,9 +63,9 @@ Los siguientes puntos describen el SHA/árbol leído antes de implementar M1. Se
 
 - Estado funcional: M1–M6 conformes local/test bajo el contrato final `4+2` ilimitado.
 - Preparación: migraciones/código/UI/pruebas M4A–M6 están verdes; no se atribuyen a producción.
-- Puerta actual: M7 no autorizado, limitado en diseño a envío/reapertura.
+- Puerta implementada: M7 `GO LOCAL/TEST`, limitado a envío/reapertura sin comunicaciones.
 - `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` están resueltos local/test.
-- Puerta posterior: cualquier M7 requiere prompt/ExecPlan separado y no puede mezclar M8+.
+- Puerta posterior: cualquier M8 requiere prompt/ExecPlan separado y no puede mezclar consolidación/resultados M9+.
 
 ## Plan de este milestone documental
 
@@ -160,4 +162,4 @@ Los cambios son exclusivamente documentales. El rollback futuro consiste en reve
 
 ## Cierre de este ExecPlan
 
-Este ExecPlan cerró el diseño original y conserva su historia. Las implementaciones M1–M6 se mantienen en ExecPlans separados. M4A reconcilia capacidad, M5 ceguera estructural y M6 borrador/cálculo. M7 requiere autorización propia. No acredita producción.
+Este ExecPlan cerró el diseño original y conserva su historia. Las implementaciones M1–M7 se mantienen en ExecPlans separados. M6A reconcilia asignación/rúbrica/UX, M5 ceguera estructural, M6 borrador/cálculo y M7 sellado/reapertura. M8–M10 requieren autorización propia. No acredita producción.

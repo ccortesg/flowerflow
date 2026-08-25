@@ -35,8 +35,20 @@
   <div class="col-lg-5">
     <section class="card ff-card p-4 h-100" aria-labelledby="judge-flow-title">
       <h2 id="judge-flow-title" class="h4">Flujo sencillo</h2>
-      <ol class="mb-3"><li>Abre la asignación.</li><li>Revisa el paquete ciego.</li><li>Inicia o continúa la evaluación.</li><li>Guarda tu borrador.</li></ol>
-      <div class="alert alert-warning mb-0" role="note">El envío final de la evaluación todavía no está habilitado.</div>
+      <ol class="mb-3">
+        <li>Abre la asignación.</li>
+        <li>Revisa el paquete ciego.</li>
+        <li>Inicia o continúa la evaluación.</li>
+        <li>Guarda tu borrador.</li>
+        @if(config('flowerflow.flags.evaluation_finalization'))
+          <li>Revisa y confirma el envío.</li>
+        @endif
+      </ol>
+      @if(config('flowerflow.flags.evaluation_finalization'))
+        <div class="alert alert-info mb-0" role="note">Al enviar, la revisión queda sellada y ya no podrás modificarla.</div>
+      @else
+        <div class="alert alert-warning mb-0" role="note">El envío final de la evaluación todavía no está habilitado.</div>
+      @endif
     </section>
   </div>
 </div>
