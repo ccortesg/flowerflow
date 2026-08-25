@@ -23,6 +23,7 @@ use App\Http\Controllers\Panel\CommunicationDeliveryController as PanelCommunica
 use App\Http\Controllers\Panel\DashboardController as PanelDashboardController;
 use App\Http\Controllers\Panel\EligibilityReviewController as PanelEligibilityReviewController;
 use App\Http\Controllers\Panel\EvaluationController as PanelEvaluationController;
+use App\Http\Controllers\Panel\EvaluationExportController as PanelEvaluationExportController;
 use App\Http\Controllers\Panel\JudgeController as PanelJudgeController;
 use App\Http\Controllers\Panel\RubricVersionController as PanelRubricVersionController;
 use App\Http\Controllers\Panel\SubmissionController as PanelSubmissionController;
@@ -252,6 +253,13 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
     });
     Route::prefix('evaluaciones')->name('evaluations.')->middleware(['business.role:admin', 'permission:view evaluations'])->group(function () {
         Route::get('/', [PanelEvaluationController::class, 'index'])->name('index');
+        Route::middleware(['evaluation-exports.enabled', 'permission:export evaluations', 'password.confirm'])->group(function () {
+            Route::get('/exportaciones/nueva', [PanelEvaluationExportController::class, 'create'])->name('exports.create');
+            Route::post('/exportaciones', [PanelEvaluationExportController::class, 'store'])
+                ->middleware('throttle:panel-mutations')->name('exports.store');
+            Route::get('/exportaciones/{evaluationExport}/descargar', [PanelEvaluationExportController::class, 'download'])
+                ->name('exports.download');
+        });
         Route::get('/{evaluation}', [PanelEvaluationController::class, 'show'])->name('show');
         Route::get('/{evaluation}/reabrir', [PanelEvaluationController::class, 'reopen'])
             ->middleware(['permission:reopen evaluations', 'password.confirm'])->name('reopen');

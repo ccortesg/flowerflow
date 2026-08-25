@@ -1,5 +1,7 @@
 # Registro de riesgos
 
+> **Riesgos ADR-0015 — 2026-08-25:** `R-EVAL-EXPORT-01` alto: el XLSX combina identidad y evaluación; mitigado con permiso exclusivo, contraseña reciente, ownership, disk privado, expiración, snapshot inmutable y auditoría redactada. `R-JUDGE-PRE-SETUP-01` medio: confundir assignment activo con cuenta operativa; mitigado manteniendo middleware/Policies y omitiendo notificaciones. Riesgo residual: el nombre del juez es actual al exportar y no histórico; el archivo lo declara. Producción no verificada.
+
 > **Riesgo de lote síncrono — 2026-08-25:** el límite fijo de veinte y la transacción por propuesta acotan locks y rollback. El preflight puede quedar obsoleto, por lo que la ejecución compara estado y falla individualmente. La medición local máxima de 200 MiB ejecutó en 2.589 s; capacidad y timeout productivos siguen `POR_CONFIRMAR`. Si un ambiente autorizado excede su timeout, el feature debe permanecer apagado; no se amplía ni vuelve asíncrono sin una decisión nueva.
 
 > **Riesgos M8 — 2026-08-25:** `R108` mitigado local/test: eventos ID-only, plantillas allowlist y scans evitan filtrar evaluación/conflicto/PII. `R109` mitigado: idempotencia y `withoutOverlapping` evitan duplicados de listener/scheduler. `R110` mitigado: ventana exacta y preflight global bloquean digest tardío o con `due_at` divergente. `R111` residual: aceptación SMTP no acredita entrega. `R100` jurídico continúa bloqueando release/producción.

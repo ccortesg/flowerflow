@@ -38,7 +38,7 @@ class SubmissionExportTest extends TestCase
             'flowerflow.exports.queue_connection' => 'sync',
             'flowerflow.exports.disk' => 'exports',
             'flowerflow.exports.retention_hours' => 24,
-            'flowerflow.exports.stale_after_minutes' => 5,
+            'flowerflow.exports.stalled_after_minutes' => 5,
         ]);
         Storage::fake('local');
         Storage::fake('exports');

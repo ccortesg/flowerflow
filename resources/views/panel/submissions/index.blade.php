@@ -34,7 +34,11 @@
 
 <form method="GET" class="card ff-card p-3 my-4" aria-label="Filtros de propuestas">
   <div class="row g-3 align-items-end">
-    <div class="col-md-4">
+    <div class="col-sm-6 col-xl-3">
+      <label class="form-label" for="folio">Folio o ID de propuesta</label>
+      <input class="form-control" id="folio" name="folio" maxlength="64" value="{{ request('folio') }}">
+    </div>
+    <div class="col-sm-6 col-xl-3">
       <label class="form-label" for="status">Estado</label>
       <select class="form-select" id="status" name="status">
         <option value="">Todos</option>
@@ -42,7 +46,7 @@
         <option value="submitted" @selected(request('status') === 'submitted')>Enviada</option>
       </select>
     </div>
-    <div class="col-md-5">
+    <div class="col-sm-6 col-xl-4">
       <label class="form-label" for="category">Categoría</label>
       <select class="form-select" id="category" name="category">
         <option value="">Todas</option>
@@ -51,7 +55,7 @@
         @endforeach
       </select>
     </div>
-    <div class="col-md-3"><button class="btn btn-flower w-100">Filtrar</button></div>
+    <div class="col-sm-6 col-xl-2"><button class="btn btn-flower w-100">Filtrar</button></div>
   </div>
 </form>
 
@@ -144,7 +148,7 @@
       <h2 class="h5" id="recent-exports-title">Exportaciones recientes</h2>
       @if($hasStalledExports)
         <div class="alert alert-warning" role="alert">
-          Hay una exportación que lleva más de {{ config('flowerflow.exports.stale_after_minutes') }} minutos en espera. Un administrador debe verificar el worker de la cola <code>{{ config('flowerflow.exports.queue') }}</code>; no generes duplicados mientras se diagnostica.
+          Hay una exportación que lleva más de {{ config('flowerflow.exports.stalled_after_minutes') }} minutos en espera. Un administrador debe verificar el worker de la cola <code>{{ config('flowerflow.exports.queue') }}</code>; no generes duplicados mientras se diagnostica.
         </div>
       @endif
       <p class="text-muted">Cada archivo permanece disponible durante {{ config('flowerflow.exports.retention_hours') }} horas y sólo puede descargarlo quien lo solicitó.</p>

@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureAdmissibilityReviewEnabled;
 use App\Http\Middleware\EnsureBulkJudgeAssignmentEnabled;
 use App\Http\Middleware\EnsureCommunicationLedgerEnabled;
 use App\Http\Middleware\EnsureEvaluationEnabled;
+use App\Http\Middleware\EnsureEvaluationExportsEnabled;
 use App\Http\Middleware\EnsureEvaluationFinalizationEnabled;
 use App\Http\Middleware\EnsureExclusiveBusinessRole;
 use App\Http\Middleware\EnsurePanelEnabled;
@@ -42,6 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'bulk-judge-assignment.enabled' => EnsureBulkJudgeAssignmentEnabled::class,
             'evaluation.enabled' => EnsureEvaluationEnabled::class,
             'evaluation-finalization.enabled' => EnsureEvaluationFinalizationEnabled::class,
+            'evaluation-exports.enabled' => EnsureEvaluationExportsEnabled::class,
             'judge.active' => EnsureActiveJudge::class,
             'business.role' => EnsureExclusiveBusinessRole::class,
             'role' => RoleMiddleware::class,

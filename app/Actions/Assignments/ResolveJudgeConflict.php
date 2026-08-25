@@ -5,7 +5,6 @@ namespace App\Actions\Assignments;
 use App\Enums\JudgeAssignmentStatus;
 use App\Enums\JudgeAssignmentType;
 use App\Enums\JudgeConflictStatus;
-use App\Enums\JudgeProfileStatus;
 use App\Events\JudgeConflictResolved;
 use App\Exceptions\AssignmentOperationRejected;
 use App\Models\JudgeAssignment;
@@ -15,6 +14,7 @@ use App\Models\RubricVersion;
 use App\Models\Submission;
 use App\Models\SubmissionVersion;
 use App\Models\User;
+use App\Services\AdministrativeJudgeEligibility;
 use App\Services\AssignmentEligibility;
 use App\Services\AuditLogger;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +25,7 @@ final class ResolveJudgeConflict
     public function __construct(
         private EnsureAssignmentAdministrator $ensureActor,
         private AssignmentEligibility $eligibility,
+        private AdministrativeJudgeEligibility $judgeEligibility,
         private SendJudgeAssignmentNotification $sendNotification,
         private AuditLogger $audit,
     ) {}
@@ -65,17 +66,14 @@ final class ResolveJudgeConflict
 
                 $selected = JudgeProfile::query()
                     ->where('public_id', $judgeProfilePublicId)
-                    ->where('status', JudgeProfileStatus::Active)
                     ->with('user.roles')
                     ->lockForUpdate()
                     ->first();
-                if (! $selected
-                    || ! $selected->user
-                    || ! $selected->user->hasExactRoles(['judge'])
-                    || ! $selected->user->hasVerifiedEmail()
-                    || $selected->password_initialized_at === null
-                    || $selected->max_active_assignments !== null) {
-                    throw new AssignmentOperationRejected('selected_judge_invalid', 'Selecciona un juez activo, verificado y con configuración completa.');
+                if (! $selected || ! $this->judgeEligibility->isAssignable($selected)) {
+                    throw new AssignmentOperationRejected(
+                        $selected ? ($this->judgeEligibility->rejectionCode($selected) ?? 'selected_judge_invalid') : 'selected_judge_invalid',
+                        'Selecciona un juez activo o con configuración pendiente y perfil coherente.',
+                    );
                 }
 
                 $hasCurrentAssignment = JudgeAssignment::query()

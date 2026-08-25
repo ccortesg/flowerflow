@@ -105,6 +105,38 @@ class PanelSubmissionContractTest extends TestCase
             ->assertDontSee(route('panel.submissions.administrative-finalization.show', $draft), false);
     }
 
+    public function test_panel_reference_filter_matches_partial_folio_or_public_id_with_other_filters(): void
+    {
+        $admin = $this->admin();
+        $target = $this->submissionFor($this->participant(), 'Objetivo por referencia', 'submitted');
+        $other = $this->submissionFor($this->participant(), 'Otra propuesta enviada', 'submitted');
+        $draft = $this->submissionFor($this->participant(), 'Borrador excluido');
+
+        $this->actingAs($admin)->get(route('panel.submissions.index', [
+            'folio' => substr((string) $target->folio, 4, 7),
+            'status' => 'submitted',
+            'category' => $target->category->slug,
+        ]))->assertOk()
+            ->assertSee('Objetivo por referencia')
+            ->assertDontSee('Otra propuesta enviada')
+            ->assertDontSee('Borrador excluido');
+
+        $this->actingAs($admin)->get(route('panel.submissions.index', [
+            'folio' => substr($target->public_id, 8, 10),
+        ]))->assertOk()
+            ->assertSee('Objetivo por referencia')
+            ->assertDontSee('Otra propuesta enviada')
+            ->assertSee('Folio o ID de propuesta');
+
+        $this->actingAs($admin)->get(route('panel.submissions.index', ['folio' => '%_\\']))
+            ->assertOk()
+            ->assertDontSee($target->folio)
+            ->assertDontSee($other->folio);
+        $this->actingAs($admin)->get(route('panel.submissions.index', ['folio' => str_repeat('B', 65)]))
+            ->assertRedirect()
+            ->assertSessionHasErrors('folio');
+    }
+
     private function submissionFor(User $user, string $title, string $status = 'draft'): Submission
     {
         $category = Category::query()->firstOrFail();

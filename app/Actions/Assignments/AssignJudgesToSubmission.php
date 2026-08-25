@@ -5,7 +5,6 @@ namespace App\Actions\Assignments;
 use App\Enums\AssignmentNotificationMode;
 use App\Enums\JudgeAssignmentStatus;
 use App\Enums\JudgeAssignmentType;
-use App\Enums\JudgeProfileStatus;
 use App\Enums\RubricVersionStatus;
 use App\Exceptions\AssignmentOperationRejected;
 use App\Models\Competition;
@@ -14,6 +13,7 @@ use App\Models\JudgeProfile;
 use App\Models\RubricVersion;
 use App\Models\Submission;
 use App\Models\User;
+use App\Services\AdministrativeJudgeEligibility;
 use App\Services\AssignmentEligibility;
 use App\Services\AuditLogger;
 use App\Services\EvaluationRubricContract;
@@ -28,6 +28,7 @@ final class AssignJudgesToSubmission
     public function __construct(
         private EnsureAssignmentAdministrator $ensureActor,
         private AssignmentEligibility $eligibility,
+        private AdministrativeJudgeEligibility $judgeEligibility,
         private EvaluationRubricContract $rubricContract,
         private SendJudgeAssignmentNotification $sendNotification,
         private AuditLogger $audit,
@@ -35,7 +36,7 @@ final class AssignJudgesToSubmission
 
     /**
      * @param  list<string>  $judgeProfilePublicIds
-     * @return array{created:Collection<int,JudgeAssignment>,omitted:int,notification_requested:bool}
+     * @return array{created:Collection<int,JudgeAssignment>,omitted:int,notification_requested:bool,notifications_skipped_pending:int}
      */
     public function execute(
         Submission $submission,
@@ -55,7 +56,7 @@ final class AssignJudgesToSubmission
 
     /**
      * @param  list<string>  $judgeProfilePublicIds
-     * @return array{created:Collection<int,JudgeAssignment>,omitted:int,notification_requested:bool}
+     * @return array{created:Collection<int,JudgeAssignment>,omitted:int,notification_requested:bool,notifications_skipped_pending:int}
      */
     public function executeWithNotificationMode(
         Submission $submission,
@@ -104,13 +105,11 @@ final class AssignJudgesToSubmission
                     throw new AssignmentOperationRejected('selected_judge_unknown', 'Uno o más jueces seleccionados no existen.');
                 }
                 foreach ($profiles as $profile) {
-                    if ($profile->status !== JudgeProfileStatus::Active
-                        || ! $profile->user
-                        || ! $profile->user->hasExactRoles(['judge'])
-                        || ! $profile->user->hasVerifiedEmail()
-                        || $profile->password_initialized_at === null
-                        || $profile->max_active_assignments !== null) {
-                        throw new AssignmentOperationRejected('selected_judge_ineligible', 'Todos los jueces seleccionados deben estar activos, verificados y con configuración completa.');
+                    if (! $this->judgeEligibility->isAssignable($profile)) {
+                        throw new AssignmentOperationRejected(
+                            $this->judgeEligibility->rejectionCode($profile) ?? 'selected_judge_ineligible',
+                            'Todos los jueces seleccionados deben estar activos o con configuración pendiente y conservar un perfil coherente.',
+                        );
                     }
                 }
 
@@ -158,6 +157,7 @@ final class AssignJudgesToSubmission
                     'created' => $created,
                     'omitted' => count($normalizedIds) - $created->count(),
                     'notification_requested' => $notificationMode->wasRequested(),
+                    'notifications_skipped_pending' => 0,
                 ];
             }, 5);
         } catch (AssignmentOperationRejected $exception) {
@@ -171,6 +171,10 @@ final class AssignJudgesToSubmission
 
         if ($notificationMode === AssignmentNotificationMode::Individual) {
             foreach ($result['created'] as $assignment) {
+                $assignment->loadMissing('judgeProfile.user.roles');
+                if (! $this->judgeEligibility->isOperational($assignment->judgeProfile)) {
+                    $result['notifications_skipped_pending']++;
+                }
                 $this->sendNotification->execute($assignment, $actor);
             }
         } elseif ($notificationMode === AssignmentNotificationMode::None) {

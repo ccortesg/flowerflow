@@ -21,6 +21,7 @@ use App\Models\RubricVersion;
 use App\Models\Submission;
 use App\Models\SubmissionVersion;
 use App\Models\User;
+use App\Services\AdministrativeJudgeEligibility;
 use App\Services\AuditLogger;
 use App\Services\BulkJudgeAssignmentEligibility;
 use App\Services\BulkJudgeAssignmentIntent;
@@ -41,6 +42,7 @@ final class ExecuteBulkJudgeAssignment
         private ActivateBlindReviewPackage $activatePackage,
         private AssignJudgesToSubmission $assign,
         private SendBulkJudgeAssignmentNotification $sendNotification,
+        private AdministrativeJudgeEligibility $judgeEligibility,
         private AuditLogger $audit,
     ) {}
 
@@ -262,6 +264,8 @@ final class ExecuteBulkJudgeAssignment
                 'failed_count' => $failedCount,
                 'notification_requested' => (bool) $payload['notify_judge'],
                 'notification_queued' => $notification,
+                'notification_skipped_pending' => (bool) $payload['notify_judge']
+                    && ! $this->judgeEligibility->isOperational($judge),
                 'items' => $results,
             ];
         } finally {

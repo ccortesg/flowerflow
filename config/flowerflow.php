@@ -45,6 +45,7 @@ return [
         'admissibility_review' => env('FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED', false),
         'evaluation' => env('FLOWERFLOW_EVALUATION_ENABLED', false),
         'evaluation_finalization' => env('FLOWERFLOW_EVALUATION_FINALIZATION_ENABLED', false),
+        'evaluation_export' => env('FLOWERFLOW_EVALUATION_EXPORT_ENABLED', false),
         'evaluation_notifications' => env('FLOWERFLOW_EVALUATION_NOTIFICATIONS_ENABLED', false),
         'submission_reminders' => env('FLOWERFLOW_SUBMISSION_REMINDERS_ENABLED', false),
         'administrative_finalization' => env('FLOWERFLOW_ADMIN_FINALIZATION_ENABLED', false),

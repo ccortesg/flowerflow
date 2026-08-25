@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\EvaluationExportStatus;
 use App\Enums\SubmissionExportStatus;
+use App\Models\EvaluationExport;
 use App\Models\SubmissionExport;
 use App\Services\AuditLogger;
 use Illuminate\Console\Command;
@@ -22,9 +24,16 @@ class PurgeExpiredSubmissionExports extends Command
             ->where('expires_at', '<=', now('UTC'))
             ->orderBy('id')
             ->get();
+        $expiredEvaluations = EvaluationExport::query()
+            ->where('status', EvaluationExportStatus::Completed->value)
+            ->whereNotNull('expires_at')
+            ->where('expires_at', '<=', now('UTC'))
+            ->orderBy('id')
+            ->get();
 
         if ($this->option('dry-run')) {
             $this->info("Exportaciones vencidas: {$expired->count()}. No se eliminó ningún archivo.");
+            $this->info("Exportaciones de evaluaciones vencidas: {$expiredEvaluations->count()}. No se eliminó ningún archivo.");
 
             return self::SUCCESS;
         }
@@ -53,7 +62,31 @@ class PurgeExpiredSubmissionExports extends Command
             $purged++;
         }
 
+        $evaluationPurged = 0;
+        foreach ($expiredEvaluations as $export) {
+            $expectedPrefix = "evaluation-exports/{$export->public_id}/";
+            if ($export->path && ! str_starts_with($export->path, $expectedPrefix)) {
+                $this->error("Ruta de evaluación fuera del alcance permitido para {$export->public_id}.");
+
+                return self::FAILURE;
+            }
+            if ($export->path) {
+                Storage::disk($export->disk)->delete($export->path);
+            }
+            $export->forceFill([
+                'status' => EvaluationExportStatus::Expired,
+                'path' => null,
+            ])->save();
+            $auditLogger->record('evaluation_export.expired', $export, $export->requestedBy, [
+                'scope_version' => $export->scope_version,
+                'status' => EvaluationExportStatus::Expired->value,
+                'expired_at' => $export->expires_at?->utc()->toIso8601String(),
+            ]);
+            $evaluationPurged++;
+        }
+
         $this->info("Exportaciones depuradas: {$purged}.");
+        $this->info("Exportaciones de evaluaciones depuradas: {$evaluationPurged}.");
 
         return self::SUCCESS;
     }
