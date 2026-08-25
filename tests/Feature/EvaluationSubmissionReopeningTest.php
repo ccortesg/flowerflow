@@ -67,7 +67,7 @@ class EvaluationSubmissionReopeningTest extends TestCase
             ->assertRedirect()->assertSessionHasNoErrors();
         $evaluation = $evaluation->fresh();
         $this->submitAsJudge($judge, $assignment, $evaluation->lock_version)
-            ->assertRedirect(route('judge.assignments.show', $assignment))->assertSessionHasNoErrors();
+            ->assertRedirect(route('judge.assignments.evaluation.show', $assignment))->assertSessionHasNoErrors();
 
         $evaluation = $evaluation->fresh('currentRevision.scores');
         $this->assertSame(EvaluationStatus::Submitted, $evaluation->status);
@@ -85,7 +85,7 @@ class EvaluationSubmissionReopeningTest extends TestCase
             ->assertDontSee('El envío final de la evaluación todavía no está habilitado.');
         $this->actingAs($judge)->get(route('judge.assignments.show', $assignment))
             ->assertOk()
-            ->assertSee('Consulta la evaluación enviada y su historial inmutable.')
+            ->assertSee('La evaluación fue enviada. Puedes consultar la revisión vigente y su historial inmutable.')
             ->assertDontSee('Declarar conflicto');
         $this->actingAs($judge)->patch(route('judge.assignments.evaluation.update', $assignment), $this->savePayload($evaluation->lock_version, str_repeat('b', 100), $assignment->rubric_version_id))
             ->assertSessionHasErrors('evaluation');
@@ -122,7 +122,7 @@ class EvaluationSubmissionReopeningTest extends TestCase
         $this->assertSame($admin->id, $reopening->reopened_by_user_id);
         $this->assertSame($judge->judgeProfile->id, $reopening->subject_judge_profile_id);
 
-        $judgeHtml = $this->actingAs($judge)->get(route('judge.assignments.show', $assignment))->assertOk()->getContent();
+        $judgeHtml = $this->actingAs($judge)->get(route('judge.assignments.evaluation.show', $assignment))->assertOk()->getContent();
         $this->assertStringContainsString('La administración reabrió esta evaluación', $judgeHtml);
         $this->assertStringNotContainsString('Motivo administrativo sintético', $judgeHtml);
         $this->assertStringNotContainsString($admin->name, $judgeHtml);

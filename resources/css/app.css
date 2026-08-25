@@ -2,6 +2,7 @@
 @import './pages/public-landing.css';
 @import './pages/participant-experience.css';
 @import './pages/admissibility-review.css';
+@import './pages/judge-evaluation-wizard.css';
 
 :root {
   --ff-ink: #17352f;

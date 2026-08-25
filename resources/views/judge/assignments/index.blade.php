@@ -30,7 +30,7 @@
           <dt class="col-sm-5">Paquete</dt><dd class="col-sm-7">{{ $assignment->submissionVersion->blindReviewPackage?->status?->label() ?? 'No disponible' }}</dd>
           <dt class="col-sm-5">Progreso</dt><dd class="col-sm-7">@if($revision && $criterionCount)<progress value="{{ $captured }}" max="{{ $criterionCount }}">{{ $captured }} de {{ $criterionCount }}</progress> {{ $captured }} de {{ $criterionCount }}@elseSin iniciar @endif</dd>
         </dl>
-        <a class="btn {{ $assignment->status === \App\Enums\JudgeAssignmentStatus::Active ? 'btn-flower' : 'btn-outline-dark' }} align-self-start mt-auto" href="{{ route('judge.assignments.show', $assignment) }}">{{ $actionLabel }}</a>
+        <a class="btn {{ $assignment->status === \App\Enums\JudgeAssignmentStatus::Active ? 'btn-flower' : 'btn-outline-dark' }} align-self-start mt-auto" href="{{ $assignment->evaluation ? route('judge.assignments.evaluation.show', $assignment) : route('judge.assignments.show', $assignment) }}">{{ $actionLabel }}</a>
       </article>
     </div>
   @endforeach

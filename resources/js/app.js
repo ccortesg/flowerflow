@@ -556,3 +556,210 @@ document.querySelectorAll('.ff-login-menu-toggle').forEach(toggle => {
   target?.addEventListener('shown.bs.collapse', () => toggle.setAttribute('aria-label', 'Cerrar navegación'));
   target?.addEventListener('hidden.bs.collapse', () => toggle.setAttribute('aria-label', 'Abrir navegación'));
 });
+
+document.querySelectorAll('[data-evaluation-autosave]').forEach(form => {
+  const status = form.querySelector('[data-autosave-status]');
+  const lockVersion = form.querySelector('[data-evaluation-lock-version]');
+  const progress = document.querySelector('[data-evaluation-progress]');
+  const progressText = document.querySelector('[data-evaluation-progress-text]');
+  const total = document.querySelector('[data-evaluation-total]');
+  const errorSummary = document.querySelector('[data-evaluation-errors]');
+  const reviewStep = document.querySelector('[data-wizard-step="4"]');
+  const interval = Number(form.dataset.autosaveInterval || 30000);
+  let dirty = false;
+  let blocked = false;
+  let submitting = false;
+  let changeVersion = 0;
+  let activeSave = null;
+
+  const setStatus = (message, state = '') => {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.remove('is-dirty', 'is-saving', 'is-saved', 'is-error');
+    if (state) status.classList.add(`is-${state}`);
+  };
+
+  const fieldName = key => {
+    const match = key.match(/^criteria\.(\d+)\.(score|comment)$/);
+    if (match) return `criteria[${match[1]}][${match[2]}]`;
+    return key;
+  };
+
+  const showErrors = errors => {
+    if (!errorSummary) return;
+    errorSummary.replaceChildren();
+    const heading = document.createElement('h2');
+    heading.className = 'h5';
+    heading.textContent = 'Revisa los siguientes campos';
+    const list = document.createElement('ul');
+    list.className = 'mb-0';
+    Object.entries(errors).forEach(([key, messages]) => {
+      const control = form.elements.namedItem(fieldName(key));
+      if (control instanceof HTMLElement) {
+        control.setAttribute('aria-invalid', 'true');
+        control.classList.add('is-invalid');
+      }
+      (Array.isArray(messages) ? messages : [messages]).forEach(message => {
+        const item = document.createElement('li');
+        item.textContent = String(message);
+        list.append(item);
+      });
+    });
+    errorSummary.append(heading, list);
+    errorSummary.hidden = false;
+    errorSummary.focus({ preventScroll: true });
+    errorSummary.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+  };
+
+  const clearErrors = () => {
+    form.querySelectorAll('[aria-invalid="true"]').forEach(control => {
+      control.removeAttribute('aria-invalid');
+      control.classList.remove('is-invalid');
+    });
+    if (errorSummary) {
+      errorSummary.hidden = true;
+      errorSummary.replaceChildren();
+    }
+  };
+
+  const enableReviewStep = isComplete => {
+    if (!reviewStep || !isComplete) return;
+    reviewStep.classList.remove('is-pending');
+    reviewStep.classList.add('is-ready');
+    const current = reviewStep.firstElementChild;
+    if (current?.tagName === 'SPAN' && reviewStep.dataset.reviewUrl) {
+      const link = document.createElement('a');
+      link.href = reviewStep.dataset.reviewUrl;
+      link.innerHTML = current.innerHTML;
+      current.replaceWith(link);
+    }
+  };
+
+  const applySavedState = payload => {
+    if (lockVersion) lockVersion.value = String(payload.lock_version);
+    if (progress) {
+      progress.value = payload.captured_criteria;
+      progress.max = payload.total_criteria;
+      progress.textContent = `${payload.captured_criteria} de ${payload.total_criteria}`;
+    }
+    if (progressText) progressText.textContent = `${payload.captured_criteria} de ${payload.total_criteria} criterios capturados`;
+    if (total) total.textContent = payload.total_display === null ? 'Disponible al capturar todos los criterios.' : `${payload.total_display} de 100.00`;
+    enableReviewStep(Boolean(payload.is_complete));
+    const savedAt = new Date(payload.saved_at);
+    const time = Number.isNaN(savedAt.getTime()) ? '' : new Intl.DateTimeFormat('es-MX', {
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }).format(savedAt);
+    setStatus(time ? `Guardado automáticamente a las ${time}` : 'Guardado automáticamente.', 'saved');
+  };
+
+  const saveDraft = async () => {
+    if (!dirty || blocked || submitting) return !blocked;
+    if (activeSave) return activeSave;
+
+    const saveVersion = changeVersion;
+    activeSave = (async () => {
+      if (!navigator.onLine) {
+        setStatus('Sin conexión. Conservamos los cambios en esta pantalla para reintentar.', 'error');
+        return false;
+      }
+
+      setStatus('Guardando…', 'saving');
+      const body = new FormData(form);
+      body.set('intent', 'autosave');
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body,
+          credentials: 'same-origin',
+          headers: {
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        const payload = await response.json().catch(() => ({}));
+
+        if (response.status === 409) {
+          blocked = true;
+          setStatus('Otra pestaña guardó una versión más reciente. Recarga antes de continuar.', 'error');
+          showErrors({ evaluation: [payload.message || 'Existe un conflicto de versión. Recarga la evaluación sin cerrar esta pestaña hasta recuperar tus cambios.'] });
+          if (errorSummary && payload.reload_url) {
+            const reload = document.createElement('a');
+            reload.className = 'btn btn-outline-danger mt-3';
+            reload.href = payload.reload_url;
+            reload.textContent = 'Recargar evaluación';
+            errorSummary.append(reload);
+          }
+          return false;
+        }
+        if (response.status === 422) {
+          showErrors(payload.errors || { evaluation: [payload.message || 'Hay campos que deben corregirse.'] });
+          setStatus('No se guardó: revisa los campos señalados.', 'error');
+          return false;
+        }
+        if (!response.ok) {
+          setStatus('No fue posible guardar. Tus cambios permanecen en esta pantalla.', 'error');
+          return false;
+        }
+
+        clearErrors();
+        applySavedState(payload);
+        if (changeVersion === saveVersion) dirty = false;
+        if (dirty) setStatus('Cambios sin guardar', 'dirty');
+        return true;
+      } catch (error) {
+        setStatus(navigator.onLine ? 'No fue posible conectar con el servidor. Tus cambios permanecen en esta pantalla.' : 'Sin conexión. Conservamos los cambios en esta pantalla para reintentar.', 'error');
+        return false;
+      } finally {
+        activeSave = null;
+      }
+    })();
+
+    return activeSave;
+  };
+
+  const markDirty = event => {
+    if (submitting || blocked || event.target === lockVersion) return;
+    dirty = true;
+    changeVersion += 1;
+    setStatus('Cambios sin guardar', 'dirty');
+  };
+
+  form.addEventListener('input', markDirty);
+  form.addEventListener('change', markDirty);
+  form.addEventListener('submit', () => {
+    submitting = true;
+    dirty = false;
+  });
+
+  document.querySelectorAll('[data-save-before-navigation]').forEach(link => {
+    link.addEventListener('click', async event => {
+      if (!dirty) return;
+      event.preventDefault();
+      const destination = link.href;
+      while (dirty && !blocked) {
+        const saved = await saveDraft();
+        if (!saved) return;
+      }
+      window.location.assign(destination);
+    });
+  });
+
+  window.addEventListener('online', () => {
+    if (dirty && !blocked) setStatus('Conexión restablecida. Los cambios se guardarán automáticamente.', 'dirty');
+  });
+  window.addEventListener('offline', () => {
+    if (dirty) setStatus('Sin conexión. Conservamos los cambios en esta pantalla para reintentar.', 'error');
+  });
+  window.addEventListener('beforeunload', event => {
+    if (!dirty || submitting) return;
+    event.preventDefault();
+    event.returnValue = '';
+  });
+
+  window.setInterval(() => void saveDraft(), Math.max(interval, 30000));
+
+  if (errorSummary && !errorSummary.hidden) {
+    window.requestAnimationFrame(() => errorSummary.focus());
+  }
+});

@@ -55,7 +55,7 @@ class SaveEvaluationDraftRequest extends FormRequest
             'lock_version' => ['required', 'integer', 'min:0'],
             'general_comment' => ['present', 'nullable', 'string', 'max:2000'],
             'criteria' => ['present', 'array', 'max:'.$criterionCount],
-            'intent' => ['sometimes', 'string', 'in:save,review'],
+            'intent' => ['sometimes', 'string', 'in:save,review,autosave'],
             'criteria.*' => ['required', 'array:code,score,comment'],
             'criteria.*.code' => ['required', 'string'],
             'criteria.*.score' => [

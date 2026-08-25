@@ -1,5 +1,7 @@
 # Handoff operativo vigente — Flower Flow
 
+> **M8A `GO LOCAL/TEST` — 2026-08-25:** wizard responsive de cuatro pasos para el juez, autosave cada 30 segundos con `lock_version` y exportaciones PDF/XLSX desde el paquete ciego. Suite 233/2,849, una prueba de carga máxima opt-in omitida, 112 rutas, cuatro schedules, 24 migraciones y UAT Firefox en tres viewports. No requiere migración, job, cola, worker ni flag nuevo. Añade DOMPDF y PhpSpreadsheet; el PDF/XLSX se genera de forma síncrona, privada y rate-limited. Rollback: retirar rutas/vistas/servicios/dependencias M8A sin borrar borradores, paquetes o auditoría. Producción no autorizada y bloqueo jurídico vigente.
+
 > **Asignación simultánea — 2026-08-25, local/test:** requiere ejecutar primero `flowerflow:admissibility-backfill --dry-run`, aplicar el backfill autorizado y exigir un segundo dry-run con cero faltantes. Flags nuevos default-off: `FLOWERFLOW_BULK_JUDGE_ASSIGNMENT_ENABLED=false` y límite 20. No añade migración o worker; el correo consolidado usa `database/default` y el proceso Flower Flow existente `high,exports,default,low`. Rollback: apagar el flag y conservar evidencia. Producción no autorizada y bloqueo jurídico vigente.
 
 > **Recuperación de admisibilidad `GO LOCAL/TEST` — 2026-08-25:** el diagnóstico de un dump productivo aportado por el propietario reveló tablas/migración presentes, pero permisos y expedientes ausentes. La corrección local añade una migración RBAC idempotente y acceso contextual de sólo navegación desde Propuestas. Quedó verde con 24 migraciones, 104 rutas, suite 221/2,556 y UAT Firefox 1440×900, 1024×768 y 390×844. Producción continúa `POR_CONFIRMAR` y no fue modificada. Una operación posterior debe verificar backup, SHA/DocumentRoot/flag, migrar, limpiar caché de permisos, ejecutar `flowerflow:admissibility-backfill --dry-run`, backfill y dry-run cero antes de habilitar `FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED=true`. Rollback funcional: apagar el flag; no eliminar evidencia.
@@ -43,13 +45,13 @@ M7 queda `GO LOCAL/TEST`: 23 migraciones, suite completa 208/2,385, asignación 
 | Área | Estado local documentado | Estado productivo en este handoff |
 |---|---|---|
 | Fase 01 / 02A, cuarta categoría, plazo, legales v1.1, XLSX y 503/CSP | Implementado y validado localmente según diagnóstico/ExecPlans | Instalación confirmada sólo por el propietario. |
-| Jueces, asignaciones, conflictos, rúbrica, evaluación y comunicaciones | M1–M8 en alcance local/test; paquete, borrador/cálculo, envío/reapertura y outbox/digest | Nada de M1–M8 atribuido a producción. |
+| Jueces, asignaciones, conflictos, rúbrica, evaluación y comunicaciones | M1–M8A en alcance local/test; paquete, borrador/cálculo, envío/reapertura, outbox/digest y wizard/exportaciones del juez | Nada de M1–M8A atribuido a producción. |
 | Ganadores/resultados | 0 %; fuera de Fase 02B | No implementado; resultados deben permanecer apagados. |
 | Operación externa | Runbooks y configuración documentados | Evidencia técnica independiente `POR_CONFIRMAR`. |
 
 ## Siguiente puerta
 
-Las decisiones de Fase 02B hasta M8 están implementadas local/test. M6A sustituyó el contrato `4+2` por selección manual sin mínimos/límites; la divergencia con “al menos tres jueces” permanece `LEGAL_RECONCILIATION_REQUIRED`. El paquete vigente incluye:
+Las decisiones de Fase 02B hasta M8A están implementadas local/test. M6A sustituyó el contrato `4+2` por selección manual sin mínimos/límites; la divergencia con “al menos tres jueces” permanece `LEGAL_RECONCILIATION_REQUIRED`. El paquete vigente incluye:
 
 - `.agent/execplans/flowerflow-phase-02b-evaluation-design.md`;
 - `.agent/execplans/flowerflow-phase-02b-m1-judge-rbac.md`;
@@ -62,6 +64,7 @@ Las decisiones de Fase 02B hasta M8 están implementadas local/test. M6A sustitu
 - `.agent/execplans/flowerflow-phase-02b-m6a-judge-operations-reconciliation.md`;
 - `.agent/execplans/flowerflow-phase-02b-m7-immutable-submission-append-only-reopening.md`;
 - `.agent/execplans/flowerflow-phase-02b-m8-evaluation-communications.md`;
+- `.agent/execplans/flowerflow-phase-02b-m8a-judge-evaluation-wizard-exports.md`;
 - `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`;
 - `docs/19-phase-02b-m2-implementation-report-2026-08-18.md`;
 - `docs/20-phase-02b-m3-implementation-report-2026-08-18.md`;
@@ -72,16 +75,18 @@ Las decisiones de Fase 02B hasta M8 están implementadas local/test. M6A sustitu
 - `docs/27-phase-02b-m6a-judge-operations-reconciliation-report-2026-08-24.md`;
 - `docs/28-phase-02b-m7-evaluation-submission-reopening-report-2026-08-24.md`;
 - `docs/29-phase-02b-m8-evaluation-communications-report-2026-08-25.md`;
+- `docs/31-phase-02b-m8a-judge-evaluation-wizard-exports-report-2026-08-25.md`;
 - `docs/adr/0008-phase-02b-evaluation-contract.md`;
 - `docs/adr/0010-m6a-judge-operations-reconciliation.md`;
 - `docs/adr/0011-m7-immutable-evaluation-submission-reopening.md`;
-- `docs/adr/0012-m8-evaluation-communications.md`.
+- `docs/adr/0012-m8-evaluation-communications.md`;
+- `docs/adr/0014-m8a-judge-evaluation-wizard-and-project-exports.md`.
 
 La siguiente puerta potencial es diseñar y autorizar exclusivamente M9. El estado es:
 
-`M1–M8 LOCAL/TEST — IMMUTABLE SUBMISSION/REOPENING + COMMUNICATIONS — M9–M10 NOT AUTHORIZED`
+`M1–M8A LOCAL/TEST — IMMUTABLE SUBMISSION/REOPENING + COMMUNICATIONS + JUDGE WIZARD — M9–M10 NOT AUTHORIZED`
 
-M1 evita acceso por descarte; M2 añade cuenta; M3 rúbrica; M6A fija asignación manual/rúbrica v2; M5 conserva proyección; M6 borrador/cálculo; M7 sellado/reapertura y M8 comunicaciones/digest. M9–M10 requieren autorización separada.
+M1 evita acceso por descarte; M2 añade cuenta; M3 rúbrica; M6A fija asignación manual/rúbrica v2; M5 conserva proyección; M6 borrador/cálculo; M7 sellado/reapertura; M8 comunicaciones/digest y M8A el wizard/exportaciones del juez. M9–M10 requieren autorización separada.
 
 La asignación vigente es exclusivamente administrativa y explícita, sin mínimo/máximo ni sustitutos exclusivos. `P2B-BLOCK-001` queda superado operacionalmente por M6A, pero la contradicción jurídica de mínimos impide release/producción.
 

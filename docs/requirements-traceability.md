@@ -9,6 +9,19 @@
 | ADM-REC-03 | Acción por propuesta enviada abre expediente sin admitir ni mutar GET | eager-load, botón contextual, prueba de atributos/eventos y UAT Firefox | VERIFIED LOCAL/TEST |
 | ADM-REC-04 | Evidenciar enviados sin expediente y recuperar con backfill idempotente | estado “Sin expediente” y comando dry-run/execute existente | VERIFIED LOCAL/TEST; PRODUCCIÓN PENDING |
 
+## Trazabilidad M8A — 2026-08-25
+
+| ID | Requisito | Implementación/prueba | Estado |
+|---|---|---|---|
+| M8A-UX-01 | Wizard responsive de cuatro pasos y conflicto sólo en la ubicación autorizada | vistas separadas, stepper semántico, CSS acotado y UAT Firefox | VERIFIED LOCAL/TEST |
+| M8A-PROJECT-01 | Proyecto del juez sólo desde paquete ciego fijado | `BlindReviewProjectResolver`, hash/schema/ownership y pruebas IDOR/drift | VERIFIED LOCAL/TEST |
+| M8A-EXPORT-01 | PDF A4 privado con marcas y sin PII estructurada | DOMPDF endurecido, controller privado, auditoría y render Poppler | VERIFIED LOCAL/TEST |
+| M8A-EXPORT-02 | XLSX de tres hojas, marcas reales y texto literal | `JudgeProjectWorkbookWriter`, PhpSpreadsheet, inspección OpenPyXL/render | VERIFIED LOCAL/TEST |
+| M8A-SAVE-01 | Autosave cada 30 s mediante Action servidor y sin storage del navegador | `intent=autosave`, JSON autoritativo y prueba/browser UAT | VERIFIED LOCAL/TEST |
+| M8A-LOCK-01 | Dos pestañas no sobrescriben; 409 conserva cambios locales | lock optimista M6/M7, JS bloqueado y evidencia DB/browser | VERIFIED LOCAL/TEST |
+| M8A-COMPAT-01 | Sin migración ni alteración de M7/M8 | regresión M5–M8, rutas sólo aditivas y ADR-0014 | VERIFIED LOCAL/TEST |
+| M8A-LEGAL | Reconciliar “al menos tres jueces” | decisión formal o documento jurídico futuro | OPEN / NO-GO RELEASE |
+
 
 ## Trazabilidad M8 — 2026-08-25
 

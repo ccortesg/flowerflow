@@ -1,5 +1,15 @@
 # Registro de dependencias
 
+## Exportaciones del proyecto asignado M8A — 2026-08-25
+
+| Dependencia | Versión lock | Alcance | Licencia | Motivo y controles |
+|---|---:|---|---|---|
+| barryvdh/laravel-dompdf | 3.1.2 en lock (`^3.1`) | Runtime PHP directo | MIT | Integración Laravel para PDF A4 síncrono y acotado. Usa vista propia, logotipos locales, cache privado y configuración con remoto, PHP y JavaScript deshabilitados. |
+| dompdf/dompdf | 3.1.6 | Runtime PHP transitivo | LGPL-2.1-only | Motor PDF de la integración anterior. No recibe HTML libre del request: renderiza la descripción sanitizada y fijada en el paquete ciego inmutable. |
+| phpoffice/phpspreadsheet | 5.9.0 en lock (`^5.9`) | Runtime PHP directo | MIT | Libro pequeño con tres hojas y dibujos de ambos logotipos. Toda entrada no confiable se fuerza a `TYPE_STRING`; no calcula fórmulas ni lee archivos del usuario. |
+
+OpenSpout 4.32 continúa como escritor de streaming de las exportaciones masivas. PhpSpreadsheet se limita a la exportación pequeña de una sola asignación porque OpenSpout no cubre los dibujos requeridos. Los PDF/XLSX M8A se generan en almacenamiento temporal privado, se descargan con `private, no-store`/`nosniff` y se eliminan después de la respuesta.
+
 ## Exportación XLSX privada — 2026-08-11
 
 | Dependencia | Versión lock | Alcance | Licencia | Motivo y controles |

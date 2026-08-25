@@ -67,6 +67,17 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(6)->by($linkKey.'|'.$request->ip());
         });
 
+        RateLimiter::for('judge-project-exports', function (Request $request) {
+            $user = $request->user()?->getAuthIdentifier() ?? 'guest';
+            $assignment = $request->route('judgeAssignment');
+            $assignmentKey = is_object($assignment) && method_exists($assignment, 'getRouteKey')
+                ? $assignment->getRouteKey()
+                : (string) $assignment;
+            $format = str_ends_with((string) $request->route()?->getName(), '.pdf') ? 'pdf' : 'xlsx';
+
+            return Limit::perMinute(6)->by($user.'|'.$assignmentKey.'|'.$format);
+        });
+
         Vite::useStyleTagAttributes(function (?string $src, string $url, ?array $chunk, ?array $manifest) {
             if ($src !== null) {
                 return [
