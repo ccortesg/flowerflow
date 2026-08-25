@@ -1,5 +1,7 @@
 # Roadmap y backlog
 
+> **Puerta vigente M8 — 2026-08-25:** se implementaron local/test las comunicaciones de conflicto, resolución, envío/reenvío, reapertura y digest único por juez mediante el outbox. No hay migración, ruta, permiso o worker adicional; los recordatorios programados 20/22 no se reproducen. M9–M10, consolidación, ranking, resultados y producción continúan `NOT IMPLEMENTED / NOT AUTHORIZED`. Release sigue bloqueado por la contradicción jurídica de mínimos.
+
 > **Puerta vigente M7 — validación final 2026-08-25:** confirmación, mínimo 100, envío inmutable y reapertura append-only quedaron `GO LOCAL/TEST` con 208 pruebas/2,385 aserciones y UAT Firefox. M8–M10 continúan `NOT IMPLEMENTED / NOT AUTHORIZED`; no existen comunicaciones de evaluación, consolidación, ranking ni resultados. Release/producción sigue bloqueado por la contradicción jurídica de mínimos.
 
 > **Puerta vigente M6A — 2026-08-24:** milestone correctivo previo a M7 para onboarding purpose-bound, asignación manual sin mínimos/límites, rúbrica v2 legal y UX del juez. M7–M10 continúan `NOT IMPLEMENTED / NOT AUTHORIZED`. Aunque M6A pueda cerrar `GO LOCAL/TEST`, no puede entrar a release/producción mientras “al menos tres jueces” no se reconcilie jurídicamente o exista aceptación formal separada.
@@ -226,24 +228,22 @@ Bloqueos externos de la ruta: licencia Materialize, textos legales, reglas de el
 - **Rollback:** pausar asignaciones/evaluación; conservar borradores.
 - **Terminado:** evaluación ciega E2E con datos sintéticos.
 
-### M8 — Decisiones, comunicaciones, reportes y auditoría
+### M8 — Comunicaciones y observabilidad de evaluación
 
-> **Separación vigente 2026-08-23:** el milestone independiente de bitácora centraliza y recupera exclusivamente las nueve comunicaciones ya existentes. No implementa ganadores, resultados, nuevas campañas ni los recordatorios programados de M8; esas partes permanecen `NOT IMPLEMENTED / NOT AUTHORIZED`.
+> **Contrato ejecutado local/test 2026-08-25:** ADR-0009 sigue siendo la única bitácora/outbox. M8 añade cinco tipos sin migración, ruta, permiso o worker. Ganadores, resultados, consolidación, recordatorios retroactivos 20/22 y reportes avanzados no forman parte de M8.
 
-- **Objetivo/valor:** cerrar operación sin publicar prematuramente.
-- **Actores:** admin, auditor, participantes.
-- **Historias:** declarar ganador con razón; enviar notificaciones críticas; consultar bitácora.
-- **Reglas:** cálculo no declara ganador; publicación off; correo sin PII sensible; reintentos idempotentes.
-- **Tareas:** winner_decisions; notifications/templates; delivery logs; reportes mínimos; failed jobs; flags.
-- **Artefactos:** acciones, jobs, mailables, views y tests.
-- **Dependencias:** SMTP y reglas de empate/publicación; M6/M7.
-- **Riesgos:** correo duplicado, resultado incorrecto/prematuro.
-- **Estimación:** 6 a 8 días-persona.
-- **Responsables:** backend A + QA + producto.
-- **Aceptación:** doble confirmación, no publicación, correos fake/idempotencia y audit log.
-- **Validación:** notification fakes, queue retries, permisos/exports.
-- **Rollback:** detener worker/flags; revocar decisión con evento, no borrar.
-- **Terminado:** runbook de comunicación y fallos probado.
+- **Objetivo/valor:** comunicar transiciones ya persistidas y resumir el cierre sin exponer evaluación ni afirmar entrega.
+- **Actores:** juez sujeto, juez saliente y administrador responsable exacto.
+- **Historias:** recibir aviso de conflicto resuelto, envío/reenvío, reapertura y digest; admin responsable recibe conflicto declarado y envío.
+- **Reglas:** eventos ID-only post-commit; outbox obligatorio; destinatarios sin fallback; enlaces autenticados; revalidación e idempotencia.
+- **Tareas:** tipos/plantillas/listeners, allowlist del registry, comando dry-run/execute, scheduler y auditoría redactada.
+- **Artefactos:** ADR-0012, ExecPlan M8, informe 29, pruebas y UAT local.
+- **Dependencias:** M6A/M7 y ADR-0009; no depende de SMTP real para validación local.
+- **Riesgos:** correo duplicado, evento obsoleto, digest tardío o `sent` mal interpretado.
+- **Aceptación:** destinatarios exactos, cero duplicados, cancelación segura, un digest por juez y ventanas exactas.
+- **Validación:** mail `array`, queue database, bitácora/recovery, límites, scans y regresión M1–M7.
+- **Rollback:** apagar flags M8; conservar delivery, attempts y auditoría.
+- **Terminado:** evidencia local/test y runbook actualizados; release continúa bloqueado jurídicamente.
 
 ### M9 — QA, accesibilidad, hardening, rendimiento y despliegue
 
@@ -321,9 +321,9 @@ Contratos de modelos, enums, rutas y componentes se acuerdan antes del paralelo.
 | Cuarta categoría | Cerrada en código/test local | datos, límite cuatro, superficies públicas/participante/admin y concurrencia |
 | Exportación privada | Cerrada en código/test local | XLSX asíncrono privado, cinco hojas, permisos, auditoría y expiración; operación de worker/scheduler pendiente |
 | Ampliación de plazo y legales v1.1 | Cerrada en código/test local | cierre al 23-ago-2026, cuatro categorías/máximo cuatro y catálogo jurídico v1.1; continuidad histórica resuelta por owner |
-| Fase 02B evaluación | `M1–M7 GO LOCAL/TEST; M8–M10 NOT AUTHORIZED` | Asignación manual sin mínimos, paquete ciego, borrador/cálculo, sellado y reapertura append-only conformes localmente |
+| Fase 02B evaluación | `M1–M8 LOCAL/TEST; M9–M10 NOT AUTHORIZED` | Asignación manual sin mínimos, paquete, borrador/cálculo, sellado/reapertura y comunicaciones/digest implementados localmente |
 | Resultados/retención ejecutable | No autorizado | ganadores, publicación y borrado condicionado |
 | Release candidate local previo | Cerrado localmente | validación/UAT documentadas; registro histórico conservado |
 | Producción de cambios actuales | `OWNER_CONFIRMED_DEPLOYED` | SHA, migraciones, flags, servicios y smoke siguen `POR_CONFIRMAR` sin evidencia independiente |
 
-La siguiente puerta potencial es M8 y requiere autorización separada. Cualquier prompt futuro debe preservar M5–M7 y no mezclar consolidación, ganadores, resultados, ARCO o producción.
+La siguiente puerta potencial es M9 y requiere autorización separada. Cualquier prompt futuro debe preservar M5–M8 y no inferir consolidación, ganadores, resultados, ARCO o producción.

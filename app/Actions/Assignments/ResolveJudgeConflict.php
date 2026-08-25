@@ -6,6 +6,7 @@ use App\Enums\JudgeAssignmentStatus;
 use App\Enums\JudgeAssignmentType;
 use App\Enums\JudgeConflictStatus;
 use App\Enums\JudgeProfileStatus;
+use App\Events\JudgeConflictResolved;
 use App\Exceptions\AssignmentOperationRejected;
 use App\Models\JudgeAssignment;
 use App\Models\JudgeConflict;
@@ -141,6 +142,12 @@ final class ResolveJudgeConflict
                     'replacement_assignment_id' => $replacement->id,
                     'status' => JudgeConflictStatus::ResolvedReassigned->value,
                 ]);
+                JudgeConflictResolved::dispatch(
+                    $lockedConflict->id,
+                    $original->id,
+                    $replacement->id,
+                    $actor->id,
+                );
 
                 return $replacement;
             }, 5);

@@ -1,5 +1,17 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+## Trazabilidad M8 — 2026-08-25
+
+| ID | Requisito | Implementación/prueba | Estado |
+|---|---|---|---|
+| M8-01 | Eventos ID-only sólo después del commit | eventos/listeners, rollback dirigido | VERIFIED LOCAL |
+| M8-02 | Destinatarios exactos sin fallback ni duplicados | `EvaluationCommunicationDispatcher`, pruebas de conflicto/envío | VERIFIED LOCAL |
+| M8-03 | Cinco tipos HTML/texto sin contenido sensible | enum, registry, notifications/views, XSS/scans | VERIFIED LOCAL |
+| M8-04 | Revalidación, cancelación y recuperación | `CommunicationMessageRegistry`, `DeliverCommunication`, panel existente y UAT | VERIFIED LOCAL |
+| M8-05 | Digest único por juez y ventanas exactas | comando/servicio/scheduler, pruebas límite/deriva/conteos | VERIFIED LOCAL |
+| M8-06 | Sin recordatorios vencidos, consolidación o resultados | búsqueda de alcance y regresión | VERIFIED LOCAL |
+| M8-LEGAL | Reconciliar “al menos tres jueces” | decisión formal o documento jurídico futuro | OPEN / NO-GO RELEASE |
+
 ## Trazabilidad M7 — 2026-08-24
 
 | ID | Requisito | Implementación/prueba | Estado |
@@ -41,7 +53,7 @@
 | PANEL-EXP-002 | Exportar una fila por propuesta enviada con contacto y proyecto inmutables | `SubmissionExportKind`, `SubmissionContactsWorkbookWriter`, rutas/UI y `SubmissionExportTest` | VERIFIED local/test dirigido; gate completo en ExecPlan |
 | PANEL-OPS-001 | Flags default-off y rollback que preserva evidencia | config/env/migración fail-closed/ExecPlan | VERIFIED local/test |
 
-> **Contrato histórico M6 — 2026-08-18:** M4A conservaba cuatro principales y dos sustitutos ilimitados; M5 aportó la proyección ciega y M6 el borrador/cálculo servidor con lock optimista. M6A sustituyó la cobertura fija y M7 implementó el envío/reapertura; sólo M8–M10 permanecen no implementados/no autorizados.
+> **Contrato histórico M6 — 2026-08-18:** M4A conservaba `4+2`; M6A sustituyó la cobertura fija, M7 implementó envío/reapertura y M8 comunicaciones/digest. Sólo M9–M10 permanecen no implementados/no autorizados.
 
 ## Trazabilidad de reconciliación jurídica v1.1 — 2026-08-17
 
@@ -82,13 +94,13 @@
 | F2B-DES-007 | Estados, envío inmutable y reapertura versionada | `SubmitEvaluation`, `ReopenEvaluation`, migración M7, ADR-0011 y pruebas dirigidas | M7 VERIFIED LOCAL |
 | F2B-DES-008 | Cálculo sólo servidor, consolidación/faltantes/empate | cálculo draft M6 implementado; consolidación/empate siguen en paquete sección 11 | M6 VERIFIED / CONSOLIDATION NOT IMPLEMENTED |
 | F2B-DES-009 | Matriz negativa, amenazas y auditoría | suites M1–M5; M5 añade canarios, IDOR, drift, neutralidad y concurrencia | M1–M5 VERIFIED LOCAL |
-| F2B-DES-010 | UX accesible mínima | flujos juez/admin M7, tres viewports, teclado/foco/zoom/reflow, consola, 409, 403/404 | M1–M7 VERIFIED; UX M8+ PENDING |
+| F2B-DES-010 | UX accesible mínima | flujos juez/admin y bitácora/correos M8 en tres viewports | M1–M8 LOCAL; UX M9+ PENDING |
 | F2B-DES-011 | Notificaciones idempotentes y operación | M2: configuración de acceso, verificación y estado/recovery con HTML+texto y dispatcher resiliente; paquete sección 14 para eventos futuros | M2 SUBSET VERIFIED / M3+ PENDING |
 | F2B-DES-012 | Compatibilidad con más de 50 propuestas | migración M2 aditiva, perfil primary/substitute, sin backfill/asignaciones; upgrade/rollback/forward preservó usuario sintético | M2 VERIFIED LOCAL / CAPACITY DECISION CLOSED |
-| F2B-DES-013 | Diez milestones y corrección | paquete sección 18 + ExecPlans M4A/M5/M6/M6A/M7 | M7 GO; M8–M10 NOT AUTHORIZED |
+| F2B-DES-013 | Diez milestones y corrección | paquete sección 18 + ExecPlans M4A/M5/M6/M6A/M7/M8 | M8 LOCAL; M9–M10 NOT AUTHORIZED |
 | F2B-DES-014 | Bloque de 21 respuestas y prompt ejecutado | paquete secciones 20–21; contrato M6 corregido | OWNER FINAL / M6 VERIFIED |
 | F2B-DES-015 | Resolver incompatibilidad de cobertura/capacidad/reemplazo | ADR-0008; D-034/D-035; R76; ExecPlan/informe M4A | `P2B-BLOCK-001 RESOLVED LOCAL` |
-| F2B-DES-016 | Contrato de QA por milestone | suites M1–M7, gates y UAT local | M7 VERIFIED / M8+ PENDING |
+| F2B-DES-016 | Contrato de QA por milestone | suites M1–M8, gates y UAT local | M8 LOCAL / M9+ PENDING |
 
 ## Trazabilidad de implementación Fase 02B M3 — 2026-08-18
 
@@ -334,23 +346,24 @@
 | F2B-M2-008 | VERIFIED LOCAL | Gates de release local y UX M2 están verdes. | ExecPlan/reporte M2 y QA | M1+M2 16/267 tras función/capacidad; suite completa y gates finales registrados en el reporte; Firefox desktop/tablet/mobile. | automatizado + UAT local | F2B-M2 |
 | JUD-001 | M1/M2 VERIFIED LOCAL | Shell exclusivo; roles excluyentes, alta directa, correo verificado, perfil activo y 2FA opcional. | `/juez`, `judge.active`, `/panel/jueces`, escritor exclusivo y flag | M1 aísla; M2 crea/activa/suspende/recupera sin conceder superficies ajenas. | suites M1/M2 + Firefox local | F2B |
 | JUD-002 | OWNER_APPROVED / M5 VERIFIED LOCAL | Ceguera simple estructural; M5 sirve sólo payload allowlist y anexos neutros a la asignación propia activa. | `/juez/asignaciones/{id}` y descarga M5 | Mantener canarios; la autoidentificación semántica permanece como riesgo aceptado. | F payload + B + SEC | F2B |
-| JUD-003 | OWNER FINAL / M4A VERIFIED | Catálogo cerrado; admin selecciona manualmente uno de dos sustitutos. | `JudgeConflict`, Actions/UI M4A | Estado bloqueante, reemplazo y locks; sin contador de capacidad. | suites M4A + UAT | F2B |
-| JUD-004 | OWNER FINAL / M4A VERIFIED | Cuatro principales y dos sustitutos sólo reemplazos; los seis ilimitados. | `JudgeAssignment`, cobertura/admin selection | Sin iniciales a sustitutos; >30 permitidos; sin autoasignación. | suites M4A + concurrencia | F2B |
-| JUD-005 | OWNER_APPROVED / NOT IMPLEMENTED | Rúbrica 20/20/25/25/10, escala 0–10/paso 0.5, comentario general obligatorio y por criterio opcional. | Rúbrica/evaluación futura | Versión activada inmutable; evaluación conserva versión exacta. | U cálculo/versionado + F | F2B |
-| JUD-006 | OWNER_APPROVED / NOT IMPLEMENTED | Borrador, envío inmutable y reapertura append-only con ventanas, razón, password confirmation y actor real. | Evaluación futura | Admin no sobrescribe ni suplanta; cierre 27-ago 23:59:59. | F + B + A11Y + SEC | F2B |
-| JUD-007 | OWNER_APPROVED / NOT IMPLEMENTED | Total servidor 0–100, precisión 4/2 HALF_UP; media de cuatro; faltante bloquea; igualdad a dos decimales señala empate. | Evaluación/historial futura | Payload cliente no altera total; señal no declara ganador. | U cálculo + F payload + SEC | F2B |
-| JUD-008 | OWNER_APPROVED / NOT IMPLEMENTED | Cierre global y reapertura sólo hasta 20:00; envío/reenvío hasta 23:59:59 Hermosillo. | Middleware/Policy futura | Tests de segundo anterior/exacto/posterior en servidor. | U fecha + F + SEC | F2B |
+| JUD-003 | OWNER FINAL / M4–M8 VERIFIED LOCAL | Catálogo cerrado; reemplazo seleccionado manualmente entre jueces activos elegibles; avisos redactados a responsables exactos. | conflictos/Actions M6A, listeners M8 | Estado bloqueante, cadena explícita, sin fallback de destinatario. | suites M6A/M8 + UAT | F2B |
+| JUD-004 | OWNER FINAL / M6A VERIFIED LOCAL | Asignación manual sin mínimo/máximo; `primary|substitute` informativo. | `JudgeAssignment`, UI/actions M6A | Cualquier juez activo elegible; sin cobertura ni automatismo. | suites M6A + concurrencia | F2B |
+| JUD-005 | OWNER FINAL / M6A–M7 VERIFIED LOCAL | Rúbrica v1 histórica de cinco y v2 activa de cuatro criterios, escala 0–10/paso .5, comentario general y por criterio. | catálogo de contratos, evaluación | Versión fijada inmutable; dimensión dinámica. | cálculo/versionado + feature | F2B |
+| JUD-006 | OWNER APPROVED / M6–M8 VERIFIED LOCAL | Borrador, envío inmutable, reapertura append-only y comunicaciones con actor real. | evaluación M6/M7, outbox M8 | Admin no sobrescribe/suplanta; evento fallido no revierte negocio. | F + B + A11Y + SEC | F2B |
+| JUD-007 | OWNER APPROVED / PARTIAL | Total servidor 0–100 y precisión 4/2 HALF_UP están verificados; consolidación/media/empate no se implementan. | cálculo M6/M7; M9+ pendiente | Payload cliente no altera total; no existe ranking/ganador. | U cálculo + ausencia de alcance | F2B |
+| JUD-008 | OWNER APPROVED / M7–M8 VERIFIED LOCAL | Reapertura hasta 20:00; envío hasta 23:59:59; digest durante las 24 h siguientes. | `EvaluationWindow`, digest/scheduler M8 | Segundos exactos, timezone/config/`due_at` fail-closed. | límites + drift | F2B |
 | WIN-001 | DECISION | Declarar ganador es separado del cálculo. | `/admin/ganadores` | Resultado calculado no cambia proyecto a ganador automáticamente. | U + F | MVP |
 | WIN-002 | DECISION | Declaración registra categoría, proyecto, actor, justificación y fecha. | Ganadores/auditoría | Decisión incompleta o sin permiso se rechaza. | F + SEC + UAT | MVP |
 | WIN-003 | PARTIAL | Empate técnico se detecta por igualdad del consolidado redondeado a dos decimales; resolución, categoría desierta y premio siguen pendientes. | Ganadores/reglas | 02B sólo emite señal; nunca elige ganador ni usa azar. | U reglas + F + UAT | MVP/FUTURE |
-| COM-001 | DECISION | Notificaciones transaccionales de eventos críticos en español, HTML/texto y marca dual. | `VerifyEmailNotification`, `ResetPasswordNotification`, `SubmissionReceived`, `resources/views/mail` | Verificación, reset y acuse generan plantilla profesional sin adjuntos/PII adicional. | `AuthMailHardeningTest` + revisión render | MVP |
+| COM-001 | VERIFIED LOCAL | Notificaciones transaccionales actuales en español, HTML/texto y marca dual. | renderizadores auth/propuesta/admisibilidad/juez/evaluación | Plantillas profesionales sin adjuntos/PII adicional. | suites mail/ledger/M8 + render | MVP |
 | COM-002 | VERIFIED LOCAL | Cola cifrada post-commit, reintento y recuperación de correo. | `ResilientMailDispatcher`, `DeliverCommunication`, `database/default`, bitácora común | Cuatro intentos con 60/300/900; cada transición e intento queda correlacionado; una falla no revierte el evento de negocio. | `CommunicationDeliveryLedgerTest`, suites auth/admisibilidad/recordatorios | MVP |
 | COM-003 | DECISION | Usar `convocatoria@flowerflow.com.mx` para convocatoria y `privacidad@flowerflow.com.mx` para privacidad. | Plantillas/configuración | Remitente/reply-to y canal corresponden al propósito sin mezclar casos. | F con mail fake + revisión de configuración | MVP |
 | COM-004 | PENDING | SMTP y entregabilidad SPF/DKIM/DMARC. | Configuración/runbook AWS | Dominio autentica envío y se monitorean rebotes. | OPS DNS + smoke correo | MVP |
 | COM-005 | DECISION | Marketing masivo no está aprobado. | Comunicaciones | No existe envío promocional/masivo en MVP. | Revisión de rutas/permisos | OUT |
-| COM-006 | VERIFIED LOCAL | Bitácora administrativa de las nueve familias existentes, sin cuerpo ni PII completa. | `/panel/notificaciones`, delivery/attempt models, ADR-0009 | Sólo admin exacto; GET no muta; máscara, timeline y `sent=aceptado por transporte`. | Feature permisos/HTML/cifrado + UAT local | Milestone independiente |
+| COM-006 | VERIFIED LOCAL | Bitácora administrativa de los quince tipos actuales, sin cuerpo ni PII completa. | `/panel/notificaciones`, delivery/attempt models, ADR-0009/0012 | Sólo admin exacto; GET no muta; máscara, timeline y `sent=aceptado por transporte`. | Feature permisos/HTML/cifrado + UAT local | M8 |
 | COM-007 | VERIFIED LOCAL | Recuperación individual segura de queued/failed/unknown. | `ForceCommunicationDelivery`, cola high, lock_version | Password reciente, CSRF, throttle, razón cifrada; unknown exige ack de duplicado; sent/cancelled no actúan. | Feature lock 409/riesgo/concurrencia | Milestone independiente |
 | COM-008 | VERIFIED LOCAL | Backfill sólo desde recordatorios confiables y reconciliación de processing vencido. | comandos `communications-*`, scheduler | Dry-run por defecto e idempotente; no reconstruye logs/jobs; reconciliación pasa a unknown sin enviar. | Feature comandos + schedule:list | Milestone independiente |
+| COM-009 | M8 VERIFIED LOCAL | Conflicto, resolución, envío/reenvío, reapertura y digest usan destinatarios exactos e idempotencia. | eventos/listeners/registry/digest M8 | Sin fallback/replay; estados obsoletos cancelan; un digest por juez. | `EvaluationCommunicationTest` + UAT | M8 |
 | PRV-001 | ASSUMPTION | Bandeja mínima de solicitudes de privacidad. | `/admin/privacidad` | Soporte registra solicitud, evidencia, responsable y cierre. | F + B + SEC + UAT | MVP-R |
 | PRV-002 | DECISION | Exportar, rectificar y eliminar de forma controlada. | Privacidad/políticas de datos | Acción aplica permisos, retención y auditoría; no promete revisión legal. | F + SEC + OPS | MVP-R |
 | RPT-001 | DECISION | Reportes por categoría, estado, elegibilidad y evaluación. | `/admin/reportes` | Usuario autorizado filtra métricas definidas y consistentes. | U agregados + F + UAT | MVP |

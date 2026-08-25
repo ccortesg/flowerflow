@@ -1,22 +1,22 @@
 # Paquete de decisiones Fase 02B — jueces y evaluación
 
-> **CONTRATO M7 — validación final 2026-08-25:** sellado inmutable y reapertura administrativa append-only quedaron `GO LOCAL/TEST`, con actor real, juez sujeto, ventanas exactas, 208 pruebas/2,385 aserciones y UAT Firefox. La sección 21 contiene el prompt canónico M7; los prompts inferiores se conservan como historia. M8–M10, comunicaciones de evaluación, consolidación, ranking, resultados y producción permanecen fuera. Continúa `NO-GO RELEASE/PRODUCTION — OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED`.
+> **CONTRATO M8 — 2026-08-25:** el outbox existente incorpora comunicaciones de conflicto, resolución, envío/reenvío, reapertura y digest único por juez, sin migración/ruta/permiso/worker nuevo. La sección 21 contiene el prompt canónico M8; M7 se conserva en 21M7. M9–M10, consolidación, ranking, resultados y producción permanecen fuera. Continúa `NO-GO RELEASE/PRODUCTION — OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED`.
 
 > **CONTRATO SUPERADO POR M6A — 2026-08-24:** las referencias operativas inferiores a `4+2`, cuatro asignaciones automáticas/manuales en bloque, sustitutos exclusivos y rúbrica activa de cinco criterios son históricas. M6A establece selección administrativa explícita sin mínimo ni máximo, funciones informativas, v2 activa de cuatro criterios y v1 fijada sólo para evidencia previa. La Mecánica mantiene “al menos tres jueces”; el override del propietario es `LEGAL_RECONCILIATION_REQUIRED` y bloquea release/producción.
 
 **Fecha:** 2026-08-18 (`America/Hermosillo`)
 
-**Estado:** `M1–M7 GO LOCAL/TEST — M8–M10 NOT AUTHORIZED`
+**Estado:** `M1–M8 LOCAL/TEST — M9–M10 NOT AUTHORIZED`
 
 **ExecPlan:** `.agent/execplans/flowerflow-phase-02b-evaluation-design.md`
 
 ## 1. Resumen ejecutivo
 
-La Fase 02B conserva M1–M5 verdes; M6A sustituyó los contratos históricos `4+1×10`, `4+2×30` y `4+2` ilimitado por selección administrativa explícita sin mínimo/máximo, roles informativos y rúbrica v2 de cuatro criterios. M5 materializa el paquete ciego estructural, M6 captura/calcula borradores y M7 sella/reabre revisiones append-only. No existe comunicación M8, consolidación o resultado.
+La Fase 02B conserva M1–M5 verdes; M6A sustituyó los contratos históricos `4+1×10`, `4+2×30` y `4+2` ilimitado por selección administrativa explícita sin mínimo/máximo, roles informativos y rúbrica v2 de cuatro criterios. M5 materializa el paquete ciego estructural, M6 captura/calcula borradores, M7 sella/reabre revisiones append-only y M8 comunica sus transiciones mediante el outbox. No existe consolidación o resultado.
 
-El propietario respondió las 21 decisiones el 2026-08-18 y autorizó después M6A/M7. `max_active_assignments=NULL` continúa, pero no hay composición mínima, cobertura ni exclusividad de sustitutos. M1–M7 están `GO LOCAL/TEST`; la discrepancia con el mínimo jurídico sigue abierta.
+El propietario respondió las 21 decisiones el 2026-08-18 y autorizó después M6A/M7/M8. `max_active_assignments=NULL` continúa, pero no hay composición mínima, cobertura ni exclusividad de sustitutos. M1–M8 tienen implementación local/test; la discrepancia con el mínimo jurídico sigue abierta.
 
-M6 —evaluación en borrador y cálculo exclusivo en servidor— y M7 —confirmación, envío inmutable y reapertura append-only— quedaron `GO LOCAL/TEST`. M8–M10, producción, ganadores y resultados permanecen fuera.
+M6 —evaluación en borrador y cálculo servidor—, M7 —envío/reapertura— y M8 —comunicaciones/digest— forman la cadena vigente. M9–M10, producción, ganadores y resultados permanecen fuera.
 
 ## 2. Estado productivo y alcance de evidencia
 
@@ -606,16 +606,16 @@ Las letras “Opción A/B/C” usadas por el propietario en su respuesta final c
 - Rollback: cerrar nuevas mutaciones; conservar versiones.
 - Terminado: envío previo nunca cambia y reapertura produce revisión nueva.
 
-### M8. Notificaciones y auditoría
+### M8. Comunicaciones y digest de evaluación
 
-- Objetivo: eventos redactados y entregas idempotentes/reintentables.
-- Dependencias: P2B-DEC-019/020 aprobadas; recordatorios de participantes se tratan como subalcance separado dentro de este milestone, nunca en M1.
-- Archivos: Mailables/Notifications/jobs/listeners/templates/audit metadata/schedule.
-- Migraciones: ledger de delivery si se aprueba.
-- Pruebas: after-commit, duplicados, retries/failure, sin PII, schedule y failed_jobs.
-- Riesgo: spam/fuga en correo/log.
-- Rollback: desactivar delivery; eventos de negocio permanecen.
-- Terminado: cada evento crítico tiene una entrega como máximo por plantilla/destino y fallo observable.
+- Objetivo: eventos redactados y entregas idempotentes/reintentables para conflicto, resolución, envío, reapertura y cierre.
+- Dependencias: M7 y ADR-0009; recordatorios 20/22 vencidos, excluidos y sin replay.
+- Archivos: events/listeners/notifications/templates, registry, digest/command/schedule y auditoría redactada.
+- Migraciones: ninguna; el ledger vigente es suficiente.
+- Pruebas: after-commit/rollback, destinatarios exactos, duplicados, retries/cancelación, privacidad, bitácora y ventanas de digest.
+- Riesgo: spam/fuga/evento obsoleto; worker revalida y cancela fail-closed.
+- Rollback: apagar flags M8; eventos y evidencia de negocio permanecen.
+- Terminado: a lo sumo un delivery por evento/propósito/plantilla y un digest por juez, con fallo observable.
 
 ### M9. QA automatizada y UAT por rol
 
@@ -685,7 +685,27 @@ Las 21 respuestas quedaron incorporadas en la matriz vigente de la sección 17. 
 
 Corrección final vigente `OWNER_APPROVED` del 2026-08-18: las respuestas intermedias `1×10` y `2×30` quedan sustituidas por cuatro jueces principales y dos jueces exclusivamente sustitutos, todos sin límite. Son seis jueces operativos; `admin` selecciona manualmente al sustituto. `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` quedan resueltos en local/test por M4A.
 
-## 21. Prompt canónico vigente — implementar exclusivamente M7
+## 21. Prompt canónico vigente — implementar exclusivamente M8
+
+```text
+Implementa exclusivamente M8 —comunicaciones transaccionales y digest del ciclo de evaluación— en `/home/ccortesg/workspace/flowerflow`, limitado a código, pruebas, documentación y UAT local sintético. No autoriza migraciones inferidas, stage, commit, push, despliegue, producción, SMTP real o servicios externos.
+
+Baseline: rama `codex/submission-deadline-extension`, HEAD/upstream/merge-base `a1a2a3babbb7b827b73cb8455b340e697ec93cb1`, árbol limpio, 23 migraciones, 104 rutas, tres schedules y M1–M7 GO LOCAL/TEST. Lee AGENTS/PLANS, ExecPlans/informes M1–M7/M6A/ledger, documentación canónica, ADR 0001/0003–0011 y Mecánica v1.1. Crea el ExecPlan M8. Antes de escribir base demuestra testing, MySQL loopback, `flowerflow_testing`, `flowerflow_testing_user` y SELECT DATABASE exacto.
+
+Reutiliza obligatoriamente el outbox ADR-0009. Añade cinco tipos: `judge.conflict_declared`, `judge.conflict_resolved`, `evaluation.submitted`, `evaluation.reopened`, `evaluation.close_digest`; plantillas HTML/texto dual-brand; eventos ID-only `ShouldDispatchAfterCommit`; listeners que crean delivery y nunca SMTP. Ledger y flag M8 deben estar activos simultáneamente; si no, omite con evidencia y jamás uses fallback legacy. Fallo de enqueue/transporte no revierte negocio.
+
+Destinatarios exactos: conflicto declarado al admin que creó esa assignment, si conserva rol/permiso/verificación; resolución sólo al juez saliente; juez entrante conserva únicamente la notificación opcional M6A; envío/reenvío al juez sujeto y admin responsable (asignador en revisión 1, `reopened_by` para revisión reabierta); reapertura sólo al juez sujeto. No existe fallback a otros admins. Idempotencia por evento/propósito/destinatario/plantilla.
+
+El worker revalida flags, fingerprint, rol/permiso/estado, ownership, relaciones, plazo/`due_at`, rúbrica y paquete cuando correspondan. Evento obsoleto pasa a cancelled con reason code redactado. Envío histórico permanece válido; reapertura ya reenviada cancela. Plantillas y auditoría omiten correo, nombres, motivo/conflicto sensible, score, componente, total, comentario, propuesta, archivo, URL y PII.
+
+Crea `flowerflow:evaluations-queue-close-digests`, dry-run por defecto y `--execute` para persistir. Scheduler cada minuto con `withoutOverlapping`. Cero deliveries antes o durante `2026-08-27 23:59:59` Hermosillo; ventana desde `2026-08-28 00:00:00` hasta `23:59:59`; desde `2026-08-29 00:00:00` falla cerrado. Timezone/config o cualquier `due_at` divergente bloquean el lote. Un digest por juez con asignaciones, sólo conteos submitted/pending/conflicts-replacements/cancelled y CTA autenticado.
+
+No implementes replay M7, recordatorios vencidos 20/22, consolidación, cobertura, promedio, empate, ranking, ganador, resultado, cierre administrativo, retención/purga, rutas públicas, campañas o proveedor. No añadas migración/ruta/permiso/worker si el esquema existente basta. Mantén `NO-GO RELEASE/PRODUCTION — OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED`.
+
+Prueba post-commit/rollback, flags, destinatarios, idempotencia/concurrencia, cancelación, recuperación desde bitácora, HTML/texto/XSS, filtros/etiquetas, digest/conteos/límites/drift y auditoría/logs redactados; ejecuta regresión M1–M7, suite completa, Pint, Composer, Yarn, build, JSON/Markdown, rutas, schedule, migrate status, diff y scans. UAT Firefox local `array` + queue database/worker en 1440×900, 1024×768 y 390×844. Crea ADR-0012/informe 29 y actualiza documentación; M9–M10 siguen fuera. No inventes evidencia.
+```
+
+## 21M7. Prompt histórico ejecutado — implementar exclusivamente M7
 
 ```text
 Implementa exclusivamente M7 —confirmación, comentario general 100–2,000, envío inmutable y reapertura administrativa append-only— en `/home/ccortesg/workspace/flowerflow`, limitado a código, migraciones, pruebas, documentación y UAT local sintético. No autoriza stage, commit, push, despliegue, producción, SMTP real o servicios externos.

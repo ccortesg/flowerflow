@@ -6,6 +6,7 @@ use App\Enums\EvaluationRevisionStatus;
 use App\Enums\JudgeAssignmentStatus;
 use App\Enums\JudgeConflictStatus;
 use App\Enums\JudgeConflictType;
+use App\Events\JudgeConflictDeclared;
 use App\Models\EvaluationRevision;
 use App\Models\JudgeAssignment;
 use App\Models\JudgeConflict;
@@ -89,6 +90,7 @@ final class DeclareJudgeConflict
                 'conflict_type' => $type->value,
                 'assignment_status' => JudgeAssignmentStatus::ConflictDeclared->value,
             ]);
+            JudgeConflictDeclared::dispatch($conflict->id, $locked->id, $actor->id);
 
             return $conflict;
         }, 5);
