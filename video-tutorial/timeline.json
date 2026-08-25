@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "locale": "es-MX",
+  "timezone": "America/Hermosillo",
+  "target_words_per_minute": 150,
+  "scenes": [
+    {
+      "id": "01",
+      "title": "Tarjeta inicial",
+      "minimum_visual_seconds": 2.5,
+      "audio_duration_seconds": 1.22,
+      "duration_seconds": 2.5,
+      "start_seconds": 0,
+      "narration": "Flower Flow."
+    },
+    {
+      "id": "02",
+      "title": "Introducción",
+      "minimum_visual_seconds": 8,
+      "audio_duration_seconds": 32.741,
+      "duration_seconds": 33.391,
+      "start_seconds": 2.5,
+      "narration": "En este tutorial aprenderás a consultar una asignación y completar la evaluación de una propuesta en Flower Flow. El recorrido inicia en Mis asignaciones, continúa con la revisión del proyecto y termina con el envío inmutable de la evaluación. Trabajaremos con información ficticia y con una cuenta de juez de demostración. La plataforma protege la identidad estructurada de las personas participantes y sólo muestra la información necesaria para valorar el proyecto. Antes de iniciar, confirma que estás en tu cuenta y que reconoces la fecha límite mostrada en pantalla."
+    },
+    {
+      "id": "03",
+      "title": "Lectura de la asignación",
+      "minimum_visual_seconds": 10,
+      "audio_duration_seconds": 34.09,
+      "duration_seconds": 34.74,
+      "start_seconds": 35.891,
+      "narration": "Cada tarjeta resume una asignación. Revisa la categoría, el estado vigente, la fecha límite en horario de Hermosillo, la disponibilidad del paquete y el progreso. El botón Iniciar evaluación indica que aún no existe un borrador. Cuando ya hayas comenzado, la barra mostrará cuántos criterios tienen puntaje. Usa el botón de la tarjeta para abrir el siguiente paso; la plataforma sólo permite consultar asignaciones vinculadas con tu propia cuenta. Si tienes varias asignaciones, atiende primero las vigentes cuyo plazo aparece más próximo en el listado."
+    },
+    {
+      "id": "04",
+      "title": "Inicio y conflicto",
+      "minimum_visual_seconds": 10,
+      "audio_duration_seconds": 33.611,
+      "duration_seconds": 34.261,
+      "start_seconds": 70.631,
+      "narration": "La pantalla Inicio de evaluación confirma el identificador de la asignación, la categoría, el plazo y el estado. Antes de comenzar, verifica que puedes evaluar con imparcialidad. Si existe una relación personal, profesional, económica o cualquier situación que afecte tu criterio, usa Declarar conflicto antes de evaluar. Esa acción bloquea el acceso y debe reservarse para un conflicto real. Si no existe impedimento, continúa con Iniciar evaluación. No declares un conflicto sólo para pausar el trabajo: un borrador puede guardarse y continuarse después."
+    },
+    {
+      "id": "05",
+      "title": "Inicio explícito",
+      "minimum_visual_seconds": 8,
+      "audio_duration_seconds": 25.266,
+      "duration_seconds": 25.916,
+      "start_seconds": 104.892,
+      "narration": "Al seleccionar Iniciar evaluación, Flower Flow crea un borrador y habilita el flujo de cuatro pasos. Esta acción no envía ningún resultado. Desde este momento podrás alternar entre Proyecto asignado y Evaluación, guardar avances y regresar después. La etapa final, Revisar y enviar, sólo estará disponible cuando todos los criterios y el comentario general cumplan las reglas."
+    },
+    {
+      "id": "06",
+      "title": "Proyecto asignado",
+      "minimum_visual_seconds": 12,
+      "audio_duration_seconds": 46.221,
+      "duration_seconds": 46.871,
+      "start_seconds": 130.808,
+      "narration": "En Proyecto asignado consulta la categoría, modalidad, título, resumen y descripción. También encontrarás enlaces externos y el inventario de anexos evaluables, cuando existan. El aviso de Anonimización estructural significa que la plataforma oculta los datos organizados de identidad y operación; sin embargo, un texto, enlace o anexo podría contener pistas escritas por su autor. Evalúa únicamente el contenido disponible y no intentes identificar a la persona participante. Los botones Exportar PDF y Exportar Excel permiten conservar una copia profesional del mismo paquete ciego, sin revelar información adicional. Si abres un vínculo externo, regresa a esta pestaña para conservar la continuidad de tu evaluación."
+    },
+    {
+      "id": "07",
+      "title": "Rúbrica y total",
+      "minimum_visual_seconds": 10,
+      "audio_duration_seconds": 33.043,
+      "duration_seconds": 33.693,
+      "start_seconds": 177.679,
+      "narration": "En el paso Evaluación aparece la rúbrica vigente. Cada criterio tiene un peso de veinticinco por ciento y acepta puntajes de cero a diez en incrementos de medio punto. Los comentarios por criterio son opcionales y sirven para dejar una justificación clara. El total no lo calcula el navegador: Flower Flow lo genera en el servidor cuando los cuatro criterios tienen puntaje. Mientras falte alguno, el total se mantiene pendiente. Lee la etiqueta completa de cada criterio antes de elegir el puntaje que mejor representa tu valoración."
+    },
+    {
+      "id": "08",
+      "title": "Captura de puntajes",
+      "minimum_visual_seconds": 18,
+      "audio_duration_seconds": 29.483,
+      "duration_seconds": 30.133,
+      "start_seconds": 211.372,
+      "narration": "Captura cada puntaje con atención y utiliza comentarios breves cuando ayuden a explicar tu decisión. En este ejemplo asignamos ocho punto cinco, ocho, siete punto cinco y nueve. Después escribe el comentario general. Puede quedar vacío durante un borrador, pero para enviar debe contener al menos cien y como máximo dos mil caracteres. Procura resumir fortalezas, riesgos y áreas de mejora sin incluir datos personales ni referencias a otros jueces. Los datos usados aquí son completamente ficticios."
+    },
+    {
+      "id": "09",
+      "title": "Guardado automático",
+      "minimum_visual_seconds": 32,
+      "audio_duration_seconds": 36.085,
+      "duration_seconds": 36.735,
+      "start_seconds": 241.505,
+      "narration": "Cuando hay cambios, la plataforma muestra el estado Cambios sin guardar. Cada treinta segundos intenta guardar automáticamente el formulario completo. Espera la confirmación Guardado automáticamente antes de cerrar la página o cambiar de dispositivo. El servidor actualiza el progreso y, al completar los cuatro criterios, presenta el total de ochenta y dos punto cincuenta. El botón Guardar borrador sigue disponible para guardar de inmediato. Si otra pestaña guardó primero, Flower Flow detiene el autosave y solicita recargar para evitar perder información."
+    },
+    {
+      "id": "10",
+      "title": "Revisión previa",
+      "minimum_visual_seconds": 10,
+      "audio_duration_seconds": 23.437,
+      "duration_seconds": 24.087,
+      "start_seconds": 278.24,
+      "narration": "Cuando termines, selecciona Revisar y enviar. La plataforma guarda nuevamente el borrador y abre un resumen con los puntajes, comentarios y total persistidos. Lee todo con calma. Si detectas un error, vuelve a la evaluación y corrígelo. Esta pantalla no recalcula ni modifica la información; su propósito es ofrecer una última comprobación antes de sellar la revisión."
+    },
+    {
+      "id": "11",
+      "title": "Confirmación y envío",
+      "minimum_visual_seconds": 12,
+      "audio_duration_seconds": 28.348,
+      "duration_seconds": 28.998,
+      "start_seconds": 302.327,
+      "narration": "El aviso recuerda que el envío es inmutable. Marca la casilla para confirmar que revisaste los datos y después selecciona Enviar evaluación. La confirmación explícita evita envíos accidentales. No hagas doble clic ni abras otra pestaña durante esta operación. Flower Flow valida nuevamente la asignación, la ventana de tiempo, los cuatro criterios, el comentario general y la versión más reciente del borrador antes de aceptar el envío."
+    },
+    {
+      "id": "12",
+      "title": "Evaluación enviada",
+      "minimum_visual_seconds": 10,
+      "audio_duration_seconds": 30.833,
+      "duration_seconds": 31.483,
+      "start_seconds": 331.325,
+      "narration": "Al finalizar, verás un mensaje de éxito y el estado Enviada. Los puntajes, los comentarios y el total quedan disponibles únicamente para consulta. Ya no aparecen controles de edición porque la revisión fue sellada. Si la administración autoriza una reapertura dentro de la ventana establecida, se creará una nueva revisión sin alterar la anterior. Fuera de ese caso, considera concluida tu participación en esta asignación. Puedes volver a Mis asignaciones para revisar si todavía tienes otros proyectos pendientes o en borrador."
+    },
+    {
+      "id": "13",
+      "title": "Cierre",
+      "minimum_visual_seconds": 12,
+      "audio_duration_seconds": 26.959,
+      "duration_seconds": 27.609,
+      "start_seconds": 362.808,
+      "narration": "En resumen: abre Mis asignaciones, verifica el plazo, revisa el proyecto ciego, captura los cuatro criterios, espera la confirmación de guardado, revisa el resumen y confirma el envío. Si necesitas interrumpir el trabajo, guarda el borrador antes de salir. Así mantienes una evaluación clara, segura y trazable. Gracias por participar en Flower Flow. La narración de este tutorial fue generada mediante inteligencia artificial."
+    }
+  ],
+  "total_duration_seconds": 390.417,
+  "measured_at": "2026-08-25T19:04:37.121Z"
+}
