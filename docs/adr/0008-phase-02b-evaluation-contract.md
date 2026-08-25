@@ -1,5 +1,7 @@
 # ADR-0008: contrato de jueces y evaluación de Fase 02B
 
+> **Sustituido operacionalmente por ADR-0010 desde M6A (2026-08-24):** `4+2`, cobertura fija, sustitutos exclusivos y rúbrica v1 activa se conservan sólo como contrato histórico de M1–M6. Nuevas operaciones usan selección admin sin mínimos/límites y rúbrica v2 de cuatro criterios. La excepción frente a “al menos tres jueces” bloquea release/producción.
+
 - **Estado:** Accepted — M1–M6 verified local/test; M7–M10 not authorized
 - **Fecha:** 2026-08-18
 - **Decisor:** propietario de Flower Flow

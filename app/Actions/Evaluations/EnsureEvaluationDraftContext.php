@@ -159,9 +159,10 @@ final class EnsureEvaluationDraftContext
             $lock,
         )->get();
         $expectedCriterionIds = $context['criteria']->pluck('id')->sort()->values()->all();
-        if ($scores->count() !== 5
+        $expectedCount = $context['criteria']->count();
+        if ($scores->count() !== $expectedCount
             || $scores->pluck('rubric_criterion_id')->sort()->values()->all() !== $expectedCriterionIds) {
-            throw new EvaluationDraftRejected('evaluation_scores_diverged', 'El borrador no conserva exactamente los cinco criterios fijados.');
+            throw new EvaluationDraftRejected('evaluation_scores_diverged', 'El borrador no conserva exactamente los criterios de la rúbrica fijada.');
         }
 
         return ['revision' => $revision, 'scores' => $scores];

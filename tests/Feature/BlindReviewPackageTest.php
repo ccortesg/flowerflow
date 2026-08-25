@@ -2,12 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Actions\Assignments\ActivateSubmissionCoverage;
+use App\Actions\Assignments\AssignJudgesToSubmission;
 use App\Actions\Assignments\DeclareJudgeConflict;
 use App\Actions\Assignments\ResolveJudgeConflict;
 use App\Actions\BlindReview\ActivateBlindReviewPackage;
 use App\Actions\BlindReview\GenerateBlindReviewPackageDraft;
-use App\Actions\Rubrics\ActivateRubricVersion;
 use App\Enums\BlindReviewPackageStatus;
 use App\Enums\EligibilityReviewStatus;
 use App\Enums\JudgeAssignmentRole;
@@ -18,7 +17,6 @@ use App\Models\AuditLog;
 use App\Models\BlindReviewPackage;
 use App\Models\JudgeAssignment;
 use App\Models\JudgeProfile;
-use App\Models\RubricVersion;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionVersion;
@@ -293,8 +291,6 @@ class BlindReviewPackageTest extends TestCase
         ]);
         $primaries = collect(range(1, 4))->map(fn (int $number): User => $this->activeJudge($admin, JudgeAssignmentRole::Primary, $number));
         $substitutes = collect(range(5, 6))->map(fn (int $number): User => $this->activeJudge($admin, JudgeAssignmentRole::Substitute, $number));
-        $rubric = RubricVersion::query()->where('version', 1)->firstOrFail();
-        app(ActivateRubricVersion::class)->execute($rubric, $admin, 'Activación sintética de rúbrica para M5.');
 
         [, $submission, $review] = $this->submittedReview(true);
         $review->update([
@@ -360,7 +356,13 @@ class BlindReviewPackageTest extends TestCase
         ];
         DB::table('submission_versions')->where('id', $version->id)->update(['snapshot' => json_encode($snapshot)]);
         $version = $version->fresh();
-        app(ActivateSubmissionCoverage::class)->execute($submission, $admin, 'Cobertura sintética completa para construir el paquete M5.');
+        app(AssignJudgesToSubmission::class)->execute(
+            $submission,
+            $admin,
+            $primaries->map(fn (User $judge): string => $judge->judgeProfile->public_id)->all(),
+            'Asignación manual sintética para construir el paquete M5.',
+            false,
+        );
 
         return [$admin, $primaries, $substitutes, $submission->fresh('category'), $version];
     }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\CommunicationType;
 use App\Enums\EligibilityReviewStatus;
+use App\Enums\JudgeAssignmentStatus;
 use App\Enums\JudgeProfileStatus;
 use App\Enums\SubmissionReminderStatus;
 use App\Exceptions\CommunicationCancelledException;
@@ -13,11 +14,14 @@ use App\Mail\SubmissionDraftReminder;
 use App\Mail\SubmissionReceived;
 use App\Models\CommunicationDelivery;
 use App\Models\EligibilityReview;
+use App\Models\JudgeAssignment;
+use App\Models\JudgeSetupLink;
 use App\Models\Submission;
 use App\Models\SubmissionReminder;
 use App\Models\User;
 use App\Notifications\JudgeAccountSetupNotification;
 use App\Notifications\JudgeAccountStatusNotification;
+use App\Notifications\JudgeAssignmentCreatedNotification;
 use App\Notifications\JudgeVerifyEmailNotification;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
@@ -37,9 +41,9 @@ final class CommunicationMessageRegistry
             $message instanceof JudgeAccountSetupNotification => [
                 'type' => CommunicationType::JudgeAccountSetup,
                 'variant' => null,
-                'context' => ['token' => $message->token],
-                'related_type' => User::class,
-                'related_id' => $recipient->id,
+                'context' => ['setup_link_id' => $message->setupLinkId, 'token' => $message->token],
+                'related_type' => JudgeSetupLink::class,
+                'related_id' => $message->setupLinkId,
             ],
             $message instanceof JudgeVerifyEmailNotification => [
                 'type' => CommunicationType::JudgeEmailVerification,
@@ -68,6 +72,13 @@ final class CommunicationMessageRegistry
                 'context' => ['event' => $message->event],
                 'related_type' => User::class,
                 'related_id' => $recipient->id,
+            ],
+            $message instanceof JudgeAssignmentCreatedNotification => [
+                'type' => CommunicationType::JudgeAssignmentCreated,
+                'variant' => null,
+                'context' => ['judge_assignment_id' => $message->assignmentId],
+                'related_type' => JudgeAssignment::class,
+                'related_id' => $message->assignmentId,
             ],
             $message instanceof SubmissionAdministrativelyFinalized => [
                 'type' => CommunicationType::SubmissionAdministrativelyFinalized,
@@ -118,10 +129,11 @@ final class CommunicationMessageRegistry
         $context = $delivery->context ?? [];
         $message = match ($delivery->notification_type) {
             CommunicationType::AccountEmailVerification => $this->accountVerification($recipient),
-            CommunicationType::AccountPasswordReset => $this->passwordReset($recipient, $context, false),
-            CommunicationType::JudgeAccountSetup => $this->passwordReset($recipient, $context, true),
+            CommunicationType::AccountPasswordReset => $this->passwordReset($recipient, $context),
+            CommunicationType::JudgeAccountSetup => $this->judgeSetup($recipient, $context),
             CommunicationType::JudgeEmailVerification => $this->judgeVerification($recipient),
             CommunicationType::JudgeAccountStatus => $this->judgeStatus($recipient, $context),
+            CommunicationType::JudgeAssignmentCreated => $this->judgeAssignment($recipient, $context),
             CommunicationType::SubmissionReceived => $this->submissionReceipt($recipient, $context, false),
             CommunicationType::SubmissionAdministrativelyFinalized => $this->submissionReceipt($recipient, $context, true),
             CommunicationType::SubmissionDraftReminder => $this->submissionReminder($recipient, $context),
@@ -177,18 +189,35 @@ final class CommunicationMessageRegistry
         return new JudgeVerifyEmailNotification;
     }
 
-    private function passwordReset(User $recipient, array $context, bool $judgeSetup): Notification
+    private function passwordReset(User $recipient, array $context): Notification
     {
         $token = $context['token'] ?? null;
         if (! is_string($token)
-            || ! Password::broker('users')->tokenExists($recipient, $token)
-            || ($judgeSetup && ! $recipient->hasExactRoles(['judge']))) {
-            throw new CommunicationCancelledException($judgeSetup ? 'judge_setup_token_invalid' : 'password_reset_token_invalid');
+            || ! Password::broker('users')->tokenExists($recipient, $token)) {
+            throw new CommunicationCancelledException('password_reset_token_invalid');
         }
 
-        return $judgeSetup
-            ? new JudgeAccountSetupNotification($token)
-            : new ResetPasswordNotification($token);
+        return new ResetPasswordNotification($token);
+    }
+
+    private function judgeSetup(User $recipient, array $context): JudgeAccountSetupNotification
+    {
+        $token = $context['token'] ?? null;
+        $link = JudgeSetupLink::query()->with('judgeProfile')->find($context['setup_link_id'] ?? null);
+        if (! is_string($token)
+            || ! $link
+            || ! $recipient->hasExactRoles(['judge'])
+            || $link->judgeProfile?->user_id !== $recipient->id
+            || $link->active_slot !== 1
+            || $link->consumed_at !== null
+            || $link->invalidated_at !== null
+            || $link->expires_at->isPast()
+            || ! hash_equals($link->token_hash, hash('sha256', $token))
+            || ! hash_equals($link->email_fingerprint, self::recipientFingerprint((string) $recipient->email))) {
+            throw new CommunicationCancelledException('judge_setup_link_invalid');
+        }
+
+        return new JudgeAccountSetupNotification($link->id, $token);
     }
 
     private function judgeStatus(User $recipient, array $context): JudgeAccountStatusNotification
@@ -203,6 +232,24 @@ final class CommunicationMessageRegistry
         }
 
         return new JudgeAccountStatusNotification($event);
+    }
+
+    private function judgeAssignment(User $recipient, array $context): JudgeAssignmentCreatedNotification
+    {
+        $assignment = JudgeAssignment::query()->with('judgeProfile')->find($context['judge_assignment_id'] ?? null);
+        if (! config('flowerflow.judge_notifications.assignment_enabled')
+            || ! $assignment
+            || $assignment->status !== JudgeAssignmentStatus::Active
+            || $assignment->current_slot !== 1
+            || $assignment->due_at->isPast()
+            || $assignment->judgeProfile?->user_id !== $recipient->id
+            || $assignment->judgeProfile?->status !== JudgeProfileStatus::Active
+            || ! $recipient->hasExactRoles(['judge'])
+            || ! $recipient->hasVerifiedEmail()) {
+            throw new CommunicationCancelledException('judge_assignment_notification_invalid');
+        }
+
+        return new JudgeAssignmentCreatedNotification($assignment->id);
     }
 
     private function submissionReceipt(User $recipient, array $context, bool $administrative): Mailable

@@ -37,12 +37,14 @@ class RubricVersionController extends Controller
     {
         Gate::authorize('create', RubricVersion::class);
         $competition = $this->competition();
+        $nextVersion = ((int) $competition->rubricVersions()->max('version')) + 1;
+        abort_unless(in_array($nextVersion, $contract->supportedVersions(), true), 409, 'No existe otro contrato de rúbrica aprobado para crear.');
 
         return view('panel.rubrics.create', [
             'competition' => $competition,
-            'nextVersion' => ((int) $competition->rubricVersions()->max('version')) + 1,
-            'versionAttributes' => $contract->versionAttributes(),
-            'criteria' => $contract->criteria(),
+            'nextVersion' => $nextVersion,
+            'versionAttributes' => $contract->versionAttributes($nextVersion),
+            'criteria' => $contract->criteria($nextVersion),
         ]);
     }
 
@@ -83,7 +85,7 @@ class RubricVersionController extends Controller
 
         return view('panel.rubrics.edit', [
             'rubric' => $rubricVersion->load('criteria'),
-            'versionAttributes' => collect(app(EvaluationRubricContract::class)->versionAttributes())
+            'versionAttributes' => collect(app(EvaluationRubricContract::class)->versionAttributes((int) $rubricVersion->version))
                 ->mapWithKeys(fn ($value, string $field) => [$field => $rubricVersion->getAttribute($field)])
                 ->all(),
             'criteria' => $rubricVersion->criteria->map(fn ($criterion) => [

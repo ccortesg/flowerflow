@@ -67,11 +67,20 @@ class JudgeRbacIsolationTest extends TestCase
             ->assertRedirect(route('judge.dashboard'));
         $this->actingAs($judge)->get(route('judge.dashboard'))
             ->assertOk()
-            ->assertSee('Área de evaluación')
-            ->assertSee('consultar tus asignaciones y declarar conflictos')
+            ->assertSee('Tu área de evaluación')
+            ->assertSee('Consulta tus asignaciones, inicia o continúa borradores')
             ->assertDontSee('data-testid="participant-menu"', false)
             ->assertDontSee('Propuestas</a>', false)
             ->assertDontSee('Admisibilidad</a>', false);
+        $this->actingAs($judge)->get(route('judge.account'))
+            ->assertOk()
+            ->assertSee('Cuenta y seguridad')
+            ->assertSee('Cambiar contraseña')
+            ->assertSee('Autenticación en dos pasos')
+            ->assertDontSee('Datos de residencia');
+        foreach ([$participant, $reviewer, $admin] as $nonJudge) {
+            $this->actingAs($nonJudge)->get(route('judge.account'))->assertForbidden();
+        }
         $this->actingAs($judge)->get(route('profile.edit'))->assertForbidden();
         $this->actingAs($judge)->get(route('submissions.index'))->assertForbidden();
         $this->actingAs($judge)->get(route('panel.dashboard'))->assertForbidden();

@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Models\JudgeAssignment;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ActivateSubmissionCoverageRequest extends FormRequest
+class CancelJudgeAssignmentRequest extends FormRequest
 {
     protected function prepareForValidation(): void
     {
@@ -14,7 +14,9 @@ class ActivateSubmissionCoverageRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return (bool) $this->user()?->can('create', JudgeAssignment::class);
+        $assignment = $this->route('judgeAssignment');
+
+        return $assignment instanceof JudgeAssignment && (bool) $this->user()?->can('cancel', $assignment);
     }
 
     public function rules(): array

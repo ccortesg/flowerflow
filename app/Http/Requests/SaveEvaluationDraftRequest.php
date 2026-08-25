@@ -46,10 +46,15 @@ class SaveEvaluationDraftRequest extends FormRequest
 
     public function rules(): array
     {
+        $assignment = $this->route('judgeAssignment');
+        $criterionCount = $assignment instanceof JudgeAssignment
+            ? RubricCriterion::query()->where('rubric_version_id', $assignment->rubric_version_id)->count()
+            : 0;
+
         return [
             'lock_version' => ['required', 'integer', 'min:0'],
             'general_comment' => ['present', 'nullable', 'string', 'max:2000'],
-            'criteria' => ['present', 'array', 'max:5'],
+            'criteria' => ['present', 'array', 'max:'.$criterionCount],
             'criteria.*' => ['required', 'array:code,score,comment'],
             'criteria.*.code' => ['required', 'string'],
             'criteria.*.score' => [
@@ -102,7 +107,7 @@ class SaveEvaluationDraftRequest extends FormRequest
         return [
             'lock_version.required' => 'La versión de bloqueo es obligatoria. Recarga la asignación.',
             'general_comment.max' => 'El comentario general admite hasta 2,000 caracteres.',
-            'criteria.max' => 'La rúbrica contiene exactamente cinco criterios.',
+            'criteria.max' => 'La solicitud excede la cantidad de criterios de la rúbrica fijada.',
             'criteria.*.comment.max' => 'Cada comentario de criterio admite hasta 1,000 caracteres.',
         ];
     }

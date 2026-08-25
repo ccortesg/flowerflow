@@ -2,16 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Actions\Assignments\ActivateSubmissionCoverage;
 use App\Actions\BlindReview\GenerateBlindReviewPackageDraft;
-use App\Actions\Rubrics\ActivateRubricVersion;
 use App\Enums\BlindReviewPackageStatus;
 use App\Enums\EligibilityReviewStatus;
-use App\Enums\JudgeAssignmentRole;
-use App\Enums\JudgeProfileStatus;
 use App\Models\BlindReviewPackage;
-use App\Models\JudgeProfile;
-use App\Models\RubricVersion;
 use App\Models\Submission;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -58,23 +52,6 @@ class BlindReviewPackageConcurrencyTest extends TestCase
             'email' => 'admin-package-concurrency@example.test',
             'password' => Hash::make('AdminPass1!'),
         ]);
-        foreach (range(1, 6) as $number) {
-            $role = $number >= 5 ? JudgeAssignmentRole::Substitute : JudgeAssignmentRole::Primary;
-            $user = User::factory()->create(['email' => "judge-package-concurrency-{$number}@example.test"]);
-            $user->assignRole('judge');
-            $profile = new JudgeProfile;
-            $profile->forceFill([
-                'user_id' => $user->id,
-                'assignment_role' => $role->value,
-                'status' => JudgeProfileStatus::Active->value,
-                'max_active_assignments' => null,
-                'created_by_user_id' => $admin->id,
-                'password_initialized_at' => now('UTC'),
-                'activated_at' => now('UTC'),
-            ])->save();
-        }
-        $rubric = RubricVersion::query()->where('version', 1)->firstOrFail();
-        app(ActivateRubricVersion::class)->execute($rubric, $admin, 'Activación sintética para concurrencia M5.');
         [, $submission, $review] = $this->submittedReview();
         $review->update([
             'status' => EligibilityReviewStatus::Admitted,
@@ -95,7 +72,6 @@ class BlindReviewPackageConcurrencyTest extends TestCase
             'external_links' => [],
             'files' => [],
         ])]);
-        app(ActivateSubmissionCoverage::class)->execute($submission, $admin, 'Cobertura sintética para concurrencia de paquete M5.');
         app(GenerateBlindReviewPackageDraft::class)->execute($submission, $admin, 'Generación sintética previa a la carrera de activación M5.');
 
         $barrier = tempnam(sys_get_temp_dir(), 'flowerflow-package-concurrency-');

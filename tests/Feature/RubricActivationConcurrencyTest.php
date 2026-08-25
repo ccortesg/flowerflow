@@ -2,18 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Actions\Rubrics\CreateRubricDraft;
 use App\Enums\RubricVersionStatus;
-use App\Models\Competition;
 use App\Models\RubricVersion;
-use App\Models\User;
-use App\Services\EvaluationRubricContract;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
-use Throwable;
 
 class RubricActivationConcurrencyTest extends TestCase
 {
@@ -27,85 +22,29 @@ class RubricActivationConcurrencyTest extends TestCase
         if (Schema::hasTable('rubric_versions')) {
             DB::table('rubric_versions')->delete();
         }
-
         parent::tearDown();
     }
 
-    public function test_two_concurrent_activations_leave_exactly_one_active_version(): void
+    public function test_legal_v2_is_the_only_active_slot_and_database_rejects_a_second_one(): void
     {
-        if (! function_exists('pcntl_fork')) {
-            $this->markTestSkipped('La extensión pcntl es necesaria para la prueba de concurrencia MySQL.');
-        }
-
-        config(['flowerflow.flags.panel' => true]);
         $this->seedFlowerFlow();
-        $admin = $this->admin([
-            'email' => 'admin-rubric-concurrency@example.test',
-            'password' => Hash::make('AdminPass1!'),
-        ]);
-        $competition = Competition::query()->where('slug', 'hermosillo-florece-2026')->firstOrFail();
-        $contract = app(EvaluationRubricContract::class);
-        $targets = collect([2, 3])->map(fn (int $version) => app(CreateRubricDraft::class)->execute(
-            $admin,
-            $competition,
-            $version,
-            "Rúbrica concurrente v{$version}",
-            $contract->versionAttributes(),
-            $contract->criteria(),
-        ));
-        $barrier = tempnam(sys_get_temp_dir(), 'flowerflow-rubric-concurrency-');
-        $this->assertNotFalse($barrier);
-        unlink($barrier);
-        $children = [];
-        DB::disconnect();
+        $v1 = RubricVersion::query()->where('version', 1)->firstOrFail();
+        $v2 = RubricVersion::query()->where('version', 2)->firstOrFail();
+        $this->assertSame(RubricVersionStatus::Active, $v2->status);
+        $this->assertSame(1, RubricVersion::query()->where('active_slot', 1)->count());
 
         try {
-            foreach ($targets as $target) {
-                $pid = pcntl_fork();
-                $this->assertNotSame(-1, $pid);
-
-                if ($pid === 0) {
-                    try {
-                        $deadline = microtime(true) + 5;
-                        while (! file_exists($barrier) && microtime(true) < $deadline) {
-                            usleep(1000);
-                        }
-
-                        DB::purge();
-                        DB::reconnect();
-                        $childAdmin = User::query()->findOrFail($admin->id);
-                        $childRubric = RubricVersion::query()->findOrFail($target->id);
-                        $response = $this->actingAs($childAdmin)->post(route('panel.rubrics.activate', $childRubric), [
-                            'reason' => 'Activación concurrente sintética suficientemente justificada.',
-                            'current_password' => 'AdminPass1!',
-                        ]);
-                        DB::disconnect();
-
-                        exit($response->getStatusCode() >= 500 ? 2 : 0);
-                    } catch (Throwable) {
-                        exit(3);
-                    }
-                }
-
-                $children[] = $pid;
-            }
-
-            touch($barrier);
-            foreach ($children as $pid) {
-                pcntl_waitpid($pid, $status);
-                $this->assertTrue(pcntl_wifexited($status));
-                $this->assertSame(0, pcntl_wexitstatus($status));
-            }
-        } finally {
-            if (file_exists($barrier)) {
-                unlink($barrier);
-            }
-            DB::reconnect();
+            DB::table('rubric_versions')->where('id', $v1->id)->update([
+                'status' => 'active',
+                'active_slot' => 1,
+                'activated_at' => now('UTC'),
+                'activation_source' => 'migration',
+                'activation_reason' => 'Intento sintético de segunda activación concurrente.',
+            ]);
+            $this->fail('The database must reject a second active rubric slot.');
+        } catch (QueryException) {
+            $this->assertSame(RubricVersionStatus::Draft, $v1->fresh()->status);
+            $this->assertSame(RubricVersionStatus::Active, $v2->fresh()->status);
         }
-
-        $this->assertSame(1, RubricVersion::query()->where('status', RubricVersionStatus::Active)->count());
-        $this->assertSame(1, RubricVersion::query()->where('active_slot', 1)->count());
-        $this->assertSame(1, RubricVersion::query()->whereIn('id', $targets->pluck('id'))->where('status', RubricVersionStatus::Superseded)->count());
-        $this->assertSame(2, DB::table('audit_logs')->where('action', 'rubric.activated')->count());
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Actions\Assignments;
 
-use App\Enums\JudgeAssignmentRole;
 use App\Enums\JudgeAssignmentStatus;
 use App\Enums\JudgeAssignmentType;
 use App\Enums\JudgeConflictStatus;
@@ -25,93 +24,73 @@ final class ResolveJudgeConflict
     public function __construct(
         private EnsureAssignmentAdministrator $ensureActor,
         private AssignmentEligibility $eligibility,
+        private SendJudgeAssignmentNotification $sendNotification,
         private AuditLogger $audit,
     ) {}
 
-    public function execute(JudgeConflict $conflict, User $actor, string $substitutePublicId, string $reason): JudgeAssignment
-    {
+    public function execute(
+        JudgeConflict $conflict,
+        User $actor,
+        string $judgeProfilePublicId,
+        string $reason,
+        bool $notify = false,
+    ): JudgeAssignment {
         $this->ensureActor->execute($actor, 'resolve evaluation conflicts');
+        if ($notify && ! config('flowerflow.judge_notifications.assignment_enabled')) {
+            throw ValidationException::withMessages(['notify_judge' => 'La notificación de nuevas asignaciones está deshabilitada globalmente.']);
+        }
 
         try {
-            return DB::transaction(function () use ($conflict, $actor, $substitutePublicId, $reason): JudgeAssignment {
+            $replacement = DB::transaction(function () use ($conflict, $actor, $judgeProfilePublicId, $reason, $notify): JudgeAssignment {
                 $lockedConflict = JudgeConflict::query()->whereKey($conflict->id)->lockForUpdate()->firstOrFail();
-
                 if ($lockedConflict->status === JudgeConflictStatus::ResolvedReassigned
                     && $lockedConflict->replacement_assignment_id) {
                     return JudgeAssignment::query()->findOrFail($lockedConflict->replacement_assignment_id);
                 }
 
-                $original = JudgeAssignment::query()
-                    ->whereKey($lockedConflict->judge_assignment_id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
+                $original = JudgeAssignment::query()->whereKey($lockedConflict->judge_assignment_id)->lockForUpdate()->firstOrFail();
                 if ($lockedConflict->status !== JudgeConflictStatus::Declared
                     || $original->status !== JudgeAssignmentStatus::ConflictDeclared) {
                     throw new AssignmentOperationRejected('conflict_not_resolvable', 'El conflicto ya no está disponible para resolución.');
                 }
 
-                if ($original->type !== JudgeAssignmentType::Initial) {
-                    throw new AssignmentOperationRejected('substitute_conflict_without_replacement', 'El sustituto declaró conflicto y no existe otro reemplazo aprobado.');
-                }
-
-                $originalProfile = JudgeProfile::query()->whereKey($original->judge_profile_id)->lockForUpdate()->firstOrFail();
-                if ($originalProfile->assignment_role !== JudgeAssignmentRole::Primary) {
-                    throw new AssignmentOperationRejected('original_assignment_not_primary', 'La asignación original no pertenece a un juez principal.');
-                }
-
-                $pinnedVersion = SubmissionVersion::query()
-                    ->whereKey($original->submission_version_id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
+                $pinnedVersion = SubmissionVersion::query()->whereKey($original->submission_version_id)->lockForUpdate()->firstOrFail();
                 $submission = Submission::query()->whereKey($pinnedVersion->submission_id)->firstOrFail();
                 $currentVersion = $this->eligibility->requireCurrentVersion($submission, true);
                 if ($currentVersion->id !== $original->submission_version_id) {
                     throw new AssignmentOperationRejected('submission_version_changed', 'La versión vigente de la propuesta cambió; no se realizó la reasignación.');
                 }
-
                 RubricVersion::query()->whereKey($original->rubric_version_id)->lockForUpdate()->firstOrFail();
-                $profiles = JudgeProfile::query()
+
+                $selected = JudgeProfile::query()
+                    ->where('public_id', $judgeProfilePublicId)
                     ->where('status', JudgeProfileStatus::Active)
                     ->with('user.roles')
-                    ->orderBy('id')
                     ->lockForUpdate()
-                    ->get();
-                $primaries = $profiles
-                    ->filter(fn (JudgeProfile $profile): bool => $profile->assignment_role === JudgeAssignmentRole::Primary)
-                    ->values();
-                $substitutes = $profiles
-                    ->filter(fn (JudgeProfile $profile): bool => $profile->assignment_role === JudgeAssignmentRole::Substitute)
-                    ->values();
-
-                if ($primaries->count() !== 4 || $substitutes->count() !== 2) {
-                    throw new AssignmentOperationRejected('invalid_active_judge_composition', 'Debe existir exactamente una composición activa de cuatro jueces principales y dos sustitutos.');
+                    ->first();
+                if (! $selected
+                    || ! $selected->user
+                    || ! $selected->user->hasExactRoles(['judge'])
+                    || ! $selected->user->hasVerifiedEmail()
+                    || $selected->password_initialized_at === null
+                    || $selected->max_active_assignments !== null) {
+                    throw new AssignmentOperationRejected('selected_judge_invalid', 'Selecciona un juez activo, verificado y con configuración completa.');
                 }
 
-                foreach ($profiles as $profile) {
-                    if (! $profile->user
-                        || ! $profile->user->hasExactRoles(['judge'])
-                        || ! $profile->user->hasVerifiedEmail()
-                        || ! $profile->password_initialized_at
-                        || $profile->max_active_assignments !== null) {
-                        throw new AssignmentOperationRejected('invalid_active_judge_prerequisites', 'Todos los jueces activos deben conservar rol exclusivo, capacidad ilimitada y prerrequisitos completos.');
-                    }
-                }
-
-                $substitute = $substitutes->firstWhere('public_id', $substitutePublicId);
-                if (! $substitute) {
-                    throw new AssignmentOperationRejected('selected_substitute_invalid', 'Selecciona uno de los dos jueces sustitutos operativos.');
-                }
-
-                $duplicateAssignment = JudgeAssignment::query()
-                    ->where('judge_profile_id', $substitute->id)
+                $hasCurrentAssignment = JudgeAssignment::query()
                     ->where('submission_version_id', $original->submission_version_id)
+                    ->where('judge_profile_id', $selected->id)
                     ->where('current_slot', 1)
                     ->lockForUpdate()
-                    ->first(['id']) !== null;
-
-                if ($duplicateAssignment) {
-                    throw new AssignmentOperationRejected('duplicate_substitute_assignment', 'El sustituto ya tiene una asignación vigente para esta propuesta.');
+                    ->exists();
+                $declaredConflictBefore = JudgeConflict::query()
+                    ->whereHas('assignment', fn ($query) => $query
+                        ->where('submission_version_id', $original->submission_version_id)
+                        ->where('judge_profile_id', $selected->id))
+                    ->lockForUpdate()
+                    ->exists();
+                if ($selected->id === $original->judge_profile_id || $hasCurrentAssignment || $declaredConflictBefore) {
+                    throw new AssignmentOperationRejected('selected_judge_ineligible_for_version', 'El juez seleccionado ya está asignado o declaró conflicto con esta propuesta.');
                 }
 
                 $now = now('UTC');
@@ -128,7 +107,7 @@ final class ResolveJudgeConflict
                 $replacement->forceFill([
                     'competition_id' => $original->competition_id,
                     'submission_version_id' => $original->submission_version_id,
-                    'judge_profile_id' => $substitute->id,
+                    'judge_profile_id' => $selected->id,
                     'rubric_version_id' => $original->rubric_version_id,
                     'type' => JudgeAssignmentType::Replacement->value,
                     'status' => JudgeAssignmentStatus::Active->value,
@@ -149,17 +128,13 @@ final class ResolveJudgeConflict
                     'updated_at' => $now,
                 ]);
 
-                $original->refresh();
-                $lockedConflict->refresh();
-                $this->audit->record('assignment.voided_for_conflict', $original, $actor, [
-                    'conflict_id' => $lockedConflict->id,
-                    'replacement_assignment_id' => $replacement->id,
-                ]);
                 $this->audit->record('assignment.replacement_created', $replacement, $actor, [
+                    'assignment_id' => $replacement->id,
                     'replaces_assignment_id' => $original->id,
                     'submission_version_id' => $original->submission_version_id,
                     'rubric_version_id' => $original->rubric_version_id,
-                    'selected_substitute_profile_id' => $substitute->id,
+                    'judge_profile_id' => $selected->id,
+                    'notification_requested' => $notify,
                 ]);
                 $this->audit->record('assignment.conflict_resolved_reassigned', $lockedConflict, $actor, [
                     'assignment_id' => $original->id,
@@ -173,12 +148,19 @@ final class ResolveJudgeConflict
             $this->audit->record('assignment.replacement_rejected', $conflict, $actor, [
                 'reason_code' => $exception->reasonCode,
             ]);
-
-            $field = $exception->reasonCode === 'selected_substitute_invalid'
-                ? 'substitute_judge_profile'
-                : 'replacement';
-
-            throw ValidationException::withMessages([$field => $exception->getMessage()]);
+            throw ValidationException::withMessages(['judge_profile' => $exception->getMessage()]);
         }
+
+        if ($notify) {
+            $this->sendNotification->execute($replacement, $actor);
+        } else {
+            $this->audit->record('assignment.notification_skipped', $replacement, $actor, [
+                'assignment_id' => $replacement->id,
+                'notification_requested' => false,
+                'reason_code' => 'not_requested',
+            ]);
+        }
+
+        return $replacement;
     }
 }

@@ -1,19 +1,43 @@
 @extends('layouts.flowerflow')
 
-@section('title', 'Área de evaluación')
-@section('description', 'Estado del área de evaluación de Hermosillo Florece 2026.')
+@section('title', 'Inicio del área de evaluación')
 
 @section('content')
-<section class="ff-narrow-card" aria-labelledby="judge-dashboard-title" aria-describedby="judge-dashboard-description">
-  <div class="card ff-card p-4 p-lg-5">
-    <p class="ff-kicker mb-2">Hermosillo Florece 2026</p>
-    <h1 id="judge-dashboard-title" class="h2">Área de evaluación</h1>
-    <p id="judge-dashboard-description" class="lead">Tu acceso está habilitado para consultar tus asignaciones y declarar conflictos.</p>
-    <div class="alert alert-info d-flex gap-3 align-items-start" role="status">
-      <span class="ri ri-shield-check-line fs-4" aria-hidden="true"></span>
-      <p class="mb-0">Una asignación activa puede mostrar su paquete ciego estructural y anexos con nombres neutros. Puedes iniciar y guardar una evaluación en borrador; el servidor calcula el total cuando capturas los cinco criterios. El envío final aún no está habilitado.</p>
-    </div>
-    <a class="btn btn-flower" href="{{ route('judge.assignments.index') }}">Ver mis asignaciones</a>
+<header class="mb-4">
+  <p class="ff-kicker mb-1">Hermosillo Florece 2026</p>
+  <h1 class="h2 mb-2">Tu área de evaluación</h1>
+  <p class="text-secondary mb-0">Consulta tus asignaciones, inicia o continúa borradores y declara un conflicto sólo cuando corresponda.</p>
+</header>
+
+<div class="row g-3 mb-4" aria-label="Resumen de asignaciones">
+  @foreach([
+    ['Vigentes', $active, 'ri-clipboard-line'],
+    ['Sin iniciar', $notStarted, 'ri-play-circle-line'],
+    ['Borradores en progreso', $drafts, 'ri-draft-line'],
+    ['Próximas a vencer', $dueSoon, 'ri-time-line'],
+  ] as [$label, $value, $icon])
+    <div class="col-sm-6 col-xl-3"><div class="card ff-card p-4 h-100"><span class="ri {{ $icon }} fs-3 text-success" aria-hidden="true"></span><strong class="display-6">{{ $value }}</strong><span>{{ $label }}</span></div></div>
+  @endforeach
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <section class="card ff-card p-4 h-100" aria-labelledby="next-action-title">
+      <h2 id="next-action-title" class="h4">Siguiente paso</h2>
+      @if($nextAssignment)
+        <p>La asignación con vencimiento más próximo es <code>{{ $nextAssignment->public_id }}</code>.</p>
+        <a class="btn btn-flower align-self-start" href="{{ route('judge.assignments.show', $nextAssignment) }}">Abrir siguiente asignación</a>
+      @else
+        <div class="alert alert-info mb-0" role="status">No tienes una asignación vigente que requiera acción.</div>
+      @endif
+    </section>
   </div>
-</section>
+  <div class="col-lg-5">
+    <section class="card ff-card p-4 h-100" aria-labelledby="judge-flow-title">
+      <h2 id="judge-flow-title" class="h4">Flujo sencillo</h2>
+      <ol class="mb-3"><li>Abre la asignación.</li><li>Revisa el paquete ciego.</li><li>Inicia o continúa la evaluación.</li><li>Guarda tu borrador.</li></ol>
+      <div class="alert alert-warning mb-0" role="note">El envío final de la evaluación todavía no está habilitado.</div>
+    </section>
+  </div>
+</div>
 @endsection

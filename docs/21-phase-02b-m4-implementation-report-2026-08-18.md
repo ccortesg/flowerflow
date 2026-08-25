@@ -1,5 +1,7 @@
 # Informe de implementación Fase 02B M4 — asignaciones y conflictos
 
+> **Contrato superado por M6A — 2026-08-24:** ya no existe cobertura fija, mínimo de perfiles, asignación de cuatro ni sustituto exclusivo. Toda asignación/reasignación exige selección admin explícita; cualquier juez activo elegible puede ser inicial o replacement y no tiene límite. La evidencia M4 inferior sigue siendo histórica.
+
 > **Corrección final vigente — 2026-08-18:** este informe acredita el contrato histórico `4 primary + 1 substitute × 10`. El owner lo sustituyó primero por `4+2 × 30` y finalmente por seis jueces ilimitados. M4A está `GO LOCAL/TEST`; la evidencia histórica siguiente se conserva y el estado vigente está en `docs/22-phase-02b-m4a-unlimited-judges-implementation-report-2026-08-18.md`.
 
 **Fecha:** 2026-08-18 (`America/Hermosillo`)

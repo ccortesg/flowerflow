@@ -27,7 +27,10 @@ final class UpdateRubricDraft
         array $criteria,
     ): RubricVersion {
         $this->ensureActor->execute($actor, 'manage evaluation rubrics');
-        $this->contract->assertPayload($versionAttributes, $criteria);
+        if (trim($title) !== $this->contract->title((int) $rubric->version)) {
+            throw ValidationException::withMessages(['title' => 'El título no coincide con el catálogo inmutable aprobado.']);
+        }
+        $this->contract->assertPayload($versionAttributes, $criteria, (int) $rubric->version);
 
         return DB::transaction(function () use ($rubric, $actor, $title, $versionAttributes, $criteria): RubricVersion {
             $locked = RubricVersion::query()->whereKey($rubric->getKey())->lockForUpdate()->firstOrFail();

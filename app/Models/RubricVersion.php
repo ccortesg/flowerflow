@@ -33,9 +33,11 @@ class RubricVersion extends Model
                 'created_by_user_id',
                 'activated_at',
                 'activated_by_user_id',
+                'activation_source',
                 'activation_reason',
                 'superseded_at',
                 'superseded_by_user_id',
+                'superseded_source',
             ])) {
                 throw new LogicException('Rubric identity and lifecycle fields can only change through the lifecycle action.');
             }

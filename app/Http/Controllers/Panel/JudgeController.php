@@ -50,6 +50,7 @@ class JudgeController extends Controller
             $request->string('name')->toString(),
             $request->string('email')->toString(),
             JudgeAssignmentRole::from($request->string('assignment_role')->toString()),
+            $request->boolean('send_setup_notification'),
         );
 
         return $this->mailAwareResponse(
@@ -74,7 +75,7 @@ class JudgeController extends Controller
             throw ValidationException::withMessages(['judge' => 'El correo de configuración sólo puede reenviarse mientras el perfil está pendiente.']);
         }
 
-        $send->execute($judgeProfile);
+        $send->execute($judgeProfile, $request->user());
 
         return $this->mailAwareResponse(back()->with('status', 'Se solicitó un nuevo correo de configuración.'));
     }

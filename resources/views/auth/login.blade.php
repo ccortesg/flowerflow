@@ -1,9 +1,10 @@
 @extends('layouts.flowerflow')
 
 @php($isPanelLogin = ($panel ?? false) === true)
+@php($isJudgeLogin = ! $isPanelLogin && request()->query('context') === 'judge')
 
-@section('title', $isPanelLogin ? 'Acceso al panel' : 'Iniciar sesión')
-@section('description', $isPanelLogin ? 'Acceso autorizado al panel de Flower Flow.' : 'Inicia sesión en tu cuenta participante de Hermosillo Florece 2026.')
+@section('title', $isPanelLogin ? 'Acceso al panel' : ($isJudgeLogin ? 'Acceso de juez' : 'Iniciar sesión'))
+@section('description', $isPanelLogin ? 'Acceso autorizado al panel de Flower Flow.' : ($isJudgeLogin ? 'Inicia sesión en el área de evaluación de Flower Flow.' : 'Inicia sesión en tu cuenta participante de Hermosillo Florece 2026.'))
 
 @section('content')
 <header class="ff-login-header">
@@ -22,7 +23,7 @@
         <a href="{{ route('landing') }}#categorias">Categorías</a>
         <a href="{{ route('landing') }}#como-participar">Cómo participar</a>
         <a href="{{ route('documents') }}">Documentos</a>
-        @if(config('flowerflow.flags.registration'))
+        @if(! $isJudgeLogin && config('flowerflow.flags.registration'))
           <a class="ff-login-nav-cta" href="{{ url('/register') }}">Crear cuenta</a>
         @endif
       </div>
@@ -42,9 +43,9 @@
 
   <div class="ff-login-card">
     <div class="ff-login-card-heading">
-      <p class="ff-ui-kicker">{{ $isPanelLogin ? 'Administración' : 'Cuenta participante' }}</p>
-      <h1 id="login-title">{{ $isPanelLogin ? 'Acceso al panel' : 'Iniciar sesión' }}</h1>
-      <p>{{ $isPanelLogin ? 'Ingresa con una cuenta autorizada para administrar la plataforma.' : 'Continúa con tu participación en Hermosillo Florece 2026.' }}</p>
+      <p class="ff-ui-kicker">{{ $isPanelLogin ? 'Administración' : ($isJudgeLogin ? 'Cuenta de juez' : 'Cuenta participante') }}</p>
+      <h1 id="login-title">{{ $isPanelLogin ? 'Acceso al panel' : ($isJudgeLogin ? 'Acceso al área de evaluación' : 'Iniciar sesión') }}</h1>
+      <p>{{ $isPanelLogin ? 'Ingresa con una cuenta autorizada para administrar la plataforma.' : ($isJudgeLogin ? 'Consulta tus asignaciones y continúa tus evaluaciones con tu cuenta de juez.' : 'Continúa con tu participación en Hermosillo Florece 2026.') }}</p>
     </div>
 
     @include('partials.messages')
@@ -105,18 +106,18 @@
       </button>
     </form>
 
-    @if(! $isPanelLogin && config('flowerflow.flags.registration'))
+    @if(! $isPanelLogin && ! $isJudgeLogin && config('flowerflow.flags.registration'))
       <p class="ff-login-register">¿Aún no tienes cuenta? <a href="{{ url('/register') }}">Regístrate</a></p>
     @endif
 
     <p class="ff-login-support">
       <span class="ri ri-shield-check-line" aria-hidden="true"></span>
-      {{ $isPanelLogin ? 'Acceso restringido a personal autorizado.' : 'Conexión segura y protección de tus datos personales.' }}
+      {{ $isPanelLogin ? 'Acceso restringido a personal autorizado.' : ($isJudgeLogin ? 'Acceso exclusivo para jueces registrados.' : 'Conexión segura y protección de tus datos personales.') }}
     </p>
   </div>
 </section>
 
-@unless($isPanelLogin)
+@if(! $isPanelLogin && ! $isJudgeLogin)
   <section class="ff-login-benefits" aria-label="Información de la convocatoria">
     <div class="ff-login-benefits-grid">
       <article>
@@ -137,5 +138,5 @@
       </article>
     </div>
   </section>
-@endunless
+@endif
 @endsection

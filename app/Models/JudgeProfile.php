@@ -58,6 +58,11 @@ class JudgeProfile extends Model
         return $this->hasMany(JudgeConflict::class, 'declared_by_judge_profile_id');
     }
 
+    public function setupLinks(): HasMany
+    {
+        return $this->hasMany(JudgeSetupLink::class);
+    }
+
     public function isActive(): bool
     {
         return $this->status === JudgeProfileStatus::Active;

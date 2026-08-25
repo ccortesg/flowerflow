@@ -23,6 +23,9 @@ final class ActivateRubricVersion
     public function execute(RubricVersion $rubric, User $actor, string $reason): RubricVersion
     {
         $this->ensureActor->execute($actor, 'manage evaluation rubrics');
+        if ($rubric->version !== EvaluationRubricContract::LEGAL_VERSION) {
+            throw ValidationException::withMessages(['rubric' => 'Sólo la rúbrica legal v2 puede ser la versión activa después de M6A.']);
+        }
 
         return DB::transaction(function () use ($rubric, $actor, $reason): RubricVersion {
             Competition::query()->whereKey($rubric->competition_id)->lockForUpdate()->firstOrFail();
@@ -52,6 +55,7 @@ final class ActivateRubricVersion
                     'active_slot' => null,
                     'superseded_at' => $now,
                     'superseded_by_user_id' => $actor->id,
+                    'superseded_source' => 'admin',
                     'updated_at' => $now,
                 ]);
                 $previous->refresh();
@@ -68,6 +72,7 @@ final class ActivateRubricVersion
                 'active_slot' => 1,
                 'activated_at' => $now,
                 'activated_by_user_id' => $actor->id,
+                'activation_source' => 'admin',
                 'activation_reason' => trim($reason),
                 'updated_at' => $now,
             ]);

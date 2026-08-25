@@ -1,5 +1,7 @@
 # Modelo de datos preliminar
 
+> **Adenda M6A — 2026-08-24:** `judge_setup_links` conserva ULID, perfil, hash de token, fingerprint HMAC del correo, slot vigente, emisión/expiración/consumo/invalidación UTC y actor emisor. `rubric_versions` añade origen `admin|migration`; v1 histórica permanece fijada a evidencia existente y v2 activa añade cuatro criterios de 25 %. Las asignaciones conservan `max_active_assignments=NULL`, sin cardinalidad mínima/máxima; cancelación y reemplazo son append-only. Evaluations/scores se dimensionan por la rúbrica fijada, no por un literal cinco.
+
 > **Adenda operativa del panel — 2026-08-22, sólo local/test:** `submission_reminder_batches` conserva ULID, solicitante, alcance `single|all_drafts`, estado y conteos; `submission_reminders` conserva ULID, batch, propuesta, destinatario propietario, estado, fallo redactado, vencimiento, envío y consumo. Sus FKs son `RESTRICT`, existe unicidad batch+propuesta+destinatario y un índice de cooldown. Los modelos nuevos son guarded y no eliminables. La migración es aditiva, sin backfill, y `down()` se niega ante cualquier recordatorio, evento o audit de este milestone.
 
 > **Contrato vigente M4A — 2026-08-18:** `judge_profiles.max_active_assignments` es `NULL` tanto para `primary` como para `substitute`; la composición operativa es cuatro `primary` + dos `substitute`. La migración aditiva `2026_08_18_160000_make_all_judge_assignment_roles_unlimited.php` convierte el antecedente `substitute=10` y exige capacidad nula para cualquier función.

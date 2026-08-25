@@ -1,5 +1,7 @@
 # Informe de implementación — Fase 02B M2
 
+> **Contrato superado por M6A — 2026-08-24:** el broker genérico deja de ser el onboarding inicial canónico del juez. El enlace purpose-bound M6A configura contraseña, verifica el correo y activa el perfil en una operación; un reset genérico nunca verifica. La evidencia M2 inferior se conserva como histórica.
+
 > **Corrección final vigente — 2026-08-18:** este informe acredita históricamente `substitute=10`. El owner aprobó después dos sustitutos y finalmente eliminó el límite para ambos roles. M4A ya migró a `max_active_assignments=NULL`; los resultados M2 siguientes no se reescriben.
 
 **Fecha:** 2026-08-18 (`America/Hermosillo`)

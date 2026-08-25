@@ -16,6 +16,9 @@ class StoreJudgeRequest extends FormRequest
             'name' => trim((string) $this->input('name')),
             'email' => Str::lower(trim((string) $this->input('email'))),
             'assignment_role' => trim((string) $this->input('assignment_role')),
+            'send_setup_notification' => $this->has('send_setup_notification')
+                ? $this->boolean('send_setup_notification')
+                : (bool) config('flowerflow.judge_notifications.account_setup_enabled'),
         ]);
     }
 
@@ -30,6 +33,7 @@ class StoreJudgeRequest extends FormRequest
             'name' => ['required', 'string', 'min:2', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email:rfc', 'max:255', Rule::unique('users', 'email')],
             'assignment_role' => ['required', Rule::enum(JudgeAssignmentRole::class)],
+            'send_setup_notification' => ['required', 'boolean'],
         ];
     }
 
@@ -42,6 +46,7 @@ class StoreJudgeRequest extends FormRequest
             'email.unique' => 'Ya existe una cuenta con este correo. No se modificó ningún rol ni perfil.',
             'assignment_role.required' => 'Selecciona si el juez será principal o sustituto.',
             'assignment_role.enum' => 'Selecciona un tipo de juez válido.',
+            'send_setup_notification.required' => 'Indica si deseas enviar el correo de configuración.',
         ];
     }
 }

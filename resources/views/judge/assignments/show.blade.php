@@ -12,6 +12,23 @@
       <dt class="col-sm-4">Plazo</dt><dd class="col-sm-8">{{ $assignment->due_at->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i:s') }} (Hermosillo)</dd>
       <dt class="col-sm-4">Estado</dt><dd class="col-sm-8">{{ $assignment->status->label() }}</dd>
     </dl>
+    @if($assignment->status === \App\Enums\JudgeAssignmentStatus::Active && ! $assignment->conflict)
+      <section class="border rounded p-3 p-md-4 mb-4" aria-labelledby="assignment-decisions-title">
+        <h2 id="assignment-decisions-title" class="h4">Tu siguiente acción</h2>
+        <p class="mb-3">Revisa el paquete y avanza con tu evaluación. Si existe un conflicto, decláralo antes de evaluar.</p>
+        <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2">
+          @if($evaluation)
+            <a class="btn btn-flower" href="#evaluation-form">Continuar evaluación</a>
+          @elseif($canStartEvaluation)
+            <form method="POST" action="{{ route('judge.assignments.evaluation.store', $assignment) }}">@csrf<button class="btn btn-flower" type="submit">Iniciar evaluación</button></form>
+          @else
+            <button class="btn btn-flower" type="button" disabled aria-describedby="evaluation-unavailable-help">Iniciar evaluación</button>
+          @endif
+          <a class="btn btn-outline-warning" href="#declare-conflict">Declarar conflicto</a>
+        </div>
+        @unless($evaluation || $canStartEvaluation)<p id="evaluation-unavailable-help" class="small text-secondary mt-2 mb-0">La evaluación se habilitará cuando el paquete ciego y las invariantes de la asignación estén vigentes.</p>@endunless
+      </section>
+    @endif
     @if($package)
       @php($payload = $package->payload)
       <div class="alert alert-warning" role="note"><strong>Anonimización estructural.</strong> Se ocultan los datos estructurados de identidad y operación. El texto, los enlaces o los anexos pueden identificar a su autor; este paquete no promete anonimato semántico.</div>
@@ -38,7 +55,7 @@
     @endif
 
     @if($evaluationUnavailable)
-      <section class="mt-4" aria-labelledby="evaluation-title">
+      <section id="evaluation-form" class="mt-4" aria-labelledby="evaluation-title">
         <h2 id="evaluation-title" class="h4">Evaluación</h2>
         <div class="alert alert-warning" role="alert">El borrador no está disponible porque una invariante de asignación, rúbrica o paquete dejó de cumplirse. No se modificó ningún dato.</div>
       </section>
@@ -46,16 +63,17 @@
       @php($revision = $evaluation->currentRevision)
       @php($scoresByCriterion = $revision->scores->keyBy('rubric_criterion_id'))
       @php($capturedCriteria = $revision->scores->whereNotNull('score')->count())
-      <section class="mt-4" aria-labelledby="evaluation-title">
+      @php($criterionCount = $evaluation->rubricVersion->criteria->count())
+      <section id="evaluation-form" class="mt-4" aria-labelledby="evaluation-title">
         <h2 id="evaluation-title" class="h4">Evaluación en borrador</h2>
         <div class="alert alert-info" role="status">
           Este borrador aún no se ha enviado. M6 sólo permite capturarlo y guardarlo.
         </div>
         <dl class="row">
           <dt class="col-sm-4">Estado</dt><dd class="col-sm-8">{{ $evaluation->status->label() }}</dd>
-          <dt class="col-sm-4">Progreso</dt><dd class="col-sm-8"><progress value="{{ $capturedCriteria }}" max="5">{{ $capturedCriteria }} de 5</progress> {{ $capturedCriteria }} de 5 criterios capturados</dd>
+          <dt class="col-sm-4">Progreso</dt><dd class="col-sm-8"><progress value="{{ $capturedCriteria }}" max="{{ $criterionCount }}">{{ $capturedCriteria }} de {{ $criterionCount }}</progress> {{ $capturedCriteria }} de {{ $criterionCount }} criterios capturados</dd>
           <dt class="col-sm-4">Total del servidor</dt>
-          <dd class="col-sm-8">{{ $evaluationTotalDisplay === null ? 'Disponible al capturar los cinco criterios.' : $evaluationTotalDisplay.' de 100.00' }}</dd>
+          <dd class="col-sm-8">{{ $evaluationTotalDisplay === null ? 'Disponible al capturar todos los criterios.' : $evaluationTotalDisplay.' de 100.00' }}</dd>
         </dl>
 
         @if($evaluationReadOnly)
@@ -114,11 +132,7 @@
     @elseif($canStartEvaluation)
       <section class="mt-4" aria-labelledby="evaluation-title">
         <h2 id="evaluation-title" class="h4">Evaluación</h2>
-        <p>La evaluación todavía no existe. Iníciala explícitamente para crear el borrador con los cinco criterios fijados.</p>
-        <form method="POST" action="{{ route('judge.assignments.evaluation.store', $assignment) }}">
-          @csrf
-          <button class="btn btn-flower" type="submit">Iniciar evaluación</button>
-        </form>
+        <p>La evaluación todavía no existe. Usa la acción principal “Iniciar evaluación” para crear el borrador con los criterios de la rúbrica fijada.</p>
       </section>
     @elseif($package && $assignment->status === \App\Enums\JudgeAssignmentStatus::Active)
       <section class="mt-4" aria-labelledby="evaluation-title">
@@ -130,18 +144,21 @@
     @if($assignment->conflict)
       <div class="alert alert-warning" role="status">Conflicto declarado: {{ $assignment->conflict->type->label() }}. La asignación permanece bloqueada.</div>
     @elseif($assignment->status === \App\Enums\JudgeAssignmentStatus::Active)
-      <h2 class="h5">Declarar conflicto</h2>
-      <form method="POST" action="{{ route('judge.assignments.conflicts.store', $assignment) }}">
-        @csrf
-        <fieldset>
-          <legend class="form-label">Tipo de conflicto</legend>
-          @foreach($conflictTypes as $type)
-            <div class="form-check mb-2"><input class="form-check-input" type="radio" name="type" id="type-{{ $type->value }}" value="{{ $type->value }}" required><label class="form-check-label" for="type-{{ $type->value }}">{{ $type->label() }}</label></div>
-          @endforeach
-        </fieldset>
-        <div class="my-3"><label class="form-label" for="explanation">Explicación (sólo para “Otro conflicto”)</label><textarea class="form-control" id="explanation" name="explanation" maxlength="1000" aria-describedby="explanation-help"></textarea><small id="explanation-help" class="text-secondary">Si eliges otro conflicto, escribe entre 20 y 1,000 caracteres.</small></div>
-        <button class="btn btn-warning" type="submit">Confirmar declaración de conflicto</button>
-      </form>
+      <details id="declare-conflict" class="border rounded p-3 mt-4">
+        <summary class="fw-bold">Declarar conflicto</summary>
+        <p class="mt-3">Usa esta acción sólo si existe una situación que impide evaluar con imparcialidad. Al confirmar perderás inmediatamente el acceso a la evaluación.</p>
+        <form method="POST" action="{{ route('judge.assignments.conflicts.store', $assignment) }}">
+          @csrf
+          <fieldset>
+            <legend class="form-label">Tipo de conflicto</legend>
+            @foreach($conflictTypes as $type)
+              <div class="form-check mb-2"><input class="form-check-input" type="radio" name="type" id="type-{{ $type->value }}" value="{{ $type->value }}" required><label class="form-check-label" for="type-{{ $type->value }}">{{ $type->label() }}</label></div>
+            @endforeach
+          </fieldset>
+          <div class="my-3"><label class="form-label" for="explanation">Explicación (sólo para “Otro conflicto”)</label><textarea class="form-control" id="explanation" name="explanation" maxlength="1000" aria-describedby="explanation-help"></textarea><small id="explanation-help" class="text-secondary">Si eliges otro conflicto, escribe entre 20 y 1,000 caracteres.</small></div>
+          <button class="btn btn-outline-warning" type="submit">Confirmar declaración de conflicto</button>
+        </form>
+      </details>
     @endif
   </div>
 </section>

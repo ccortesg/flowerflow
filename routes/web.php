@@ -3,10 +3,12 @@
 use App\Http\Controllers\AdmissibilityParticipantController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Judge\AccessStatusController as JudgeAccessStatusController;
+use App\Http\Controllers\Judge\AccountSecurityController as JudgeAccountSecurityController;
 use App\Http\Controllers\Judge\AssignmentController as JudgeAssignmentController;
 use App\Http\Controllers\Judge\BlindReviewPackageFileController as JudgeBlindReviewPackageFileController;
 use App\Http\Controllers\Judge\DashboardController as JudgeDashboardController;
 use App\Http\Controllers\Judge\EvaluationDraftController as JudgeEvaluationDraftController;
+use App\Http\Controllers\Judge\SetupController as JudgeSetupController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Panel\AccountSecurityController;
 use App\Http\Controllers\Panel\AdministrativeSubmissionFinalizationController;
@@ -28,6 +30,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', LandingController::class)->name('landing');
 Route::view('/documentos', 'public.documents')->name('documents');
 Route::view('/correo-verificado', 'auth.email-verified')->name('verification.success');
+
+Route::middleware(['signed', 'throttle:judge-setup'])->group(function () {
+    Route::get('/juez/configuracion/{setupLink}/{token}', [JudgeSetupController::class, 'show'])
+        ->name('judge.setup.show');
+    Route::post('/juez/configuracion/{setupLink}/{token}', [JudgeSetupController::class, 'store'])
+        ->name('judge.setup.store');
+});
 
 Route::middleware(['submission-reminders.enabled', 'signed', 'throttle:submission-reminders-public'])->group(function () {
     Route::get('/propuestas/{submission}/recordatorio/{reminder}/confirmar', [SubmissionReminderConfirmationController::class, 'show'])
@@ -86,6 +95,13 @@ Route::prefix('juez')->name('judge.')->middleware([
     Route::get('/estado', JudgeAccessStatusController::class)->name('status');
     Route::middleware(['verified', 'judge.active'])->group(function () {
         Route::get('/', JudgeDashboardController::class)->name('dashboard');
+        Route::get('/cuenta', [JudgeAccountSecurityController::class, 'show'])->name('account');
+        Route::prefix('cuenta/2fa')->name('account.two-factor.')->middleware('throttle:account-security')->group(function () {
+            Route::post('/activar', [JudgeAccountSecurityController::class, 'enableTwoFactor'])->name('enable');
+            Route::post('/confirmar', [JudgeAccountSecurityController::class, 'confirmTwoFactor'])->name('confirm');
+            Route::post('/recuperacion', [JudgeAccountSecurityController::class, 'regenerateRecoveryCodes'])->name('recovery-codes');
+            Route::delete('/', [JudgeAccountSecurityController::class, 'disableTwoFactor'])->name('disable');
+        });
         Route::get('/asignaciones', [JudgeAssignmentController::class, 'index'])->name('assignments.index');
         Route::get('/asignaciones/{judgeAssignment}', [JudgeAssignmentController::class, 'show'])->name('assignments.show');
         Route::get('/asignaciones/{judgeAssignment}/anexos/{blindReviewPackageFile}', JudgeBlindReviewPackageFileController::class)
@@ -185,10 +201,16 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
     });
     Route::prefix('asignaciones')->name('assignments.')->middleware(['business.role:admin', 'permission:view evaluation assignments'])->group(function () {
         Route::get('/', [PanelAssignmentController::class, 'index'])->name('index');
-        Route::get('/{submission}', [PanelAssignmentController::class, 'show'])->name('show');
-        Route::post('/{submission}/activar', [PanelAssignmentController::class, 'activate'])
+        Route::get('/propuestas/{submission}', [PanelAssignmentController::class, 'show'])->name('show');
+        Route::post('/propuestas/{submission}/jueces', [PanelAssignmentController::class, 'store'])
             ->middleware(['permission:manage evaluation assignments', 'throttle:panel-mutations'])
-            ->name('activate');
+            ->name('judges.store');
+        Route::get('/{judgeAssignment}/cancelar', [PanelAssignmentController::class, 'cancel'])
+            ->middleware(['permission:manage evaluation assignments', 'password.confirm'])
+            ->name('cancel');
+        Route::post('/{judgeAssignment}/cancelar', [PanelAssignmentController::class, 'destroy'])
+            ->middleware(['permission:manage evaluation assignments', 'password.confirm', 'throttle:panel-mutations'])
+            ->name('cancel.store');
         Route::post('/conflictos/{judgeConflict}/resolver', [PanelAssignmentController::class, 'resolve'])
             ->middleware(['permission:resolve evaluation conflicts', 'throttle:panel-mutations'])
             ->name('conflicts.resolve');

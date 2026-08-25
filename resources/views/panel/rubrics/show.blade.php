@@ -23,7 +23,7 @@
       <h2 class="h4" id="rubric-status-title">Estado y versión</h2>
       <dl class="row mb-0">
         <dt class="col-7">Estado</dt><dd class="col-5">{{ $rubric->status->label() }}</dd>
-        <dt class="col-7">Criterios</dt><dd class="col-5">{{ $rubric->criteria->count() }} de 5</dd>
+        <dt class="col-7">Criterios</dt><dd class="col-5">{{ $rubric->criteria->count() }}</dd>
         <dt class="col-7">Escala</dt><dd class="col-5">0–10</dd>
         <dt class="col-7">Paso</dt><dd class="col-5">0.5</dd>
         <dt class="col-7">Peso</dt><dd class="col-5">100 %</dd>
@@ -58,7 +58,7 @@
           </tbody>
         </table>
       </div>
-      <p class="small text-body-secondary mt-3 mb-0">Comentario general futuro: 100–2,000 caracteres. Comentarios por criterio: opcionales, hasta 1,000. M3 no captura comentarios ni puntajes.</p>
+      <p class="small text-body-secondary mt-3 mb-0">En borrador, el comentario general es opcional hasta 2,000 caracteres; el mínimo de 100 corresponde al futuro envío final. Los comentarios por criterio son opcionales, hasta 1,000.</p>
     </section>
   </div>
 </div>
@@ -84,6 +84,6 @@
     </form>
   </section>
 @else
-  <div class="alert alert-info mt-4" role="status">Esta versión es inmutable y no dispone de acciones de edición, reactivación o eliminación.</div>
+  <div class="alert alert-info mt-4" role="status">El catálogo v1/v2 es inmutable y no dispone de acciones de edición, reactivación o eliminación.</div>
 @endcan
 @endsection

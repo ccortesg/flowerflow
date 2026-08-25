@@ -12,7 +12,7 @@
     </div>
     <div class="col-md-9">
       <label class="form-label" for="title">Título interno</label>
-      <input class="form-control @error('title') is-invalid @enderror" id="title" name="title" maxlength="255" value="{{ old('title', $rubric?->title ?? \App\Services\EvaluationRubricContract::INITIAL_TITLE) }}" required autofocus>
+      <input class="form-control @error('title') is-invalid @enderror" id="title" name="title" maxlength="255" value="{{ old('title', $rubric?->title ?? \App\Services\EvaluationRubricContract::LEGAL_TITLE) }}" required autofocus>
       @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
   </div>

@@ -11,6 +11,10 @@ use App\Services\EvaluationRubricContract;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
+/**
+ * Produces the canonical v1/v2 catalog for fresh local/testing installations.
+ * The historical class name is retained because seeders and M3 evidence refer to it.
+ */
 final class ProvisionCanonicalRubricDraft
 {
     public function __construct(
@@ -26,53 +30,93 @@ final class ProvisionCanonicalRubricDraft
 
         return DB::transaction(function () use ($competition): RubricVersion {
             Competition::query()->whereKey($competition->getKey())->lockForUpdate()->firstOrFail();
-            $existing = RubricVersion::query()
+            $versions = RubricVersion::query()
                 ->where('competition_id', $competition->id)
-                ->where('version', EvaluationRubricContract::INITIAL_VERSION)
+                ->with('criteria')
+                ->orderBy('version')
                 ->lockForUpdate()
-                ->first();
-
-            if ($existing) {
-                $this->assertInitialVersion($existing);
-
-                return $existing->load('criteria');
+                ->get();
+            if ($versions->contains(fn (RubricVersion $rubric): bool => ! in_array($rubric->version, $this->contract->supportedVersions(), true))) {
+                throw new RuntimeException('The canonical competition contains a rubric outside the immutable v1/v2 catalog.');
             }
 
-            $rubric = new RubricVersion;
-            $rubric->forceFill([
-                'competition_id' => $competition->id,
-                'version' => EvaluationRubricContract::INITIAL_VERSION,
-                'title' => EvaluationRubricContract::INITIAL_TITLE,
-                ...$this->contract->versionAttributes(),
-                'status' => RubricVersionStatus::Draft,
-                'created_by_user_id' => null,
-            ])->save();
+            $historical = $versions->firstWhere('version', EvaluationRubricContract::INITIAL_VERSION)
+                ?? $this->createDraft($competition, EvaluationRubricContract::INITIAL_VERSION);
+            $this->contract->assertPersisted($historical->load('criteria'));
 
-            foreach ($this->contract->criteria() as $criterionAttributes) {
-                $criterion = new RubricCriterion;
-                $criterion->forceFill([
-                    'rubric_version_id' => $rubric->id,
-                    ...$criterionAttributes,
-                ])->save();
+            $legal = $versions->firstWhere('version', EvaluationRubricContract::LEGAL_VERSION);
+            if (! $legal) {
+                $legal = $this->createDraft($competition, EvaluationRubricContract::LEGAL_VERSION);
+            }
+            $this->contract->assertPersisted($legal->load('criteria'));
+
+            $active = RubricVersion::query()
+                ->where('competition_id', $competition->id)
+                ->where('status', RubricVersionStatus::Active)
+                ->lockForUpdate()
+                ->get();
+            if ($active->count() > 1 || ($active->isNotEmpty() && $active->sole()->id !== $historical->id && $active->sole()->id !== $legal->id)) {
+                throw new RuntimeException('The canonical active rubric is not deterministic.');
             }
 
-            $this->assertInitialVersion($rubric);
-            $this->audit->record('rubric.draft_provisioned', $rubric, metadata: [
+            $now = now('UTC');
+            if ($historical->status === RubricVersionStatus::Active) {
+                DB::table('rubric_versions')->where('id', $historical->id)->update([
+                    'status' => RubricVersionStatus::Superseded->value,
+                    'active_slot' => null,
+                    'superseded_at' => $now,
+                    'superseded_by_user_id' => null,
+                    'superseded_source' => 'migration',
+                    'updated_at' => $now,
+                ]);
+            }
+
+            if ($legal->status === RubricVersionStatus::Draft) {
+                DB::table('rubric_versions')->where('id', $legal->id)->update([
+                    'status' => RubricVersionStatus::Active->value,
+                    'active_slot' => 1,
+                    'activated_at' => $now,
+                    'activated_by_user_id' => null,
+                    'activation_source' => 'migration',
+                    'activation_reason' => 'Activación técnica de la rúbrica legal v2 aprobada para M6A.',
+                    'updated_at' => $now,
+                ]);
+            } elseif ($legal->status !== RubricVersionStatus::Active) {
+                throw new RuntimeException('Legal rubric v2 is not activatable in the canonical seed state.');
+            }
+
+            $legal->refresh()->load('criteria');
+            $this->audit->record('rubric.canonical_catalog_provisioned', $legal, metadata: [
                 'competition_id' => $competition->id,
-                'version' => EvaluationRubricContract::INITIAL_VERSION,
-                'status' => RubricVersionStatus::Draft->value,
+                'version' => EvaluationRubricContract::LEGAL_VERSION,
+                'status' => RubricVersionStatus::Active->value,
+                'activation_source' => 'migration',
             ]);
 
-            return $rubric->refresh()->load('criteria');
-        });
+            return $legal;
+        }, 3);
     }
 
-    private function assertInitialVersion(RubricVersion $rubric): void
+    private function createDraft(Competition $competition, int $version): RubricVersion
     {
-        if ($rubric->title !== EvaluationRubricContract::INITIAL_TITLE) {
-            throw new RuntimeException('Rubric version 1 diverges from its immutable internal title.');
+        $rubric = new RubricVersion;
+        $rubric->forceFill([
+            'competition_id' => $competition->id,
+            'version' => $version,
+            'title' => $this->contract->title($version),
+            ...$this->contract->versionAttributes($version),
+            'status' => RubricVersionStatus::Draft,
+            'created_by_user_id' => null,
+        ])->save();
+
+        foreach ($this->contract->criteria($version) as $criterionAttributes) {
+            $criterion = new RubricCriterion;
+            $criterion->forceFill([
+                'rubric_version_id' => $rubric->id,
+                ...$criterionAttributes,
+            ])->save();
         }
 
-        $this->contract->assertPersisted($rubric->load('criteria'));
+        return $rubric->refresh()->load('criteria');
     }
 }

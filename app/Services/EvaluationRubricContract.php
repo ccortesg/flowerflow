@@ -12,9 +12,30 @@ final class EvaluationRubricContract
 
     public const INITIAL_TITLE = 'Rúbrica de evaluación Flower Flow 2026';
 
-    /** @return array<string, int|string> */
-    public function versionAttributes(): array
+    public const LEGAL_VERSION = 2;
+
+    public const LEGAL_TITLE = 'Rúbrica de evaluación Hermosillo Florece 2026 — Mecánica v1.1';
+
+    /** @return list<int> */
+    public function supportedVersions(): array
     {
+        return [self::INITIAL_VERSION, self::LEGAL_VERSION];
+    }
+
+    public function title(int $version): string
+    {
+        return match ($version) {
+            self::INITIAL_VERSION => self::INITIAL_TITLE,
+            self::LEGAL_VERSION => self::LEGAL_TITLE,
+            default => throw new LogicException('The rubric version is not part of the immutable catalog.'),
+        };
+    }
+
+    /** @return array<string, int|string> */
+    public function versionAttributes(int $version = self::LEGAL_VERSION): array
+    {
+        $this->assertSupportedVersion($version);
+
         return [
             'criterion_score_min' => '0.0000',
             'criterion_score_max' => '10.0000',
@@ -32,27 +53,53 @@ final class EvaluationRubricContract
     }
 
     /** @return list<array<string, int|string|null>> */
-    public function criteria(): array
+    public function criteria(int $version = self::LEGAL_VERSION): array
     {
-        return [
-            $this->criterion('pertinence', 'Pertinencia', '20.0000', 1),
-            $this->criterion('clarity', 'Claridad', '20.0000', 2),
-            $this->criterion('feasibility', 'Viabilidad', '25.0000', 3),
-            $this->criterion('impact', 'Impacto', '25.0000', 4),
-            $this->criterion('coherence', 'Coherencia', '10.0000', 5),
-        ];
+        return match ($version) {
+            self::INITIAL_VERSION => [
+                $this->criterion('pertinence', 'Pertinencia', '20.0000', 1),
+                $this->criterion('clarity', 'Claridad', '20.0000', 2),
+                $this->criterion('feasibility', 'Viabilidad', '25.0000', 3),
+                $this->criterion('impact', 'Impacto', '25.0000', 4),
+                $this->criterion('coherence', 'Coherencia', '10.0000', 5),
+            ],
+            self::LEGAL_VERSION => [
+                $this->criterion('relevance_diagnosis', 'Relevancia del problema para Hermosillo y claridad del diagnóstico', '25.0000', 1),
+                $this->criterion('quality_originality', 'Calidad, claridad y originalidad de la solución', '25.0000', 2),
+                $this->criterion('participation_coordination', 'Participación ciudadana y coordinación municipal propuesta', '25.0000', 3),
+                $this->criterion('impact_sustainability', 'Impacto, sostenibilidad y posibilidad de medición', '25.0000', 4),
+            ],
+            default => throw new LogicException('The rubric version is not part of the immutable catalog.'),
+        };
+    }
+
+    public function criterionCount(int $version): int
+    {
+        return count($this->criteria($version));
+    }
+
+    public function maximumCriterionCount(): int
+    {
+        return max(array_map(fn (int $version): int => $this->criterionCount($version), $this->supportedVersions()));
     }
 
     /** @return array<string, string> */
-    public function payloadErrors(array $versionAttributes, array $criteria): array
+    public function payloadErrors(array $versionAttributes, array $criteria, int $version = self::LEGAL_VERSION): array
     {
+        try {
+            $expectedVersionAttributes = $this->versionAttributes($version);
+            $expectedCriteria = $this->criteria($version);
+        } catch (LogicException) {
+            return ['version' => 'La versión no pertenece al catálogo inmutable aprobado.'];
+        }
+
         $errors = [];
-        $unexpectedVersionFields = array_diff(array_keys($versionAttributes), array_keys($this->versionAttributes()));
+        $unexpectedVersionFields = array_diff(array_keys($versionAttributes), array_keys($expectedVersionAttributes));
         if ($unexpectedVersionFields !== []) {
             $errors['contract'] = 'El contrato contiene campos de versión no autorizados.';
         }
 
-        foreach ($this->versionAttributes() as $field => $expected) {
+        foreach ($expectedVersionAttributes as $field => $expected) {
             $actual = $versionAttributes[$field] ?? null;
             $valid = is_int($expected)
                 ? filter_var($actual, FILTER_VALIDATE_INT) !== false && (int) $actual === $expected
@@ -66,9 +113,8 @@ final class EvaluationRubricContract
         }
 
         $criteria = array_values($criteria);
-        $expectedCriteria = $this->criteria();
         if (count($criteria) !== count($expectedCriteria)) {
-            $errors['criteria'] = 'La rúbrica debe contener exactamente cinco criterios.';
+            $errors['criteria'] = 'La cantidad de criterios no coincide con la versión del contrato aprobado.';
         }
 
         foreach ($expectedCriteria as $index => $expected) {
@@ -98,9 +144,9 @@ final class EvaluationRubricContract
     }
 
     /** @throws ValidationException */
-    public function assertPayload(array $versionAttributes, array $criteria): void
+    public function assertPayload(array $versionAttributes, array $criteria, int $version = self::LEGAL_VERSION): void
     {
-        $errors = $this->payloadErrors($versionAttributes, $criteria);
+        $errors = $this->payloadErrors($versionAttributes, $criteria, $version);
 
         if ($errors !== []) {
             throw ValidationException::withMessages($errors);
@@ -110,8 +156,14 @@ final class EvaluationRubricContract
     /** @throws LogicException */
     public function assertPersisted(RubricVersion $rubric): void
     {
+        $version = (int) $rubric->version;
+        $this->assertSupportedVersion($version);
+        if ($rubric->title !== $this->title($version)) {
+            throw new LogicException('The persisted rubric title diverges from the approved immutable catalog.');
+        }
+
         $rubric->loadMissing('criteria');
-        $versionAttributes = collect($this->versionAttributes())
+        $versionAttributes = collect($this->versionAttributes($version))
             ->mapWithKeys(fn ($value, string $field) => [$field => $rubric->getAttribute($field)])
             ->all();
         $criteria = $rubric->criteria->map(fn ($criterion) => [
@@ -124,7 +176,7 @@ final class EvaluationRubricContract
             'score_step' => $criterion->score_step,
             'sort_order' => $criterion->sort_order,
         ])->all();
-        $errors = $this->payloadErrors($versionAttributes, $criteria);
+        $errors = $this->payloadErrors($versionAttributes, $criteria, $version);
 
         if ($errors !== []) {
             throw new LogicException('The persisted rubric diverges from the approved contract: '.implode(' ', $errors));
@@ -144,6 +196,13 @@ final class EvaluationRubricContract
             'score_step' => '0.5000',
             'sort_order' => $order,
         ];
+    }
+
+    private function assertSupportedVersion(int $version): void
+    {
+        if (! in_array($version, $this->supportedVersions(), true)) {
+            throw new LogicException('The rubric version is not part of the immutable catalog.');
+        }
     }
 
     private function decimalEquals(mixed $actual, string $expected): bool

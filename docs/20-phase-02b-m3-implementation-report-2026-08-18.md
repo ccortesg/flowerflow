@@ -1,5 +1,7 @@
 # Informe de implementación Fase 02B M3 — rúbrica versionada
 
+> **Contrato superado por M6A — 2026-08-24:** la v1 de cinco criterios permanece histórica e inmutable para assignments/evaluations ya fijadas; la v2 activa usa los cuatro criterios de la Mecánica y pesos neutrales 25 %. La evidencia M3 inferior no se reescribe.
+
 > **Corrección final vigente — 2026-08-18:** la rúbrica M3 no cambia. La dependencia de asignación pasó históricamente de `1×10` a `2×30` y terminó en `4+2` ilimitado. M4A ya está verde; las referencias de capacidad de este informe son históricas.
 
 **Fecha:** 2026-08-18 (`America/Hermosillo`)

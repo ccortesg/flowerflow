@@ -24,7 +24,7 @@
         <dt class="col-7">2FA</dt><dd class="col-5">{{ $judgeProfile->user->hasEnabledTwoFactorAuthentication() ? 'Configurada' : 'Opcional / sin configurar' }}</dd>
         <dt class="col-7">Capacidad</dt><dd class="col-5">{{ $judgeProfile->max_active_assignments ?? 'Sin límite' }}</dd>
       </dl>
-      <p class="small text-body-secondary mt-3 mb-0">La función y capacidad no crean asignaciones ni habilitan módulos de evaluación. El sustituto no recibe asignaciones iniciales.</p>
+      <p class="small text-body-secondary mt-3 mb-0">La función es informativa y la capacidad es ilimitada. Ninguna de las dos crea asignaciones; cada propuesta debe ser seleccionada manualmente por administración.</p>
     </section>
   </div>
 
@@ -36,7 +36,8 @@
         <form method="POST" action="{{ route('panel.judges.setup.resend', $judgeProfile) }}" class="mb-4">
           @csrf
           <p>Genera un enlace temporal nuevo sin cambiar la contraseña ni verificar el correo por inferencia.</p>
-          <button class="btn btn-outline-dark" type="submit">Reenviar configuración</button>
+          <button class="btn btn-outline-dark" type="submit" @disabled(! config('flowerflow.judge_notifications.account_setup_enabled'))>Reenviar configuración</button>
+          @unless(config('flowerflow.judge_notifications.account_setup_enabled'))<p class="small text-secondary mt-2 mb-0">El envío está deshabilitado globalmente.</p>@endunless
         </form>
       @endif
 

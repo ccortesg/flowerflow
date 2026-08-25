@@ -29,8 +29,12 @@ class AssignmentController extends Controller
                 'submissionVersion:id,submission_id',
                 'submissionVersion.submission:id,category_id',
                 'submissionVersion.submission.category:id,name',
+                'submissionVersion.blindReviewPackage:id,submission_version_id,status',
+                'rubricVersion.criteria:id,rubric_version_id,sort_order',
                 'conflict',
+                'evaluation.currentRevision.scores:id,evaluation_revision_id,score',
             ])
+            ->orderByRaw("CASE WHEN status = 'active' THEN 0 ELSE 1 END")
             ->orderBy('due_at')
             ->paginate(20);
 

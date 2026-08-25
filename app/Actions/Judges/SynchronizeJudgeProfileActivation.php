@@ -15,13 +15,15 @@ final class SynchronizeJudgeProfileActivation
     public function execute(User $user, ?User $actor = null): ?JudgeProfile
     {
         return DB::transaction(function () use ($user, $actor): ?JudgeProfile {
-            $lockedUser = User::query()->lockForUpdate()->find($user->getKey());
-            if (! $lockedUser?->hasExactRoles(['judge'])) {
+            // Keep the same profile -> user lock order as setup-link consumption
+            // so the post-commit Verified listener cannot deadlock a concurrent use.
+            $profile = JudgeProfile::query()->where('user_id', $user->getKey())->lockForUpdate()->first();
+            if (! $profile) {
                 return null;
             }
 
-            $profile = JudgeProfile::query()->where('user_id', $lockedUser->id)->lockForUpdate()->first();
-            if (! $profile || $profile->status === JudgeProfileStatus::Suspended) {
+            $lockedUser = User::query()->lockForUpdate()->find($user->getKey());
+            if (! $lockedUser?->hasExactRoles(['judge']) || $profile->status === JudgeProfileStatus::Suspended) {
                 return $profile;
             }
 

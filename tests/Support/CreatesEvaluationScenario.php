@@ -2,19 +2,21 @@
 
 namespace Tests\Support;
 
-use App\Actions\Assignments\ActivateSubmissionCoverage;
 use App\Actions\BlindReview\ActivateBlindReviewPackage;
 use App\Actions\BlindReview\GenerateBlindReviewPackageDraft;
-use App\Actions\Rubrics\ActivateRubricVersion;
 use App\Enums\EligibilityReviewStatus;
 use App\Enums\JudgeAssignmentRole;
+use App\Enums\JudgeAssignmentStatus;
+use App\Enums\JudgeAssignmentType;
 use App\Enums\JudgeProfileStatus;
 use App\Models\BlindReviewPackage;
+use App\Models\JudgeAssignment;
 use App\Models\JudgeProfile;
 use App\Models\RubricVersion;
 use App\Models\Submission;
 use App\Models\SubmissionVersion;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -36,7 +38,16 @@ trait CreatesEvaluationScenario
         );
 
         $rubric = RubricVersion::query()->where('version', 1)->firstOrFail();
-        app(ActivateRubricVersion::class)->execute($rubric, $admin, 'Activación sintética de rúbrica para M6.');
+        DB::table('rubric_versions')->where('id', $rubric->id)->update([
+            'status' => 'superseded',
+            'activated_at' => now('UTC'),
+            'activated_by_user_id' => null,
+            'activation_source' => 'migration',
+            'activation_reason' => 'Activación histórica sintética para compatibilidad M6.',
+            'superseded_at' => now('UTC'),
+            'superseded_by_user_id' => null,
+            'superseded_source' => 'migration',
+        ]);
         [, $submission, $review] = $this->submittedReview();
         $review->update([
             'status' => EligibilityReviewStatus::Admitted,
@@ -62,11 +73,22 @@ trait CreatesEvaluationScenario
         ], JSON_THROW_ON_ERROR)]);
         $version = $version->fresh();
 
-        app(ActivateSubmissionCoverage::class)->execute(
-            $submission,
-            $admin,
-            'Cobertura sintética completa para evaluación M6.',
-        );
+        foreach ($primaries as $judge) {
+            $assignment = new JudgeAssignment;
+            $assignment->forceFill([
+                'competition_id' => $submission->competition_id,
+                'submission_version_id' => $version->id,
+                'judge_profile_id' => $judge->judgeProfile->id,
+                'rubric_version_id' => $rubric->id,
+                'type' => JudgeAssignmentType::Initial,
+                'status' => JudgeAssignmentStatus::Active,
+                'current_slot' => 1,
+                'due_at' => CarbonImmutable::parse(config('flowerflow.evaluation_close_at'), config('flowerflow.timezone'))->utc(),
+                'assigned_by_user_id' => $admin->id,
+                'assignment_reason' => 'Asignación histórica sintética fijada a rúbrica v1.',
+                'assigned_at' => now('UTC'),
+            ])->save();
+        }
         app(GenerateBlindReviewPackageDraft::class)->execute(
             $submission,
             $admin,

@@ -1,5 +1,7 @@
 # Informe de implementación Fase 02B M4A — jueces ilimitados
 
+> **Contrato superado por M6A — 2026-08-24:** se conserva `max_active_assignments=NULL`, pero ya no se exige composición `4+2`, mínimo alguno ni exclusividad de sustitutos. Roles son informativos y toda asignación/reasignación es una selección administrativa explícita. El informe inferior conserva la evidencia histórica M4A.
+
 **Fecha:** 2026-08-18 (`America/Hermosillo`)
 
 **Estado al cierre M4A:** `GO LOCAL/TEST — NOT DEPLOYED — M5 NOT IMPLEMENTED`

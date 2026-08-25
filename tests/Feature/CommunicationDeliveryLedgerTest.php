@@ -84,7 +84,7 @@ class CommunicationDeliveryLedgerTest extends TestCase
         $messages = [
             [$account, new VerifyEmailNotification, 'account-verification'],
             [$account, new ResetPasswordNotification('synthetic-reset-token'), 'account-reset'],
-            [$judge, new JudgeAccountSetupNotification('synthetic-setup-token'), 'judge-setup'],
+            [$judge, new JudgeAccountSetupNotification(999, 'synthetic-setup-token'), 'judge-setup'],
             [$judge, new JudgeVerifyEmailNotification, 'judge-verification'],
             [$judge, new JudgeAccountStatusNotification('reactivated'), 'judge-status'],
             [$participant, new SubmissionReceived($submission), 'submission-received'],

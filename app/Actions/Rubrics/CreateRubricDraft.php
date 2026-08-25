@@ -30,7 +30,11 @@ final class CreateRubricDraft
         array $criteria,
     ): RubricVersion {
         $this->ensureActor->execute($actor, 'manage evaluation rubrics');
-        $this->contract->assertPayload($versionAttributes, $criteria);
+        if (! in_array($version, $this->contract->supportedVersions(), true)
+            || trim($title) !== $this->contract->title($version)) {
+            throw ValidationException::withMessages(['version' => 'La versión o el título no pertenecen al catálogo inmutable aprobado.']);
+        }
+        $this->contract->assertPayload($versionAttributes, $criteria, $version);
 
         try {
             return DB::transaction(function () use ($actor, $competition, $version, $title, $versionAttributes, $criteria): RubricVersion {
