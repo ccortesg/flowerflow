@@ -1,0 +1,18 @@
+{
+  "name": "flower-flow-judge-video-tutorial",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Automatización reproducible del tutorial local del rol Juez.",
+  "scripts": {
+    "manual": "TUTORIAL_MODE=manual playwright test --config=playwright.config.ts",
+    "technical": "TUTORIAL_MODE=technical playwright test --config=playwright.config.ts",
+    "record": "TUTORIAL_MODE=final playwright test --config=playwright.config.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "@types/node": "22.20.1",
+    "typescript": "5.9.3"
+  }
+}
