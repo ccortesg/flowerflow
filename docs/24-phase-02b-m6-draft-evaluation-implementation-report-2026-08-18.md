@@ -1,6 +1,8 @@
 # Informe de implementación Fase 02B M6 — evaluación en borrador y cálculo servidor
 
-> **Adenda M6A — 2026-08-24:** M6 continúa compatible con v1 histórica de cinco criterios y ahora usa dinámicamente la rúbrica fijada; nuevas asignaciones v2 crean cuatro scores. Las referencias inferiores a “exactamente cinco” describen el corte histórico M6. M7–M10 permanecen no implementados/no autorizados.
+> **Contrato posterior M7 — 2026-08-24:** el borrador M6 permanece compatible; M7 añade sellado/reapertura en migración y Actions separadas. Las afirmaciones inferiores de “sin envío” describen correctamente el corte histórico M6.
+
+> **Adenda M6A — 2026-08-24:** M6 continúa compatible con v1 histórica de cinco criterios y ahora usa dinámicamente la rúbrica fijada; nuevas asignaciones v2 crean cuatro scores. Las referencias inferiores a “exactamente cinco” y a M7 pendiente describen el corte histórico M6. M7 fue implementado después; M8–M10 permanecen no implementados/no autorizados.
 
 **Fecha:** 2026-08-18  
 **Estado:** `GO LOCAL/TEST`  

@@ -1,5 +1,7 @@
 # Estrategia de pruebas y calidad
 
+> **Gate M7 — validación final 2026-08-25, `GO LOCAL/TEST`:** GET puro, 99/100/2,000/2,001, completitud, XSS, cálculo persistido, sellado, PATCH posterior, dos pestañas/409, submit/reopen simultáneos, carrera juez/admin, clon exacto, revisiones sucesivas, actor real, privacidad diferenciada, conflicto, replacement, v1/v2, segundos limítrofes, drift, auditoría redactada y ausencia de deliveries quedaron verdes. Resultado: M7 5/165, regresión dirigida M5–M7 60/847 y suite completa 208/2,385; 23 migraciones, 104 rutas, gates y UAT Firefox verdes. `yarn audit` conserva sólo el advisory bajo conocido de Quill sin parche. La evidencia está en el informe 28 y no se atribuye a producción.
+
 > **Gate M6A — 2026-08-24, `GO LOCAL/TEST`:** setup GET puro/POST único/concurrencia/expiración/cruce/cambio de correo, flags y reset genérico; migración v1/v2 fresh-upgrade-rollback y drift; selección manual uno/varios, más de cuatro proyectos por juez, cero mínimos, idempotencia y carreras; paquete sin cobertura; cancelación/reemplazo explícito; notificación sin PII; v1 cinco scores y v2 cuatro con BCMath/409; matriz de roles y UAT Firefox responsive. Resultado final: 40/459 dirigidas y 203/2,220 completa; 22 migraciones, 95 rutas, build/gates verdes y advisory bajo conocido de Quill sin parche. El zoom equivalente pasó con reflow a 390 CSS px; repetir porcentaje nativo manual antes de release. Ningún resultado local autoriza producción.
 
 > **Gate de exportación de contactos — 2026-08-24:** bajo el guard exacto de `flowerflow_testing`, cubrir botón/rutas por permiso y contraseña, conteo global independiente de filtros, inclusión exclusiva de `submitted`, snapshot frente a datos vivos, perfil administrativo ausente, Unicode/saltos, fórmula hostil, tipo histórico, tipo desconocido, fallo cerrado, archivo privado, conteos, auditoría redactada y regresión del libro completo. La estructura XLSX se valida con OpenSpout/OpenPyXL y, si el runtime está disponible, mediante render de LibreOffice/Poppler.
@@ -19,19 +21,19 @@ La reconciliación jurídica v1.1 añade `LegalDocumentsV11Test`: valida existen
 | Gate | Resultado actual |
 |---|---|
 | Base/cuenta de tests | `flowerflow_testing` / `flowerflow_testing_user`, MySQL loopback, guard obligatorio |
-| Migraciones de test | 19/19 aplicadas; M6 pasó forward/rollback/forward y su rollback rechazó evidencia M6 sin afectar M1–M5 |
-| Suite | M6 13/228; M1–M6 54/888; completa 163/1,937, verdes |
+| Migraciones de test | 23/23 aplicadas; M7 pasó forward/rollback/forward y su rollback rechazó evidencia M7 sin afectar M1–M6A |
+| Suite | M7 5/165; M5–M7 60/847; completa 208/2,385, verdes |
 | Pint | Verde |
 | Composer validate/platform/audit | Verde; cero advisories |
 | Yarn dependencies | Un advisory bajo de Quill 2.0.3 sin fix; cero moderados/altos/críticos |
 | Iconos/build | 98 iconos, 784 módulos y tres assets Vite, verde |
-| Browser | UAT M6 Firefox: inicio explícito, parcial/completo 75.25, refresh, dos pestañas/409, XSS, vencimiento sólo lectura, conflicto, replacement independiente, 403/404, tres viewports, teclado/foco/zoom/reflow y consola limpia. |
+| Browser | UAT M7 Firefox: confirmación, mínimo 100, sellado, sólo lectura, reaperturas sucesivas, edición/reenvío juez y admin, actor real, aviso diferenciado, dos pestañas/409, XSS, 403/404, tres viewports, teclado/foco/zoom/reflow y consola limpia. |
 
 La base local primaria no sustituye este ambiente y no está autorizada para esta ejecución. El único runtime destructivo permitido es `flowerflow_testing` con `flowerflow_testing_user`, MySQL loopback, datos sintéticos y guard probado antes de cada `migrate:fresh`. La auditoría vigente está en `docs/16-project-status-by-module-and-role-2026-08-17.md`.
 
 ## Contrato de QA Fase 02B aprobado — 2026-08-18
 
-M1–M6 permanecen verdes. M4A prueba composición exacta/capacidad ilimitada, M5 la proyección ciega y M6 apertura/guardado/cálculo decimal con lock optimista. M7–M10 siguen futuros/no autorizados.
+M1–M7 permanecen verdes local/test. M6A sustituyó la composición fija por asignación administrativa manual sin mínimos/límites; M5 conserva la proyección ciega, M6 apertura/guardado/cálculo decimal y M7 sellado/reapertura append-only. M8–M10 siguen futuros/no autorizados.
 
 - M1 — `VERIFIED LOCAL`: visitante, `participant`, `reviewer`, `admin`, `judge`, sin rol y multirol; roles estrictamente excluyentes, gates fail-closed, rutas directas/IDOR y flag de evaluación apagado/encendido.
 - M2 — `VERIFIED LOCAL`: alta directa por `admin`, función `primary|substitute`, capacidad `NULL|10`, correo verificado, primer cambio seguro de contraseña, activación idempotente en cualquier orden, suspensión/reactivación, revocación de sesiones y recovery administrativo. 2FA de juez es opcional y su ausencia no se trató como fallo.
@@ -39,7 +41,7 @@ M1–M6 permanecen verdes. M4A prueba composición exacta/capacidad ilimitada, M
 - M4 — `HISTORICAL VERIFIED 1×10`: cuatro iniciales, conflicto/void/reemplazo y ausencia M5 probados. M4A — `VERIFIED UNLIMITED`: dos sustitutos sin iniciales, 31 reemplazos aceptados, selección manual y carreras cerradas.
 - M5 `VERIFIED LOCAL`: proyección estructural separada y archivos con etiquetas/metadatos neutros; ausencia comprobada de PII estructurada, residencia, notas, aclaraciones, historial, rutas/nombres originales. La UI no promete eliminar identidad semántica de texto/imágenes/enlaces/anexos; ese riesgo está aceptado.
 - M6 `VERIFIED LOCAL`: GET no muta, POST converge en 1/1/5, PATCH valida allowlist y lock, total BCMath permanece nulo incompleto y produce los vectores exactos; total cliente/XSS/IDs/códigos hostiles se rechazan o quedan inertes. El segundo exacto es inclusivo y el siguiente bloquea mutaciones.
-- M7: envío inmutable; reapertura sólo por `admin` hasta 20:00 Hermosillo con razón 20–1,000/password confirmation; revisión append-only editable hasta 23:59:59. Si admin edita en nombre del juez, se prueban actor real, juez sujeto y preservación de la revisión previa.
+- M7 `VERIFIED LOCAL`: envío inmutable; reapertura sólo por `admin` hasta 20:00 Hermosillo con razón 20–1,000/password confirmation; revisión append-only editable hasta 23:59:59. Actor real, juez sujeto, preservación de fuente, carreras y 409 están probados.
 - Consolidación: media aritmética sólo con cuatro evaluaciones válidas; cualquier faltante mantiene `incomplete`; empate técnico sólo por igualdad a dos decimales y nunca declara ganador.
 - M8: emails idempotentes de alta/asignación/conflicto resuelto/reasignación/envío/reapertura/cierre y recordatorios de participantes 20/22-ago 09:00 Hermosillo. Incluye cero propuestas, al menos un borrador, enviada+borrador, todas enviadas y duplicado de ventana.
 - Retención: 24 meses desde `evaluation_cycle_closed_at`; antes de implementar purga se prueban legal hold, auditoría, idempotencia y compatibilidad documentada con backups.

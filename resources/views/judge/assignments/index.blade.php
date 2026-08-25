@@ -17,7 +17,7 @@
     @php($revision = $assignment->evaluation?->currentRevision)
     @php($criterionCount = $assignment->rubricVersion?->criteria?->count() ?? $revision?->scores?->count() ?? 0)
     @php($captured = $revision?->scores?->whereNotNull('score')->count() ?? 0)
-    @php($actionLabel = $assignment->status !== \App\Enums\JudgeAssignmentStatus::Active ? 'Ver detalle' : ($assignment->evaluation ? 'Continuar evaluación' : 'Iniciar evaluación'))
+    @php($actionLabel = $assignment->status !== \App\Enums\JudgeAssignmentStatus::Active ? 'Ver detalle' : ($assignment->evaluation?->status === \App\Enums\EvaluationStatus::Submitted ? 'Ver evaluación' : ($assignment->evaluation ? 'Continuar evaluación' : 'Iniciar evaluación')))
     <div class="col-12 col-xl-6">
       <article class="card ff-card p-4 h-100" aria-labelledby="assignment-{{ $assignment->public_id }}">
         <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">

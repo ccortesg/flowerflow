@@ -1,5 +1,7 @@
 # Preguntas abiertas y decisiones — Flower Flow 2026
 
+> **Decisiones M7 — 2026-08-24:** `Q-M7-001 RESOLVED LOCAL`: revisión inicial se sella sin copia redundante. `Q-M7-002 RESOLVED LOCAL`: reapertura crea revisión append-only y puede reenviarla juez o admin; el actor real nunca se sustituye por el juez sujeto. `Q-M7-003 RESOLVED LOCAL`: cierre de reapertura 20:00:00 y mutaciones 23:59:59, segundos inclusivos. `Q-M7-004 OPEN / RELEASE BLOCKER`: reconciliación jurídica del mínimo de jueces. M8–M10 permanecen fuera.
+
 > **Decisiones M6A — 2026-08-24:** `Q-M6A-001 RESOLVED LOCAL`: sin límite por juez ni mínimo de principales/sustitutos/asignaciones; funciones informativas y selección admin explícita. `Q-M6A-002 RESOLVED LOCAL`: alta y asignación notificables mediante flags y casilla por operación. `Q-M6A-003 RESOLVED LOCAL`: cuatro criterios legales, 25 % cada uno como decisión de producto, v1 histórica preservada. `Q-M6A-004 OPEN / RELEASE BLOCKER`: reconciliar la contradicción con “al menos tres jueces” del PDF. M7–M10 no están autorizados.
 
 > **Estado vigente M6 — 2026-08-18:** `P2B-DEC-005/015` permanecen cerradas mediante `4+2` ilimitado y selección manual. M5 materializa la ceguera estructural y M6 el borrador/cálculo servidor. M7–M10 permanecen no implementados/no autorizados.

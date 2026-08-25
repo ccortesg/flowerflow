@@ -8,6 +8,7 @@ use App\Http\Controllers\Judge\AssignmentController as JudgeAssignmentController
 use App\Http\Controllers\Judge\BlindReviewPackageFileController as JudgeBlindReviewPackageFileController;
 use App\Http\Controllers\Judge\DashboardController as JudgeDashboardController;
 use App\Http\Controllers\Judge\EvaluationDraftController as JudgeEvaluationDraftController;
+use App\Http\Controllers\Judge\EvaluationSubmissionController as JudgeEvaluationSubmissionController;
 use App\Http\Controllers\Judge\SetupController as JudgeSetupController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Panel\AccountSecurityController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Panel\BlindReviewPackageController as PanelBlindReviewP
 use App\Http\Controllers\Panel\CommunicationDeliveryController as PanelCommunicationDeliveryController;
 use App\Http\Controllers\Panel\DashboardController as PanelDashboardController;
 use App\Http\Controllers\Panel\EligibilityReviewController as PanelEligibilityReviewController;
+use App\Http\Controllers\Panel\EvaluationController as PanelEvaluationController;
 use App\Http\Controllers\Panel\JudgeController as PanelJudgeController;
 use App\Http\Controllers\Panel\RubricVersionController as PanelRubricVersionController;
 use App\Http\Controllers\Panel\SubmissionController as PanelSubmissionController;
@@ -115,6 +117,12 @@ Route::prefix('juez')->name('judge.')->middleware([
         Route::patch('/asignaciones/{judgeAssignment}/evaluacion', [JudgeEvaluationDraftController::class, 'update'])
             ->middleware(['permission:manage own evaluation drafts', 'throttle:panel-mutations'])
             ->name('assignments.evaluation.update');
+        Route::get('/asignaciones/{judgeAssignment}/evaluacion/confirmar', [JudgeEvaluationSubmissionController::class, 'confirm'])
+            ->middleware('permission:submit own evaluations')
+            ->name('assignments.evaluation.confirm');
+        Route::post('/asignaciones/{judgeAssignment}/evaluacion/enviar', [JudgeEvaluationSubmissionController::class, 'submit'])
+            ->middleware(['evaluation-finalization.enabled', 'permission:submit own evaluations', 'throttle:panel-mutations'])
+            ->name('assignments.evaluation.submit');
     });
 });
 
@@ -214,6 +222,23 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
         Route::post('/conflictos/{judgeConflict}/resolver', [PanelAssignmentController::class, 'resolve'])
             ->middleware(['permission:resolve evaluation conflicts', 'throttle:panel-mutations'])
             ->name('conflicts.resolve');
+    });
+    Route::prefix('evaluaciones')->name('evaluations.')->middleware(['business.role:admin', 'permission:view evaluations'])->group(function () {
+        Route::get('/', [PanelEvaluationController::class, 'index'])->name('index');
+        Route::get('/{evaluation}', [PanelEvaluationController::class, 'show'])->name('show');
+        Route::get('/{evaluation}/reabrir', [PanelEvaluationController::class, 'reopen'])
+            ->middleware(['permission:reopen evaluations', 'password.confirm'])->name('reopen');
+        Route::post('/{evaluation}/reabrir', [PanelEvaluationController::class, 'storeReopening'])
+            ->middleware(['evaluation-finalization.enabled', 'permission:reopen evaluations', 'password.confirm', 'throttle:panel-mutations'])
+            ->name('reopen.store');
+        Route::patch('/{evaluation}/borrador', [PanelEvaluationController::class, 'update'])
+            ->middleware(['evaluation-finalization.enabled', 'permission:manage reopened evaluations', 'password.confirm', 'throttle:panel-mutations'])
+            ->name('draft.update');
+        Route::get('/{evaluation}/confirmar-envio', [PanelEvaluationController::class, 'confirm'])
+            ->middleware(['permission:manage reopened evaluations', 'password.confirm'])->name('confirm');
+        Route::post('/{evaluation}/enviar', [PanelEvaluationController::class, 'submit'])
+            ->middleware(['evaluation-finalization.enabled', 'permission:manage reopened evaluations', 'password.confirm', 'throttle:panel-mutations'])
+            ->name('submit');
     });
     Route::prefix('paquetes-ciegos')->name('blind-review-packages.')->middleware(['business.role:admin', 'permission:view blind review packages'])->group(function () {
         Route::get('/', [PanelBlindReviewPackageController::class, 'index'])->name('index');

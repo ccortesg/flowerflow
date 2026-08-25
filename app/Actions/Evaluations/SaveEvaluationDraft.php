@@ -2,6 +2,8 @@
 
 namespace App\Actions\Evaluations;
 
+use App\Enums\EvaluationRevisionStatus;
+use App\Enums\EvaluationStatus;
 use App\Exceptions\EvaluationDraftRejected;
 use App\Exceptions\StaleEvaluationDraft;
 use App\Models\Evaluation;
@@ -25,7 +27,7 @@ final class SaveEvaluationDraft
     ) {}
 
     /**
-     * @param  array{lock_version:int,general_comment:?string,criteria:list<array{code:string,score:string|int|null,comment:?string}>}  $payload
+     * @param  array{lock_version:int,general_comment:?string,criteria:list<array{code:string,score:string|int|null,comment:?string}>,intent?:string}  $payload
      */
     public function execute(JudgeAssignment $assignment, User $actor, array $payload): Evaluation
     {
@@ -33,7 +35,10 @@ final class SaveEvaluationDraft
             $payload = $this->normalizePayload($payload);
 
             return DB::transaction(function () use ($assignment, $actor, $payload): Evaluation {
-                $context = $this->ensureContext->execute($assignment, $actor, true, true);
+                $isAdmin = $actor->hasExactRoles(['admin']);
+                $context = $isAdmin
+                    ? $this->ensureContext->executeForAdmin($assignment, $actor, 'manage reopened evaluations', true, true)
+                    : $this->ensureContext->execute($assignment, $actor, true, true);
                 $evaluation = Evaluation::query()
                     ->where('judge_assignment_id', $context['assignment']->id)
                     ->lockForUpdate()
@@ -42,7 +47,20 @@ final class SaveEvaluationDraft
                     throw new EvaluationDraftRejected('evaluation_not_started', 'Primero inicia explícitamente la evaluación.');
                 }
 
-                $aggregate = $this->ensureContext->assertAggregate($evaluation, $context, true);
+                $allowedStatuses = $isAdmin
+                    ? [EvaluationStatus::Reopened]
+                    : [EvaluationStatus::Draft, EvaluationStatus::Reopened];
+                $aggregate = $this->ensureContext->assertAggregate(
+                    $evaluation,
+                    $context,
+                    true,
+                    $allowedStatuses,
+                    [EvaluationRevisionStatus::Draft],
+                );
+                if ($evaluation->status === EvaluationStatus::Reopened
+                    && config('flowerflow.flags.evaluation_finalization') !== true) {
+                    throw new EvaluationDraftRejected('evaluation_finalization_disabled', 'La edición de revisiones reabiertas está deshabilitada.');
+                }
                 if ($evaluation->lock_version !== $payload['lock_version']) {
                     throw new StaleEvaluationDraft($evaluation->lock_version);
                 }
@@ -99,11 +117,14 @@ final class SaveEvaluationDraft
                 }
 
                 $evaluation->refresh();
-                $this->audit->record('evaluation.draft_saved', $evaluation, $actor, [
+                $auditAction = $evaluation->status === EvaluationStatus::Reopened
+                    ? ($isAdmin ? 'evaluation.reopened_draft_saved_administratively' : 'evaluation.reopened_draft_saved')
+                    : 'evaluation.draft_saved';
+                $this->audit->record($auditAction, $evaluation, $actor, [
                     'assignment_id' => $context['assignment']->id,
                     'rubric_version_id' => $context['rubric']->id,
                     'blind_review_package_id' => $context['package']->id,
-                    'revision_number' => 1,
+                    'revision_number' => $aggregate['revision']->revision_number,
                     'lock_version_previous' => $previousLockVersion,
                     'lock_version_new' => $newLockVersion,
                     'captured_criteria_count' => $captured,
@@ -115,7 +136,10 @@ final class SaveEvaluationDraft
         } catch (StaleEvaluationDraft $exception) {
             $evaluation = Evaluation::query()->where('judge_assignment_id', $assignment->id)->first();
             $subject = $evaluation ?? $assignment;
-            $this->audit->record('evaluation.draft_save_rejected_stale', $subject, $actor, [
+            $action = $evaluation?->status === EvaluationStatus::Reopened
+                ? 'evaluation.reopened_draft_save_rejected_stale'
+                : 'evaluation.draft_save_rejected_stale';
+            $this->audit->record($action, $subject, $actor, [
                 'assignment_id' => $assignment->id,
                 ...($evaluation ? ['evaluation_id' => $evaluation->id] : []),
                 'lock_version_previous' => $exception->persistedLockVersion,
@@ -125,7 +149,10 @@ final class SaveEvaluationDraft
             throw $exception;
         } catch (EvaluationDraftRejected $exception) {
             $evaluation = Evaluation::query()->where('judge_assignment_id', $assignment->id)->first();
-            $this->audit->record('evaluation.draft_save_rejected', $evaluation ?? $assignment, $actor, [
+            $action = $evaluation?->status === EvaluationStatus::Reopened
+                ? 'evaluation.reopened_draft_save_rejected'
+                : 'evaluation.draft_save_rejected';
+            $this->audit->record($action, $evaluation ?? $assignment, $actor, [
                 'assignment_id' => $assignment->id,
                 ...($evaluation ? ['evaluation_id' => $evaluation->id] : []),
                 'reason_code' => $exception->reasonCode,
@@ -137,11 +164,11 @@ final class SaveEvaluationDraft
 
     /**
      * @param  array<string,mixed>  $payload
-     * @return array{lock_version:int,general_comment:?string,criteria:list<array{code:string,score:string|int|null,comment:?string}>}
+     * @return array{lock_version:int,general_comment:?string,criteria:list<array{code:string,score:string|int|null,comment:?string}>,intent:string}
      */
     private function normalizePayload(array $payload): array
     {
-        if (array_diff(array_keys($payload), ['lock_version', 'general_comment', 'criteria']) !== []
+        if (array_diff(array_keys($payload), ['lock_version', 'general_comment', 'criteria', 'intent']) !== []
             || ! isset($payload['lock_version'])
             || filter_var($payload['lock_version'], FILTER_VALIDATE_INT) === false
             || (int) $payload['lock_version'] < 0
@@ -150,6 +177,11 @@ final class SaveEvaluationDraft
             || ! is_array($payload['criteria'])
             || count($payload['criteria']) > $this->rubricContract->maximumCriterionCount()) {
             throw new EvaluationDraftRejected('evaluation_payload_invalid', 'El contenido del borrador no respeta la allowlist autorizada.');
+        }
+
+        $intent = $payload['intent'] ?? 'save';
+        if (! is_string($intent) || ! in_array($intent, ['save', 'review'], true)) {
+            throw new EvaluationDraftRejected('evaluation_intent_invalid', 'La intención del guardado no es válida.');
         }
 
         $generalComment = $payload['general_comment'];
@@ -190,6 +222,7 @@ final class SaveEvaluationDraft
             'lock_version' => (int) $payload['lock_version'],
             'general_comment' => $generalComment,
             'criteria' => $criteria,
+            'intent' => $intent,
         ];
     }
 }

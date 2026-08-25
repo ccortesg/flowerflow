@@ -1,5 +1,17 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+## Trazabilidad M7 — 2026-08-24
+
+| ID | Requisito | Implementación/prueba | Estado |
+|---|---|---|---|
+| M7-01 | Confirmación, comentario 100–2,000 y cálculo servidor | `SubmitEvaluation`, confirmación juez, `EvaluationSubmissionReopeningTest` | IMPLEMENTED LOCAL |
+| M7-02 | Revisión enviada inmutable | enums separados, checks, Actions append-only, prueba de fuente intacta | IMPLEMENTED LOCAL |
+| M7-03 | Reaperturas sucesivas append-only | `evaluation_reopenings`, `ReopenEvaluation`, revisiones 2/3 | IMPLEMENTED LOCAL |
+| M7-04 | Actor admin real y juez sujeto estable | campos de revisión/reapertura, panel/aviso juez, pruebas | IMPLEMENTED LOCAL |
+| M7-05 | Ventanas exactas y lock/409 | `EvaluationWindow`, locks, pruebas límite/concurrencia | IMPLEMENTED LOCAL |
+| M7-06 | Sin M8+ | ausencia de `CommunicationType`/delivery de evaluación y prueba | VERIFIED LOCAL |
+| M7-LEGAL | Reconciliar “al menos tres jueces” | decisión formal o documento jurídico futuro | OPEN / NO-GO RELEASE |
+
 ## Trazabilidad M6A — 2026-08-24
 
 | ID | Requisito | Implementación/prueba | Estado |
@@ -29,7 +41,7 @@
 | PANEL-EXP-002 | Exportar una fila por propuesta enviada con contacto y proyecto inmutables | `SubmissionExportKind`, `SubmissionContactsWorkbookWriter`, rutas/UI y `SubmissionExportTest` | VERIFIED local/test dirigido; gate completo en ExecPlan |
 | PANEL-OPS-001 | Flags default-off y rollback que preserva evidencia | config/env/migración fail-closed/ExecPlan | VERIFIED local/test |
 
-> **Contrato vigente M6 — 2026-08-18:** M4A conserva cuatro principales y dos sustitutos ilimitados; M5 aporta la proyección ciega y M6 el borrador/cálculo servidor con lock optimista. M7–M10 permanecen no implementados/no autorizados.
+> **Contrato histórico M6 — 2026-08-18:** M4A conservaba cuatro principales y dos sustitutos ilimitados; M5 aportó la proyección ciega y M6 el borrador/cálculo servidor con lock optimista. M6A sustituyó la cobertura fija y M7 implementó el envío/reapertura; sólo M8–M10 permanecen no implementados/no autorizados.
 
 ## Trazabilidad de reconciliación jurídica v1.1 — 2026-08-17
 
@@ -67,16 +79,16 @@
 | F2B-DES-004 | Asignación/reasignación/cobertura/plazo | M4A verifica `4+2`, capacidad nula, sustitutos sin iniciales y selección manual | OWNER FINAL / M4A VERIFIED LOCAL |
 | F2B-DES-005 | Matriz ciega campo por campo y anonimización | builder/payload/inventario/Policies M5; paquete sección 8; decisiones 006–008 | M5 VERIFIED LOCAL / SEMANTIC IDENTITY RISK ACCEPTED |
 | F2B-DES-006 | Rúbrica versionada y contrato exacto | `rubric_versions`, `rubric_criteria`, contrato/Actions/Policy/UI y pruebas M3; paquete sección 9 | M3 VERIFIED LOCAL |
-| F2B-DES-007 | Estados, envío inmutable y reapertura versionada | paquete sección 10; decisión 017 | OWNER_APPROVED / NOT IMPLEMENTED |
+| F2B-DES-007 | Estados, envío inmutable y reapertura versionada | `SubmitEvaluation`, `ReopenEvaluation`, migración M7, ADR-0011 y pruebas dirigidas | M7 VERIFIED LOCAL |
 | F2B-DES-008 | Cálculo sólo servidor, consolidación/faltantes/empate | cálculo draft M6 implementado; consolidación/empate siguen en paquete sección 11 | M6 VERIFIED / CONSOLIDATION NOT IMPLEMENTED |
 | F2B-DES-009 | Matriz negativa, amenazas y auditoría | suites M1–M5; M5 añade canarios, IDOR, drift, neutralidad y concurrencia | M1–M5 VERIFIED LOCAL |
-| F2B-DES-010 | UX accesible mínima | detalle juez M6, tres viewports, teclado/foco/zoom/reflow, consola, 409, 403/404 | M1–M6 VERIFIED; UX M7+ PENDING |
+| F2B-DES-010 | UX accesible mínima | flujos juez/admin M7, tres viewports, teclado/foco/zoom/reflow, consola, 409, 403/404 | M1–M7 VERIFIED; UX M8+ PENDING |
 | F2B-DES-011 | Notificaciones idempotentes y operación | M2: configuración de acceso, verificación y estado/recovery con HTML+texto y dispatcher resiliente; paquete sección 14 para eventos futuros | M2 SUBSET VERIFIED / M3+ PENDING |
 | F2B-DES-012 | Compatibilidad con más de 50 propuestas | migración M2 aditiva, perfil primary/substitute, sin backfill/asignaciones; upgrade/rollback/forward preservó usuario sintético | M2 VERIFIED LOCAL / CAPACITY DECISION CLOSED |
-| F2B-DES-013 | Diez milestones y corrección | paquete sección 18 + ExecPlans M4A/M5/M6 | M6 GO; M7–M10 NOT AUTHORIZED |
+| F2B-DES-013 | Diez milestones y corrección | paquete sección 18 + ExecPlans M4A/M5/M6/M6A/M7 | M7 GO; M8–M10 NOT AUTHORIZED |
 | F2B-DES-014 | Bloque de 21 respuestas y prompt ejecutado | paquete secciones 20–21; contrato M6 corregido | OWNER FINAL / M6 VERIFIED |
 | F2B-DES-015 | Resolver incompatibilidad de cobertura/capacidad/reemplazo | ADR-0008; D-034/D-035; R76; ExecPlan/informe M4A | `P2B-BLOCK-001 RESOLVED LOCAL` |
-| F2B-DES-016 | Contrato de QA por milestone | suites M1–M6 + gates futuros | M6 VERIFIED / M7+ PENDING |
+| F2B-DES-016 | Contrato de QA por milestone | suites M1–M7, gates y UAT local | M7 VERIFIED / M8+ PENDING |
 
 ## Trazabilidad de implementación Fase 02B M3 — 2026-08-18
 

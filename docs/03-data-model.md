@@ -1,12 +1,14 @@
 # Modelo de datos preliminar
 
+> **Adenda M7 — 2026-08-24:** `evaluations.status` admite `draft|reopened|submitted`; `evaluation_revisions.status` usa el enum independiente `draft|submitted` y añade `subject_judge_profile_id`, actor/fecha/modo de envío. `evaluation_reopenings` es append-only, con ULID, fuente/destino únicos, juez sujeto, actor real, motivo cifrado, largo validado y UTC. La migración hace únicamente el backfill determinista del juez sujeto para revisiones M6; no crea evaluaciones, revisiones, scores ni reaperturas.
+
 > **Adenda M6A — 2026-08-24:** `judge_setup_links` conserva ULID, perfil, hash de token, fingerprint HMAC del correo, slot vigente, emisión/expiración/consumo/invalidación UTC y actor emisor. `rubric_versions` añade origen `admin|migration`; v1 histórica permanece fijada a evidencia existente y v2 activa añade cuatro criterios de 25 %. Las asignaciones conservan `max_active_assignments=NULL`, sin cardinalidad mínima/máxima; cancelación y reemplazo son append-only. Evaluations/scores se dimensionan por la rúbrica fijada, no por un literal cinco.
 
 > **Adenda operativa del panel — 2026-08-22, sólo local/test:** `submission_reminder_batches` conserva ULID, solicitante, alcance `single|all_drafts`, estado y conteos; `submission_reminders` conserva ULID, batch, propuesta, destinatario propietario, estado, fallo redactado, vencimiento, envío y consumo. Sus FKs son `RESTRICT`, existe unicidad batch+propuesta+destinatario y un índice de cooldown. Los modelos nuevos son guarded y no eliminables. La migración es aditiva, sin backfill, y `down()` se niega ante cualquier recordatorio, evento o audit de este milestone.
 
 > **Contrato vigente M4A — 2026-08-18:** `judge_profiles.max_active_assignments` es `NULL` tanto para `primary` como para `substitute`; la composición operativa es cuatro `primary` + dos `substitute`. La migración aditiva `2026_08_18_160000_make_all_judge_assignment_roles_unlimited.php` convierte el antecedente `substitute=10` y exige capacidad nula para cualquier función.
 
-> **Estado vigente — 2026-08-18:** M2 añadió `judge_profiles`; M3 `rubric_versions`/`rubric_criteria`; M4 `judge_assignments`/`judge_conflicts`; M5 `blind_review_packages`/`blind_review_package_files`; M6 `evaluations`/`evaluation_revisions`/`evaluation_scores`. M7–M10 siguen no implementados/no autorizados.
+> **Corte histórico M6 — 2026-08-18:** M2 añadió `judge_profiles`; M3 `rubric_versions`/`rubric_criteria`; M4 `judge_assignments`/`judge_conflicts`; M5 `blind_review_packages`/`blind_review_package_files`; M6 `evaluations`/`evaluation_revisions`/`evaluation_scores`. La adenda M7 superior sustituye el estado posterior; M8–M10 siguen no implementados/no autorizados.
 
 ## Adenda Fase 01 implementada — 2026-07-15
 

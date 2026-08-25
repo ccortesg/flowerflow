@@ -195,6 +195,9 @@
         @if(auth()->user()->hasExactRoles(['admin']) && auth()->user()->can('view evaluation assignments'))
           <a href="{{ route('panel.assignments.index') }}" @if(request()->routeIs('panel.assignments.*')) aria-current="page" @endif>Asignaciones</a>
         @endif
+        @if(auth()->user()->hasExactRoles(['admin']) && auth()->user()->can('view evaluations'))
+          <a href="{{ route('panel.evaluations.index') }}" @if(request()->routeIs('panel.evaluations.*')) aria-current="page" @endif>Evaluaciones</a>
+        @endif
         @if(auth()->user()->hasExactRoles(['admin']) && auth()->user()->can('view blind review packages'))
           <a href="{{ route('panel.blind-review-packages.index') }}" @if(request()->routeIs('panel.blind-review-packages.*')) aria-current="page" @endif>Paquetes ciegos</a>
         @endif

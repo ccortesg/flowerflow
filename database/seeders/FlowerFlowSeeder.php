@@ -115,6 +115,10 @@ class FlowerFlowSeeder extends Seeder
             'view blind review packages',
             'manage blind review packages',
             'manage own evaluation drafts',
+            'submit own evaluations',
+            'view evaluations',
+            'reopen evaluations',
+            'manage reopened evaluations',
             'send submission reminders',
             'administratively finalize submissions',
             'view communication deliveries',
@@ -139,12 +143,14 @@ class FlowerFlowSeeder extends Seeder
             'access judge workspace',
             'declare own evaluation conflicts',
             'manage own evaluation drafts',
+            'submit own evaluations',
         ]);
         Role::findOrCreate('admin', 'web')->syncPermissions(
             Permission::query()->whereNotIn('name', [
                 'access judge workspace',
                 'declare own evaluation conflicts',
                 'manage own evaluation drafts',
+                'submit own evaluations',
             ])->get()
         );
 

@@ -5,6 +5,7 @@ return [
     'timezone' => env('FLOWERFLOW_TIMEZONE', 'America/Hermosillo'),
     'submissions_close_at' => env('FLOWERFLOW_SUBMISSIONS_CLOSE_AT', '2026-08-23 23:59:59'),
     'evaluation_close_at' => env('FLOWERFLOW_EVALUATION_CLOSE_AT', '2026-08-27 23:59:59'),
+    'evaluation_reopen_close_at' => env('FLOWERFLOW_EVALUATION_REOPEN_CLOSE_AT', '2026-08-27 20:00:00'),
     'organization' => [
         'legal_name' => 'FUNXT, A.C.',
         'rfc' => 'FUN110208BT0',
@@ -43,6 +44,7 @@ return [
         'panel' => env('FLOWERFLOW_PANEL_ENABLED', true),
         'admissibility_review' => env('FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED', false),
         'evaluation' => env('FLOWERFLOW_EVALUATION_ENABLED', false),
+        'evaluation_finalization' => env('FLOWERFLOW_EVALUATION_FINALIZATION_ENABLED', false),
         'submission_reminders' => env('FLOWERFLOW_SUBMISSION_REMINDERS_ENABLED', false),
         'administrative_finalization' => env('FLOWERFLOW_ADMIN_FINALIZATION_ENABLED', false),
         'communication_ledger' => env('FLOWERFLOW_COMMUNICATION_LEDGER_ENABLED', false),

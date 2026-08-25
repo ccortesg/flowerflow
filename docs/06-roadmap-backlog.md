@@ -1,5 +1,7 @@
 # Roadmap y backlog
 
+> **Puerta vigente M7 — validación final 2026-08-25:** confirmación, mínimo 100, envío inmutable y reapertura append-only quedaron `GO LOCAL/TEST` con 208 pruebas/2,385 aserciones y UAT Firefox. M8–M10 continúan `NOT IMPLEMENTED / NOT AUTHORIZED`; no existen comunicaciones de evaluación, consolidación, ranking ni resultados. Release/producción sigue bloqueado por la contradicción jurídica de mínimos.
+
 > **Puerta vigente M6A — 2026-08-24:** milestone correctivo previo a M7 para onboarding purpose-bound, asignación manual sin mínimos/límites, rúbrica v2 legal y UX del juez. M7–M10 continúan `NOT IMPLEMENTED / NOT AUTHORIZED`. Aunque M6A pueda cerrar `GO LOCAL/TEST`, no puede entrar a release/producción mientras “al menos tres jueces” no se reconcilie jurídicamente o exista aceptación formal separada.
 
 > **Estado vigente — 2026-08-18:** Fase 01/02A, jurídicos v1.1 y M1–M6 permanecen conformes localmente. M6 implementa borrador, concurrencia optimista y cálculo servidor; M7 —envío inmutable/reapertura append-only— es la siguiente puerta potencial, aún no autorizada. `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; nada de M1–M6 se atribuye a producción.
@@ -319,9 +321,9 @@ Contratos de modelos, enums, rutas y componentes se acuerdan antes del paralelo.
 | Cuarta categoría | Cerrada en código/test local | datos, límite cuatro, superficies públicas/participante/admin y concurrencia |
 | Exportación privada | Cerrada en código/test local | XLSX asíncrono privado, cinco hojas, permisos, auditoría y expiración; operación de worker/scheduler pendiente |
 | Ampliación de plazo y legales v1.1 | Cerrada en código/test local | cierre al 23-ago-2026, cuatro categorías/máximo cuatro y catálogo jurídico v1.1; continuidad histórica resuelta por owner |
-| Fase 02B evaluación | `M6 GO LOCAL/TEST; M7 NOT AUTHORIZED` | M1–M6 conformes localmente; paquete ciego por acción admin y borrador propio con cálculo servidor/lock optimista |
+| Fase 02B evaluación | `M1–M7 GO LOCAL/TEST; M8–M10 NOT AUTHORIZED` | Asignación manual sin mínimos, paquete ciego, borrador/cálculo, sellado y reapertura append-only conformes localmente |
 | Resultados/retención ejecutable | No autorizado | ganadores, publicación y borrado condicionado |
 | Release candidate local previo | Cerrado localmente | validación/UAT documentadas; registro histórico conservado |
 | Producción de cambios actuales | `OWNER_CONFIRMED_DEPLOYED` | SHA, migraciones, flags, servicios y smoke siguen `POR_CONFIRMAR` sin evidencia independiente |
 
-La siguiente puerta potencial es M7 —envío inmutable y reapertura append-only—, pero permanece `NOT IMPLEMENTED / NOT AUTHORIZED`. Cualquier prompt futuro debe preservar M4A–M6 y no mezclar notificaciones M8, consolidación, ganadores, resultados, ARCO o producción.
+La siguiente puerta potencial es M8 y requiere autorización separada. Cualquier prompt futuro debe preservar M5–M7 y no mezclar consolidación, ganadores, resultados, ARCO o producción.

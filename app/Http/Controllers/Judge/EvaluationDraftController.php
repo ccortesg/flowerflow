@@ -30,8 +30,9 @@ class EvaluationDraftController extends Controller
         JudgeAssignment $judgeAssignment,
         SaveEvaluationDraft $save,
     ): RedirectResponse|Response {
+        $payload = $request->validated();
         try {
-            $save->execute($judgeAssignment, $request->user(), $request->validated());
+            $save->execute($judgeAssignment, $request->user(), $payload);
         } catch (StaleEvaluationDraft $exception) {
             return response()->view('errors.409', [
                 'assignment' => $judgeAssignment,
@@ -39,7 +40,11 @@ class EvaluationDraftController extends Controller
             ], 409);
         }
 
-        return redirect()->route('judge.assignments.show', $judgeAssignment)
+        $destination = ($payload['intent'] ?? 'save') === 'review'
+            ? 'judge.assignments.evaluation.confirm'
+            : 'judge.assignments.show';
+
+        return redirect()->route($destination, $judgeAssignment)
             ->with('status', 'Borrador guardado. El servidor recalculó los componentes y el total disponible.');
     }
 }

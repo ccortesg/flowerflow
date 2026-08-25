@@ -5,6 +5,7 @@ use App\Http\Middleware\EnsureAdministrativeFinalizationEnabled;
 use App\Http\Middleware\EnsureAdmissibilityReviewEnabled;
 use App\Http\Middleware\EnsureCommunicationLedgerEnabled;
 use App\Http\Middleware\EnsureEvaluationEnabled;
+use App\Http\Middleware\EnsureEvaluationFinalizationEnabled;
 use App\Http\Middleware\EnsureExclusiveBusinessRole;
 use App\Http\Middleware\EnsurePanelEnabled;
 use App\Http\Middleware\EnsureSubmissionRemindersEnabled;
@@ -38,6 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'panel.enabled' => EnsurePanelEnabled::class,
             'admissibility.enabled' => EnsureAdmissibilityReviewEnabled::class,
             'evaluation.enabled' => EnsureEvaluationEnabled::class,
+            'evaluation-finalization.enabled' => EnsureEvaluationFinalizationEnabled::class,
             'judge.active' => EnsureActiveJudge::class,
             'business.role' => EnsureExclusiveBusinessRole::class,
             'role' => RoleMiddleware::class,
