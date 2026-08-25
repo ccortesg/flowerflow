@@ -1,5 +1,7 @@
 # Seguridad y privacidad desde el diseño
 
+> **Control simultáneo — 2026-08-25:** el asistente exige admin exacto, tres permisos acumulativos, contraseña reciente/actual, CSRF, throttle, allowlist e intención cifrada de quince minutos. Cada propuesta se revalida bajo locks y falla cerrada ante drift. La auditoría bulk omite textos/PII y el correo consolidado sólo incluye conteo, categorías, plazo y CTA autenticado.
+
 > **Controles M8 — 2026-08-25:** las Actions publican sólo IDs después del commit; un rollback no crea delivery y un fallo de correo no revierte negocio. M8 exige ledger+flag propios, destinatario exacto y revalidación en worker; nunca usa correo legacy. Plantillas, contexto, logs y auditoría omiten correo completo, motivo, conflicto sensible, scores, componentes, total, comentarios, propuesta, archivos y PII. El digest contiene sólo conteos y el panel sigue mostrando dirección enmascarada y “Aceptado por el servidor de correo”, no entrega.
 
 > **Controles M7 — 2026-08-24:** juez y admin operan permisos separados; toda mutación usa CSRF, throttle, locks y `lock_version`, y las administrativas exigen contraseña reciente, contraseña actual y confirmación reforzada. Sólo IDs/cambios técnicos llegan a auditoría; no se registran puntajes, total, comentarios, motivo ni PII. El motivo de reapertura vive cifrado y sólo el admin autorizado lo ve; el juez recibe un aviso genérico. Campos hostiles de actor, estado, total, criterio, rúbrica o paquete se rechazan.

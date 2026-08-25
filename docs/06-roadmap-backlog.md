@@ -1,5 +1,7 @@
 # Roadmap y backlog
 
+> **Milestone operativo de asignación simultánea — 2026-08-25:** implementación local de un juez por operación y hasta veinte propuestas, con preflight puro, atomicidad por propuesta y correo consolidado. Es independiente de M9/M10, nace apagado y no resuelve cobertura jurídica, producción o despliegue.
+
 > **Puerta vigente M8 — 2026-08-25:** se implementaron local/test las comunicaciones de conflicto, resolución, envío/reenvío, reapertura y digest único por juez mediante el outbox. No hay migración, ruta, permiso o worker adicional; los recordatorios programados 20/22 no se reproducen. M9–M10, consolidación, ranking, resultados y producción continúan `NOT IMPLEMENTED / NOT AUTHORIZED`. Release sigue bloqueado por la contradicción jurídica de mínimos.
 
 > **Puerta vigente M7 — validación final 2026-08-25:** confirmación, mínimo 100, envío inmutable y reapertura append-only quedaron `GO LOCAL/TEST` con 208 pruebas/2,385 aserciones y UAT Firefox. M8–M10 continúan `NOT IMPLEMENTED / NOT AUTHORIZED`; no existen comunicaciones de evaluación, consolidación, ranking ni resultados. Release/producción sigue bloqueado por la contradicción jurídica de mínimos.

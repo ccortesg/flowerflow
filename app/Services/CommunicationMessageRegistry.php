@@ -33,6 +33,7 @@ use App\Notifications\EvaluationReopenedNotification;
 use App\Notifications\EvaluationSubmittedNotification;
 use App\Notifications\JudgeAccountSetupNotification;
 use App\Notifications\JudgeAccountStatusNotification;
+use App\Notifications\JudgeAssignmentBulkCreatedNotification;
 use App\Notifications\JudgeAssignmentCreatedNotification;
 use App\Notifications\JudgeConflictDeclaredNotification;
 use App\Notifications\JudgeConflictResolvedNotification;
@@ -94,6 +95,13 @@ final class CommunicationMessageRegistry
                 'context' => ['judge_assignment_id' => $message->assignmentId],
                 'related_type' => JudgeAssignment::class,
                 'related_id' => $message->assignmentId,
+            ],
+            $message instanceof JudgeAssignmentBulkCreatedNotification => [
+                'type' => CommunicationType::JudgeAssignmentBulkCreated,
+                'variant' => 'consolidated',
+                'context' => ['judge_assignment_ids' => $message->assignmentIds],
+                'related_type' => JudgeProfile::class,
+                'related_id' => $recipient->judgeProfile?->id,
             ],
             $message instanceof JudgeConflictDeclaredNotification => [
                 'type' => CommunicationType::JudgeConflictDeclared,
@@ -194,6 +202,7 @@ final class CommunicationMessageRegistry
             CommunicationType::JudgeEmailVerification => $this->judgeVerification($recipient),
             CommunicationType::JudgeAccountStatus => $this->judgeStatus($recipient, $context),
             CommunicationType::JudgeAssignmentCreated => $this->judgeAssignment($recipient, $context),
+            CommunicationType::JudgeAssignmentBulkCreated => $this->judgeBulkAssignment($recipient, $context),
             CommunicationType::JudgeConflictDeclared => $this->judgeConflictDeclared($recipient, $context),
             CommunicationType::JudgeConflictResolved => $this->judgeConflictResolved($recipient, $context),
             CommunicationType::EvaluationSubmitted => $this->evaluationSubmitted($recipient, $context),
@@ -315,6 +324,55 @@ final class CommunicationMessageRegistry
         }
 
         return new JudgeAssignmentCreatedNotification($assignment->id);
+    }
+
+    private function judgeBulkAssignment(User $recipient, array $context): JudgeAssignmentBulkCreatedNotification
+    {
+        $assignmentIds = $context['judge_assignment_ids'] ?? null;
+        $limit = (int) config('flowerflow.bulk_judge_assignment.limit');
+        if (! config('flowerflow.flags.bulk_judge_assignment')
+            || ! config('flowerflow.flags.communication_ledger')
+            || ! config('flowerflow.judge_notifications.assignment_enabled')
+            || ! is_array($assignmentIds)
+            || $assignmentIds === []
+            || count($assignmentIds) > $limit
+            || count($assignmentIds) !== count(array_unique($assignmentIds))
+            || collect($assignmentIds)->contains(fn ($id): bool => ! is_int($id))) {
+            throw new CommunicationCancelledException('judge_bulk_assignment_notification_invalid');
+        }
+
+        $assignments = JudgeAssignment::query()
+            ->whereIn('id', $assignmentIds)
+            ->with([
+                'judgeProfile.user.roles',
+                'submissionVersion.blindReviewPackage',
+            ])
+            ->orderBy('id')
+            ->get();
+        $validIds = $assignments
+            ->filter(function (JudgeAssignment $assignment) use ($recipient): bool {
+                $profile = $assignment->judgeProfile;
+                $package = $assignment->submissionVersion?->blindReviewPackage;
+
+                return $assignment->status === JudgeAssignmentStatus::Active
+                    && $assignment->current_slot === 1
+                    && ! $assignment->due_at->isPast()
+                    && $profile?->user_id === $recipient->id
+                    && $profile->status === JudgeProfileStatus::Active
+                    && $profile->password_initialized_at !== null
+                    && $package?->status === BlindReviewPackageStatus::Active
+                    && $package->submission_version_id === $assignment->submission_version_id
+                    && $recipient->hasExactRoles(['judge'])
+                    && $recipient->hasVerifiedEmail();
+            })
+            ->pluck('id')
+            ->values()
+            ->all();
+        if ($validIds === []) {
+            throw new CommunicationCancelledException('judge_bulk_assignment_no_longer_actionable');
+        }
+
+        return new JudgeAssignmentBulkCreatedNotification($validIds);
     }
 
     private function judgeConflictDeclared(User $recipient, array $context): JudgeConflictDeclaredNotification

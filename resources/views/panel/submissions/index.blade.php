@@ -7,6 +7,13 @@
     <h1>Propuestas</h1>
   </div>
   <div class="d-flex flex-wrap gap-2">
+    @if(config('flowerflow.flags.bulk_judge_assignment'))
+      @if(auth()->user()->hasExactRoles(['admin']) && auth()->user()->can('decide admissibility') && auth()->user()->can('manage blind review packages') && auth()->user()->can('manage evaluation assignments'))
+        <a class="btn btn-outline-primary" href="{{ route('panel.assignments.bulk.create') }}">
+          <i class="ri-user-add-line me-1" aria-hidden="true"></i> Asignar varias propuestas
+        </a>
+      @endif
+    @endif
     @if(config('flowerflow.flags.submission_reminders'))
       @can('send submission reminders')
         <a class="btn btn-outline-primary" href="{{ route('panel.submissions.reminders.create') }}">

@@ -49,11 +49,17 @@ return [
         'submission_reminders' => env('FLOWERFLOW_SUBMISSION_REMINDERS_ENABLED', false),
         'administrative_finalization' => env('FLOWERFLOW_ADMIN_FINALIZATION_ENABLED', false),
         'communication_ledger' => env('FLOWERFLOW_COMMUNICATION_LEDGER_ENABLED', false),
+        'bulk_judge_assignment' => env('FLOWERFLOW_BULK_JUDGE_ASSIGNMENT_ENABLED', false),
     ],
     'judge_notifications' => [
         'account_setup_enabled' => env('FLOWERFLOW_JUDGE_ACCOUNT_SETUP_NOTIFICATION_ENABLED', true),
         'setup_link_ttl_minutes' => (int) env('FLOWERFLOW_JUDGE_SETUP_LINK_TTL_MINUTES', 2880),
         'assignment_enabled' => env('FLOWERFLOW_JUDGE_ASSIGNMENT_NOTIFICATION_ENABLED', false),
+    ],
+    'bulk_judge_assignment' => [
+        'limit' => min(20, max(1, (int) env('FLOWERFLOW_BULK_JUDGE_ASSIGNMENT_LIMIT', 20))),
+        'intent_ttl_minutes' => 15,
+        'lock_seconds' => 300,
     ],
     'security' => [
         'enforce_strict_csp' => env('FLOWERFLOW_CSP_ENFORCE_STRICT', false),

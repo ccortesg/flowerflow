@@ -1,5 +1,7 @@
 # Arquitectura propuesta
 
+> **Orquestación simultánea — 2026-08-25:** `BulkAssignmentController` separa selección/preflight/ejecución; una intención cifrada de quince minutos fija actor, juez, propuestas, textos y estado. `ExecuteBulkJudgeAssignment` coordina las Actions existentes dentro de una transacción por propuesta y usa un lock por operación. `judge.assignment_bulk_created` reutiliza ADR-0009 y el worker actual. No hay migración, tabla batch, dependencia o proceso nuevo.
+
 > **Arquitectura M8 — 2026-08-25:** cuatro eventos ID-only `ShouldDispatchAfterCommit` alimentan listeners síncronos que crean deliveries idempotentes; sólo `DeliverCommunication` usa transporte. `EvaluationCommunicationDispatcher` resuelve destinatarios deterministas y `CommunicationMessageRegistry` revalida flags, identidad, rol, relaciones, ventana, rúbrica y paquete. `EvaluationCloseDigest` añade un comando dry-run/`--execute` y una tarea por minuto con `withoutOverlapping`; reutiliza tablas, panel, permisos, cola `database/default` y worker existentes, sin migración ni rutas nuevas.
 
 > **Arquitectura M7 — 2026-08-24:** `EvaluationWindow` centraliza las dos ventanas exactas y falla cerrado ante deriva; `SubmitEvaluation`, `ReopenEvaluation` y `SaveEvaluationDraft` son las únicas fronteras transaccionales. `Evaluation` conserva el estado agregado y lock; cada `EvaluationRevision` separa juez sujeto, actor real y modo; `evaluation_reopenings` enlaza fuente/destino y cifra el motivo. La revisión enviada nunca se actualiza y el outbox no recibe tipos de evaluación hasta M8.

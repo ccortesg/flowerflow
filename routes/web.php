@@ -15,6 +15,7 @@ use App\Http\Controllers\Panel\AccountSecurityController;
 use App\Http\Controllers\Panel\AdministrativeSubmissionFinalizationController;
 use App\Http\Controllers\Panel\AssignmentController as PanelAssignmentController;
 use App\Http\Controllers\Panel\BlindReviewPackageController as PanelBlindReviewPackageController;
+use App\Http\Controllers\Panel\BulkAssignmentController as PanelBulkAssignmentController;
 use App\Http\Controllers\Panel\CommunicationDeliveryController as PanelCommunicationDeliveryController;
 use App\Http\Controllers\Panel\DashboardController as PanelDashboardController;
 use App\Http\Controllers\Panel\EligibilityReviewController as PanelEligibilityReviewController;
@@ -206,6 +207,21 @@ Route::prefix('panel')->name('panel.')->middleware(['panel.enabled', 'auth', 've
             ->middleware(['permission:manage evaluation rubrics', 'throttle:panel-mutations'])->name('update');
         Route::post('/{rubricVersion}/activar', [PanelRubricVersionController::class, 'activate'])
             ->middleware(['permission:manage evaluation rubrics', 'throttle:panel-mutations'])->name('activate');
+    });
+    Route::prefix('asignaciones/masiva')->name('assignments.bulk.')->middleware([
+        'business.role:admin',
+        'bulk-judge-assignment.enabled',
+        'permission:decide admissibility',
+        'permission:manage blind review packages',
+        'permission:manage evaluation assignments',
+        'password.confirm',
+    ])->group(function () {
+        Route::get('/', [PanelBulkAssignmentController::class, 'create'])->name('create');
+        Route::post('/revisar', [PanelBulkAssignmentController::class, 'review'])
+            ->middleware('throttle:panel-mutations')->name('review');
+        Route::post('/', [PanelBulkAssignmentController::class, 'store'])
+            ->middleware('throttle:panel-mutations')->name('store');
+        Route::get('/resultado', [PanelBulkAssignmentController::class, 'result'])->name('result');
     });
     Route::prefix('asignaciones')->name('assignments.')->middleware(['business.role:admin', 'permission:view evaluation assignments'])->group(function () {
         Route::get('/', [PanelAssignmentController::class, 'index'])->name('index');

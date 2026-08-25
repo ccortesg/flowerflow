@@ -1,5 +1,7 @@
 # UX/UI, accesibilidad e identidad — Flower Flow 2026
 
+> **Asistente de asignación simultánea — 2026-08-25:** Propuestas y Asignaciones enlazan al mismo flujo. La selección muestra juez, filtros, máximo veinte, estados y causas de bloqueo; nunca selecciona registros invisibles de otras páginas. El preflight declara que no mutó, presenta la información compartida y exige tres confirmaciones. El resultado separa admisibilidad, paquete y asignación por propuesta y hace visible el éxito parcial.
+
 > **Adenda UX M8 — 2026-08-25:** las cinco comunicaciones usan el layout HTML institucional con ambos logotipos, footer y alternativa texto plano. Los CTA siempre llevan a rutas autenticadas. `Notificaciones` reutiliza filtros, detalle, estados, timeline y recuperación ya existentes; los nuevos tipos aparecen con etiquetas españolas. El juez recibe mensajes genéricos sin motivo/admin/contenido y el digest presenta sólo cuatro conteos. No se añadieron pantallas o rutas públicas.
 
 > **Adenda UX M7 — 2026-08-24:** el juez guarda o elige “Revisar y enviar”; una pantalla separada presenta datos persistidos, total servidor y advertencia de inmutabilidad. Enviada queda sólo lectura; reabierta muestra aviso genérico e historial sin motivo/admin. El panel añade “Evaluaciones” entre Asignaciones y Paquetes ciegos, con historial, actores reales, motivo escapado, reapertura y edición/reenvío reforzados. Todo funciona sin JavaScript, con HTML semántico, teclado, foco, zoom y reflow.

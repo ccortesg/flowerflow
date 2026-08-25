@@ -1,5 +1,7 @@
 # Modelo de datos preliminar
 
+> **Asignación simultánea — 2026-08-25:** no añade tablas ni columnas. La evidencia queda en `eligibility_reviews/events`, `blind_review_packages/files`, `judge_assignments`, `communication_deliveries/attempts` y `audit_logs`. La intención cifrada es efímera y no sustituye el estado autoritativo. Un expediente ya admitido y un paquete activo válido se reutilizan sin actualización.
+
 > **Adenda M8 — 2026-08-25:** no requiere migración. Los cinco tipos nuevos reutilizan `communication_deliveries` y `communication_delivery_attempts`; el contexto cifrado conserva únicamente IDs/purpose y, para el digest, cuatro conteos no negativos. La clave idempotente combina tipo, fingerprint HMAC, evento fuente y versión de plantilla. Ningún dato de evaluación se copia al paquete ciego, a tablas nuevas o a metadata pública.
 
 > **Adenda M7 — 2026-08-24:** `evaluations.status` admite `draft|reopened|submitted`; `evaluation_revisions.status` usa el enum independiente `draft|submitted` y añade `subject_judge_profile_id`, actor/fecha/modo de envío. `evaluation_reopenings` es append-only, con ULID, fuente/destino únicos, juez sujeto, actor real, motivo cifrado, largo validado y UTC. La migración hace únicamente el backfill determinista del juez sujeto para revisiones M6; no crea evaluaciones, revisiones, scores ni reaperturas.
