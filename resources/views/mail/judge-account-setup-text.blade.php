@@ -4,9 +4,9 @@ Configura tu acceso de juez
 
 Hola, {{ $userName }}:
 
-Se creó para ti una cuenta de juez. Establece una contraseña propia con este enlace temporal, que vence en {{ $expiresInMinutes }} minutos:
+Se creó para ti una cuenta de juez. Establece una contraseña propia y verifica tu correo con este enlace temporal de un solo uso, que vence el {{ $expiresAt }} (hora de Hermosillo):
 {{ $actionUrl }}
 
-Después deberás verificar tu correo. La autenticación en dos pasos es opcional.
+No recibirás una segunda solicitud de verificación. La autenticación en dos pasos es opcional.
 
 Contacto: {{ config('flowerflow.mail.reply_to') }}

@@ -1,5 +1,7 @@
 # Registro de riesgos
 
+> **Riesgos M6A — 2026-08-24:** `R100 OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED` (alto/bloqueante de release): el código permite cero asignaciones aunque la Mecánica v1.1 exige al menos tres jueces; sólo una reconciliación jurídica o aceptación formal separada puede cerrar el riesgo. `R101` (mitigado local/test): uso doble del enlace inicial se serializa por locks y consumo único. `R102` (mitigado): nueva asignación siempre requiere selección admin y unicidad; no hay automatismo. `R103` (residual): correo aceptado por transporte no acredita entrega y no revierte la asignación.
+
 > **Estado vigente M6 — 2026-08-18:** M4A conserva `4+2` ilimitado, M5 mitiga fuga estructurada y M6 mitiga cálculo ambiguo/concurrencia mediante BCMath, lock optimista y auditoría redactada. Persisten autoidentificación semántica, producción no verificada y cadena de conflicto de replacement fail-closed.
 
 ## Riesgos del milestone de acciones del panel — 2026-08-22

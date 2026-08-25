@@ -1,5 +1,7 @@
 # Diagnóstico vigente por módulo y rol — 2026-08-17
 
+> **Adenda M6A — 2026-08-24:** el corte histórico inferior queda superado para operaciones de jueces. El árbol local parte de `d3f616c…` y reconcilia setup inicial, asignación manual sin mínimos/límites, rúbrica v2 de cuatro criterios y UX juez; v1/4+2/cinco criterios permanecen sólo como historia o evidencia fijada. No existe autorización productiva y la divergencia “al menos tres jueces” impone `NO-GO RELEASE/PRODUCTION`.
+
 **Corte de evidencia:** 2026-08-18 MST (`America/Hermosillo`)
 
 **Checkout:** `/home/ccortesg/workspace/flowerflow`

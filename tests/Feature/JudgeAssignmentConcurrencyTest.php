@@ -2,13 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Actions\Rubrics\ActivateRubricVersion;
 use App\Enums\EligibilityReviewStatus;
 use App\Enums\JudgeAssignmentRole;
 use App\Enums\JudgeProfileStatus;
 use App\Models\JudgeAssignment;
 use App\Models\JudgeProfile;
-use App\Models\RubricVersion;
 use App\Models\Submission;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -49,7 +47,7 @@ class JudgeAssignmentConcurrencyTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_two_concurrent_coverage_requests_leave_exactly_four_assignments(): void
+    public function test_two_concurrent_manual_requests_for_the_same_judge_leave_one_assignment(): void
     {
         if (! function_exists('pcntl_fork')) {
             $this->markTestSkipped('La extensión pcntl es necesaria para la prueba de concurrencia MySQL.');
@@ -64,23 +62,18 @@ class JudgeAssignmentConcurrencyTest extends TestCase
             'email' => 'admin-assignment-concurrency@example.test',
             'password' => Hash::make('AdminPass1!'),
         ]);
-        foreach (range(1, 6) as $number) {
-            $role = $number >= 5 ? JudgeAssignmentRole::Substitute : JudgeAssignmentRole::Primary;
-            $user = User::factory()->create(['email' => "judge-assignment-concurrency-{$number}@example.test"]);
-            $user->assignRole('judge');
-            $profile = new JudgeProfile;
-            $profile->forceFill([
-                'user_id' => $user->id,
-                'assignment_role' => $role->value,
-                'status' => JudgeProfileStatus::Active->value,
-                'max_active_assignments' => $role->maxActiveAssignments(),
-                'created_by_user_id' => $admin->id,
-                'password_initialized_at' => now('UTC'),
-                'activated_at' => now('UTC'),
-            ])->save();
-        }
-        $rubric = RubricVersion::query()->where('version', 1)->firstOrFail();
-        app(ActivateRubricVersion::class)->execute($rubric, $admin, 'Activación sintética para concurrencia de asignaciones.');
+        $user = User::factory()->create(['email' => 'judge-assignment-concurrency@example.test']);
+        $user->assignRole('judge');
+        $profile = new JudgeProfile;
+        $profile->forceFill([
+            'user_id' => $user->id,
+            'assignment_role' => JudgeAssignmentRole::Substitute->value,
+            'status' => JudgeProfileStatus::Active->value,
+            'max_active_assignments' => null,
+            'created_by_user_id' => $admin->id,
+            'password_initialized_at' => now('UTC'),
+            'activated_at' => now('UTC'),
+        ])->save();
         [, $submission, $review] = $this->submittedReview();
         $review->update([
             'status' => EligibilityReviewStatus::Admitted,
@@ -109,8 +102,10 @@ class JudgeAssignmentConcurrencyTest extends TestCase
                         DB::reconnect();
                         $childAdmin = User::query()->findOrFail($admin->id);
                         $childSubmission = Submission::query()->findOrFail($submission->id);
-                        $response = $this->actingAs($childAdmin)->post(route('panel.assignments.activate', $childSubmission), [
-                            'reason' => "Cobertura concurrente sintética número {$requestNumber} aprobada.",
+                        $response = $this->actingAs($childAdmin)->post(route('panel.assignments.judges.store', $childSubmission), [
+                            'judge_profiles' => [$profile->public_id],
+                            'notify_judges' => 0,
+                            'reason' => "Asignación manual concurrente sintética número {$requestNumber}.",
                             'current_password' => 'AdminPass1!',
                         ]);
                         DB::disconnect();
@@ -137,8 +132,8 @@ class JudgeAssignmentConcurrencyTest extends TestCase
             DB::reconnect();
         }
 
-        $this->assertSame(4, JudgeAssignment::query()->count());
-        $this->assertSame(4, JudgeAssignment::query()->distinct('judge_profile_id')->count('judge_profile_id'));
-        $this->assertSame(1, DB::table('audit_logs')->where('action', 'assignment.coverage_created')->count());
+        $this->assertSame(1, JudgeAssignment::query()->count());
+        $this->assertSame($profile->id, JudgeAssignment::query()->sole()->judge_profile_id);
+        $this->assertSame(1, DB::table('audit_logs')->where('action', 'assignment.created')->count());
     }
 }

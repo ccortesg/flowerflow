@@ -10,6 +10,7 @@ use App\Models\JudgeAssignment;
 use App\Models\User;
 use App\Services\AuditLogger;
 use App\Services\EvaluationDraftCalculator;
+use App\Services\EvaluationRubricContract;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
@@ -19,6 +20,7 @@ final class SaveEvaluationDraft
     public function __construct(
         private EnsureEvaluationDraftContext $ensureContext,
         private EvaluationDraftCalculator $calculator,
+        private EvaluationRubricContract $rubricContract,
         private AuditLogger $audit,
     ) {}
 
@@ -76,7 +78,7 @@ final class SaveEvaluationDraft
                     }
                 }
 
-                $total = $this->calculator->total($components);
+                $total = $this->calculator->total($components, $context['criteria']->count());
                 $previousLockVersion = $evaluation->lock_version;
                 $newLockVersion = $previousLockVersion + 1;
                 DB::table('evaluation_revisions')->where('id', $aggregate['revision']->id)->update([
@@ -146,7 +148,7 @@ final class SaveEvaluationDraft
             || ! array_key_exists('general_comment', $payload)
             || ! array_key_exists('criteria', $payload)
             || ! is_array($payload['criteria'])
-            || count($payload['criteria']) > 5) {
+            || count($payload['criteria']) > $this->rubricContract->maximumCriterionCount()) {
             throw new EvaluationDraftRejected('evaluation_payload_invalid', 'El contenido del borrador no respeta la allowlist autorizada.');
         }
 

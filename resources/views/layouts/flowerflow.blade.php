@@ -58,12 +58,18 @@
           ? (bool) $competition->active
           : \App\Models\Competition::query()->where('active', true)->exists();
   }
+  if ($isJudgeShell) {
+      $judgeDisplayName = trim((string) auth()->user()->name) ?: 'Juez';
+      $judgeNameParts = collect(preg_split('/\s+/u', $judgeDisplayName) ?: [])->filter()->take(2);
+      $judgeInitials = $judgeNameParts->map(fn ($part) => mb_strtoupper(mb_substr($part, 0, 1)))->implode('') ?: 'JZ';
+  }
 @endphp
 <body @class([
   'ff-public-landing' => $isLandingPage,
   'ff-auth-login-page' => $isLoginPage,
   'ff-panel-login-page' => request()->routeIs('panel.login'),
   'ff-participant-shell-page' => $isParticipant,
+  'ff-participant-shell-page ff-judge-shell-page' => $isJudgeShell,
   'ff-participant-dashboard-page' => $isParticipant && $isDashboardPage,
   'ff-participant-profile-page' => $isParticipant && $isProfilePage,
   'ff-participant-submissions-page' => $isParticipant && $isSubmissionsPage,
@@ -119,6 +125,49 @@
       </header>
 
       <main id="contenido" class="ff-participant-content">
+        @include('partials.messages')
+        @yield('content')
+      </main>
+    </div>
+  </div>
+@elseif($isJudgeShell)
+  <div class="ff-participant-shell ff-judge-shell">
+    <aside class="ff-participant-sidebar d-none d-lg-flex" aria-label="Navegación de juez">
+      @include('partials.judge-navigation')
+    </aside>
+
+    <div class="ff-participant-workspace">
+      <header class="ff-participant-mobile-header d-lg-none">
+        <button class="ff-icon-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#judgeNavigation" aria-controls="judgeNavigation" aria-expanded="false" aria-label="Abrir menú">
+          <span class="ri ri-menu-line" aria-hidden="true"></span>
+        </button>
+        <a class="ff-participant-mobile-brand" href="{{ route('judge.dashboard') }}" aria-label="Ir al inicio del área de evaluación">
+          <img src="{{ asset('assets/flowerflow/logo_flowerflow_transparente.png') }}" width="48" height="48" alt="">
+          <span aria-hidden="true"></span>
+          <img src="{{ asset('assets/flowerflow/logo_florecehermosillo_transparente.png') }}" width="48" height="48" alt="">
+        </a>
+        <div class="ff-user-chip ff-user-chip-mobile" aria-label="Cuenta de {{ $judgeDisplayName }}; Juez">
+          <span class="ff-user-initials" aria-hidden="true">{{ $judgeInitials }}</span>
+        </div>
+      </header>
+
+      <div class="offcanvas offcanvas-start ff-participant-offcanvas" tabindex="-1" id="judgeNavigation" aria-labelledby="judgeNavigationLabel">
+        <div class="offcanvas-header">
+          <h2 class="visually-hidden" id="judgeNavigationLabel">Navegación de juez</h2>
+          <button class="ff-icon-button ms-auto" type="button" data-bs-dismiss="offcanvas" aria-label="Cerrar menú"><span class="ri ri-close-line" aria-hidden="true"></span></button>
+        </div>
+        <div class="offcanvas-body p-0">@include('partials.judge-navigation', ['mobile' => true])</div>
+      </div>
+
+      <header class="ff-participant-topbar d-none d-lg-flex">
+        <span class="ff-participant-topbar-context">Hermosillo Florece 2026 · Evaluación</span>
+        <div class="ff-user-chip" aria-label="Cuenta de {{ $judgeDisplayName }}; Juez">
+          <span class="ff-user-initials" aria-hidden="true">{{ $judgeInitials }}</span>
+          <span><strong>{{ $judgeDisplayName }}</strong><small>Juez</small></span>
+        </div>
+      </header>
+
+      <main id="contenido" class="ff-participant-content ff-judge-content">
         @include('partials.messages')
         @yield('content')
       </main>

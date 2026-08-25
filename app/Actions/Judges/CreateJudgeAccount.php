@@ -24,9 +24,19 @@ final class CreateJudgeAccount
         private SendJudgeSetupNotification $sendSetupNotification,
     ) {}
 
-    public function execute(User $actor, string $name, string $email, JudgeAssignmentRole $assignmentRole): JudgeProfile
-    {
+    public function execute(
+        User $actor,
+        string $name,
+        string $email,
+        JudgeAssignmentRole $assignmentRole,
+        bool $sendSetupNotification = true,
+    ): JudgeProfile {
         $this->ensureActor->execute($actor, 'manage judges');
+        if ($sendSetupNotification && ! config('flowerflow.judge_notifications.account_setup_enabled')) {
+            throw ValidationException::withMessages([
+                'send_setup_notification' => 'La notificación de configuración está deshabilitada globalmente.',
+            ]);
+        }
         $normalizedEmail = Str::lower(trim($email));
 
         try {
@@ -49,7 +59,7 @@ final class CreateJudgeAccount
                     'user_id' => $user->id,
                     'assignment_role' => $assignmentRole,
                     'status' => JudgeProfileStatus::PendingSetup,
-                    'max_active_assignments' => $assignmentRole->maxActiveAssignments(),
+                    'max_active_assignments' => null,
                     'created_by_user_id' => $actor->id,
                 ]);
                 $profile->save();
@@ -57,7 +67,7 @@ final class CreateJudgeAccount
                 $this->audit->record('judge.account_created', $profile, $actor, [
                     'status' => JudgeProfileStatus::PendingSetup->value,
                     'assignment_role' => $assignmentRole->value,
-                    'max_active_assignments' => $assignmentRole->maxActiveAssignments(),
+                    'max_active_assignments' => null,
                 ]);
 
                 return $profile->load('user');
@@ -72,7 +82,9 @@ final class CreateJudgeAccount
             ]);
         }
 
-        $this->sendSetupNotification->execute($profile);
+        if ($sendSetupNotification) {
+            $this->sendSetupNotification->execute($profile, $actor);
+        }
 
         return $profile;
     }

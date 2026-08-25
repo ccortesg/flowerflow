@@ -47,6 +47,11 @@ return [
         'administrative_finalization' => env('FLOWERFLOW_ADMIN_FINALIZATION_ENABLED', false),
         'communication_ledger' => env('FLOWERFLOW_COMMUNICATION_LEDGER_ENABLED', false),
     ],
+    'judge_notifications' => [
+        'account_setup_enabled' => env('FLOWERFLOW_JUDGE_ACCOUNT_SETUP_NOTIFICATION_ENABLED', true),
+        'setup_link_ttl_minutes' => (int) env('FLOWERFLOW_JUDGE_SETUP_LINK_TTL_MINUTES', 2880),
+        'assignment_enabled' => env('FLOWERFLOW_JUDGE_ASSIGNMENT_NOTIFICATION_ENABLED', false),
+    ],
     'security' => [
         'enforce_strict_csp' => env('FLOWERFLOW_CSP_ENFORCE_STRICT', false),
         'hsts_max_age' => (int) env('FLOWERFLOW_HSTS_MAX_AGE', 86400),

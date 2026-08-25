@@ -17,14 +17,17 @@
   <div class="card ff-card">
     <div class="table-responsive">
       <table class="table align-middle mb-0">
-        <thead><tr><th scope="col">ID técnico</th><th scope="col">Categoría</th><th scope="col">Cobertura</th><th scope="col"><span class="visually-hidden">Acción</span></th></tr></thead>
+        <thead><tr><th scope="col">ID técnico</th><th scope="col">Categoría</th><th scope="col">Asignaciones</th><th scope="col"><span class="visually-hidden">Acción</span></th></tr></thead>
         <tbody>
         @foreach($submissions as $submission)
           @php($coverage = $submission->getAttribute('assignment_coverage'))
           <tr>
             <td><code>{{ $submission->public_id }}</code></td>
             <td>{{ $submission->category->name }}</td>
-            <td>{{ $coverage['covered'] ?? 0 }} de {{ $coverage['required'] ?? 4 }} @if(($coverage['pending_conflicts'] ?? 0) > 0)<span class="badge bg-warning text-dark">Conflicto pendiente</span>@endif</td>
+            <td>
+              <span class="d-block">{{ $coverage['active'] ?? 0 }} vigentes</span>
+              <small class="text-secondary">{{ $coverage['pending_conflicts'] ?? 0 }} conflictos, {{ $coverage['cancelled'] ?? 0 }} canceladas, {{ $coverage['replaced'] ?? 0 }} reemplazadas</small>
+            </td>
             <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ route('panel.assignments.show', $submission) }}">Administrar</a></td>
           </tr>
         @endforeach

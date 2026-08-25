@@ -15,7 +15,7 @@
       <p id="judge-status-description" class="lead">La sesión permanece protegida y no puedes abrir el área de evaluación mientras la suspensión esté vigente.</p>
     @elseif($judgeProfile->status === \App\Enums\JudgeProfileStatus::PendingSetup)
       <h1 id="judge-status-title" class="h2">Completa la configuración de tu acceso</h1>
-      <p id="judge-status-description" class="lead">Antes de abrir el área de evaluación debes establecer tu contraseña y verificar tu correo electrónico.</p>
+      <p id="judge-status-description" class="lead">Antes de abrir el área de evaluación debes consumir el enlace inicial de configuración enviado por administración.</p>
       <ul class="list-group mb-4" aria-label="Prerrequisitos de acceso">
         <li class="list-group-item d-flex justify-content-between align-items-center">
           Contraseña propia
@@ -26,9 +26,7 @@
           <strong>{{ auth()->user()->hasVerifiedEmail() ? 'Completado' : 'Pendiente' }}</strong>
         </li>
       </ul>
-      @unless(auth()->user()->hasVerifiedEmail())
-        <a class="btn btn-flower align-self-start" href="{{ route('verification.notice') }}">Verificar correo</a>
-      @endunless
+      <p class="mb-0">Ese enlace establece tu contraseña y verifica el correo en una sola operación. Si ya no está vigente, solicita a administración un reenvío.</p>
     @else
       <h1 id="judge-status-title" class="h2">Tu acceso está activo</h1>
       <p id="judge-status-description" class="lead">Los prerrequisitos están completos.</p>

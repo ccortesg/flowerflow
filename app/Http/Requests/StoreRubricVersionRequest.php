@@ -21,6 +21,11 @@ class StoreRubricVersionRequest extends FormRequest
 
     public function rules(): array
     {
+        $version = $this->contractVersion();
+        $criterionCount = in_array($version, app(EvaluationRubricContract::class)->supportedVersions(), true)
+            ? app(EvaluationRubricContract::class)->criterionCount($version)
+            : 0;
+
         return [
             'version' => ['required', 'integer', 'min:1'],
             'title' => ['required', 'string', 'min:3', 'max:255'],
@@ -36,7 +41,7 @@ class StoreRubricVersionRequest extends FormRequest
             'general_comment_min_characters' => ['required', 'integer'],
             'general_comment_max_characters' => ['required', 'integer'],
             'criterion_comment_max_characters' => ['required', 'integer'],
-            'criteria' => ['required', 'array', 'size:5'],
+            'criteria' => ['required', 'array', 'size:'.$criterionCount],
             'criteria.*' => ['required', 'array:code,label,weight,min_score,max_score,score_step,sort_order'],
             'criteria.*.code' => ['required', 'string', 'max:32'],
             'criteria.*.label' => ['required', 'string', 'max:100'],
@@ -69,6 +74,7 @@ class StoreRubricVersionRequest extends FormRequest
             $errors = app(EvaluationRubricContract::class)->payloadErrors(
                 $this->versionAttributes(),
                 (array) $this->input('criteria', []),
+                $this->contractVersion(),
             );
             foreach ($errors as $field => $message) {
                 $validator->errors()->add($field, $message);
@@ -79,7 +85,7 @@ class StoreRubricVersionRequest extends FormRequest
     /** @return array<string, mixed> */
     public function versionAttributes(): array
     {
-        return collect(app(EvaluationRubricContract::class)->versionAttributes())
+        return collect(app(EvaluationRubricContract::class)->versionAttributes($this->contractVersion()))
             ->mapWithKeys(fn ($value, string $field) => [$field => $this->input($field)])
             ->all();
     }
@@ -96,9 +102,16 @@ class StoreRubricVersionRequest extends FormRequest
             'version.required' => 'Escribe el número de versión.',
             'version.min' => 'La versión debe ser un entero positivo.',
             'title.required' => 'Escribe el título interno de la rúbrica.',
-            'criteria.size' => 'La rúbrica debe contener exactamente cinco criterios.',
+            'criteria.size' => 'La cantidad de criterios debe coincidir exactamente con la versión seleccionada.',
             'criteria.*.description.prohibited' => 'La descripción permanece POR_CONFIRMAR y no puede capturarse todavía.',
             '*.prohibited' => 'Este campo de ciclo o auditoría no puede enviarse desde el formulario.',
         ];
+    }
+
+    private function contractVersion(): int
+    {
+        $rubric = $this->route('rubricVersion');
+
+        return $rubric instanceof RubricVersion ? (int) $rubric->version : $this->integer('version');
     }
 }

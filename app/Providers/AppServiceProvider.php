@@ -58,6 +58,15 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(6)->by($reminderKey.'|'.$request->ip());
         });
 
+        RateLimiter::for('judge-setup', function (Request $request) {
+            $setupLink = $request->route('setupLink');
+            $linkKey = is_object($setupLink) && method_exists($setupLink, 'getRouteKey')
+                ? $setupLink->getRouteKey()
+                : (string) $setupLink;
+
+            return Limit::perMinute(6)->by($linkKey.'|'.$request->ip());
+        });
+
         Vite::useStyleTagAttributes(function (?string $src, string $url, ?array $chunk, ?array $manifest) {
             if ($src !== null) {
                 return [

@@ -1,5 +1,7 @@
 # Informe de implementación Fase 02B M5 — paquete ciego
 
+> **Adenda M6A — 2026-08-24:** el paquete/proyección/hash M5 permanecen inmutables, pero generación y activación ya no exigen cobertura mínima. Las referencias inferiores a `4+2` son históricas. Ningún paquete, GET, migración o seeder crea asignaciones.
+
 **Fecha:** 2026-08-18 (`America/Hermosillo`)
 **Estado:** `GO LOCAL/TEST — M5 COMPLETE — M6 NOT AUTHORIZED`
 **Alcance:** paquete ciego estructural, inventario de anexos y descarga privada; sin evaluación, puntajes, envío, producción o datos reales.

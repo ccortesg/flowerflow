@@ -1,5 +1,7 @@
 # Arquitectura propuesta
 
+> **Arquitectura vigente M6A — 2026-08-24:** `judge_setup_links` separa onboarding inicial del broker genérico; el catálogo inmutable valida rúbricas v1/v2; `AssignJudgesToSubmission`, `CancelJudgeAssignment` y `ResolveJudgeConflict` son las únicas fronteras de mutación manual. Paquetes ciegos no dependen de cobertura mínima. La notificación opcional de asignación reutiliza el outbox y el worker `database/default`. El shell Blade del juez es independiente y responsive. Todo es local/test y la divergencia jurídica mantiene `NO-GO RELEASE/PRODUCTION`.
+
 > **Estado vigente M6 — 2026-08-18:** M4A conserva cuatro `primary` y dos `substitute` ilimitados; M5 conserva el paquete allowlist inmutable. M6 añade el agregado `Evaluation`/revisión 1/scores, Actions transaccionales, lock optimista y cálculo BCMath fijado a la rúbrica de la asignación. M7–M10 permanecen separados.
 
 > **Adenda Fase 02B — 2026-08-18:** M1–M6 están implementados localmente. M6 conserva GET puro y separa apertura POST de guardado PATCH, resuelve siempre assignment/rubric/package del servidor y responde 409 ante lock stale. M7–M10 no están implementados/no autorizados; `P2B-BLOCK-001` permanece resuelto.

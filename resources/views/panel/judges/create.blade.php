@@ -28,9 +28,16 @@
       @endforeach
     </select>
     @error('assignment_role')<div class="invalid-feedback">{{ $message }}</div>@enderror
-    <div class="form-text">Los cuatro jueces principales evaluarán todas las propuestas elegibles. Los dos sustitutos sólo recibirán reasignaciones. Ningún juez tiene límite de proyectos.</div>
+    <div class="form-text">La función es informativa. Tanto principales como sustitutos pueden recibir asignaciones iniciales o reemplazos; ningún juez tiene límite de proyectos.</div>
   </div>
-  <div class="alert alert-info" role="note">Después del alta se programará un enlace temporal para que el juez establezca su propia contraseña. El correo se verificará mediante el flujo firmado de Flower Flow.</div>
+  <div class="form-check mb-3">
+    <input class="form-check-input @error('send_setup_notification') is-invalid @enderror" type="hidden" name="send_setup_notification" value="0">
+    <input class="form-check-input @error('send_setup_notification') is-invalid @enderror" id="send_setup_notification" name="send_setup_notification" type="checkbox" value="1" @checked(old('send_setup_notification', config('flowerflow.judge_notifications.account_setup_enabled'))) @disabled(! config('flowerflow.judge_notifications.account_setup_enabled'))>
+    <label class="form-check-label" for="send_setup_notification">Enviar correo para configurar la cuenta</label>
+    @error('send_setup_notification')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+    @unless(config('flowerflow.judge_notifications.account_setup_enabled'))<div class="form-text">El envío está deshabilitado globalmente. La cuenta quedará pendiente sin generar enlace.</div>@endunless
+  </div>
+  <div class="alert alert-info" role="note">Si solicitas el correo, se generará un enlace temporal de un solo uso. Al configurar la contraseña desde ese enlace, el correo quedará verificado en la misma operación.</div>
   <div class="d-flex flex-wrap gap-2">
     <button class="btn btn-flower" type="submit">Crear cuenta de juez</button>
     <a class="btn btn-outline-dark" href="{{ route('panel.judges.index') }}">Cancelar</a>

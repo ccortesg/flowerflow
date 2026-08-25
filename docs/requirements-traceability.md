@@ -1,5 +1,17 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+## Trazabilidad M6A — 2026-08-24
+
+| ID | Requisito | Implementación/prueba | Estado |
+|---|---|---|---|
+| M6A-SETUP-001 | Enlace inicial configura contraseña y verifica correo una vez | `judge_setup_links`, Actions/validator/rutas, `JudgeSetupLinkTest`, `JudgeSetupLinkConcurrencyTest` | VERIFIED local/test |
+| M6A-RUBRIC-001 | v1 histórica y v2 legal activa de cuatro criterios | migración M6A, `EvaluationRubricContract`, seeder, `VersionedRubricTest` | VERIFIED local/test |
+| M6A-ASGN-001 | Selección manual, ilimitada, cero mínimos, sin automatismo | Actions/controller/views, `JudgeAssignmentsAndConflictsTest`, concurrencia | VERIFIED local/test |
+| M6A-PKG-001 | Paquete ciego sin cobertura mínima | Actions M5 generalizadas y prueba dirigida | VERIFIED local/test |
+| M6A-MAIL-001 | Alta/asignación configurables y delivery sin PII | flags, outbox, templates, pruebas onboarding/asignaciones/ledger | VERIFIED local/test |
+| M6A-UX-001 | Shell/dashboard/listado/detalle/cuenta accesible y responsive | vistas juez, pruebas RBAC y UAT Firefox 1440×900, 1024×768 y 390×844 | VERIFIED local/test; zoom nativo manual recomendado antes de release |
+| M6A-LEGAL-001 | Visibilizar contradicción “al menos tres jueces” | ExecPlan, ADR-0010, riesgos/handoff | RELEASE BLOCKER |
+
 > **Adenda de exportación de contactos — 2026-08-24:** extensión local/test del ADR 0007 sobre baseline `9df0828a41733cd0b35128f71698fee6f3cfd1ab`; no añade migraciones, permisos, dependencias, workers ni acceso productivo.
 
 > **Adenda de trazabilidad de comunicaciones — 2026-08-23:** milestone independiente local/test con ADR-0009, sin producción, SMTP real, M7/M8, campañas o resultados.

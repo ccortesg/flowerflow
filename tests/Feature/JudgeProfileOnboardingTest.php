@@ -206,7 +206,7 @@ class JudgeProfileOnboardingTest extends TestCase
         $initializedAt = $first->password_initialized_at;
         $this->assertNotNull($initializedAt);
         $this->assertSame(JudgeProfileStatus::PendingSetup, $first->status);
-        Notification::assertSentTo($firstUser, JudgeVerifyEmailNotification::class);
+        Notification::assertNotSentTo($firstUser, JudgeVerifyEmailNotification::class);
 
         app(ResetUserPassword::class)->reset($firstUser, [
             'password' => 'JudgePass2!',
@@ -425,8 +425,7 @@ class JudgeProfileOnboardingTest extends TestCase
         $this->assertTrue($created->hasExactRoles(['judge']));
         $this->assertSame(JudgeProfileStatus::PendingSetup, $created->judgeProfile->status);
         $this->assertDatabaseHas('audit_logs', [
-            'action' => 'judge.setup_email.failed',
-            'auditable_id' => $created->judgeProfile->id,
+            'action' => 'judge.setup_link.rejected',
         ]);
     }
 
@@ -435,12 +434,12 @@ class JudgeProfileOnboardingTest extends TestCase
         Notification::fake();
         $admin = $this->adminWithPassword();
         $profile = app(CreateJudgeAccount::class)->execute($admin, 'Juez Plantilla', 'template-m2@example.test', JudgeAssignmentRole::Primary);
-        $notification = new JudgeAccountSetupNotification('opaque-synthetic-token');
+        $notification = Notification::sent($profile->user, JudgeAccountSetupNotification::class)->last();
         $mail = $notification->toMail($profile->user);
         $html = (string) $mail->render();
         $text = view('mail.judge-account-setup-text', [
             'actionUrl' => 'https://example.test/reset/opaque-synthetic-token',
-            'expiresInMinutes' => 60,
+            'expiresAt' => '25/08/2026 10:00',
             'userName' => $profile->user->name,
         ])->render();
 

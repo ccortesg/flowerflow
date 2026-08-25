@@ -10,7 +10,8 @@ class ResolveJudgeConflictRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'substitute_judge_profile' => trim((string) $this->input('substitute_judge_profile')),
+            'judge_profile' => trim((string) $this->input('judge_profile')),
+            'notify_judge' => $this->boolean('notify_judge'),
             'reason' => trim((string) $this->input('reason')),
         ]);
     }
@@ -26,7 +27,8 @@ class ResolveJudgeConflictRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'substitute_judge_profile' => ['required', 'string', 'ulid'],
+            'judge_profile' => ['required', 'string', 'ulid'],
+            'notify_judge' => ['required', 'boolean'],
             'reason' => ['required', 'string', 'min:20', 'max:1000'],
             'current_password' => ['required', 'string', 'current_password'],
         ];
@@ -35,8 +37,8 @@ class ResolveJudgeConflictRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'substitute_judge_profile.required' => 'Selecciona uno de los dos jueces sustitutos operativos.',
-            'substitute_judge_profile.ulid' => 'El juez sustituto seleccionado no es válido.',
+            'judge_profile.required' => 'Selecciona un juez operativo.',
+            'judge_profile.ulid' => 'El juez seleccionado no es válido.',
         ];
     }
 }

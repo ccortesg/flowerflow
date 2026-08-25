@@ -2,28 +2,42 @@
 
 namespace App\Notifications;
 
+use App\Models\JudgeSetupLink;
 use App\Support\ConfiguresTransactionalMail;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\URL;
 
-class JudgeAccountSetupNotification extends ResetPassword implements ShouldBeEncrypted, ShouldQueueAfterCommit
+class JudgeAccountSetupNotification extends Notification implements ShouldBeEncrypted, ShouldQueueAfterCommit
 {
     use ConfiguresTransactionalMail, Queueable;
 
-    public function __construct(#[\SensitiveParameter] $token)
-    {
-        parent::__construct($token);
+    public function __construct(
+        public int $setupLinkId,
+        #[\SensitiveParameter] public string $token,
+    ) {
         $this->configureTransactionalMail();
     }
 
-    public function toMail($notifiable): MailMessage
+    /** @return list<string> */
+    public function via(object $notifiable): array
     {
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $link = JudgeSetupLink::query()->findOrFail($this->setupLinkId);
         $data = [
-            'actionUrl' => $this->resetUrl($notifiable),
-            'expiresInMinutes' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire'),
+            'actionUrl' => URL::temporarySignedRoute(
+                'judge.setup.show',
+                $link->expires_at,
+                ['setupLink' => $link, 'token' => $this->token],
+            ),
+            'expiresAt' => $link->expires_at->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i'),
             'userName' => $notifiable->name,
         ];
 

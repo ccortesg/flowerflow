@@ -43,9 +43,12 @@ final class EvaluationDraftCalculator
     }
 
     /** @param list<string|null> $components */
-    public function total(array $components): ?string
+    public function total(array $components, ?int $expectedCriterionCount = null): ?string
     {
-        if (count($components) !== 5 || in_array(null, $components, true)) {
+        $expectedCriterionCount ??= count($components);
+        if ($expectedCriterionCount < 1
+            || count($components) !== $expectedCriterionCount
+            || in_array(null, $components, true)) {
             return null;
         }
 

@@ -1,5 +1,7 @@
 # Roadmap y backlog
 
+> **Puerta vigente M6A — 2026-08-24:** milestone correctivo previo a M7 para onboarding purpose-bound, asignación manual sin mínimos/límites, rúbrica v2 legal y UX del juez. M7–M10 continúan `NOT IMPLEMENTED / NOT AUTHORIZED`. Aunque M6A pueda cerrar `GO LOCAL/TEST`, no puede entrar a release/producción mientras “al menos tres jueces” no se reconcilie jurídicamente o exista aceptación formal separada.
+
 > **Estado vigente — 2026-08-18:** Fase 01/02A, jurídicos v1.1 y M1–M6 permanecen conformes localmente. M6 implementa borrador, concurrencia optimista y cálculo servidor; M7 —envío inmutable/reapertura append-only— es la siguiente puerta potencial, aún no autorizada. `PRODUCTION_RELEASE_SHA=POR_CONFIRMAR`; nada de M1–M6 se atribuye a producción.
 
 ## Estado Fase 01 — 2026-07-15

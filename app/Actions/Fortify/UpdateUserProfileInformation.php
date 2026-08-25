@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Actions\Judges\SynchronizeJudgeProfileActivation;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
@@ -11,6 +12,8 @@ use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
 
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
+    public function __construct(private SynchronizeJudgeProfileActivation $synchronizeJudgeProfile) {}
+
     /**
      * Validate and update the given user's profile information.
      *
@@ -55,6 +58,10 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'email' => $input['email'],
             'email_verified_at' => null,
         ])->save();
+
+        if ($user->hasExactRoles(['judge'])) {
+            $this->synchronizeJudgeProfile->execute($user);
+        }
 
         $user->sendEmailVerificationNotification();
     }

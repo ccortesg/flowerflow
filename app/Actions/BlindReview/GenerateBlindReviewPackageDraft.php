@@ -6,7 +6,6 @@ use App\Enums\BlindReviewPackageStatus;
 use App\Exceptions\BlindReviewPackageRejected;
 use App\Models\BlindReviewPackage;
 use App\Models\BlindReviewPackageFile;
-use App\Models\JudgeAssignment;
 use App\Models\Submission;
 use App\Models\SubmissionFile;
 use App\Models\SubmissionVersion;
@@ -14,7 +13,6 @@ use App\Models\User;
 use App\Services\AssignmentEligibility;
 use App\Services\AuditLogger;
 use App\Services\BlindReviewPackageBuilder;
-use App\Services\JudgeAssignmentCoverage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -23,7 +21,6 @@ final class GenerateBlindReviewPackageDraft
     public function __construct(
         private EnsureBlindReviewAdministrator $ensureActor,
         private AssignmentEligibility $eligibility,
-        private JudgeAssignmentCoverage $coverage,
         private BlindReviewPackageBuilder $builder,
         private AuditLogger $audit,
     ) {}
@@ -36,17 +33,6 @@ final class GenerateBlindReviewPackageDraft
             return DB::transaction(function () use ($submission, $actor, $reason): BlindReviewPackage {
                 $version = $this->eligibility->requireCurrentVersion($submission, true);
                 SubmissionVersion::query()->whereKey($version->id)->lockForUpdate()->firstOrFail();
-                $assignments = JudgeAssignment::query()
-                    ->where('submission_version_id', $version->id)
-                    ->with('replacementAssignment:id,replaces_assignment_id,status')
-                    ->orderBy('id')
-                    ->lockForUpdate()
-                    ->get();
-
-                if (! $this->coverage->fromAssignments($assignments)['complete']) {
-                    throw new BlindReviewPackageRejected('assignment_coverage_incomplete', 'La propuesta no conserva cobertura completa de cuatro evaluaciones.');
-                }
-
                 SubmissionFile::query()
                     ->where('submission_id', $version->submission_id)
                     ->orderBy('id')

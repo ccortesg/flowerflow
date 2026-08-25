@@ -21,7 +21,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 use LogicException;
 use Spatie\Permission\Models\Role;
 use Tests\Support\CreatesEvaluationScenario;
@@ -51,7 +50,12 @@ class EvaluationDraftTest extends TestCase
         $assignment = $this->assignmentFor($judge);
 
         $this->actingAs($judge)->get(route('judge.assignments.show', $assignment))
-            ->assertOk()->assertSee('Iniciar evaluación')->assertDontSee('Pertinencia');
+            ->assertOk()
+            ->assertSee('Iniciar evaluación')
+            ->assertSee('btn btn-flower', false)
+            ->assertSee('btn btn-outline-warning', false)
+            ->assertSee('Si existe un conflicto, decláralo antes de evaluar')
+            ->assertDontSee('Pertinencia');
         $this->actingAs($judge)->get(route('judge.assignments.show', $assignment))->assertOk();
         $this->assertDatabaseCount('evaluations', 0);
         $this->assertDatabaseCount('evaluation_revisions', 0);
@@ -104,7 +108,7 @@ class EvaluationDraftTest extends TestCase
             ->assertSee('Pertinencia')
             ->assertSee('20.0000 %')
             ->assertSee('Rango 0.0000–10.0000; paso exacto 0.5000.')
-            ->assertSee('Disponible al capturar los cinco criterios.')
+            ->assertSee('Disponible al capturar todos los criterios.')
             ->assertSee('Guardar borrador');
 
         try {
@@ -439,20 +443,18 @@ class EvaluationDraftTest extends TestCase
             JudgeConflictType::ProfessionalOrEconomicRelationship,
             null,
         );
-        try {
-            app(ResolveJudgeConflict::class)->execute(
-                $replacementConflict,
-                $admin,
-                $substitutes->get(1)->judgeProfile->public_id,
-                'No debe crear una cadena de reemplazo en M6.',
-            );
-            $this->fail('A replacement conflict must fail closed without inferred chains.');
-        } catch (ValidationException $exception) {
-            $this->assertArrayHasKey('replacement', $exception->errors());
-        }
+        $secondReplacement = app(ResolveJudgeConflict::class)->execute(
+            $replacementConflict,
+            $admin,
+            $substitutes->get(1)->judgeProfile->public_id,
+            'Reemplazo explícito del reemplazo en conflicto para M6A.',
+        );
+        $this->assertSame($replacement->id, $secondReplacement->replaces_assignment_id);
+        $this->assertSame(JudgeAssignmentStatus::Active, $secondReplacement->status);
+        $this->assertDatabaseMissing('evaluations', ['judge_assignment_id' => $secondReplacement->id]);
         $this->assertDatabaseCount('evaluations', 2);
         $this->assertDatabaseCount('evaluation_scores', 10);
-        $this->assertDatabaseCount('judge_assignments', 5);
+        $this->assertDatabaseCount('judge_assignments', 6);
         $this->actingAs($replacementJudge)->get(route('judge.assignments.show', $replacement))
             ->assertOk()->assertDontSee('Guardar borrador');
     }

@@ -29,22 +29,14 @@ class ResetUserPassword implements ResetsUserPasswords
             'password' => $this->passwordRules(),
         ])->validate();
 
-        $sendJudgeVerification = DB::transaction(function () use ($user, $input): bool {
+        DB::transaction(function () use ($user, $input): void {
             $user->forceFill([
                 'password' => Hash::make($input['password']),
             ])->save();
 
             if ($user->hasExactRoles(['judge'])) {
-                $initialized = $this->initializeJudgePassword->execute($user);
-
-                return $initialized && ! $user->hasVerifiedEmail();
+                $this->initializeJudgePassword->execute($user);
             }
-
-            return false;
         });
-
-        if ($sendJudgeVerification) {
-            $user->sendEmailVerificationNotification();
-        }
     }
 }

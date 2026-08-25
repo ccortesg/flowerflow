@@ -1,5 +1,7 @@
 # Preguntas abiertas y decisiones — Flower Flow 2026
 
+> **Decisiones M6A — 2026-08-24:** `Q-M6A-001 RESOLVED LOCAL`: sin límite por juez ni mínimo de principales/sustitutos/asignaciones; funciones informativas y selección admin explícita. `Q-M6A-002 RESOLVED LOCAL`: alta y asignación notificables mediante flags y casilla por operación. `Q-M6A-003 RESOLVED LOCAL`: cuatro criterios legales, 25 % cada uno como decisión de producto, v1 histórica preservada. `Q-M6A-004 OPEN / RELEASE BLOCKER`: reconciliar la contradicción con “al menos tres jueces” del PDF. M7–M10 no están autorizados.
+
 > **Estado vigente M6 — 2026-08-18:** `P2B-DEC-005/015` permanecen cerradas mediante `4+2` ilimitado y selección manual. M5 materializa la ceguera estructural y M6 el borrador/cálculo servidor. M7–M10 permanecen no implementados/no autorizados.
 
 > **Decisiones operativas del propietario — 2026-08-22:** `Q-006A RESOLVED / LOCAL IMPLEMENTED`: sólo `admin` exacto puede finalizar antes del cierre una propuesta con título/resumen/descripción, password reciente, confirmación y razón 20–1,000; omite archivo/perfil/equipo/legales y no crea aceptaciones ajenas. `Q-006B RESOLVED / LOCAL IMPLEMENTED`: el recordatorio se envía exclusivamente al propietario verificado; el CTA abre un GET firmado puro y un POST separado con las tres aceptaciones puede enviar sin archivo. Integrantes quedan excluidos. Activación/despliegue productivo no están autorizados.

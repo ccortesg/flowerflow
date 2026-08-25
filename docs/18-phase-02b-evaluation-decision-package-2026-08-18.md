@@ -1,5 +1,7 @@
 # Paquete de decisiones Fase 02B — jueces y evaluación
 
+> **CONTRATO SUPERADO POR M6A — 2026-08-24:** las referencias operativas inferiores a `4+2`, cuatro asignaciones automáticas/manuales en bloque, sustitutos exclusivos y rúbrica activa de cinco criterios son históricas. M6A establece selección administrativa explícita sin mínimo ni máximo, funciones informativas, v2 activa de cuatro criterios y v1 fijada sólo para evidencia previa. La Mecánica mantiene “al menos tres jueces”; el override del propietario es `LEGAL_RECONCILIATION_REQUIRED` y bloquea release/producción.
+
 **Fecha:** 2026-08-18 (`America/Hermosillo`)
 
 **Estado:** `OWNER CONTRACT IMPLEMENTED THROUGH M5 — GO LOCAL/TEST — M6 NOT AUTHORIZED`
@@ -681,7 +683,35 @@ Las 21 respuestas quedaron incorporadas en la matriz vigente de la sección 17. 
 
 Corrección final vigente `OWNER_APPROVED` del 2026-08-18: las respuestas intermedias `1×10` y `2×30` quedan sustituidas por cuatro jueces principales y dos jueces exclusivamente sustitutos, todos sin límite. Son seis jueces operativos; `admin` selecciona manualmente al sustituto. `P2B-BLOCK-001` y `P2B-M4-CORRECTION-001` quedan resueltos en local/test por M4A.
 
-## 21. Prompt canónico corregido y ejecutado — implementar únicamente M6
+## 21. Prompt canónico vigente — implementar exclusivamente M6A previo a M7
+
+```text
+Implementa exclusivamente M6A — onboarding, asignación manual, rúbrica legal y experiencia del juez— en `/home/ccortesg/workspace/flowerflow`, limitado a código, migraciones, pruebas, documentación y UAT local sintético. No autoriza stage, commit, push, despliegue, producción, SMTP real o servicios externos.
+
+Baseline obligatorio: rama `codex/submission-deadline-extension`, HEAD/upstream/merge-base `d3f616c86d72bfd32c1545205df057e19cf765ea`, árbol limpio, 21 migraciones, 86 rutas y M1–M6 GO LOCAL/TEST. Antes de editar lee AGENTS, PLANS, diseño/ExecPlans/informes M1–M6, auth/correo/outbox, documentación canónica, ADR 0001/0003–0009 y el PDF Mecánica v1.1. Crea el ExecPlan `flowerflow-phase-02b-m6a-judge-operations-reconciliation.md`. Antes de tocar esquema demuestra APP_ENV testing, MySQL loopback, base `flowerflow_testing`, usuario `flowerflow_testing_user` y SELECT DATABASE exacto.
+
+Decisiones inmutables: ningún juez tiene límite; no hay mínimos de principales, sustitutos ni assignments; `primary|substitute` es informativo; toda asignación/reasignación exige selección admin explícita y nunca existe reparto o automatismo; paquete ciego puede generarse/activarse sin cobertura; cancelar sólo antes de Evaluation y con evidencia append-only; conflicto/replacement requiere una acción por eslabón; correos de alta/asignación son configurables; CTA de evaluación es primario y conflicto secundario. M7–M10 quedan fuera.
+
+Registra `OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED`: el PDF exige “al menos tres jueces”, mientras el owner ordena no exigir mínimo. No modificar PDF/hash/aceptaciones. Resultado máximo local/test; release/producción es NO-GO hasta reconciliación jurídica o aceptación formal separada.
+
+Onboarding: crea `judge_setup_links` con ULID, perfil, hash de token, fingerprint HMAC de correo, slot vigente, emisión/expiración/consumo/invalidación UTC y actor. GET firmado es puro; POST firmado+CSRF+rate limit bloquea link/perfil/user, revalida propósito/token/correo/rol/estado, guarda contraseña, password_initialized_at, email_verified_at y perfil active en una transacción, consume/invalida, emite Verified post-commit una vez, no inicia sesión. Reset genérico no verifica; cambiar correo vuelve pending. Flags `FLOWERFLOW_JUDGE_ACCOUNT_SETUP_NOTIFICATION_ENABLED=true` y TTL 2880; checkbox por alta; fallo de enqueue no revierte cuenta.
+
+Rúbrica: catálogo inmutable v1 histórica (cinco) y v2 activa (cuatro). V2 se titula `Rúbrica de evaluación Hermosillo Florece 2026 — Mecánica v1.1`, con `relevance_diagnosis`, `quality_originality`, `participation_coordination`, `impact_sustainability`, etiquetas literales de la Mecánica y 25.0000 cada uno; escala 0–10, paso .5, precisión 4/2 HALF_UP, descriptions NULL. Migración activa v2 con origen `migration`, supersede v1 sin inventar admin, fresh seed igual, drift/otra competencia falla cerrado, no toca evidencia. Down se niega con referencias. M6 usa conteo de rubric fijada: v1 cinco scores, v2 cuatro. Vector v2 7.5/8/6.5/9=77.5000/77.50; conserva vectores v1 y HALF_UP.
+
+Asignación: rutas GET índice, GET propuesta, POST propuesta/jueces, GET+POST cancelar; conflicto se adapta. Admin selecciona checkboxes de jueces activos, ve función/carga sólo informativas, decide correo, escribe razón y contraseña. Permite uno o varios, operaciones sucesivas, sin mínimo/máximo; duplicados/extraños/ineligibles rechazan atómicamente; carreras convergen; sólo nuevos se notifican. Elimina cobertura fija de paquete/controller/UI/audit/tests/docs. Cancelar active sin conflicto/Evaluation, limpia slot y conserva actor/razón/fecha. Replacement puede ser cualquier juez activo elegible, excluye original/vigentes/conflictuados y permite cadenas explícitas sin automatismo.
+
+Notificación: `FLOWERFLOW_JUDGE_ASSIGNMENT_NOTIFICATION_ENABLED=false`; checkbox desmarcado. Integra `judge_assignment_created` al outbox post-commit `database/default`, idempotente por assignment/plantilla; revalida active/juez/plazo y cancela si cambió. Mail dual con ambos logos/footer, categoría, ID opaco, plazo Hermosillo y CTA; nunca PII, título, contenido, archivos u otros jueces.
+
+UX: shell juez exclusivo responsive con Inicio, Mis asignaciones, Cuenta y seguridad y logout; sidebar/offcanvas, aria-current, skip link/foco. Dashboard con vigentes/sin iniciar/drafts/próximas y aviso M7. Listado muestra ID, categoría, estado, plazo, paquete, progreso dinámico y CTA. Detalle hace “Iniciar/Continuar evaluación” primario verde y “Declarar conflicto” secondary outline-warning, con texto previo; cuenta permite contraseña y 2FA. HTML semántico, labels/fieldsets, errores/foco, teclado, zoom/reflow, WCAG 2.2 AA y esencial sin JS.
+
+Audita sólo IDs técnicos, conteos, versión, flags, reason codes y transiciones para setup link, assignment created/cancelled/replacement y notification requested/skipped. Nunca correo/token/URL/nombre/propuesta/scores/comentarios/archivos/PII.
+
+Prueba setup puro/válido/fallos/concurrencia/flags/reset; asignación uno/varios, cero mínimos, substitute-only y más de cuatro por juez, ausencia total de automatismo, idempotencia/carreras, cancelación, replacement encadenado; migración/fresh/drift/down; v1/v2 cálculo/NULL/step/HALF_UP/409; paquete sin cobertura; correo exacto/redactado; RBAC/IDOR/XSS y UX. Ejecuta forward/rollback/forward, suites M6A y M1–M6, suite completa, Pint, Composer, auditorías, build, JSON, rutas/schedule/migrate, diff/enlaces/scans y UAT Firefox 1440x900, 1024x768, 390x844. No inventes evidencia.
+
+Actualiza ExecPlan, ADR nuevo que sustituya lo operativo de ADR-0008 y documentos canónicos; conserva informes históricos con notas de contrato superado. Entrega GO/NO-GO local y siempre NO-GO release/production mientras persista la divergencia jurídica. No stage/commit/push/deploy ni producción.
+```
+
+## 21Z. Prompt histórico ejecutado — implementar únicamente M6
 
 ```text
 Trabaja exclusivamente en el repositorio local `/home/ccortesg/workspace/flowerflow`.

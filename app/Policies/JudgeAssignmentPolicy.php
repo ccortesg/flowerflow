@@ -30,6 +30,11 @@ class JudgeAssignmentPolicy
         return $this->isAdminWith($user, 'manage evaluation assignments');
     }
 
+    public function cancel(User $user, JudgeAssignment $assignment): bool
+    {
+        return $this->isAdminWith($user, 'manage evaluation assignments');
+    }
+
     public function declareConflict(User $user, JudgeAssignment $assignment): bool
     {
         return $this->isOperationalJudge($user)

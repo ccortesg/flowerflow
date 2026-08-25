@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 final class JudgeAssignmentCoverage
 {
     /**
-     * @return array{required:int, covered:int, initial:int, pending_conflicts:int, complete:bool}
+     * @return array{active:int, initial:int, pending_conflicts:int, cancelled:int, replaced:int}
      */
     public function summarize(SubmissionVersion $version): array
     {
@@ -25,31 +25,16 @@ final class JudgeAssignmentCoverage
 
     /**
      * @param  Collection<int, JudgeAssignment>  $assignments
-     * @return array{required:int, covered:int, initial:int, pending_conflicts:int, complete:bool}
+     * @return array{active:int, initial:int, pending_conflicts:int, cancelled:int, replaced:int}
      */
     public function fromAssignments(Collection $assignments): array
     {
-        $initials = $assignments
-            ->filter(fn (JudgeAssignment $assignment): bool => $assignment->type === JudgeAssignmentType::Initial);
-        $covered = $initials->filter(function (JudgeAssignment $assignment): bool {
-            if ($assignment->status === JudgeAssignmentStatus::Active) {
-                return true;
-            }
-
-            return $assignment->status === JudgeAssignmentStatus::Voided
-                && $assignment->replacementAssignment?->status === JudgeAssignmentStatus::Active;
-        })->count();
-
-        $pendingConflicts = $assignments
-            ->filter(fn (JudgeAssignment $assignment): bool => $assignment->status === JudgeAssignmentStatus::ConflictDeclared)
-            ->count();
-
         return [
-            'required' => 4,
-            'covered' => $covered,
-            'initial' => $initials->count(),
-            'pending_conflicts' => $pendingConflicts,
-            'complete' => $covered === 4 && $initials->count() === 4,
+            'active' => $assignments->where('status', JudgeAssignmentStatus::Active)->count(),
+            'initial' => $assignments->where('type', JudgeAssignmentType::Initial)->count(),
+            'pending_conflicts' => $assignments->where('status', JudgeAssignmentStatus::ConflictDeclared)->count(),
+            'cancelled' => $assignments->where('status', JudgeAssignmentStatus::Cancelled)->count(),
+            'replaced' => $assignments->where('status', JudgeAssignmentStatus::Voided)->count(),
         ];
     }
 }
