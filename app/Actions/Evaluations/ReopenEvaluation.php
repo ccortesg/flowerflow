@@ -4,6 +4,7 @@ namespace App\Actions\Evaluations;
 
 use App\Enums\EvaluationRevisionStatus;
 use App\Enums\EvaluationStatus;
+use App\Events\EvaluationReopened;
 use App\Exceptions\EvaluationDraftRejected;
 use App\Exceptions\StaleEvaluationDraft;
 use App\Models\Evaluation;
@@ -127,6 +128,13 @@ final class ReopenEvaluation
                     'captured_criteria_count' => $aggregate['scores']->whereNotNull('score')->count(),
                     'is_complete' => $target->total_raw !== null,
                 ]);
+                EvaluationReopened::dispatch(
+                    $lockedEvaluation->id,
+                    $reopening->id,
+                    $source->id,
+                    $target->id,
+                    $actor->id,
+                );
 
                 return $lockedEvaluation->fresh();
             }, 5);

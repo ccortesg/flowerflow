@@ -2,9 +2,13 @@
 
 namespace App\Services;
 
+use App\Enums\BlindReviewPackageStatus;
 use App\Enums\CommunicationType;
 use App\Enums\EligibilityReviewStatus;
+use App\Enums\EvaluationRevisionStatus;
+use App\Enums\EvaluationStatus;
 use App\Enums\JudgeAssignmentStatus;
+use App\Enums\JudgeConflictStatus;
 use App\Enums\JudgeProfileStatus;
 use App\Enums\SubmissionReminderStatus;
 use App\Exceptions\CommunicationCancelledException;
@@ -13,15 +17,25 @@ use App\Mail\SubmissionAdministrativelyFinalized;
 use App\Mail\SubmissionDraftReminder;
 use App\Mail\SubmissionReceived;
 use App\Models\CommunicationDelivery;
+use App\Models\Competition;
 use App\Models\EligibilityReview;
+use App\Models\EvaluationReopening;
+use App\Models\EvaluationRevision;
 use App\Models\JudgeAssignment;
+use App\Models\JudgeConflict;
+use App\Models\JudgeProfile;
 use App\Models\JudgeSetupLink;
 use App\Models\Submission;
 use App\Models\SubmissionReminder;
 use App\Models\User;
+use App\Notifications\EvaluationCloseDigestNotification;
+use App\Notifications\EvaluationReopenedNotification;
+use App\Notifications\EvaluationSubmittedNotification;
 use App\Notifications\JudgeAccountSetupNotification;
 use App\Notifications\JudgeAccountStatusNotification;
 use App\Notifications\JudgeAssignmentCreatedNotification;
+use App\Notifications\JudgeConflictDeclaredNotification;
+use App\Notifications\JudgeConflictResolvedNotification;
 use App\Notifications\JudgeVerifyEmailNotification;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
@@ -31,6 +45,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
+use LogicException;
 
 final class CommunicationMessageRegistry
 {
@@ -79,6 +94,51 @@ final class CommunicationMessageRegistry
                 'context' => ['judge_assignment_id' => $message->assignmentId],
                 'related_type' => JudgeAssignment::class,
                 'related_id' => $message->assignmentId,
+            ],
+            $message instanceof JudgeConflictDeclaredNotification => [
+                'type' => CommunicationType::JudgeConflictDeclared,
+                'variant' => 'responsible_admin',
+                'context' => ['judge_conflict_id' => $message->conflictId],
+                'related_type' => JudgeConflict::class,
+                'related_id' => $message->conflictId,
+            ],
+            $message instanceof JudgeConflictResolvedNotification => [
+                'type' => CommunicationType::JudgeConflictResolved,
+                'variant' => 'outgoing_judge',
+                'context' => ['judge_conflict_id' => $message->conflictId],
+                'related_type' => JudgeConflict::class,
+                'related_id' => $message->conflictId,
+            ],
+            $message instanceof EvaluationSubmittedNotification => [
+                'type' => CommunicationType::EvaluationSubmitted,
+                'variant' => $message->recipientPurpose,
+                'context' => [
+                    'evaluation_revision_id' => $message->revisionId,
+                    'recipient_purpose' => $message->recipientPurpose,
+                ],
+                'related_type' => EvaluationRevision::class,
+                'related_id' => $message->revisionId,
+            ],
+            $message instanceof EvaluationReopenedNotification => [
+                'type' => CommunicationType::EvaluationReopened,
+                'variant' => 'subject_judge',
+                'context' => ['evaluation_reopening_id' => $message->reopeningId],
+                'related_type' => EvaluationReopening::class,
+                'related_id' => $message->reopeningId,
+            ],
+            $message instanceof EvaluationCloseDigestNotification => [
+                'type' => CommunicationType::EvaluationCloseDigest,
+                'variant' => 'subject_judge',
+                'context' => [
+                    'judge_profile_id' => $message->judgeProfileId,
+                    'competition_id' => $message->competitionId,
+                    'submitted' => $message->submitted,
+                    'pending' => $message->pending,
+                    'conflicts_replacements' => $message->conflictsReplacements,
+                    'cancelled' => $message->cancelled,
+                ],
+                'related_type' => JudgeProfile::class,
+                'related_id' => $message->judgeProfileId,
             ],
             $message instanceof SubmissionAdministrativelyFinalized => [
                 'type' => CommunicationType::SubmissionAdministrativelyFinalized,
@@ -134,6 +194,11 @@ final class CommunicationMessageRegistry
             CommunicationType::JudgeEmailVerification => $this->judgeVerification($recipient),
             CommunicationType::JudgeAccountStatus => $this->judgeStatus($recipient, $context),
             CommunicationType::JudgeAssignmentCreated => $this->judgeAssignment($recipient, $context),
+            CommunicationType::JudgeConflictDeclared => $this->judgeConflictDeclared($recipient, $context),
+            CommunicationType::JudgeConflictResolved => $this->judgeConflictResolved($recipient, $context),
+            CommunicationType::EvaluationSubmitted => $this->evaluationSubmitted($recipient, $context),
+            CommunicationType::EvaluationReopened => $this->evaluationReopened($recipient, $context),
+            CommunicationType::EvaluationCloseDigest => $this->evaluationCloseDigest($recipient, $context),
             CommunicationType::SubmissionReceived => $this->submissionReceipt($recipient, $context, false),
             CommunicationType::SubmissionAdministrativelyFinalized => $this->submissionReceipt($recipient, $context, true),
             CommunicationType::SubmissionDraftReminder => $this->submissionReminder($recipient, $context),
@@ -250,6 +315,189 @@ final class CommunicationMessageRegistry
         }
 
         return new JudgeAssignmentCreatedNotification($assignment->id);
+    }
+
+    private function judgeConflictDeclared(User $recipient, array $context): JudgeConflictDeclaredNotification
+    {
+        $this->assertEvaluationNotificationsEnabled();
+        $conflict = JudgeConflict::query()->with('assignment')->find($context['judge_conflict_id'] ?? null);
+        if (! $conflict
+            || $conflict->status !== JudgeConflictStatus::Declared
+            || $conflict->assignment->status !== JudgeAssignmentStatus::ConflictDeclared
+            || $conflict->assignment->assigned_by_user_id !== $recipient->id
+            || ! $this->eligibleAdmin($recipient, 'resolve evaluation conflicts')) {
+            throw new CommunicationCancelledException('judge_conflict_declared_invalid');
+        }
+        $this->assertAssignmentWindow($conflict->assignment, false);
+
+        return new JudgeConflictDeclaredNotification($conflict->id);
+    }
+
+    private function judgeConflictResolved(User $recipient, array $context): JudgeConflictResolvedNotification
+    {
+        $this->assertEvaluationNotificationsEnabled();
+        $conflict = JudgeConflict::query()
+            ->with(['assignment.judgeProfile', 'replacementAssignment'])
+            ->find($context['judge_conflict_id'] ?? null);
+        if (! $conflict
+            || $conflict->status !== JudgeConflictStatus::ResolvedReassigned
+            || $conflict->assignment->status !== JudgeAssignmentStatus::Voided
+            || ! $conflict->replacementAssignment
+            || $conflict->replacement_assignment_id !== $conflict->replacementAssignment->id
+            || $conflict->assignment->judgeProfile?->user_id !== $recipient->id
+            || ! $this->eligibleJudge($conflict->assignment->judgeProfile, $recipient)) {
+            throw new CommunicationCancelledException('judge_conflict_resolved_invalid');
+        }
+        $this->assertAssignmentWindow($conflict->assignment, false);
+
+        return new JudgeConflictResolvedNotification($conflict->id);
+    }
+
+    private function evaluationSubmitted(User $recipient, array $context): EvaluationSubmittedNotification
+    {
+        $this->assertEvaluationNotificationsEnabled();
+        $purpose = $context['recipient_purpose'] ?? null;
+        $revision = EvaluationRevision::query()
+            ->with([
+                'evaluation.judgeAssignment.judgeProfile',
+                'evaluation.rubricVersion.criteria',
+                'evaluation.blindReviewPackage',
+                'reopeningAsTarget',
+            ])
+            ->find($context['evaluation_revision_id'] ?? null);
+        if (! $revision
+            || ! in_array($purpose, ['subject_judge', 'responsible_admin'], true)
+            || $revision->status !== EvaluationRevisionStatus::Submitted
+            || $revision->submitted_at === null
+            || $revision->submission_mode === null
+            || $revision->total_raw === null) {
+            throw new CommunicationCancelledException('evaluation_submission_invalid');
+        }
+
+        $assignment = $this->assertEvaluationFoundation($revision, false);
+        if ($purpose === 'subject_judge') {
+            if ($revision->subject_judge_profile_id !== $assignment->judge_profile_id
+                || $assignment->judgeProfile?->user_id !== $recipient->id
+                || ! $this->eligibleJudge($assignment->judgeProfile, $recipient)) {
+                throw new CommunicationCancelledException('evaluation_submission_judge_invalid');
+            }
+        } else {
+            $responsibleId = $revision->revision_number === 1
+                ? $assignment->assigned_by_user_id
+                : $revision->reopeningAsTarget?->reopened_by_user_id;
+            if ($responsibleId !== $recipient->id || ! $this->eligibleAdmin($recipient, 'view evaluations')) {
+                throw new CommunicationCancelledException('evaluation_submission_admin_invalid');
+            }
+        }
+
+        return new EvaluationSubmittedNotification($revision->id, $purpose);
+    }
+
+    private function evaluationReopened(User $recipient, array $context): EvaluationReopenedNotification
+    {
+        $this->assertEvaluationNotificationsEnabled();
+        $reopening = EvaluationReopening::query()
+            ->with([
+                'targetRevision.evaluation.judgeAssignment.judgeProfile',
+                'targetRevision.evaluation.rubricVersion.criteria',
+                'targetRevision.evaluation.blindReviewPackage',
+            ])
+            ->find($context['evaluation_reopening_id'] ?? null);
+        if (! $reopening
+            || $reopening->targetRevision->status !== EvaluationRevisionStatus::Draft
+            || $reopening->targetRevision->evaluation->status !== EvaluationStatus::Reopened
+            || $reopening->targetRevision->evaluation->current_revision_id !== $reopening->target_revision_id) {
+            throw new CommunicationCancelledException('evaluation_reopening_no_longer_actionable');
+        }
+        $assignment = $this->assertEvaluationFoundation($reopening->targetRevision, true);
+        if ($reopening->subject_judge_profile_id !== $assignment->judge_profile_id
+            || $assignment->judgeProfile?->user_id !== $recipient->id
+            || ! $this->eligibleJudge($assignment->judgeProfile, $recipient)) {
+            throw new CommunicationCancelledException('evaluation_reopening_judge_invalid');
+        }
+
+        return new EvaluationReopenedNotification($reopening->id);
+    }
+
+    private function evaluationCloseDigest(User $recipient, array $context): EvaluationCloseDigestNotification
+    {
+        $profile = JudgeProfile::query()->with('user.roles')->find($context['judge_profile_id'] ?? null);
+        $competition = Competition::query()->find($context['competition_id'] ?? null);
+        $counts = [];
+        foreach (['submitted', 'pending', 'conflicts_replacements', 'cancelled'] as $key) {
+            if (! isset($context[$key]) || ! is_int($context[$key]) || $context[$key] < 0) {
+                throw new CommunicationCancelledException('evaluation_close_digest_context_invalid');
+            }
+            $counts[$key] = $context[$key];
+        }
+        if (! $profile || ! $competition || $profile->user_id !== $recipient->id) {
+            throw new CommunicationCancelledException('evaluation_close_digest_context_invalid');
+        }
+        app(EvaluationCloseDigest::class)->assertDeliveryContext($profile, $competition, $counts);
+
+        return new EvaluationCloseDigestNotification(
+            $profile->id,
+            $competition->id,
+            $counts['submitted'],
+            $counts['pending'],
+            $counts['conflicts_replacements'],
+            $counts['cancelled'],
+        );
+    }
+
+    private function assertEvaluationNotificationsEnabled(): void
+    {
+        if (! config('flowerflow.flags.communication_ledger')
+            || ! config('flowerflow.flags.evaluation_notifications')) {
+            throw new CommunicationCancelledException('evaluation_notifications_disabled');
+        }
+    }
+
+    private function eligibleAdmin(User $recipient, string $permission): bool
+    {
+        return $recipient->hasExactRoles(['admin'])
+            && $recipient->hasVerifiedEmail()
+            && $recipient->can($permission);
+    }
+
+    private function eligibleJudge(?JudgeProfile $profile, User $recipient): bool
+    {
+        return $profile?->status === JudgeProfileStatus::Active
+            && $recipient->hasExactRoles(['judge'])
+            && $recipient->hasVerifiedEmail()
+            && $recipient->can('access judge workspace');
+    }
+
+    private function assertAssignmentWindow(JudgeAssignment $assignment, bool $forMutation): void
+    {
+        try {
+            app(EvaluationWindow::class)->assertAssignment($assignment, $forMutation);
+        } catch (\Throwable) {
+            throw new CommunicationCancelledException('evaluation_assignment_window_invalid');
+        }
+    }
+
+    private function assertEvaluationFoundation(EvaluationRevision $revision, bool $forMutation): JudgeAssignment
+    {
+        $evaluation = $revision->evaluation;
+        $assignment = $evaluation->judgeAssignment;
+        if ($assignment->status !== JudgeAssignmentStatus::Active
+            || $assignment->current_slot !== 1
+            || $evaluation->rubric_version_id !== $assignment->rubric_version_id
+            || $evaluation->blindReviewPackage?->status !== BlindReviewPackageStatus::Active
+            || $evaluation->blindReviewPackage?->submission_version_id !== $assignment->submission_version_id
+            || $revision->evaluation_id !== $evaluation->id
+            || $revision->subject_judge_profile_id !== $assignment->judge_profile_id) {
+            throw new CommunicationCancelledException('evaluation_context_invalid');
+        }
+        try {
+            app(EvaluationRubricContract::class)->assertPersisted($evaluation->rubricVersion);
+        } catch (LogicException) {
+            throw new CommunicationCancelledException('evaluation_rubric_invalid');
+        }
+        $this->assertAssignmentWindow($assignment, $forMutation);
+
+        return $assignment;
     }
 
     private function submissionReceipt(User $recipient, array $context, bool $administrative): Mailable

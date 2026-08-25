@@ -1,5 +1,7 @@
 # Handoff operativo vigente — Flower Flow
 
+> **M8 `GO LOCAL/TEST` — 2026-08-25:** añade `FLOWERFLOW_EVALUATION_NOTIFICATIONS_ENABLED=false`, `FLOWERFLOW_EVALUATION_CLOSE_DIGEST_ENABLED=false` y catch-up fijo de 24 horas. Reutiliza el worker exclusivo Flower Flow `--queue=high,exports,default,low`; no requiere otro proceso. El scheduler añade `flowerflow:evaluations-queue-close-digests --execute` cada minuto con lock. Suite final 216/2,495 y UAT Firefox/worker local verdes. El comando sin `--execute` es read-only. No activar ni ejecutar en producción sin autorización, cache/config revisada, scheduler/worker verificados y UAT SMTP separado. Rollback: apagar ambos flags y conservar deliveries/intentos/auditoría.
+
 > **M7 `GO LOCAL/TEST` — validación final 2026-08-25:** añade `FLOWERFLOW_EVALUATION_FINALIZATION_ENABLED=false` y `FLOWERFLOW_EVALUATION_REOPEN_CLOSE_AT="2026-08-27 20:00:00"`; conserva cierre de evaluación `2026-08-27 23:59:59`. La migración 23 amplía estados/revisiones, hace backfill del juez sujeto y crea reaperturas. Suite final 208/2,385, 23 migraciones, 104 rutas y UAT Firefox verdes. Rollback operativo: apagar el flag; con evidencia M7 no ejecutar `down()` ni desplegar código M6 incompatible. No se requieren workers nuevos porque M7 no envía correo. Producción no está autorizada.
 
 > **M6A `GO LOCAL/TEST` — 2026-08-24:** baseline `d3f616c86d72bfd32c1545205df057e19cf765ea`; suite final 203/2,220, 22 migraciones y 95 rutas. Añade onboarding purpose-bound, rúbrica v2 activa, asignación manual ilimitada/sin mínimos, cancelación, cadenas explícitas de reemplazo, notificación opcional y shell responsive de juez. Flags nuevos: `FLOWERFLOW_JUDGE_ACCOUNT_SETUP_NOTIFICATION_ENABLED`, `FLOWERFLOW_JUDGE_SETUP_LINK_TTL_MINUTES` y `FLOWERFLOW_JUDGE_ASSIGNMENT_NOTIFICATION_ENABLED`. No aplicar en producción: `OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED` mantiene `NO-GO RELEASE/PRODUCTION`. M7–M10 siguen fuera. Evidencia: `docs/27-phase-02b-m6a-judge-operations-reconciliation-report-2026-08-24.md`.
@@ -37,13 +39,13 @@ M7 queda `GO LOCAL/TEST`: 23 migraciones, suite completa 208/2,385, asignación 
 | Área | Estado local documentado | Estado productivo en este handoff |
 |---|---|---|
 | Fase 01 / 02A, cuarta categoría, plazo, legales v1.1, XLSX y 503/CSP | Implementado y validado localmente según diagnóstico/ExecPlans | Instalación confirmada sólo por el propietario. |
-| Jueces, asignaciones, conflictos, rúbrica y evaluación | M1–M7 conformes local/test; paquete ciego, borrador/cálculo, envío inmutable y reapertura append-only | Nada de M1–M7 atribuido a producción. |
+| Jueces, asignaciones, conflictos, rúbrica, evaluación y comunicaciones | M1–M8 en alcance local/test; paquete, borrador/cálculo, envío/reapertura y outbox/digest | Nada de M1–M8 atribuido a producción. |
 | Ganadores/resultados | 0 %; fuera de Fase 02B | No implementado; resultados deben permanecer apagados. |
 | Operación externa | Runbooks y configuración documentados | Evidencia técnica independiente `POR_CONFIRMAR`. |
 
 ## Siguiente puerta
 
-Las decisiones de Fase 02B hasta M7 están implementadas local/test. M6A sustituyó el contrato `4+2` por selección manual sin mínimos/límites; la divergencia con “al menos tres jueces” permanece `LEGAL_RECONCILIATION_REQUIRED`. El paquete vigente incluye:
+Las decisiones de Fase 02B hasta M8 están implementadas local/test. M6A sustituyó el contrato `4+2` por selección manual sin mínimos/límites; la divergencia con “al menos tres jueces” permanece `LEGAL_RECONCILIATION_REQUIRED`. El paquete vigente incluye:
 
 - `.agent/execplans/flowerflow-phase-02b-evaluation-design.md`;
 - `.agent/execplans/flowerflow-phase-02b-m1-judge-rbac.md`;
@@ -55,6 +57,7 @@ Las decisiones de Fase 02B hasta M7 están implementadas local/test. M6A sustitu
 - `.agent/execplans/flowerflow-phase-02b-m6-draft-evaluation-server-scoring.md`;
 - `.agent/execplans/flowerflow-phase-02b-m6a-judge-operations-reconciliation.md`;
 - `.agent/execplans/flowerflow-phase-02b-m7-immutable-submission-append-only-reopening.md`;
+- `.agent/execplans/flowerflow-phase-02b-m8-evaluation-communications.md`;
 - `docs/18-phase-02b-evaluation-decision-package-2026-08-18.md`;
 - `docs/19-phase-02b-m2-implementation-report-2026-08-18.md`;
 - `docs/20-phase-02b-m3-implementation-report-2026-08-18.md`;
@@ -64,15 +67,17 @@ Las decisiones de Fase 02B hasta M7 están implementadas local/test. M6A sustitu
 - `docs/24-phase-02b-m6-draft-evaluation-implementation-report-2026-08-18.md`;
 - `docs/27-phase-02b-m6a-judge-operations-reconciliation-report-2026-08-24.md`;
 - `docs/28-phase-02b-m7-evaluation-submission-reopening-report-2026-08-24.md`;
+- `docs/29-phase-02b-m8-evaluation-communications-report-2026-08-25.md`;
 - `docs/adr/0008-phase-02b-evaluation-contract.md`;
 - `docs/adr/0010-m6a-judge-operations-reconciliation.md`;
-- `docs/adr/0011-m7-immutable-evaluation-submission-reopening.md`.
+- `docs/adr/0011-m7-immutable-evaluation-submission-reopening.md`;
+- `docs/adr/0012-m8-evaluation-communications.md`.
 
-La siguiente puerta potencial es diseñar y autorizar exclusivamente M8. El estado es:
+La siguiente puerta potencial es diseñar y autorizar exclusivamente M9. El estado es:
 
-`M1–M7 CONFORMANT LOCAL/TEST — IMMUTABLE SUBMISSION/REOPENING ACTIVE — M8–M10 NOT AUTHORIZED`
+`M1–M8 LOCAL/TEST — IMMUTABLE SUBMISSION/REOPENING + COMMUNICATIONS — M9–M10 NOT AUTHORIZED`
 
-M1 evita el acceso por descarte; M2 añade cuenta; M3 rúbrica; M6A fija asignación manual sin mínimos/límites y rúbrica v2; M5 conserva proyección ciega/anexos; M6 borrador/cálculo; M7 sellado y reapertura append-only. M8–M10 requieren autorización separada.
+M1 evita acceso por descarte; M2 añade cuenta; M3 rúbrica; M6A fija asignación manual/rúbrica v2; M5 conserva proyección; M6 borrador/cálculo; M7 sellado/reapertura y M8 comunicaciones/digest. M9–M10 requieren autorización separada.
 
 La asignación vigente es exclusivamente administrativa y explícita, sin mínimo/máximo ni sustitutos exclusivos. `P2B-BLOCK-001` queda superado operacionalmente por M6A, pero la contradicción jurídica de mínimos impide release/producción.
 

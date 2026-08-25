@@ -45,6 +45,7 @@ return [
         'admissibility_review' => env('FLOWERFLOW_ADMISSIBILITY_REVIEW_ENABLED', false),
         'evaluation' => env('FLOWERFLOW_EVALUATION_ENABLED', false),
         'evaluation_finalization' => env('FLOWERFLOW_EVALUATION_FINALIZATION_ENABLED', false),
+        'evaluation_notifications' => env('FLOWERFLOW_EVALUATION_NOTIFICATIONS_ENABLED', false),
         'submission_reminders' => env('FLOWERFLOW_SUBMISSION_REMINDERS_ENABLED', false),
         'administrative_finalization' => env('FLOWERFLOW_ADMIN_FINALIZATION_ENABLED', false),
         'communication_ledger' => env('FLOWERFLOW_COMMUNICATION_LEDGER_ENABLED', false),
@@ -120,5 +121,9 @@ return [
         'force_queue' => env('FLOWERFLOW_COMMUNICATION_FORCE_QUEUE', 'high'),
         'stalled_after_minutes' => (int) env('FLOWERFLOW_COMMUNICATION_STALLED_AFTER_MINUTES', 5),
         'failed_context_retention_days' => (int) env('FLOWERFLOW_COMMUNICATION_CONTEXT_FAILED_RETENTION_DAYS', 90),
+    ],
+    'evaluation_notifications' => [
+        'close_digest_enabled' => env('FLOWERFLOW_EVALUATION_CLOSE_DIGEST_ENABLED', false),
+        'close_digest_catchup_hours' => (int) env('FLOWERFLOW_EVALUATION_CLOSE_DIGEST_CATCHUP_HOURS', 24),
     ],
 ];

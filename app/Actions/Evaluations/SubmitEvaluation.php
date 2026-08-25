@@ -126,7 +126,7 @@ final class SubmitEvaluation
                     'captured_criteria_count' => $context['criteria']->count(),
                     'is_complete' => true,
                 ]);
-                EvaluationSubmitted::dispatch($evaluation->id, $aggregate['revision']->id, $actor->id, $mode->value);
+                EvaluationSubmitted::dispatch($evaluation->id, $aggregate['revision']->id, $actor->id);
 
                 return $evaluation->fresh();
             }, 5);

@@ -1,5 +1,7 @@
 # Especificación de producto — Flower Flow 2026
 
+> **Contrato de producto M8 — 2026-08-25, local/test:** el outbox registra comunicaciones de conflicto declarado/resuelto, envío/reenvío, reapertura y un digest por juez. Destinatarios, contenido e idempotencia son deterministas; el worker cancela eventos obsoletos y la bitácora permite recuperación con la misma revalidación. Los recordatorios 20/22 no se ejecutan retroactivamente. M9–M10, consolidación, ranking, resultados, producción y SMTP real siguen fuera.
+
 > **Contrato de producto M7 — validación final 2026-08-25, `GO LOCAL/TEST`:** evaluación completa + comentario general 100–2,000 + confirmación explícita sellan la revisión vigente. Reapertura administrativa hasta 20:00:00 crea una nueva revisión desde la enviada; juez o admin real pueden editar/reenviar hasta 23:59:59. La aplicación conserva juez sujeto, actor y modo, muestra información diferenciada y no crea comunicaciones M8. Resultado: 208 pruebas/2,385 aserciones y UAT Firefox. M8–M10 y producción siguen fuera.
 
 > **Contrato de producto M6A — 2026-08-24:** onboarding inicial purpose-bound verifica el correo al fijar contraseña; asignación sólo manual, sin mínimos/máximos y con `primary|substitute` informativo; paquete sin gate de cobertura; cancelación antes de evaluación y reemplazos explícitos. Rúbrica v2 activa: cuatro criterios de la Mecánica, pesos de producto 25/25/25/25, escala 0–10, paso .5 y HALF_UP 4/2. La notificación de alta y de asignación es configurable globalmente y por operación. M7–M10 permanecen fuera y la contradicción jurídica bloquea release.
@@ -36,7 +38,7 @@
 
 ## Integridad del insumo
 
-> **RESOLVED para Fase 01, Fase 02A y M1–M7 de 02B; PENDING para el producto maestro:** identidad, rúbrica, asignaciones/conflictos, paquete ciego, evaluación draft, sellado y reapertura están probados en local/test. M8–M10, consolidación, empate, ganadores, publicación y ARCO permanecen pendientes. La contradicción jurídica del mínimo de jueces continúa bloqueando release.
+> **RESOLVED para Fase 01, Fase 02A y M1–M8 de 02B; PENDING para el producto maestro:** identidad, rúbrica, asignaciones/conflictos, paquete, evaluación, sellado/reapertura y comunicaciones/digest tienen implementación local/test. M9–M10, consolidación, empate, ganadores, publicación y ARCO permanecen pendientes. La contradicción jurídica del mínimo continúa bloqueando release.
 
 ## Resumen ejecutivo
 
@@ -87,7 +89,7 @@ La frase histórica “la primera fase es documental” quedó superada por las 
 | Frontend | DECISION | Bootstrap 5.3.6, Vite 6.4.3 y varios plugins de la plantilla están declarados; su presencia no autoriza usarlos todos. |
 | Layouts | VERIFIED | `layouts/flowerflow.blade.php` sirve público, participante y panel; layouts heredados se conservan sin ser el contrato principal. |
 | Navegación | VERIFIED / DEUDA | Navegación Flower Flow usa parciales/Blade por rol; los JSON heredados conservan demos no usados por este layout. |
-| Aplicación | VERIFIED | Hay 104 rutas propias sin vendor y módulos de auth, perfil, propuestas, admisibilidad, panel, exportación y Fase 02B M1–M7. |
+| Aplicación | VERIFIED | Hay 104 rutas propias sin vendor y módulos de auth, perfil, propuestas, admisibilidad, panel, exportación y Fase 02B M1–M8; M8 no añade rutas. |
 | Variante/licencia exacta | PENDING | Debe confirmarse si el paquete adquirido es starter kit o full version, y el alcance de su licencia para dominio/proyecto. |
 
 ## Objetivo del producto
@@ -182,12 +184,12 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 
 - **JUD-001 — OWNER_APPROVED / PARTIAL — M1 VERIFIED:** rol `judge`, permiso mínimo exclusivo, correo verificado, gates y shell vacío detrás de flag están implementados/probados. M2 aborda perfil, alta directa por `admin`, activación, suspensión y recovery; no hay dashboard de asignaciones.
 - **JUD-002 — OWNER_APPROVED / M5 VERIFIED LOCAL:** ceguera simple estructural mediante paquete allowlist; todos los campos sustantivos y anexos evaluables capturados son visibles con nombres neutros, mientras PII estructurada, residencia, notas, aclaraciones e historial permanecen ocultos. El riesgo de autoidentificación dentro del contenido fue aceptado y se comunica en UI.
-- **JUD-003 — OWNER_APPROVED / NOT IMPLEMENTED:** catálogo cerrado de cuatro tipos de conflicto; `admin` resuelve y reasigna a otro juez mediante una asignación independiente.
-- **JUD-004 — OWNER_APPROVED / M3 IMPLEMENTED LOCAL:** rúbrica global versionada con `pertinence`/Pertinencia 20, `clarity`/Claridad 20, `feasibility`/Viabilidad 25, `impact`/Impacto 25 y `coherence`/Coherencia 10; escala 0–10/paso 0.5; precisión 4/2 `HALF_UP`; comentarios futuros 100–2,000/1,000. Descripciones extensas `NULL`/`POR_CONFIRMAR`; no existe captura de evaluación.
-- **JUD-005 — OWNER_APPROVED / NOT IMPLEMENTED:** envío inmutable, reapertura append-only por `admin` hasta las 20:00 con razón/password confirmation y edición hasta las 23:59:59; toda edición administrativa conserva actor real y revisión previa.
-- **JUD-006 — OWNER_APPROVED / NOT IMPLEMENTED:** cierre global `2026-08-27 23:59:59 America/Hermosillo`; notificaciones mínimas de juez y recordatorios de participantes 20/22 de agosto a las 09:00.
-- **JUD-007 — OWNER_APPROVED / NOT IMPLEMENTED:** total sólo servidor, precisión 4/2 `HALF_UP`, media aritmética de cuatro evaluaciones, consolidación bloqueada ante faltantes y empate por igualdad a dos decimales. Ganador/desempate quedan fuera.
-- **JUD-008 — OWNER FINAL / M4A VERIFIED:** cuatro primary cubren todas las elegibles y dos substitute exclusivos reciben reemplazos; los seis son ilimitados. M4A aplica capacidad nula y selección manual, con más de treinta reemplazos probados.
+- **JUD-003 — OWNER_APPROVED / M4–M8 VERIFIED LOCAL:** catálogo cerrado de cuatro tipos; el juez declara, el admin resuelve y selecciona explícitamente cualquier juez activo elegible. M8 notifica al admin responsable y al juez saliente sin contenido sensible.
+- **JUD-004 — OWNER FINAL / M6A–M7 VERIFIED LOCAL:** v1 histórica conserva cinco criterios 20/20/25/25/10; v2 activa conserva cuatro criterios de la Mecánica con pesos neutrales 25/25/25/25. Ambas usan escala 0–10/paso .5 y precisión 4/2 `HALF_UP`; la asignación fija versión y M6/M7 dimensionan/capturan/envían dinámicamente.
+- **JUD-005 — OWNER APPROVED / M7–M8 VERIFIED LOCAL:** envío inmutable y reapertura append-only hasta las 20:00; juez/admin real editan y reenvían la revisión reabierta hasta 23:59:59. M8 comunica envío y reapertura sin cambiar autoría/evidencia.
+- **JUD-006 — OWNER APPROVED / M8 VERIFIED LOCAL:** cierre global `2026-08-27 23:59:59 America/Hermosillo`; digest único por juez durante las siguientes 24 horas. Los recordatorios programados de participantes 20/22 quedaron vencidos/excluidos y no se reproducen.
+- **JUD-007 — OWNER APPROVED / NOT IMPLEMENTED:** consolidación/promedio, faltantes, empate, ganador y desempate pertenecen a M9+; no existe cobertura mínima ni media fija de cuatro en el contrato vigente.
+- **JUD-008 — OWNER FINAL / M6A VERIFIED LOCAL:** asignación exclusivamente manual por admin, sin mínimo/máximo; `primary|substitute` es informativo y cualquier juez activo elegible puede recibir asignación inicial o replacement.
 
 ### Ganadores y resultados
 
@@ -201,12 +203,13 @@ Permitir que una convocatoria opere de punta a punta con mínimo privilegio, tra
 
 ### Comunicaciones, privacidad y reportes
 
-- **COM-001 — DECISION:** plantillas transaccionales para verificación, alta directa de juez, invitaciones de integrante si se aprueban, correcciones, envío, elegibilidad, asignación, evaluación y resultados.
+- **COM-001 — M8 VERIFIED LOCAL PARA CICLO ACTUAL:** plantillas transaccionales HTML/texto y marca dual para las familias actuales, incluidas asignación y evaluación. Invitaciones futuras, resultados y marketing permanecen fuera.
 - **COM-002 — DECISION:** colas, idempotencia, reintentos y registro de resultado sin contenido sensible innecesario.
 - **COM-003 — DECISION:** usar `convocatoria@flowerflow.com.mx` como remitente o reply-to funcional y `privacidad@flowerflow.com.mx` para privacidad; credenciales SMTP permanecen pendientes y no deben inventarse.
 - **COM-004 — DECISION:** no construir marketing masivo sin consentimiento y alcance explícitos.
-- **COM-006 — VERIFIED LOCAL:** bitácora `/panel/notificaciones` para las nueve familias existentes; rol exacto `admin`, estados e intentos sin cuerpo/PII completa y `sent` presentado como aceptación del servidor de correo.
+- **COM-006 — VERIFIED LOCAL:** bitácora `/panel/notificaciones` para los quince tipos actuales (diez previos + cinco M8); rol exacto `admin`, estados e intentos sin cuerpo/PII completa y `sent` presentado como aceptación del servidor de correo.
 - **COM-007 — VERIFIED LOCAL:** recuperación individual de `queued|failed|unknown` con revalidación en worker, lock optimista, contraseña reciente, razón cifrada y reconocimiento adicional de posible duplicado para `unknown`.
+- **COM-008 — M8 VERIFIED LOCAL:** conflicto, resolución, envío/reenvío, reapertura y cierre usan eventos/deliveries idempotentes, destinatarios exactos y cancelación fail-closed; no hay replay M7 ni recordatorios retroactivos.
 - **PRV-001 — ASSUMPTION:** bandeja administrativa para solicitudes recibidas por correo o formulario, sin afirmar que sustituye revisión legal.
 - **PRV-002 — DECISION:** conservar evidencia de atención y cierre, con exportación, rectificación, retención y eliminación controladas.
 - **RPT-001 — DECISION:** reportes por categoría, estado, elegibilidad y evaluación, sujetos a permiso.

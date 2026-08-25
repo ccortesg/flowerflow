@@ -13,3 +13,4 @@ Artisan::command('inspire', function () {
 Schedule::command('flowerflow:exports-purge')->hourly()->withoutOverlapping();
 Schedule::command('flowerflow:communications-reconcile')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('flowerflow:communications-purge-context')->hourly()->withoutOverlapping();
+Schedule::command('flowerflow:evaluations-queue-close-digests --execute')->everyMinute()->withoutOverlapping();
