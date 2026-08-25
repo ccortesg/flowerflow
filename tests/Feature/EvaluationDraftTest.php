@@ -67,9 +67,9 @@ class EvaluationDraftTest extends TestCase
         $this->assertDatabaseCount('evaluations', 0);
 
         $this->actingAs($judge)->post(route('judge.assignments.evaluation.store', $assignment))
-            ->assertRedirect(route('judge.assignments.show', $assignment))->assertSessionHasNoErrors();
+            ->assertRedirect(route('judge.assignments.project.show', $assignment))->assertSessionHasNoErrors();
         $this->actingAs($judge)->post(route('judge.assignments.evaluation.store', $assignment))
-            ->assertRedirect(route('judge.assignments.show', $assignment))->assertSessionHasNoErrors();
+            ->assertRedirect(route('judge.assignments.project.show', $assignment))->assertSessionHasNoErrors();
 
         $evaluation = Evaluation::query()->with('currentRevision.scores')->sole();
         $this->assertDatabaseCount('evaluations', 1);
@@ -103,7 +103,7 @@ class EvaluationDraftTest extends TestCase
             fn (EvaluationScore $score): bool => $score->score === null && $score->calculated_component === null
         ));
 
-        $this->actingAs($judge)->get(route('judge.assignments.show', $assignment))
+        $this->actingAs($judge)->get(route('judge.assignments.evaluation.show', $assignment))
             ->assertOk()
             ->assertSee('Pertinencia')
             ->assertSee('20.0000 %')
@@ -172,7 +172,7 @@ class EvaluationDraftTest extends TestCase
         ]))->assertRedirect()->assertSessionHasNoErrors();
         $this->assertSame('75.2500', $revision->fresh()->total_raw);
         $this->assertSame(5, Evaluation::query()->sole()->lock_version);
-        $this->actingAs($judge)->get(route('judge.assignments.show', $assignment))
+        $this->actingAs($judge)->get(route('judge.assignments.evaluation.show', $assignment))
             ->assertOk()->assertSee('75.25 de 100.00');
     }
 
@@ -240,7 +240,7 @@ class EvaluationDraftTest extends TestCase
             ]],
         ])->assertRedirect()->assertSessionHasNoErrors();
         $this->assertSame($xss, EvaluationRevision::query()->sole()->general_comment);
-        $html = $this->actingAs($judge)->get(route('judge.assignments.show', $assignment))->assertOk()->getContent();
+        $html = $this->actingAs($judge)->get(route('judge.assignments.evaluation.show', $assignment))->assertOk()->getContent();
         $this->assertStringNotContainsString('<script>alert("M6-XSS")</script>', $html);
         $this->assertStringContainsString('&lt;script&gt;alert(&quot;M6-XSS&quot;)&lt;/script&gt;', $html);
     }
@@ -401,7 +401,7 @@ class EvaluationDraftTest extends TestCase
         $this->save($judge, $assignment, 2, [], 'Guardado un segundo después, debe fallar.')
             ->assertSessionHasErrors('evaluation');
         $this->assertSame(2, Evaluation::query()->sole()->lock_version);
-        $this->actingAs($judge)->get(route('judge.assignments.show', $assignment))
+        $this->actingAs($judge)->get(route('judge.assignments.evaluation.show', $assignment))
             ->assertOk()->assertSee('sólo para lectura')->assertDontSee('Guardar borrador');
 
         CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-08-18 12:00:00', 'America/Hermosillo'));
@@ -414,6 +414,8 @@ class EvaluationDraftTest extends TestCase
         $this->assertSame(JudgeAssignmentStatus::ConflictDeclared, $assignment->fresh()->status);
         $this->actingAs($judge)->get(route('judge.assignments.show', $assignment))
             ->assertOk()->assertDontSee('Comentario de la primera pestaña.')->assertDontSee('Guardar borrador');
+        $this->actingAs($judge)->get(route('judge.assignments.project.show', $assignment))->assertForbidden();
+        $this->actingAs($judge)->get(route('judge.assignments.evaluation.show', $assignment))->assertForbidden();
         $this->actingAs($judge)->patch(route('judge.assignments.evaluation.update', $assignment), [
             'lock_version' => 2, 'general_comment' => null, 'criteria' => [],
         ])->assertForbidden();

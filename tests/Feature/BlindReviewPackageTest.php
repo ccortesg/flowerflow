@@ -136,7 +136,8 @@ class BlindReviewPackageTest extends TestCase
         $assignment = JudgeAssignment::query()->where('judge_profile_id', $primaries->first()->judgeProfile->id)->firstOrFail();
         $packageFile = $package->files()->firstOrFail();
 
-        $html = $this->actingAs($primaries->first())->get(route('judge.assignments.show', $assignment))
+        $this->actingAs($primaries->first())->post(route('judge.assignments.evaluation.store', $assignment))->assertRedirect();
+        $html = $this->actingAs($primaries->first())->get(route('judge.assignments.project.show', $assignment))
             ->assertOk()
             ->assertSee('Anonimización estructural')
             ->assertSee('IDENTIDAD-AUTOEXPUESTA-ACEPTADA')
@@ -155,22 +156,22 @@ class BlindReviewPackageTest extends TestCase
         $this->assertStringNotContainsString('identidad-original', (string) $download->headers->get('Content-Disposition'));
 
         $otherJudge = $primaries->get(1);
-        $this->actingAs($otherJudge)->get(route('judge.assignments.show', $assignment))->assertForbidden();
+        $this->actingAs($otherJudge)->get(route('judge.assignments.project.show', $assignment))->assertForbidden();
         $this->actingAs($otherJudge)->get(route('judge.assignments.packages.files.download', [$assignment, $packageFile]))->assertForbidden();
         $this->app['auth']->logout();
-        $this->get(route('judge.assignments.show', $assignment))->assertRedirect();
+        $this->get(route('judge.assignments.project.show', $assignment))->assertRedirect();
         foreach ([$this->participant(), $this->reviewer(), $admin, User::factory()->create()] as $forbidden) {
-            $this->actingAs($forbidden)->get(route('judge.assignments.show', $assignment))->assertForbidden();
+            $this->actingAs($forbidden)->get(route('judge.assignments.project.show', $assignment))->assertForbidden();
         }
 
         $multiRole = User::factory()->create();
         $multiRole->assignRole(['judge', 'participant']);
-        $this->actingAs($multiRole)->get(route('judge.assignments.show', $assignment))->assertForbidden();
+        $this->actingAs($multiRole)->get(route('judge.assignments.project.show', $assignment))->assertForbidden();
         $this->actingAs($primaries->first())->get('/juez/asignaciones/'.$assignment->public_id.'/anexos/01J00000000000000000000000')->assertNotFound();
         $this->actingAs($primaries->first())->get(route('judge.assignments.packages.files.download', [$assignment, $package->files()->latest('id')->firstOrFail()]))->assertOk();
 
         $primaries->first()->judgeProfile->forceFill(['status' => JudgeProfileStatus::Suspended->value])->save();
-        $this->actingAs($primaries->first())->get(route('judge.assignments.show', $assignment))->assertRedirect(route('judge.status'));
+        $this->actingAs($primaries->first())->get(route('judge.assignments.project.show', $assignment))->assertRedirect(route('judge.status'));
     }
 
     public function test_conflict_removes_access_and_manual_replacement_uses_the_same_package(): void
@@ -200,7 +201,8 @@ class BlindReviewPackageTest extends TestCase
         $this->assertSame($original->submission_version_id, $replacement->submission_version_id);
         $this->assertSame(BlindReviewPackageStatus::Active, $package->fresh()->status);
         $this->assertDatabaseCount('blind_review_packages', 1);
-        $this->actingAs($substitutes->last())->get(route('judge.assignments.show', $replacement))
+        $this->actingAs($substitutes->last())->post(route('judge.assignments.evaluation.store', $replacement))->assertRedirect();
+        $this->actingAs($substitutes->last())->get(route('judge.assignments.project.show', $replacement))
             ->assertOk()->assertSee('IDENTIDAD-AUTOEXPUESTA-ACEPTADA');
         $this->actingAs($substitutes->last())->get(route('judge.assignments.packages.files.download', [$replacement, $file]))
             ->assertOk()->assertDownload('Documento 01.pdf');

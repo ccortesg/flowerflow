@@ -45,7 +45,7 @@ class EvaluationSubmissionController extends Controller
             return response()->view('errors.409', ['assignment' => $judgeAssignment, 'message' => $exception->getMessage()], 409);
         }
 
-        return redirect()->route('judge.assignments.show', $judgeAssignment)
+        return redirect()->route('judge.assignments.evaluation.show', $judgeAssignment)
             ->with('status', 'La evaluación quedó enviada y sellada. La revisión enviada es inmutable.');
     }
 }

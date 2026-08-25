@@ -7,8 +7,11 @@ use App\Http\Controllers\Judge\AccountSecurityController as JudgeAccountSecurity
 use App\Http\Controllers\Judge\AssignmentController as JudgeAssignmentController;
 use App\Http\Controllers\Judge\BlindReviewPackageFileController as JudgeBlindReviewPackageFileController;
 use App\Http\Controllers\Judge\DashboardController as JudgeDashboardController;
+use App\Http\Controllers\Judge\EvaluationController as JudgeEvaluationController;
 use App\Http\Controllers\Judge\EvaluationDraftController as JudgeEvaluationDraftController;
 use App\Http\Controllers\Judge\EvaluationSubmissionController as JudgeEvaluationSubmissionController;
+use App\Http\Controllers\Judge\ProjectController as JudgeProjectController;
+use App\Http\Controllers\Judge\ProjectExportController as JudgeProjectExportController;
 use App\Http\Controllers\Judge\SetupController as JudgeSetupController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Panel\AccountSecurityController;
@@ -106,7 +109,14 @@ Route::prefix('juez')->name('judge.')->middleware([
             Route::delete('/', [JudgeAccountSecurityController::class, 'disableTwoFactor'])->name('disable');
         });
         Route::get('/asignaciones', [JudgeAssignmentController::class, 'index'])->name('assignments.index');
-        Route::get('/asignaciones/{judgeAssignment}', [JudgeAssignmentController::class, 'show'])->name('assignments.show');
+        Route::get('/asignaciones/{judgeAssignment}/proyecto', [JudgeProjectController::class, 'show'])
+            ->name('assignments.project.show');
+        Route::get('/asignaciones/{judgeAssignment}/proyecto.pdf', [JudgeProjectExportController::class, 'pdf'])
+            ->middleware('throttle:judge-project-exports')->name('assignments.project.exports.pdf');
+        Route::get('/asignaciones/{judgeAssignment}/proyecto.xlsx', [JudgeProjectExportController::class, 'xlsx'])
+            ->middleware('throttle:judge-project-exports')->name('assignments.project.exports.xlsx');
+        Route::get('/asignaciones/{judgeAssignment}/evaluacion', [JudgeEvaluationController::class, 'show'])
+            ->name('assignments.evaluation.show');
         Route::get('/asignaciones/{judgeAssignment}/anexos/{blindReviewPackageFile}', JudgeBlindReviewPackageFileController::class)
             ->name('assignments.packages.files.download');
         Route::post('/asignaciones/{judgeAssignment}/conflicto', [JudgeAssignmentController::class, 'declare'])
@@ -124,6 +134,7 @@ Route::prefix('juez')->name('judge.')->middleware([
         Route::post('/asignaciones/{judgeAssignment}/evaluacion/enviar', [JudgeEvaluationSubmissionController::class, 'submit'])
             ->middleware(['evaluation-finalization.enabled', 'permission:submit own evaluations', 'throttle:panel-mutations'])
             ->name('assignments.evaluation.submit');
+        Route::get('/asignaciones/{judgeAssignment}', [JudgeAssignmentController::class, 'show'])->name('assignments.show');
     });
 });
 

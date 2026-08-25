@@ -1,0 +1,189 @@
+.ff-evaluation-shell {
+  width: min(100%, 72rem);
+  margin-inline: auto;
+}
+
+.ff-evaluation-stepper {
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.ff-evaluation-stepper ol {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ff-evaluation-stepper li {
+  position: relative;
+  min-width: 0;
+}
+
+.ff-evaluation-stepper li::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 1.25rem;
+  left: calc(50% + 1.35rem);
+  width: calc(100% - 2.2rem);
+  height: 2px;
+  background: #cddbd4;
+}
+
+.ff-evaluation-stepper li:last-child::after {
+  display: none;
+}
+
+.ff-evaluation-stepper a,
+.ff-evaluation-stepper li > span {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+  color: #50635d;
+  font-size: .84rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+}
+
+.ff-evaluation-stepper a:hover {
+  color: var(--ff-green-dark);
+}
+
+.ff-evaluation-stepper a:focus-visible {
+  outline: 3px solid var(--ff-green);
+  outline-offset: 4px;
+  border-radius: .5rem;
+}
+
+.ff-evaluation-stepper .ff-step-number {
+  position: static;
+  inset: auto;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: #40544d;
+  background: #fff;
+  border: 2px solid #aebfb7;
+  border-radius: 50%;
+  font-size: .9rem;
+  letter-spacing: normal;
+}
+
+.ff-evaluation-stepper .is-current .ff-step-number,
+.ff-evaluation-stepper .is-ready .ff-step-number {
+  color: #fff;
+  background: var(--ff-green);
+  border-color: var(--ff-green);
+}
+
+.ff-evaluation-stepper .is-completed .ff-step-number {
+  color: var(--ff-green-dark);
+  background: #dcefe7;
+  border-color: var(--ff-green);
+}
+
+.ff-evaluation-stepper .is-pending > span {
+  color: #7b8984;
+}
+
+.ff-next-action {
+  padding: clamp(1rem, 3vw, 1.5rem);
+  background: #f2f9f5;
+  border: 1px solid #cfe1d8;
+  border-radius: 1rem;
+}
+
+.ff-detail-list dd,
+.ff-project-content,
+.ff-rich-content {
+  overflow-wrap: anywhere;
+}
+
+.ff-rich-content img,
+.ff-rich-content video,
+.ff-rich-content audio {
+  max-width: 100%;
+  height: auto;
+}
+
+.ff-criterion-card {
+  margin-bottom: 1rem;
+  padding: clamp(1rem, 3vw, 1.35rem);
+  background: #fff;
+  border: 1px solid #dce8e2;
+  border-radius: 1rem;
+}
+
+.ff-evaluation-summary progress {
+  width: min(100%, 15rem);
+  height: .8rem;
+  accent-color: var(--ff-green);
+}
+
+.ff-evaluation-actionbar {
+  position: sticky;
+  z-index: 20;
+  bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 253, 245, .97);
+  border: 1px solid #cbdad3;
+  border-radius: 1rem;
+  box-shadow: 0 .75rem 1.8rem rgba(20, 64, 50, .12);
+  backdrop-filter: blur(8px);
+}
+
+[data-autosave-status].is-dirty { color: #8a5700; }
+[data-autosave-status].is-saving { color: #175ca5; }
+[data-autosave-status].is-saved { color: #13734f; }
+[data-autosave-status].is-error { color: #b42318; }
+
+.ff-export-actions .btn,
+.ff-wizard-actions .btn {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+}
+
+@media (max-width: 575.98px) {
+  .ff-evaluation-stepper ol { gap: .2rem; }
+  .ff-evaluation-stepper a,
+  .ff-evaluation-stepper li > span { font-size: .68rem; }
+  .ff-evaluation-stepper .ff-step-number { width: 2.15rem; height: 2.15rem; }
+  .ff-evaluation-stepper li::after {
+    top: 1.08rem;
+    left: calc(50% + 1.1rem);
+    width: calc(100% - 1.7rem);
+  }
+  .ff-evaluation-actionbar {
+    bottom: 0;
+    align-items: stretch;
+    flex-direction: column;
+    margin-inline: -.5rem;
+    border-radius: .85rem .85rem 0 0;
+  }
+  .ff-evaluation-actionbar .btn,
+  .ff-export-actions .btn,
+  .ff-wizard-actions .btn { width: 100%; min-height: 2.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ff-evaluation-stepper *,
+  .ff-evaluation-actionbar * { scroll-behavior: auto !important; transition: none !important; }
+}

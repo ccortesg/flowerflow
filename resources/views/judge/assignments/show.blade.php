@@ -3,168 +3,55 @@
 @section('title', 'Detalle de asignación')
 
 @section('content')
-<section class="ff-narrow-card" aria-labelledby="assignment-title">
-  <div class="card ff-card p-4 p-lg-5">
-    <a href="{{ route('judge.assignments.index') }}" class="mb-3">← Volver a mis asignaciones</a>
-    <h1 id="assignment-title" class="h2">Asignación {{ $assignment->public_id }}</h1>
-    <dl class="row">
+<section class="ff-evaluation-shell" aria-labelledby="assignment-title">
+  <div class="card ff-card p-3 p-md-4 p-lg-5">
+    <a href="{{ route('judge.assignments.index') }}" class="mb-3 align-self-start">← Volver a mis asignaciones</a>
+    @include('judge.assignments._wizard-stepper', ['currentStep' => 1])
+
+    <p class="ff-kicker mb-1">Paso 1 de 4</p>
+    <h1 id="assignment-title" class="h2">Inicio de evaluación</h1>
+    <p class="text-secondary">Confirma el contexto de la asignación antes de consultar el proyecto y capturar la rúbrica.</p>
+
+    <dl class="row ff-detail-list">
+      <dt class="col-sm-4">Asignación</dt><dd class="col-sm-8"><code>{{ $assignment->public_id }}</code></dd>
       <dt class="col-sm-4">Categoría</dt><dd class="col-sm-8">{{ $assignment->submissionVersion->submission->category->name }}</dd>
       <dt class="col-sm-4">Plazo</dt><dd class="col-sm-8">{{ $assignment->due_at->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i:s') }} (Hermosillo)</dd>
       <dt class="col-sm-4">Estado</dt><dd class="col-sm-8">{{ $assignment->status->label() }}</dd>
     </dl>
+
     @if($assignment->status === \App\Enums\JudgeAssignmentStatus::Active && ! $assignment->conflict)
-      <section class="border rounded p-3 p-md-4 mb-4" aria-labelledby="assignment-decisions-title">
+      <section class="ff-next-action" aria-labelledby="assignment-decisions-title">
         <h2 id="assignment-decisions-title" class="h4">Tu siguiente acción</h2>
-        <p class="mb-3">
+        <p>
           @if($hasSubmittedRevision)
-            Consulta la evaluación enviada y su historial inmutable.
+            La evaluación fue enviada. Puedes consultar la revisión vigente y su historial inmutable.
+          @elseif($evaluation)
+            El borrador ya está iniciado. Continúa con el proyecto o abre directamente la evaluación.
           @else
-            Revisa el paquete y avanza con tu evaluación. Si existe un conflicto, decláralo antes de evaluar.
+            Inicia la evaluación para habilitar el proyecto asignado. Si existe un conflicto, decláralo antes de evaluar.
           @endif
         </p>
         <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2">
           @if($evaluation)
-            <a class="btn btn-flower" href="#evaluation-form">{{ $evaluation->status === \App\Enums\EvaluationStatus::Submitted ? 'Ver evaluación' : 'Continuar evaluación' }}</a>
+            <a class="btn btn-flower" href="{{ route('judge.assignments.evaluation.show', $assignment) }}">{{ $evaluation->status === \App\Enums\EvaluationStatus::Submitted ? 'Ver evaluación' : 'Continuar evaluación' }}</a>
+            <a class="btn btn-outline-primary" href="{{ route('judge.assignments.project.show', $assignment) }}">Ver proyecto asignado</a>
           @elseif($canStartEvaluation)
             <form method="POST" action="{{ route('judge.assignments.evaluation.store', $assignment) }}">@csrf<button class="btn btn-flower" type="submit">Iniciar evaluación</button></form>
+            <a class="btn btn-outline-warning" href="#declare-conflict">Declarar conflicto</a>
           @else
             <button class="btn btn-flower" type="button" disabled aria-describedby="evaluation-unavailable-help">Iniciar evaluación</button>
           @endif
-          @unless($hasSubmittedRevision)<a class="btn btn-outline-warning" href="#declare-conflict">Declarar conflicto</a>@endunless
         </div>
         @unless($evaluation || $canStartEvaluation)<p id="evaluation-unavailable-help" class="small text-secondary mt-2 mb-0">La evaluación se habilitará cuando el paquete ciego y las invariantes de la asignación estén vigentes.</p>@endunless
       </section>
     @endif
-    @if($package)
-      @php($payload = $package->payload)
-      <div class="alert alert-warning" role="note"><strong>Anonimización estructural.</strong> Se ocultan los datos estructurados de identidad y operación. El texto, los enlaces o los anexos pueden identificar a su autor; este paquete no promete anonimato semántico.</div>
-      <article aria-labelledby="blind-package-title">
-        <h2 id="blind-package-title" class="h4">Proyecto asignado</h2>
-        <dl class="row">
-          <dt class="col-sm-4">Categoría</dt><dd class="col-sm-8">{{ data_get($payload, 'category.name') }}</dd>
-          <dt class="col-sm-4">Modalidad</dt><dd class="col-sm-8">{{ data_get($payload, 'submission.participation_type') === 'team' ? 'Equipo' : 'Individual' }}</dd>
-          <dt class="col-sm-4">Título</dt><dd class="col-sm-8">{{ data_get($payload, 'submission.title') }}</dd>
-        </dl>
-        <h3 class="h5">Resumen</h3><p>{{ data_get($payload, 'submission.summary') }}</p>
-        <h3 class="h5">Descripción</h3><div>{!! data_get($payload, 'submission.description_html') !!}</div>
-        <h3 class="h5 mt-4">Enlaces externos</h3>
-        <ul>@forelse(data_get($payload, 'external_links', []) as $link)<li><a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer">{{ $link['kind'] === 'youtube' ? 'Video del proyecto' : 'Carpeta pública del proyecto' }}</a> <small>{{ $link['normalized_host'] }}</small></li>@empty<li>Sin enlaces externos.</li>@endforelse</ul>
-        <h3 class="h5 mt-4">Anexos evaluables</h3>
-        <ul class="list-group list-group-flush mb-4">
-          @forelse($package->files as $file)
-            <li class="list-group-item d-flex flex-wrap justify-content-between gap-2"><span>{{ $file->neutral_label }} <small>({{ $file->file_class->label() }}, {{ number_format($file->expected_size_bytes / 1024, 1) }} KiB)</small></span><a href="{{ route('judge.assignments.packages.files.download', [$assignment, $file]) }}">Descargar</a></li>
-          @empty<li class="list-group-item">Sin anexos capturados.</li>@endforelse
-        </ul>
-      </article>
-    @else
-      <div class="alert alert-info">El paquete ciego activo todavía no está disponible. No se genera automáticamente desde este acceso.</div>
-    @endif
 
     @if($evaluationUnavailable)
-      <section id="evaluation-form" class="mt-4" aria-labelledby="evaluation-title">
-        <h2 id="evaluation-title" class="h4">Evaluación</h2>
-        <div class="alert alert-warning" role="alert">El borrador no está disponible porque una invariante de asignación, rúbrica o paquete dejó de cumplirse. No se modificó ningún dato.</div>
-      </section>
-    @elseif($evaluation)
-      @php($revision = $evaluation->currentRevision)
-      @php($scoresByCriterion = $revision->scores->keyBy('rubric_criterion_id'))
-      @php($capturedCriteria = $revision->scores->whereNotNull('score')->count())
-      @php($criterionCount = $evaluation->rubricVersion->criteria->count())
-      <section id="evaluation-form" class="mt-4" aria-labelledby="evaluation-title">
-        <h2 id="evaluation-title" class="h4">Evaluación — revisión {{ $revision->revision_number }}</h2>
-        @if($evaluation->status === \App\Enums\EvaluationStatus::Reopened)
-          <div class="alert alert-warning" role="status">La administración reabrió esta evaluación. Revisa cuidadosamente los datos antes de volver a enviarla.</div>
-        @elseif($evaluation->status === \App\Enums\EvaluationStatus::Submitted)
-          <div class="alert alert-success" role="status">La evaluación fue enviada. Esta revisión está sellada y permanece sólo para lectura.</div>
-        @else
-          <div class="alert alert-info" role="status">Este borrador aún no se ha enviado.</div>
-        @endif
-        <dl class="row">
-          <dt class="col-sm-4">Estado</dt><dd class="col-sm-8">{{ $evaluation->status->label() }}</dd>
-          <dt class="col-sm-4">Progreso</dt><dd class="col-sm-8"><progress value="{{ $capturedCriteria }}" max="{{ $criterionCount }}">{{ $capturedCriteria }} de {{ $criterionCount }}</progress> {{ $capturedCriteria }} de {{ $criterionCount }} criterios capturados</dd>
-          <dt class="col-sm-4">Total del servidor</dt>
-          <dd class="col-sm-8">{{ $evaluationTotalDisplay === null ? 'Disponible al capturar todos los criterios.' : $evaluationTotalDisplay.' de 100.00' }}</dd>
-        </dl>
-
-        @if($evaluationReadOnly)
-          @if($evaluation->status !== \App\Enums\EvaluationStatus::Submitted)<div class="alert alert-warning" role="status">Las mutaciones no están disponibles. La revisión se conserva sólo para lectura.</div>@endif
-          @foreach($evaluation->rubricVersion->criteria as $criterion)
-            @php($scoreRow = $scoresByCriterion->get($criterion->id))
-            <section class="border rounded p-3 mb-3" aria-labelledby="criterion-read-{{ $criterion->code }}">
-              <h3 id="criterion-read-{{ $criterion->code }}" class="h5">{{ $criterion->label }} — {{ $criterion->weight }} %</h3>
-              <p class="mb-1">Rango 0.0000–10.0000; paso 0.5000.</p>
-              <p class="mb-1"><strong>Puntaje:</strong> {{ $scoreRow->score ?? 'Sin capturar' }}</p>
-              <p class="mb-0 text-break"><strong>Comentario:</strong> {{ $scoreRow->comment ?? 'Sin comentario' }}</p>
-            </section>
-          @endforeach
-          <h3 class="h5">Comentario general</h3>
-          <p class="text-break">{{ $revision->general_comment ?? 'Sin comentario general' }}</p>
-        @else
-          <form method="POST" action="{{ route('judge.assignments.evaluation.update', $assignment) }}">
-            @csrf
-            @method('PATCH')
-            <input type="hidden" name="lock_version" value="{{ $evaluation->lock_version }}">
-
-            @foreach($evaluation->rubricVersion->criteria as $criterion)
-              @php($scoreRow = $scoresByCriterion->get($criterion->id))
-              @php($scoreError = "criteria.{$loop->index}.score")
-              @php($commentError = "criteria.{$loop->index}.comment")
-              <fieldset class="border rounded p-3 mb-3">
-                <legend class="h5 px-2">{{ $criterion->label }} — {{ $criterion->weight }} %</legend>
-                <p id="criterion-help-{{ $criterion->code }}" class="text-secondary">Rango 0.0000–10.0000; paso exacto 0.5000.</p>
-                <input type="hidden" name="criteria[{{ $loop->index }}][code]" value="{{ $criterion->code }}">
-                <div class="mb-3">
-                  <label class="form-label" for="score-{{ $criterion->code }}">Puntaje</label>
-                  <input class="form-control @error($scoreError) is-invalid @enderror" type="number" inputmode="decimal" min="0" max="10" step="0.5" id="score-{{ $criterion->code }}" name="criteria[{{ $loop->index }}][score]" value="{{ old("criteria.{$loop->index}.score", $scoreRow->score) }}" aria-describedby="criterion-help-{{ $criterion->code }} @error($scoreError) score-error-{{ $criterion->code }} @enderror">
-                  @error($scoreError)<div class="invalid-feedback" id="score-error-{{ $criterion->code }}">{{ $message }}</div>@enderror
-                </div>
-                <div>
-                  <label class="form-label" for="comment-{{ $criterion->code }}">Comentario del criterio (opcional)</label>
-                  <textarea class="form-control @error($commentError) is-invalid @enderror" id="comment-{{ $criterion->code }}" name="criteria[{{ $loop->index }}][comment]" maxlength="1000" rows="3" aria-describedby="comment-help-{{ $criterion->code }} @error($commentError) comment-error-{{ $criterion->code }} @enderror">{{ old("criteria.{$loop->index}.comment", $scoreRow->comment) }}</textarea>
-                  <small id="comment-help-{{ $criterion->code }}" class="text-secondary">Máximo 1,000 caracteres.</small>
-                  @error($commentError)<div class="invalid-feedback" id="comment-error-{{ $criterion->code }}">{{ $message }}</div>@enderror
-                </div>
-              </fieldset>
-            @endforeach
-
-            <div class="mb-3">
-              <label class="form-label" for="general-comment">Comentario general (opcional en borrador)</label>
-              <textarea class="form-control @error('general_comment') is-invalid @enderror" id="general-comment" name="general_comment" maxlength="2000" rows="5" aria-describedby="general-comment-help @error('general_comment') general-comment-error @enderror">{{ old('general_comment', $revision->general_comment) }}</textarea>
-              <small id="general-comment-help" class="text-secondary">Puede quedar vacío al guardar; para enviar debe contener entre 100 y 2,000 caracteres.</small>
-              @error('general_comment')<div class="invalid-feedback" id="general-comment-error">{{ $message }}</div>@enderror
-            </div>
-
-            <div class="d-flex flex-wrap gap-2">
-              <button class="btn btn-outline-primary" name="intent" value="save" type="submit">Guardar borrador</button>
-              @if($finalizationEnabled)<button class="btn btn-flower" name="intent" value="review" type="submit">Revisar y enviar</button>@endif
-            </div>
-            <p class="mt-2 mb-0 text-secondary" aria-live="polite">El servidor es la única autoridad de componentes, progreso y total.</p>
-          </form>
-        @endif
-      </section>
-      @if($evaluation->revisions->count() > 1)
-        <section class="mt-4" aria-labelledby="judge-history-title">
-          <h2 id="judge-history-title" class="h4">Historial de revisiones</h2>
-          <p class="text-secondary">Las revisiones enviadas anteriores permanecen inmutables.</p>
-          @foreach($evaluation->revisions->where('id', '<>', $revision->id)->sortByDesc('revision_number') as $historicalRevision)
-            <details class="border rounded p-3 mb-2"><summary>Revisión {{ $historicalRevision->revision_number }} — {{ $historicalRevision->status->label() }}</summary><div class="mt-3">@include('evaluations._revision-read', ['revision' => $historicalRevision])</div></details>
-          @endforeach
-        </section>
-      @endif
-    @elseif($canStartEvaluation)
-      <section class="mt-4" aria-labelledby="evaluation-title">
-        <h2 id="evaluation-title" class="h4">Evaluación</h2>
-        <p>La evaluación todavía no existe. Usa la acción principal “Iniciar evaluación” para crear el borrador con los criterios de la rúbrica fijada.</p>
-      </section>
-    @elseif($package && $assignment->status === \App\Enums\JudgeAssignmentStatus::Active)
-      <section class="mt-4" aria-labelledby="evaluation-title">
-        <h2 id="evaluation-title" class="h4">Evaluación</h2>
-        <div class="alert alert-info" role="status">No es posible iniciar una evaluación con las condiciones actuales de plazo o integridad. Abrir o refrescar esta página no crea ningún borrador.</div>
-      </section>
+      <div class="alert alert-warning mt-4" role="alert">La evaluación no está disponible porque una invariante de asignación, rúbrica o paquete dejó de cumplirse. No se modificó ningún dato.</div>
     @endif
 
     @if($assignment->conflict)
-      <div class="alert alert-warning" role="status">Conflicto declarado: {{ $assignment->conflict->type->label() }}. La asignación permanece bloqueada.</div>
+      <div class="alert alert-warning mt-4" role="status">Conflicto declarado: {{ $assignment->conflict->type->label() }}. La asignación permanece bloqueada.</div>
     @elseif($assignment->status === \App\Enums\JudgeAssignmentStatus::Active && ! $hasSubmittedRevision)
       <details id="declare-conflict" class="border rounded p-3 mt-4">
         <summary class="fw-bold">Declarar conflicto</summary>

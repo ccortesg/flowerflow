@@ -180,7 +180,7 @@ final class SaveEvaluationDraft
         }
 
         $intent = $payload['intent'] ?? 'save';
-        if (! is_string($intent) || ! in_array($intent, ['save', 'review'], true)) {
+        if (! is_string($intent) || ! in_array($intent, ['save', 'review', 'autosave'], true)) {
             throw new EvaluationDraftRejected('evaluation_intent_invalid', 'La intención del guardado no es válida.');
         }
 

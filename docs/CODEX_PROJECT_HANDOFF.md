@@ -1,5 +1,7 @@
 # Handoff actual — Flower Flow
 
+> **M8A `GO LOCAL/TEST` — 2026-08-25:** sobre baseline limpio `4aff0b0cd6e65a2101463657165e11e30379be00` se implementó el wizard responsive de cuatro pasos, autosave cada 30 segundos con lock optimista y exportaciones privadas PDF/XLSX construidas sólo desde el paquete ciego fijado. Resultado final: 233 pruebas/2,849 aserciones, una prueba opt-in omitida, 112 rutas, cuatro schedules, 24 migraciones, gates y UAT Firefox en tres viewports verdes. No añade migración, permiso, job, cola o worker; sí registra DOMPDF y PhpSpreadsheet. No hubo stage/commit/push/deploy ni producción. Se conserva `NO-GO RELEASE/PRODUCTION — OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED`. Ver `docs/31-phase-02b-m8a-judge-evaluation-wizard-exports-report-2026-08-25.md`.
+
 > **Asignación simultánea — `GO LOCAL/TEST`, 2026-08-25:** se añadió un asistente default-off para un juez y hasta veinte propuestas, con preflight cifrado, transacción por propuesta, éxito parcial y un único correo consolidado. Suite 228/2,653, dirigida final 9/123, benchmark de 200 MiB en 2.589 s y UAT Firefox en tres viewports. No hay migración, tabla batch, worker nuevo, stage/commit/push/deploy o producción. Ver `.agent/execplans/flowerflow-bulk-judge-assignment.md` y `docs/30-bulk-judge-assignment-report-2026-08-25.md`.
 
 > **M8 `GO LOCAL/TEST` — 2026-08-25:** sobre baseline limpio `a1a2a3babbb7b827b73cb8455b340e697ec93cb1` se implementaron cinco comunicaciones del ciclo de evaluación y digest resumido mediante el outbox existente. Resultado final: 216 pruebas/2,495 aserciones, 23 migraciones, 104 rutas, cuatro schedules y UAT Firefox verde. No hay migración, permiso, ruta o worker nuevo. Flags default-off y rollback sin borrar evidencia. No hubo stage/commit/push/deploy, producción o SMTP real. M9–M10 siguen fuera y se conserva `NO-GO RELEASE/PRODUCTION — OWNER_OVERRIDE / LEGAL_RECONCILIATION_REQUIRED`.
@@ -22,23 +24,23 @@ Fecha de corte canónico: 2026-08-25.
 
 - Checkout: `/home/ccortesg/workspace/flowerflow`.
 - Rama auditada: `codex/submission-deadline-extension`.
-- HEAD/remoto/ancestro común observado al iniciar M8: `a1a2a3babbb7b827b73cb8455b340e697ec93cb1`; el árbol contiene el diff local M8 no publicado por esta tarea.
-- El diagnóstico vigente está en `docs/16-project-status-by-module-and-role-2026-08-17.md`; informes M7/M8: `docs/28-phase-02b-m7-evaluation-submission-reopening-report-2026-08-24.md` y `docs/29-phase-02b-m8-evaluation-communications-report-2026-08-25.md`.
+- HEAD/remoto/ancestro común observado al iniciar M8A: `4aff0b0cd6e65a2101463657165e11e30379be00`; el árbol contiene el diff local M8A no publicado por esta tarea.
+- El diagnóstico vigente está en `docs/16-project-status-by-module-and-role-2026-08-17.md`; informes M7/M8/M8A: `docs/28-phase-02b-m7-evaluation-submission-reopening-report-2026-08-24.md`, `docs/29-phase-02b-m8-evaluation-communications-report-2026-08-25.md` y `docs/31-phase-02b-m8a-judge-evaluation-wizard-exports-report-2026-08-25.md`.
 - Fase 01, Fase 02A, cuarta categoría, exportación privada, ampliación de plazo y catálogo/vínculos/aceptaciones v1.1 están implementados, probados y recorridos localmente sin tocar v1.0 ni aceptaciones históricas.
 - La Mecánica v1.1 definitiva confirma cuatro categorías y máximo cuatro propuestas. El propietario aceptó la superposición de accesibilidad sin cambios y resolvió la continuidad de aceptaciones v1.0 sin reaceptación forzada ni backfill.
 - El propietario designó como v1.0 el archivo físico actual `3bcf31…`; la diferencia con `42bd5e…` permanece como incidencia histórica visible, pero deja de ser bloqueo operativo. Ver `docs/17-legal-v1-1-reconciliation-2026-08-17.md`.
 - P2 503/CSP quedó resuelto localmente con vista accesible/de marca, assets Vite normales, cero estilos inline y soporte de pre-render de mantenimiento.
 - Topología productiva confirmada por el propietario: checkout Git directo en `/var/www/flowerflow`, sin `releases/current/shared`; el VirtualHost informado `app.sguniformes.com.mx` apunta a esa ruta. No inferir por ello un cambio del host canónico público ni alterar Apache.
-- Fase 02B M1–M8 está implementada sólo en local/test. M6A sustituyó `4+2`, M7 agregó sellado/reapertura y M8 comunicaciones/digest por outbox. M9–M10, consolidación, ganadores, resultados, ARCO y despliegue permanecen fuera.
+- Fase 02B M1–M8 y M8A están implementadas sólo en local/test. M6A sustituyó `4+2`, M7 agregó sellado/reapertura, M8 comunicaciones/digest por outbox y M8A reorganizó la experiencia del juez sin cambiar persistencia. M9–M10, consolidación, ganadores, resultados, ARCO y despliegue permanecen fuera.
 - Existe evidencia pública histórica de una release anterior (`26256e3`), pero no prueba que `e2f4345` esté desplegado.
 
 ## Evidencia vigente
 
-- Última evidencia ejecutada M8: suite MySQL aislada 216 pruebas/2,495 aserciones; M8 7/99 y concurrencia 1/11.
+- Última evidencia ejecutada M8A: suite MySQL aislada 233 pruebas/2,849 aserciones, con una prueba de carga máxima opt-in omitida; regresión dirigida 37/812.
 - Pint, Composer validate/platform/audit, JSON y build Vite: verdes.
 - Yarn conserva un advisory bajo conocido de Quill 2.0.3 sin fix; sanitización servidor vigente.
-- 104 rutas propias sin vendor y 23 migraciones aplicadas en `flowerflow_testing`.
-- UAT Firefox M8: bitácora, filtro, detalle, procesamiento prioritario, worker database, aceptación/cancelación redactada, juez 403, visitante redirigido y tres viewports; teclado/foco/zoom-reflow/consola limpios.
+- 112 rutas propias sin vendor, cuatro schedules y 24 migraciones aplicadas en `flowerflow_testing`; M8A no añade migración.
+- UAT Firefox M8A: cuatro pasos, autosave real, navegación con guardado, 422, offline, dos pestañas/409, envío y sólo lectura, PDF/XLSX y tres viewports; teclado/foco/reflow/consola limpios. El zoom nativo 200–400 % y un smoke en Excel/LibreOffice real se mantienen como verificación manual previa a release.
 - `scripts/serve_local_testing.sh` valida base/cuenta/catálogos/flags antes de servir; usa sesiones database, correo array, cola sync, limpia cache de permisos y mantiene resultados apagados. La base terminó sembrada con cero usuarios/perfiles/sesiones sintéticos.
 - La base local primaria `flowerflow` conserva cuatro migraciones funcionales pendientes.
 - El `.env` local conserva `FLOWERFLOW_MAX_SUBMISSIONS_PER_USER=3`; el contrato, código, ejemplo y pruebas usan cuatro.
@@ -46,7 +48,7 @@ Fecha de corte canónico: 2026-08-25.
 
 ## Siguiente puerta
 
-La siguiente puerta potencial es M9 y requiere autorización separada. No puede inferirse consolidación, cobertura, ranking, resultados, retención, producción ni acceso al checkout `/var/www/flowerflow` desde M8.
+La siguiente puerta potencial es M9 y requiere autorización separada. No puede inferirse consolidación, cobertura, ranking, resultados, retención, producción ni acceso al checkout `/var/www/flowerflow` desde M8A.
 
 ## Reglas de continuidad
 
