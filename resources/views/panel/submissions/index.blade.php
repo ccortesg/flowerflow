@@ -49,7 +49,7 @@
 </form>
 
 <div class="card ff-card">
-  <p class="small text-muted px-3 pt-3 mb-0">En Acciones, el sobre envía un recordatorio y el avión registra administrativamente una propuesta.</p>
+  <p class="small text-muted px-3 pt-3 mb-0">En Acciones, el sobre envía un recordatorio, el avión registra administrativamente una propuesta y el escudo abre su expediente de admisibilidad.</p>
   <div class="table-responsive">
     <table class="table mb-0">
       <thead><tr><th>Folio</th><th>Proyecto</th><th>Participante</th><th>Categoría</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
@@ -63,9 +63,11 @@
           <td>{{ $item->statusLabel() }}</td>
           <td>{{ $item->created_at->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i') }}</td>
           <td>
+            @php($hasRowAction = false)
             <div class="d-flex flex-wrap gap-1">
               @if(config('flowerflow.flags.submission_reminders'))
                 @can('sendReminder', $item)
+                  @php($hasRowAction = true)
                   <form method="POST" action="{{ route('panel.submissions.reminders.submissions.store', $item) }}">
                     @csrf
                     <button class="btn btn-sm btn-outline-primary" type="submit" aria-label="Enviar recordatorio de la propuesta {{ $item->title }}">
@@ -77,6 +79,7 @@
               @endif
               @if(config('flowerflow.flags.administrative_finalization') && $item->isDraft())
                 @can('administrativelyFinalize', $item)
+                  @php($hasRowAction = true)
                   @if($item->hasMinimumFinalizationContent())
                     <a class="btn btn-sm btn-outline-success" href="{{ route('panel.submissions.administrative-finalization.show', $item) }}" aria-label="Registrar administrativamente la propuesta {{ $item->title }}">
                       <i class="ri-send-plane-line" aria-hidden="true"></i>
@@ -90,9 +93,32 @@
                   @endif
                 @endcan
               @endif
-              @if(! config('flowerflow.flags.submission_reminders') && ! config('flowerflow.flags.administrative_finalization'))
-                <span aria-hidden="true">—</span><span class="visually-hidden">Sin acciones disponibles</span>
+              @if(config('flowerflow.flags.admissibility_review') && $item->status === 'submitted')
+                @can('view admissibility reviews')
+                  @php($hasRowAction = true)
+                  @if($item->eligibilityReview)
+                    @php($admissibilityActionLabel = match ($item->eligibilityReview->status) {
+                      \App\Enums\EligibilityReviewStatus::Pending => 'Revisar admisibilidad',
+                      \App\Enums\EligibilityReviewStatus::InReview,
+                      \App\Enums\EligibilityReviewStatus::ClarificationRequested => 'Continuar admisibilidad',
+                      \App\Enums\EligibilityReviewStatus::Admitted => 'Ver admisión',
+                      \App\Enums\EligibilityReviewStatus::NotAdmitted => 'Ver resolución',
+                    })
+                    <a class="btn btn-sm btn-outline-success" href="{{ route('panel.admissibility.show', $item->eligibilityReview) }}" aria-label="{{ $admissibilityActionLabel }} de la propuesta {{ $item->title }}">
+                      <i class="ri-shield-check-line" aria-hidden="true"></i>
+                      <span class="d-none d-xl-inline ms-1">{{ $admissibilityActionLabel }}</span>
+                    </a>
+                  @else
+                    <span class="btn btn-sm btn-outline-secondary disabled" aria-disabled="true" aria-label="Sin expediente de admisibilidad para la propuesta {{ $item->title }}" title="Ejecuta el backfill de admisibilidad antes de revisar esta propuesta">
+                      <i class="ri-shield-check-line" aria-hidden="true"></i>
+                      <span class="d-none d-xl-inline ms-1">Sin expediente</span>
+                    </span>
+                  @endif
+                @endcan
               @endif
+              @unless($hasRowAction)
+                <span aria-hidden="true">—</span><span class="visually-hidden">Sin acciones disponibles</span>
+              @endunless
             </div>
           </td>
         </tr>

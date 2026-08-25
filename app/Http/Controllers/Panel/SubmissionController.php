@@ -13,7 +13,7 @@ class SubmissionController extends Controller
 {
     public function index(): View
     {
-        $submissions = Submission::query()->with(['user', 'category'])
+        $submissions = Submission::query()->with(['user', 'category', 'eligibilityReview'])
             ->when(request('status'), fn ($q, $status) => $q->where('status', $status))
             ->when(request('category'), fn ($q, $category) => $q->whereHas('category', fn ($cq) => $cq->where('slug', $category)))
             ->latest()->paginate(25)->withQueryString();
