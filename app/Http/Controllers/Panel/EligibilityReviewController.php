@@ -18,6 +18,7 @@ use App\Models\TeamMember;
 use App\Models\User;
 use App\Services\AuditLogger;
 use App\Services\EligibilityReviewWorkflow;
+use App\Services\SubmissionReferenceFilter;
 use App\Support\MailDispatchStatus;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
@@ -27,9 +28,12 @@ use Illuminate\View\View;
 
 class EligibilityReviewController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, SubmissionReferenceFilter $referenceFilter): View
     {
         abort_unless($request->user()->can('view admissibility reviews'), 403);
+        $request->validate([
+            'folio' => ['nullable', 'string', 'max:64'],
+        ]);
         $fromUtc = $request->filled('from')
             ? CarbonImmutable::parse($request->string('from').' 00:00:00', config('flowerflow.timezone'))->utc()
             : null;
@@ -41,7 +45,10 @@ class EligibilityReviewController extends Controller
             ->with(['submission:id,public_id,folio,title,category_id,submitted_at', 'submission.category:id,slug,name', 'reviewer:id,name'])
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
             ->when($request->filled('category'), fn ($query) => $query->whereHas('submission.category', fn ($category) => $category->where('slug', $request->string('category'))))
-            ->when($request->filled('folio'), fn ($query) => $query->whereHas('submission', fn ($submission) => $submission->where('folio', 'like', '%'.$request->string('folio')->trim().'%')))
+            ->when($request->filled('folio'), fn ($query) => $query->whereHas(
+                'submission',
+                fn ($submission) => $referenceFilter->apply($submission, $request->string('folio')->toString()),
+            ))
             ->when($request->filled('reviewer'), fn ($query) => $query->where('reviewer_user_id', $request->integer('reviewer')))
             ->when($fromUtc, fn ($query) => $query->whereHas('submission', fn ($submission) => $submission->where('submitted_at', '>=', $fromUtc)))
             ->when($toUtc, fn ($query) => $query->whereHas('submission', fn ($submission) => $submission->where('submitted_at', '<=', $toUtc)))

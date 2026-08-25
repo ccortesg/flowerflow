@@ -21,7 +21,11 @@
 
 @if($result['notification_requested'])
   <div class="alert {{ $result['notification_queued'] ? 'alert-success' : 'alert-warning' }}" role="status">
-    {{ $result['notification_queued'] ? 'El correo consolidado quedó en cola.' : 'Las asignaciones se conservaron, pero el correo consolidado no quedó en cola.' }}
+    @if($result['notification_skipped_pending'] ?? false)
+      Las asignaciones se conservaron, pero el correo consolidado se omitió porque el juez aún tiene la configuración de su cuenta pendiente.
+    @else
+      {{ $result['notification_queued'] ? 'El correo consolidado quedó en cola.' : 'Las asignaciones se conservaron, pero el correo consolidado no quedó en cola.' }}
+    @endif
   </div>
 @endif
 

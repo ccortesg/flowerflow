@@ -235,6 +235,75 @@ class JudgeAssignmentsAndConflictsTest extends TestCase
         app(CommunicationMessageRegistry::class)->prepare($delivery);
     }
 
+    public function test_pending_setup_judges_can_be_assigned_and_replaced_without_early_access_or_deferred_mail(): void
+    {
+        Queue::fake();
+        config([
+            'flowerflow.flags.communication_ledger' => true,
+            'flowerflow.judge_notifications.assignment_enabled' => true,
+        ]);
+        $admin = $this->adminWithPassword();
+        $active = $this->activeJudge($admin, JudgeAssignmentRole::Primary, 1);
+        $pending = $this->pendingJudge($admin, JudgeAssignmentRole::Substitute, 2);
+        $submission = $this->admittedSubmission();
+
+        $result = app(AssignJudgesToSubmission::class)->execute(
+            $submission,
+            $admin,
+            [$active->judgeProfile->public_id, $pending->judgeProfile->public_id],
+            'Asignación mixta sintética antes de completar el onboarding.',
+            true,
+        );
+
+        $this->assertCount(2, $result['created']);
+        $this->assertSame(1, $result['notifications_skipped_pending']);
+        $this->assertDatabaseCount('communication_deliveries', 1);
+        $pendingAssignment = JudgeAssignment::query()
+            ->where('judge_profile_id', $pending->judgeProfile->id)
+            ->sole();
+        $this->assertSame(JudgeAssignmentStatus::Active, $pendingAssignment->status);
+        $this->actingAs($pending)->get(route('judge.assignments.index'))
+            ->assertRedirect(route('verification.notice'));
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'assignment.notification_skipped',
+            'auditable_id' => $pendingAssignment->id,
+        ]);
+        $audit = DB::table('audit_logs')
+            ->where('action', 'assignment.notification_skipped')
+            ->where('auditable_id', $pendingAssignment->id)
+            ->value('metadata');
+        $this->assertStringContainsString('judge_setup_pending', (string) $audit);
+
+        DB::table('users')->where('id', $pending->id)->update(['email_verified_at' => now('UTC')]);
+        DB::table('judge_profiles')->where('id', $pending->judgeProfile->id)->update([
+            'status' => JudgeProfileStatus::Active->value,
+            'password_initialized_at' => now('UTC'),
+            'activated_at' => now('UTC'),
+        ]);
+        $pending->unsetRelation('judgeProfile')->refresh();
+        $this->actingAs($pending)->get(route('judge.assignments.index'))
+            ->assertOk()
+            ->assertSee($pendingAssignment->public_id);
+        $this->assertDatabaseCount('judge_assignments', 2);
+
+        $otherPending = $this->pendingJudge($admin, JudgeAssignmentRole::Primary, 3);
+        $conflict = app(DeclareJudgeConflict::class)->execute(
+            $result['created']->first(),
+            $active,
+            JudgeConflictType::ParticipationInSubmission,
+            null,
+        );
+        $replacement = app(ResolveJudgeConflict::class)->execute(
+            $conflict,
+            $admin,
+            $otherPending->judgeProfile->public_id,
+            'Reemplazo explícito sintético hacia una cuenta aún pendiente.',
+            true,
+        );
+        $this->assertSame($otherPending->judgeProfile->id, $replacement->judge_profile_id);
+        $this->assertDatabaseCount('communication_deliveries', 1);
+    }
+
     public function test_legal_v2_evaluation_uses_four_criteria_and_server_authoritative_decimal_total(): void
     {
         $admin = $this->adminWithPassword();
@@ -269,6 +338,40 @@ class JudgeAssignmentsAndConflictsTest extends TestCase
         $this->assertSame('77.5000', $evaluation->currentRevision->total_raw);
         $this->assertSame('77.50', app(EvaluationDraftCalculator::class)->display($evaluation->currentRevision->total_raw));
         $this->assertSame(4, $evaluation->currentRevision->scores()->whereNotNull('score')->count());
+    }
+
+    public function test_suspended_roleless_multi_role_and_incoherent_pending_profiles_are_not_assignable(): void
+    {
+        $admin = $this->adminWithPassword();
+        $submission = $this->admittedSubmission();
+        $suspended = $this->pendingJudge($admin, JudgeAssignmentRole::Primary, 10);
+        $suspended->judgeProfile->forceFill(['status' => JudgeProfileStatus::Suspended])->save();
+        $roleless = $this->pendingJudge($admin, JudgeAssignmentRole::Primary, 11);
+        $roleless->syncRoles([]);
+        $multiRole = $this->pendingJudge($admin, JudgeAssignmentRole::Primary, 12);
+        $multiRole->assignRole('reviewer');
+        $incoherent = $this->pendingJudge($admin, JudgeAssignmentRole::Primary, 13);
+        $incoherent->forceFill(['email_verified_at' => now('UTC')])->save();
+        $incoherent->judgeProfile->forceFill(['password_initialized_at' => now('UTC')])->save();
+
+        foreach ([$suspended, $roleless, $multiRole, $incoherent] as $candidate) {
+            try {
+                app(AssignJudgesToSubmission::class)->execute(
+                    $submission,
+                    $admin,
+                    [$candidate->judgeProfile->public_id],
+                    'Intento sintético con un perfil que debe fallar de forma cerrada.',
+                    false,
+                );
+                $this->fail('The invalid judge candidate must be rejected.');
+            } catch (ValidationException) {
+                $this->assertDatabaseMissing('judge_assignments', [
+                    'judge_profile_id' => $candidate->judgeProfile->id,
+                ]);
+            }
+        }
+
+        $this->assertDatabaseCount('judge_assignments', 0);
     }
 
     private function admittedSubmission(): Submission
@@ -315,6 +418,28 @@ class JudgeAssignmentsAndConflictsTest extends TestCase
             'created_by_user_id' => $creator->id,
             'password_initialized_at' => now('UTC'),
             'activated_at' => now('UTC'),
+        ])->save();
+
+        return $judge->setRelation('judgeProfile', $profile);
+    }
+
+    private function pendingJudge(User $creator, JudgeAssignmentRole $role, int $number): User
+    {
+        $judge = User::factory()->create([
+            'name' => "Juez pendiente {$number}",
+            'email' => "judge-pending-{$number}-".fake()->unique()->numerify('######').'@example.test',
+            'email_verified_at' => null,
+        ]);
+        $judge->assignRole('judge');
+        $profile = new JudgeProfile;
+        $profile->forceFill([
+            'user_id' => $judge->id,
+            'assignment_role' => $role,
+            'status' => JudgeProfileStatus::PendingSetup,
+            'max_active_assignments' => null,
+            'created_by_user_id' => $creator->id,
+            'password_initialized_at' => null,
+            'activated_at' => null,
         ])->save();
 
         return $judge->setRelation('judgeProfile', $profile);

@@ -6,7 +6,6 @@ use App\Enums\BlindReviewPackageStatus;
 use App\Enums\ClarificationStatus;
 use App\Enums\EligibilityReviewStatus;
 use App\Enums\JudgeAssignmentStatus;
-use App\Enums\JudgeProfileStatus;
 use App\Enums\ResidencyVerificationStatus;
 use App\Enums\RubricVersionStatus;
 use App\Exceptions\BulkJudgeAssignmentRejected;
@@ -19,6 +18,8 @@ use App\Models\User;
 
 final class BulkJudgeAssignmentEligibility
 {
+    public function __construct(private AdministrativeJudgeEligibility $judgeEligibility) {}
+
     public function assertAdministrator(User $actor): void
     {
         abort_unless(config('flowerflow.flags.bulk_judge_assignment'), 404);
@@ -37,16 +38,10 @@ final class BulkJudgeAssignmentEligibility
             ->with('user.roles');
         $profile = ($lock ? $query->lockForUpdate() : $query)->first();
 
-        if (! $profile
-            || $profile->status !== JudgeProfileStatus::Active
-            || $profile->max_active_assignments !== null
-            || $profile->password_initialized_at === null
-            || ! $profile->user
-            || ! $profile->user->hasExactRoles(['judge'])
-            || ! $profile->user->hasVerifiedEmail()) {
+        if (! $profile || ! $this->judgeEligibility->isAssignable($profile)) {
             throw new BulkJudgeAssignmentRejected(
-                'selected_judge_ineligible',
-                'El juez seleccionado ya no está activo, verificado o con configuración completa.',
+                $profile ? ($this->judgeEligibility->rejectionCode($profile) ?? 'selected_judge_ineligible') : 'selected_judge_ineligible',
+                'El juez seleccionado ya no está activo o con configuración pendiente y perfil coherente.',
             );
         }
 

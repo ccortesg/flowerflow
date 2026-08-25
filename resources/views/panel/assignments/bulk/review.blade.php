@@ -19,7 +19,11 @@
     <dt class="col-sm-4">Juez</dt><dd class="col-sm-8">{{ $judge->user->name }} · {{ $judge->assignment_role->label() }}</dd>
     <dt class="col-sm-4">Propuestas</dt><dd class="col-sm-8">{{ $submissions->count() }}</dd>
     <dt class="col-sm-4">Correo consolidado</dt><dd class="col-sm-8">{{ $validated['notify_judge'] ? 'Sí' : 'No' }}</dd>
+    <dt class="col-sm-4">Estado de cuenta</dt><dd class="col-sm-8">{{ $judge->status->label() }}</dd>
   </dl>
+  @if($judge->status === \App\Enums\JudgeProfileStatus::PendingSetup)
+    <div class="alert alert-warning mt-3 mb-0">Las asignaciones se crearán, pero el juez no podrá consultarlas ni evaluarlas hasta configurar su cuenta. El correo consolidado se omitirá aunque se haya solicitado.</div>
+  @endif
 </section>
 
 <section class="card ff-card mb-4" aria-labelledby="bulk-proposals-title">

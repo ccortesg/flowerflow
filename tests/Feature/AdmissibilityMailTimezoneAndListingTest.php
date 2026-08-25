@@ -98,4 +98,32 @@ class AdmissibilityMailTimezoneAndListingTest extends TestCase
             ->assertSee('15/08/2026 23:59')
             ->assertSee('(Hermosillo)');
     }
+
+    public function test_reference_filter_matches_folio_or_public_proposal_id_and_treats_wildcards_literally(): void
+    {
+        $reviewer = $this->reviewer();
+        [, $target] = $this->submittedReview();
+        [, $other] = $this->submittedReview();
+
+        $this->actingAs($reviewer)->get(route('panel.admissibility.index', [
+            'folio' => substr((string) $target->folio, 3, 8),
+        ]))->assertOk()
+            ->assertSee($target->title)
+            ->assertDontSee($other->folio);
+
+        $this->actingAs($reviewer)->get(route('panel.admissibility.index', [
+            'folio' => substr($target->public_id, 7, 12),
+        ]))->assertOk()
+            ->assertSee($target->folio)
+            ->assertDontSee($other->folio)
+            ->assertSee('Folio o ID de propuesta');
+
+        $this->actingAs($reviewer)->get(route('panel.admissibility.index', ['folio' => '%_\\']))
+            ->assertOk()
+            ->assertDontSee($target->folio)
+            ->assertDontSee($other->folio);
+        $this->actingAs($reviewer)->get(route('panel.admissibility.index', ['folio' => str_repeat('A', 65)]))
+            ->assertRedirect()
+            ->assertSessionHasErrors('folio');
+    }
 }

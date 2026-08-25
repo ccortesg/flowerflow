@@ -18,6 +18,7 @@ use App\Models\JudgeConflict;
 use App\Models\JudgeProfile;
 use App\Models\RubricVersion;
 use App\Models\Submission;
+use App\Services\AdministrativeJudgeEligibility;
 use App\Services\JudgeAssignmentCoverage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -52,8 +53,11 @@ class AssignmentController extends Controller
         return view('panel.assignments.index', compact('submissions'));
     }
 
-    public function show(Submission $submission, JudgeAssignmentCoverage $coverage): View
-    {
+    public function show(
+        Submission $submission,
+        JudgeAssignmentCoverage $coverage,
+        AdministrativeJudgeEligibility $judgeEligibility,
+    ): View {
         Gate::authorize('viewAny', JudgeAssignment::class);
         $submission->load([
             'category:id,name',
@@ -75,7 +79,7 @@ class AssignmentController extends Controller
             ->pluck('declared_by_judge_profile_id');
         $currentJudgeIds = $assignments->where('current_slot', 1)->pluck('judge_profile_id');
         $judges = JudgeProfile::query()
-            ->where('status', JudgeProfileStatus::Active)
+            ->whereIn('status', [JudgeProfileStatus::Active, JudgeProfileStatus::PendingSetup])
             ->whereNull('max_active_assignments')
             ->with('user.roles')
             ->withCount(['assignments as active_assignments_count' => fn ($query) => $query->whereIn('status', [
@@ -84,9 +88,9 @@ class AssignmentController extends Controller
             ])])
             ->orderBy('id')
             ->get()
-            ->filter(fn (JudgeProfile $profile): bool => $profile->user?->hasExactRoles(['judge'])
-                && $profile->user->hasVerifiedEmail()
-                && $profile->password_initialized_at !== null);
+            ->filter(fn (JudgeProfile $profile): bool => $judgeEligibility->isAssignable($profile))
+            ->sortBy(fn (JudgeProfile $profile): array => [$judgeEligibility->sortRank($profile), $profile->id])
+            ->values();
 
         return view('panel.assignments.show', [
             'submission' => $submission,
@@ -114,11 +118,18 @@ class AssignmentController extends Controller
             $request->boolean('notify_judges'),
         );
 
-        return back()->with('status', sprintf(
+        $response = back()->with('status', sprintf(
             'Asignación manual completada: %d creadas y %d ya vigentes omitidas.',
             $result['created']->count(),
             $result['omitted'],
         ));
+
+        return $result['notifications_skipped_pending'] > 0
+            ? $response->with('warning', sprintf(
+                'Se omitieron %d correos porque esos jueces aún tienen la configuración de su cuenta pendiente.',
+                $result['notifications_skipped_pending'],
+            ))
+            : $response;
     }
 
     public function cancel(JudgeAssignment $judgeAssignment): View
@@ -144,7 +155,7 @@ class AssignmentController extends Controller
 
     public function resolve(ResolveJudgeConflictRequest $request, JudgeConflict $judgeConflict, ResolveJudgeConflict $resolve): RedirectResponse
     {
-        $resolve->execute(
+        $replacement = $resolve->execute(
             $judgeConflict,
             $request->user(),
             $request->string('judge_profile')->toString(),
@@ -152,6 +163,12 @@ class AssignmentController extends Controller
             $request->boolean('notify_judge'),
         );
 
-        return back()->with('status', 'El conflicto quedó resuelto mediante una reasignación manual.');
+        $response = back()->with('status', 'El conflicto quedó resuelto mediante una reasignación manual.');
+        $replacement->loadMissing('judgeProfile');
+
+        return $request->boolean('notify_judge')
+            && $replacement->judgeProfile->status === JudgeProfileStatus::PendingSetup
+            ? $response->with('warning', 'La asignación se creó, pero el correo se omitió porque el juez aún tiene la configuración de su cuenta pendiente.')
+            : $response;
     }
 }

@@ -1,5 +1,16 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+## ADR-0015 — asignación previa, referencias y exportación de evaluaciones
+
+| ID | Requisito | Implementación/prueba | Estado |
+|---|---|---|---|
+| JUD-PRE-01 | Asignar individual, bulk y replacement a `pending_setup` coherente | `AdministrativeJudgeEligibility`, Actions/controladores y suites de asignación | VERIFIED LOCAL/TEST |
+| JUD-PRE-02 | Mantener acceso bloqueado y omitir correo sin replay | middleware/Policies existentes, dispatchers y matriz antes/después de onboarding | VERIFIED LOCAL/TEST |
+| REF-01 | Buscar folio o ULID público parcial, con comodines literales | `SubmissionReferenceFilter`, Propuestas/Admisibilidad y pruebas combinadas | VERIFIED LOCAL/TEST |
+| EVAL-EXP-01 | Export privado/asíncrono de todas las evaluaciones y revisiones | `evaluation_exports`, Policy, job, writer, rutas y UI | VERIFIED LOCAL/TEST |
+| EVAL-EXP-02 | Fuente inmutable, texto literal y campos sensibles excluidos | validación de snapshot, XML XLSX y pruebas v1/v2/hostiles | VERIFIED LOCAL/TEST |
+| EVAL-EXP-03 | Ownership, expiración, purga, diagnóstico y rollback protegido | descarga/purge/diagnose/migración y pruebas negativas | VERIFIED LOCAL/TEST |
+
 ## Recuperación de admisibilidad — 2026-08-25
 
 | ID | Requisito | Implementación/prueba | Estado |

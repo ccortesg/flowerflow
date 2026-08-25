@@ -19,13 +19,14 @@ class DiagnoseSubmissionExports extends Command
         $queue = (string) config('flowerflow.exports.queue');
         $disk = (string) config('flowerflow.exports.disk');
         $diskRoot = config("filesystems.disks.{$disk}.root");
-        $staleBefore = now()->subMinutes((int) config('flowerflow.exports.stale_after_minutes'));
+        $staleBefore = now()->subMinutes((int) config('flowerflow.exports.stalled_after_minutes'));
 
         $result = [
             'queue_connection' => $connection,
             'queue_name' => $queue,
             'export_disk' => $disk,
             'submission_exports_table' => Schema::hasTable('submission_exports'),
+            'evaluation_exports_table' => Schema::hasTable('evaluation_exports'),
             'jobs_table' => Schema::hasTable('jobs'),
             'failed_jobs_table' => Schema::hasTable('failed_jobs'),
             'queued_jobs' => null,
@@ -34,6 +35,9 @@ class DiagnoseSubmissionExports extends Command
             'queued_exports' => null,
             'stale_exports' => null,
             'failed_exports' => null,
+            'queued_evaluation_exports' => null,
+            'stale_evaluation_exports' => null,
+            'failed_evaluation_exports' => null,
             'disk_directory_exists' => is_string($diskRoot) && is_dir($diskRoot),
             'disk_directory_writable' => is_string($diskRoot) && is_dir($diskRoot) && is_writable($diskRoot),
             'disk_free_megabytes' => is_string($diskRoot) && is_dir($diskRoot)
@@ -63,6 +67,14 @@ class DiagnoseSubmissionExports extends Command
                     ->where('created_at', '<=', $staleBefore)
                     ->count();
                 $result['failed_exports'] = DB::table('submission_exports')->where('status', 'failed')->count();
+            }
+            if ($result['evaluation_exports_table']) {
+                $result['queued_evaluation_exports'] = DB::table('evaluation_exports')->where('status', 'queued')->count();
+                $result['stale_evaluation_exports'] = DB::table('evaluation_exports')
+                    ->where('status', 'queued')
+                    ->where('created_at', '<=', $staleBefore)
+                    ->count();
+                $result['failed_evaluation_exports'] = DB::table('evaluation_exports')->where('status', 'failed')->count();
             }
         } catch (Throwable $exception) {
             $result['diagnostic_error_code'] = class_basename($exception);

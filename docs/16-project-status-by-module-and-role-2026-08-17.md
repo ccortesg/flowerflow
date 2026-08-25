@@ -1,5 +1,7 @@
 # Diagnóstico vigente por módulo y rol — 2026-08-17
 
+> **Adenda ADR-0015 — 2026-08-25, local/test:** el contrato operativo permite asignar a jueces `pending_setup` sin habilitar su cuenta ni enviarles la notificación de assignment; unifica búsqueda folio/ULID en Propuestas y Admisibilidad; y añade exportación confidencial de todas las revisiones para el admin solicitante. La migración, permiso, job, writer y UI son aditivos y default-off. Las cifras finales y gates constan en el informe 32; producción permanece fuera y el bloqueo jurídico continúa.
+
 > **Adenda de asignación simultánea — 2026-08-25, `GO LOCAL/TEST`:** el panel local incorpora selección de un juez y hasta veinte propuestas, preflight cifrado y tres fases atómicas por propuesta. Reutiliza admisibilidad, paquete, assignment y outbox; no añade migración, batch, dependencia o worker. Suite 228/2,653, prueba dirigida final 9/123, benchmark máximo 2.589 s y UAT Firefox en tres viewports. Producción no autorizada y `NO-GO RELEASE/PRODUCTION` jurídico vigente.
 
 > **Adenda M8 — 2026-08-25, `GO LOCAL/TEST`:** el corte local añade cinco comunicaciones del ciclo de evaluación y digest resumido, todos por el outbox/bitácora existentes. Resultado final: 216 pruebas/2,495 aserciones, 23 migraciones, 104 rutas, cuatro schedules y UAT Firefox verde. No se añadieron rutas/permisos/migraciones/workers. M9–M10 y producción permanecen fuera y la divergencia jurídica sigue bloqueando release.

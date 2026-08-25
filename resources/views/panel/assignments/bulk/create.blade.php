@@ -24,7 +24,7 @@
         <option value="">Selecciona un juez</option>
         @foreach($judges as $judge)
           <option value="{{ $judge->public_id }}" @selected($selectedJudge?->id === $judge->id)>
-            {{ $judge->user->name }} · {{ $judge->assignment_role->label() }} · {{ $judge->active_assignments_count }} vigentes
+            {{ $judge->user->name }} · {{ $judge->assignment_role->label() }} · {{ $judge->active_assignments_count }} vigentes{{ $judge->status === \App\Enums\JudgeProfileStatus::PendingSetup ? ' · Configuración pendiente' : '' }}
           </option>
         @endforeach
       </select>
@@ -72,6 +72,8 @@
 
 @if(!$selectedJudge)
   <div class="alert alert-warning" role="status">Selecciona primero al juez para habilitar las propuestas.</div>
+@elseif($selectedJudge->status === \App\Enums\JudgeProfileStatus::PendingSetup)
+  <div class="alert alert-warning" role="status">Este juez puede recibir asignaciones, pero no podrá consultarlas ni evaluarlas hasta configurar su cuenta. Si solicitas el correo consolidado, se omitirá sin dejar un envío pendiente.</div>
 @endif
 
 <form method="POST" action="{{ route('panel.assignments.bulk.review') }}" novalidate>

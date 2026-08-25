@@ -54,10 +54,14 @@
             <label class="form-check-label d-block" for="judge-{{ $judge->public_id }}">
               <strong>{{ $judge->user->name }}</strong>
               <span class="d-block small text-secondary">{{ $judge->assignment_role->label() }} · {{ $judge->active_assignments_count }} asignaciones vigentes · sin límite</span>
+              @if($judge->status === \App\Enums\JudgeProfileStatus::PendingSetup)
+                <span class="badge text-bg-warning mt-1">Configuración pendiente</span>
+                <span class="d-block small text-warning-emphasis mt-1">Puede recibir asignaciones, pero no podrá consultarlas ni evaluarlas hasta configurar su cuenta.</span>
+              @endif
             </label>
           </div>
         @empty
-          <div class="alert alert-info">No hay jueces operativos disponibles para agregar en este momento.</div>
+          <div class="alert alert-info">No hay jueces activos o con configuración pendiente disponibles para agregar en este momento.</div>
         @endforelse
       </fieldset>
 
@@ -103,9 +107,10 @@
                 <div class="mb-2">
                   <label class="form-label" for="judge-profile-{{ $assignment->id }}">Juez de reemplazo</label>
                   <select class="form-select" id="judge-profile-{{ $assignment->id }}" name="judge_profile" required>
-                    <option value="">Selecciona un juez activo</option>
-                    @foreach($replacementJudges as $candidate)<option value="{{ $candidate->public_id }}">{{ $candidate->user->name }} · {{ $candidate->assignment_role->label() }} · {{ $candidate->active_assignments_count }} vigentes</option>@endforeach
+                    <option value="">Selecciona un juez</option>
+                    @foreach($replacementJudges as $candidate)<option value="{{ $candidate->public_id }}">{{ $candidate->user->name }} · {{ $candidate->assignment_role->label() }} · {{ $candidate->active_assignments_count }} vigentes{{ $candidate->status === \App\Enums\JudgeProfileStatus::PendingSetup ? ' · Configuración pendiente' : '' }}</option>@endforeach
                   </select>
+                  <div class="form-text">Los jueces con configuración pendiente pueden recibir la asignación, pero no consultarla ni evaluarla hasta activar su cuenta.</div>
                 </div>
                 <input type="hidden" name="notify_judge" value="0">
                 <div class="form-check mb-2"><input class="form-check-input" id="notify-replacement-{{ $assignment->id }}" name="notify_judge" type="checkbox" value="1" @disabled(! config('flowerflow.judge_notifications.assignment_enabled'))><label class="form-check-label" for="notify-replacement-{{ $assignment->id }}">Notificar la nueva asignación</label></div>

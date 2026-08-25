@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Panel;
 use App\Actions\Evaluations\ReopenEvaluation;
 use App\Actions\Evaluations\SaveEvaluationDraft;
 use App\Actions\Evaluations\SubmitEvaluation;
+use App\Enums\EvaluationExportStatus;
 use App\Exceptions\StaleEvaluationDraft;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminSaveReopenedEvaluationRequest;
 use App\Http\Requests\AdminSubmitEvaluationRequest;
 use App\Http\Requests\ReopenEvaluationRequest;
 use App\Models\Evaluation;
+use App\Models\EvaluationExport;
 use App\Services\EvaluationDraftCalculator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -28,7 +30,16 @@ class EvaluationController extends Controller
             'currentRevision:id,evaluation_id,revision_number,status,total_raw,last_saved_by_user_id,submitted_by_user_id,submitted_at,submission_mode',
         ])->orderByDesc('updated_at')->paginate(25);
 
-        return view('panel.evaluations.index', compact('evaluations'));
+        $exports = Gate::allows('create', EvaluationExport::class)
+            ? request()->user()->evaluationExports()->latest()->limit(5)->get()
+            : collect();
+        $staleBefore = now()->subMinutes((int) config('flowerflow.exports.stalled_after_minutes'));
+        $hasStalledExports = $exports->contains(
+            fn (EvaluationExport $export): bool => $export->status === EvaluationExportStatus::Queued
+                && $export->created_at->lessThanOrEqualTo($staleBefore),
+        );
+
+        return view('panel.evaluations.index', compact('evaluations', 'exports', 'hasStalledExports'));
     }
 
     public function show(Evaluation $evaluation, EvaluationDraftCalculator $calculator): View

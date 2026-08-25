@@ -1,5 +1,7 @@
 # Modelo de datos preliminar
 
+> **Adenda ADR-0015 — 2026-08-25:** no cambia `judge_assignments`: una fila activa puede pertenecer a un perfil coherente `pending_setup` sin volver operativa su cuenta. La migración 25 crea `evaluation_exports` con ULID, solicitante, estado, versión de alcance, ubicación privada, conteos y fechas/fallo redactado. No guarda contenido de evaluación ni PII; éstos existen sólo en el XLSX efímero. El registro no se elimina al expirar y `down()` se niega ante evidencia.
+
 > **Asignación simultánea — 2026-08-25:** no añade tablas ni columnas. La evidencia queda en `eligibility_reviews/events`, `blind_review_packages/files`, `judge_assignments`, `communication_deliveries/attempts` y `audit_logs`. La intención cifrada es efímera y no sustituye el estado autoritativo. Un expediente ya admitido y un paquete activo válido se reutilizan sin actualización.
 
 > **Adenda M8 — 2026-08-25:** no requiere migración. Los cinco tipos nuevos reutilizan `communication_deliveries` y `communication_delivery_attempts`; el contexto cifrado conserva únicamente IDs/purpose y, para el digest, cuatro conteos no negativos. La clave idempotente combina tipo, fingerprint HMAC, evento fuente y versión de plantilla. Ningún dato de evaluación se copia al paquete ciego, a tablas nuevas o a metadata pública.

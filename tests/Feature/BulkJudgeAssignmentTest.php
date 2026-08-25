@@ -410,6 +410,39 @@ class BulkJudgeAssignmentTest extends TestCase
         app(CommunicationMessageRegistry::class)->prepare($delivery);
     }
 
+    public function test_pending_setup_judge_can_receive_bulk_assignments_but_consolidated_mail_is_skipped(): void
+    {
+        Queue::fake();
+        $admin = $this->adminWithPassword();
+        $judge = $this->pendingJudge($admin);
+        $submission = $this->bulkSubmission();
+        $session = ['auth.password_confirmed_at' => now()->timestamp];
+
+        $page = $this->actingAs($admin)->withSession($session)
+            ->get(route('panel.assignments.bulk.create', ['judge_profile' => $judge->public_id]))
+            ->assertOk()
+            ->assertSee('Configuración pendiente')
+            ->assertSee('no podrá consultarlas ni evaluarlas');
+        $this->assertSame(0, JudgeAssignment::query()->count());
+
+        $review = $this->actingAs($admin)->withSession($session)
+            ->post(route('panel.assignments.bulk.review'), $this->reviewPayload($judge, [$submission], true))
+            ->assertOk();
+        $response = $this->actingAs($admin)->withSession($session)
+            ->post(route('panel.assignments.bulk.store'), $this->confirmationPayload($review->viewData('intent')))
+            ->assertRedirect(route('panel.assignments.bulk.result'));
+        $result = $response->getSession()->get('bulk_assignment_result');
+
+        $this->assertSame(1, $result['created_count']);
+        $this->assertFalse($result['notification_queued']);
+        $this->assertTrue($result['notification_skipped_pending']);
+        $this->assertSame(0, CommunicationDelivery::query()
+            ->where('notification_type', CommunicationType::JudgeAssignmentBulkCreated->value)
+            ->count());
+        $this->assertDatabaseHas('judge_assignments', ['judge_profile_id' => $judge->id]);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'assignment.bulk_notification_skipped']);
+    }
+
     public function test_missing_or_blocked_prerequisites_are_visible_and_rejected_before_intent(): void
     {
         $admin = $this->adminWithPassword();
@@ -516,6 +549,28 @@ class BulkJudgeAssignmentTest extends TestCase
             'created_by_user_id' => $creator->id,
             'password_initialized_at' => now('UTC'),
             'activated_at' => now('UTC'),
+        ])->save();
+
+        return $profile->setRelation('user', $user);
+    }
+
+    private function pendingJudge(User $creator): JudgeProfile
+    {
+        $user = User::factory()->create([
+            'name' => 'Juez pendiente de asignación simultánea',
+            'email' => fake()->unique()->numerify('bulk-pending-judge-######@example.test'),
+            'email_verified_at' => null,
+        ]);
+        $user->assignRole('judge');
+        $profile = new JudgeProfile;
+        $profile->forceFill([
+            'user_id' => $user->id,
+            'assignment_role' => JudgeAssignmentRole::Primary,
+            'status' => JudgeProfileStatus::PendingSetup,
+            'max_active_assignments' => null,
+            'created_by_user_id' => $creator->id,
+            'password_initialized_at' => null,
+            'activated_at' => null,
         ])->save();
 
         return $profile->setRelation('user', $user);

@@ -119,6 +119,7 @@ class FlowerFlowSeeder extends Seeder
             'view evaluations',
             'reopen evaluations',
             'manage reopened evaluations',
+            'export evaluations',
             'send submission reminders',
             'administratively finalize submissions',
             'view communication deliveries',

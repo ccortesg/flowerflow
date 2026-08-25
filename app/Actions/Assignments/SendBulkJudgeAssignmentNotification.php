@@ -2,9 +2,11 @@
 
 namespace App\Actions\Assignments;
 
+use App\Enums\JudgeProfileStatus;
 use App\Models\JudgeProfile;
 use App\Models\User;
 use App\Notifications\JudgeAssignmentBulkCreatedNotification;
+use App\Services\AdministrativeJudgeEligibility;
 use App\Services\AuditLogger;
 use App\Services\ResilientMailDispatcher;
 
@@ -13,6 +15,7 @@ final class SendBulkJudgeAssignmentNotification
     public function __construct(
         private ResilientMailDispatcher $mail,
         private AuditLogger $audit,
+        private AdministrativeJudgeEligibility $judgeEligibility,
     ) {}
 
     /** @param list<int> $assignmentIds */
@@ -26,6 +29,10 @@ final class SendBulkJudgeAssignmentNotification
         $reasonCode = null;
         if (! $requested) {
             $reasonCode = 'not_requested';
+        } elseif (! $this->judgeEligibility->isOperational($judge)) {
+            $reasonCode = $judge->status === JudgeProfileStatus::PendingSetup
+                ? 'judge_setup_pending'
+                : 'judge_not_operational';
         } elseif ($assignmentIds === []) {
             $reasonCode = 'no_new_assignments';
         } elseif (! config('flowerflow.flags.communication_ledger')) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Panel;
 use App\Actions\Assignments\ExecuteBulkJudgeAssignment;
 use App\Enums\BlindReviewPackageStatus;
 use App\Enums\EligibilityReviewStatus;
+use App\Enums\JudgeProfileStatus;
 use App\Exceptions\BulkJudgeAssignmentRejected;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReviewBulkJudgeAssignmentsRequest;
@@ -39,7 +40,12 @@ final class BulkAssignmentController extends Controller
                 } catch (BulkJudgeAssignmentRejected) {
                     return false;
                 }
-            });
+            })
+            ->sortBy(fn (JudgeProfile $profile): array => [
+                $profile->status === JudgeProfileStatus::Active ? 0 : 1,
+                $profile->id,
+            ])
+            ->values();
         $selectedJudge = null;
         if ($request->filled('judge_profile')) {
             try {
