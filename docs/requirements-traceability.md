@@ -1,5 +1,15 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+## Recuperación de admisibilidad — 2026-08-25
+
+| ID | Requisito | Implementación/prueba | Estado |
+|---|---|---|---|
+| ADM-REC-01 | Catálogo RBAC reproducible sin depender del seeder productivo | migración correctiva, caché Spatie y `AdmissibilityRecoveryTest` | VERIFIED LOCAL/TEST |
+| ADM-REC-02 | Admin/reviewer operan; participant/judge permanecen aislados | permisos exactos, middleware/Policies y matriz negativa | VERIFIED LOCAL/TEST |
+| ADM-REC-03 | Acción por propuesta enviada abre expediente sin admitir ni mutar GET | eager-load, botón contextual, prueba de atributos/eventos y UAT Firefox | VERIFIED LOCAL/TEST |
+| ADM-REC-04 | Evidenciar enviados sin expediente y recuperar con backfill idempotente | estado “Sin expediente” y comando dry-run/execute existente | VERIFIED LOCAL/TEST; PRODUCCIÓN PENDING |
+
+
 ## Trazabilidad M8 — 2026-08-25
 
 | ID | Requisito | Implementación/prueba | Estado |
