@@ -10,6 +10,7 @@ enum CommunicationType: string
     case JudgeEmailVerification = 'judge.email_verification';
     case JudgeAccountStatus = 'judge.account_status';
     case JudgeAssignmentCreated = 'judge.assignment_created';
+    case JudgeAssignmentBulkCreated = 'judge.assignment_bulk_created';
     case JudgeConflictDeclared = 'judge.conflict_declared';
     case JudgeConflictResolved = 'judge.conflict_resolved';
     case EvaluationSubmitted = 'evaluation.submitted';
@@ -29,6 +30,7 @@ enum CommunicationType: string
             self::JudgeEmailVerification => 'Verificación de correo de juez',
             self::JudgeAccountStatus => 'Estado de cuenta de juez',
             self::JudgeAssignmentCreated => 'Nueva asignación de evaluación',
+            self::JudgeAssignmentBulkCreated => 'Nuevas asignaciones de evaluación',
             self::JudgeConflictDeclared => 'Conflicto de evaluación declarado',
             self::JudgeConflictResolved => 'Conflicto de evaluación resuelto',
             self::EvaluationSubmitted => 'Evaluación enviada',

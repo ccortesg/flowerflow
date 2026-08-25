@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureActiveJudge;
 use App\Http\Middleware\EnsureAdministrativeFinalizationEnabled;
 use App\Http\Middleware\EnsureAdmissibilityReviewEnabled;
+use App\Http\Middleware\EnsureBulkJudgeAssignmentEnabled;
 use App\Http\Middleware\EnsureCommunicationLedgerEnabled;
 use App\Http\Middleware\EnsureEvaluationEnabled;
 use App\Http\Middleware\EnsureEvaluationFinalizationEnabled;
@@ -38,6 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'communication-ledger.enabled' => EnsureCommunicationLedgerEnabled::class,
             'panel.enabled' => EnsurePanelEnabled::class,
             'admissibility.enabled' => EnsureAdmissibilityReviewEnabled::class,
+            'bulk-judge-assignment.enabled' => EnsureBulkJudgeAssignmentEnabled::class,
             'evaluation.enabled' => EnsureEvaluationEnabled::class,
             'evaluation-finalization.enabled' => EnsureEvaluationFinalizationEnabled::class,
             'judge.active' => EnsureActiveJudge::class,

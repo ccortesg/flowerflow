@@ -2,6 +2,7 @@
 
 namespace App\Actions\Assignments;
 
+use App\Enums\AssignmentNotificationMode;
 use App\Enums\JudgeAssignmentStatus;
 use App\Enums\JudgeAssignmentType;
 use App\Enums\JudgeProfileStatus;
@@ -43,8 +44,28 @@ final class AssignJudgesToSubmission
         string $reason,
         bool $notify,
     ): array {
+        return $this->executeWithNotificationMode(
+            $submission,
+            $actor,
+            $judgeProfilePublicIds,
+            $reason,
+            $notify ? AssignmentNotificationMode::Individual : AssignmentNotificationMode::None,
+        );
+    }
+
+    /**
+     * @param  list<string>  $judgeProfilePublicIds
+     * @return array{created:Collection<int,JudgeAssignment>,omitted:int,notification_requested:bool}
+     */
+    public function executeWithNotificationMode(
+        Submission $submission,
+        User $actor,
+        array $judgeProfilePublicIds,
+        string $reason,
+        AssignmentNotificationMode $notificationMode,
+    ): array {
         $this->ensureActor->execute($actor, 'manage evaluation assignments');
-        if ($notify && ! config('flowerflow.judge_notifications.assignment_enabled')) {
+        if ($notificationMode->wasRequested() && ! config('flowerflow.judge_notifications.assignment_enabled')) {
             throw ValidationException::withMessages(['notify_judges' => 'La notificación de nuevas asignaciones está deshabilitada globalmente.']);
         }
 
@@ -54,7 +75,7 @@ final class AssignJudgesToSubmission
         }
 
         try {
-            $result = DB::transaction(function () use ($submission, $actor, $normalizedIds, $reason, $notify): array {
+            $result = DB::transaction(function () use ($submission, $actor, $normalizedIds, $reason, $notificationMode): array {
                 $version = $this->eligibility->requireCurrentVersion($submission, true);
                 Competition::query()->whereKey($submission->competition_id)->lockForUpdate()->firstOrFail();
                 $rubrics = RubricVersion::query()
@@ -129,14 +150,14 @@ final class AssignJudgesToSubmission
                         'judge_profile_id' => $profile->id,
                         'rubric_version_id' => $rubric->id,
                         'rubric_version' => $rubric->version,
-                        'notification_requested' => $notify,
+                        'notification_requested' => $notificationMode->wasRequested(),
                     ]);
                 }
 
                 return [
                     'created' => $created,
                     'omitted' => count($normalizedIds) - $created->count(),
-                    'notification_requested' => $notify,
+                    'notification_requested' => $notificationMode->wasRequested(),
                 ];
             }, 5);
         } catch (AssignmentOperationRejected $exception) {
@@ -148,11 +169,11 @@ final class AssignJudgesToSubmission
             throw ValidationException::withMessages(['judge_profiles' => $exception->getMessage()]);
         }
 
-        if ($notify) {
+        if ($notificationMode === AssignmentNotificationMode::Individual) {
             foreach ($result['created'] as $assignment) {
                 $this->sendNotification->execute($assignment, $actor);
             }
-        } else {
+        } elseif ($notificationMode === AssignmentNotificationMode::None) {
             foreach ($result['created'] as $assignment) {
                 $this->audit->record('assignment.notification_skipped', $assignment, $actor, [
                     'assignment_id' => $assignment->id,

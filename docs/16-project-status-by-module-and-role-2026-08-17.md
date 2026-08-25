@@ -1,5 +1,7 @@
 # Diagnóstico vigente por módulo y rol — 2026-08-17
 
+> **Adenda de asignación simultánea — 2026-08-25, `GO LOCAL/TEST`:** el panel local incorpora selección de un juez y hasta veinte propuestas, preflight cifrado y tres fases atómicas por propuesta. Reutiliza admisibilidad, paquete, assignment y outbox; no añade migración, batch, dependencia o worker. Suite 228/2,653, prueba dirigida final 9/123, benchmark máximo 2.589 s y UAT Firefox en tres viewports. Producción no autorizada y `NO-GO RELEASE/PRODUCTION` jurídico vigente.
+
 > **Adenda M8 — 2026-08-25, `GO LOCAL/TEST`:** el corte local añade cinco comunicaciones del ciclo de evaluación y digest resumido, todos por el outbox/bitácora existentes. Resultado final: 216 pruebas/2,495 aserciones, 23 migraciones, 104 rutas, cuatro schedules y UAT Firefox verde. No se añadieron rutas/permisos/migraciones/workers. M9–M10 y producción permanecen fuera y la divergencia jurídica sigue bloqueando release.
 
 > **Adenda M7 — validación final 2026-08-25:** el corte vigente local incorpora confirmación del juez, comentario mínimo, sellado inmutable, historial y reapertura administrativa append-only con actor real. El panel admin añade Evaluaciones; el juez ve enviado sólo lectura y reapertura genérica. Resultado final: 208 pruebas/2,385 aserciones, 23 migraciones, 104 rutas y UAT Firefox verde. M8–M10 y producción permanecen fuera; la divergencia “al menos tres jueces” sigue bloqueando release.

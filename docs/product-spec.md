@@ -1,5 +1,7 @@
 # Especificación de producto — Flower Flow 2026
 
+> **Asignación simultánea local/test — 2026-08-25:** el administrador puede preparar hasta veinte propuestas para un único juez con fases explícitas de admisibilidad, paquete ciego y asignación. No existe selección automática ni cobertura mínima. Cada propuesta es atómica, el lote admite éxito parcial y el correo al juez se resume en un delivery opcional sin contenido de proyectos.
+
 > **Contrato de producto M8 — 2026-08-25, local/test:** el outbox registra comunicaciones de conflicto declarado/resuelto, envío/reenvío, reapertura y un digest por juez. Destinatarios, contenido e idempotencia son deterministas; el worker cancela eventos obsoletos y la bitácora permite recuperación con la misma revalidación. Los recordatorios 20/22 no se ejecutan retroactivamente. M9–M10, consolidación, ranking, resultados, producción y SMTP real siguen fuera.
 
 > **Contrato de producto M7 — validación final 2026-08-25, `GO LOCAL/TEST`:** evaluación completa + comentario general 100–2,000 + confirmación explícita sellan la revisión vigente. Reapertura administrativa hasta 20:00:00 crea una nueva revisión desde la enviada; juez o admin real pueden editar/reenviar hasta 23:59:59. La aplicación conserva juez sujeto, actor y modo, muestra información diferenciada y no crea comunicaciones M8. Resultado: 208 pruebas/2,385 aserciones y UAT Firefox. M8–M10 y producción siguen fuera.

@@ -1,5 +1,7 @@
 # Preguntas abiertas y decisiones — Flower Flow 2026
 
+> **Decisiones de asignación simultánea — 2026-08-25:** `Q-BULK-001 RESOLVED LOCAL`: límite síncrono 20 y éxito parcial por transacción de propuesta. `Q-BULK-002 RESOLVED LOCAL`: no hay tabla batch; intención cifrada, lock y auditoría terminal. `Q-BULK-003 RESOLVED LOCAL`: un delivery consolidado opcional, sin PII/contenido. `Q-BULK-004 RESOLVED LOCAL / RELEASE POR_CONFIRMAR`: 20 propuestas con 10 MiB cada una ejecutaron en 2.589 s localmente; timeout/capacidad productivos no fueron autorizados ni verificados. El mínimo jurídico sigue abierto y bloqueante.
+
 > **Decisiones M8 — 2026-08-25:** `Q-M8-001 RESOLVED LOCAL`: destinatarios exactos sin fallback. `Q-M8-002 RESOLVED LOCAL`: un digest por juez, ventana de catch-up de 24 horas y cero replay 20/22. `Q-M8-003 RESOLVED LOCAL`: outbox/bitácora/worker existentes son suficientes, sin migración. Siguen abiertos SMTP/DNS/entregabilidad/monitoreo y retención/purga; `Q-M7-004` jurídico permanece como bloqueo de release. M9–M10 siguen fuera.
 
 > **Decisiones M7 — 2026-08-24:** `Q-M7-001 RESOLVED LOCAL`: revisión inicial se sella sin copia redundante. `Q-M7-002 RESOLVED LOCAL`: reapertura crea revisión append-only y puede reenviarla juez o admin; el actor real nunca se sustituye por el juez sujeto. `Q-M7-003 RESOLVED LOCAL`: cierre de reapertura 20:00:00 y mutaciones 23:59:59, segundos inclusivos. `Q-M7-004 OPEN / RELEASE BLOCKER`: reconciliación jurídica del mínimo de jueces. M8–M10 permanecen fuera.

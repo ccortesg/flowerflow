@@ -1,5 +1,7 @@
 # Registro de riesgos
 
+> **Riesgo de lote síncrono — 2026-08-25:** el límite fijo de veinte y la transacción por propuesta acotan locks y rollback. El preflight puede quedar obsoleto, por lo que la ejecución compara estado y falla individualmente. La medición local máxima de 200 MiB ejecutó en 2.589 s; capacidad y timeout productivos siguen `POR_CONFIRMAR`. Si un ambiente autorizado excede su timeout, el feature debe permanecer apagado; no se amplía ni vuelve asíncrono sin una decisión nueva.
+
 > **Riesgos M8 — 2026-08-25:** `R108` mitigado local/test: eventos ID-only, plantillas allowlist y scans evitan filtrar evaluación/conflicto/PII. `R109` mitigado: idempotencia y `withoutOverlapping` evitan duplicados de listener/scheduler. `R110` mitigado: ventana exacta y preflight global bloquean digest tardío o con `due_at` divergente. `R111` residual: aceptación SMTP no acredita entrega. `R100` jurídico continúa bloqueando release/producción.
 
 > **Riesgos M7 — 2026-08-24:** `R104` mitigado localmente: revisiones enviadas se sellan y reaperturas sólo clonan append-only. `R105` mitigado: actor real y juez sujeto se separan y prueban. `R106` mitigado: ventanas centralizadas inclusivas fallan cerrado ante deriva. `R107` residual: un admin autorizado puede actuar en nombre del juez, por lo que contraseña, motivo cifrado, auditoría y revisión operativa son controles obligatorios. `R100` jurídico continúa bloqueando release/producción.

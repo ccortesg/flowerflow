@@ -9,6 +9,13 @@
     <h1 class="h2 mb-1">Asignaciones de evaluación</h1>
     <p class="text-secondary mb-0">Sólo aparecen propuestas enviadas cuya versión final vigente está admitida.</p>
   </div>
+  @if(config('flowerflow.flags.bulk_judge_assignment'))
+    @if(auth()->user()->can('decide admissibility') && auth()->user()->can('manage blind review packages') && auth()->user()->can('manage evaluation assignments'))
+      <a class="btn btn-flower" href="{{ route('panel.assignments.bulk.create') }}">
+        <i class="ri-user-add-line me-1" aria-hidden="true"></i> Asignar varias propuestas
+      </a>
+    @endif
+  @endif
 </div>
 
 @if($submissions->isEmpty())
