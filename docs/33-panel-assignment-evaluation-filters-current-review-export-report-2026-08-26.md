@@ -1,8 +1,9 @@
 # Informe de implementación — filtros y exportación de revisiones vigentes
 
 **Fecha:** 2026-08-26 (`America/Hermosillo`)  
-**Ámbito:** local/test; sin stage, commit, push, despliegue, producción o servicios externos.  
-**Estado:** validación final en curso.
+**Ámbito de validación:** local/test; sin despliegue, producción o servicios externos. El código funcional quedó incorporado en `ba543f4` antes del cierre de UAT; los ajustes de cierre permanecen sin stage, commit o push.
+
+**Estado:** implementación funcional validada en local/test; `NO-GO RELEASE/PRODUCTION` por los bloqueos globales descritos abajo.
 
 ## Resultado funcional
 
@@ -26,8 +27,15 @@ No hay migración, rutas, permisos, dependencias o configuración nuevos. Las so
 - Guard de base: 8 pruebas/8 aserciones verdes.
 - Baseline dirigido previo: 16 pruebas/834 aserciones verdes.
 - Pruebas nuevas/dirigidas iniciales: 6 pruebas/1,224 aserciones verdes, incluida lectura independiente con PhpSpreadsheet y XML ZIP sin fórmulas.
-- Suite completa, gates y UAT: `PENDING` hasta cerrar el ExecPlan.
+- Regresión relacionada: 44 pruebas/1,741 aserciones verdes y 1 prueba opt-in omitida.
+- Suite completa: 244 pruebas/4,131 aserciones verdes y 1 prueba opt-in omitida.
+- Pint del alcance: verde en los 10 archivos PHP modificados. Pint global conserva un único fallo preexistente y fuera de alcance en `video-tutorial/scripts/freeze-time.php` (`fully_qualified_strict_types`).
+- Composer validate/platform/audit: verdes y sin advisories. Build Vite: verde, 784 módulos. `yarn audit --groups dependencies`: un aviso LOW conocido de Quill sin parche disponible.
+- Inventarios: 115 rutas, 4 tareas programadas, 25 migraciones aplicadas en `flowerflow_testing`, 15 JSON válidos y 2 enlaces Markdown locales revisados; búsqueda de secretos sin coincidencias.
+- UAT real con Chromium/Playwright dentro de WSL: autenticación admin sintética, filtros y limpieza con query string, wildcard `%` literal, reconfirmación de contraseña, alcance vigente predeterminado, selección de ambos alcances, navegación por teclado y cero errores/warnings de consola.
+- Responsive en 390, 1,024 y 1,440 px sin desbordamiento del documento. Durante el UAT se detectó y corrigió el overflow móvil de la tarjeta de exportaciones recientes sin retirar el scroll interno de su tabla.
+- El servidor local y el navegador se cerraron y `flowerflow_testing` fue reconstruida con su seed canónico; el usuario sintético de UAT no permanece.
 
 ## Rollback y riesgos residuales
 
-Rollback operativo: `FLOWERFLOW_EVALUATION_EXPORT_ENABLED=false`. El rollback de código puede retirar filtros y `current_revisions_v1` sin borrar evidencia ni tocar `all_revisions_v1`. Persisten el bloqueo jurídico global de cobertura mínima, la identidad del juez como dato actual al exportar y la necesidad de validar worker/disk/capacidad/UAT en un release autorizado.
+Rollback operativo: `FLOWERFLOW_EVALUATION_EXPORT_ENABLED=false`. El rollback de código puede retirar filtros y `current_revisions_v1` sin borrar evidencia ni tocar `all_revisions_v1`. Persisten el bloqueo jurídico global de cobertura mínima, el fallo global preexistente de Pint, el aviso LOW de Quill, la identidad del juez como dato actual al exportar y la necesidad de validar worker, disk, capacidad y UAT de release en un despliegue expresamente autorizado.

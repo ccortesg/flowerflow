@@ -57,7 +57,7 @@ El panel administrativo permitirá localizar asignaciones y evaluaciones por fol
 - Suite completa: `php artisan test`.
 - Calidad: Pint del alcance y global, Composer validate/platform/audit, build Vite, rutas, scheduler, migraciones, JSON, enlaces Markdown y búsquedas de secretos/PII.
 - Git: `git status --short`, `git diff --check`, `git diff --stat`, `git diff`.
-- UAT de navegador queda `PENDING` si el navegador local no está disponible; no se simula como ejecutado.
+- UAT de navegador ejecutado con Chromium administrado por Playwright dentro de WSL, sobre `flowerflow_testing` y datos sintéticos eliminados al finalizar.
 
 ## Despliegue y rollback
 
@@ -66,5 +66,6 @@ No se autoriza despliegue. El rollback operativo de la exportación continúa si
 ## Registro vivo
 
 - [x] 2026-08-26 11:29 MST — Preflight WSL, lecturas obligatorias y baseline dirigido completados; evidencia: guard 8/8 y 16 pruebas/834 aserciones verdes.
-- [ ] 2026-08-26 11:29 MST — Implementar contrato, filtros, exportación, pruebas y documentación; criterio: diff acotado y gates verdes.
-- [ ] 2026-08-26 11:29 MST — Registrar resultados finales, riesgos residuales y estado de UAT.
+- [x] 2026-08-26 12:45 MST — Contrato, filtros, exportación, pruebas y documentación implementados; el alcance PHP pasó Pint y las suites dirigidas, de regresión y completa quedaron verdes.
+- [x] 2026-08-26 12:45 MST — UAT local completado en 390, 1024 y 1440 px: filtros GET, limpieza, reconfirmación de contraseña, selector de alcance, teclado y consola sin errores. Se corrigió el desbordamiento móvil de la tarjeta de exportaciones recientes y se restauró `flowerflow_testing` al seed canónico.
+- [x] 2026-08-26 12:45 MST — Gates registrados: Composer/build/rutas/scheduler/migraciones/JSON/enlaces/secret scan verdes; el gate global de Pint continúa rojo únicamente por `video-tutorial/scripts/freeze-time.php`, archivo preexistente y fuera de alcance, y `yarn audit` mantiene el aviso LOW conocido de Quill sin parche.
