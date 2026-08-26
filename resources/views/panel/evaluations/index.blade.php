@@ -13,13 +13,51 @@
     @endcan
   @endif
 </header>
+
+<form method="GET" class="card ff-card p-3 mb-4" aria-label="Filtros de evaluaciones">
+  <div class="row g-3 align-items-end">
+    <div class="col-sm-6 col-xl-4">
+      <label class="form-label" for="folio">Folio o ID de propuesta</label>
+      <input class="form-control" id="folio" name="folio" maxlength="64" value="{{ request('folio') }}">
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <label class="form-label" for="status">Estado</label>
+      <select class="form-select" id="status" name="status">
+        <option value="">Todos</option>
+        @foreach($statuses as $status)
+          <option value="{{ $status->value }}" @selected(request('status') === $status->value)>{{ $status->label() }}</option>
+        @endforeach
+      </select>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <label class="form-label" for="category">Categoría</label>
+      <select class="form-select" id="category" name="category">
+        <option value="">Todas</option>
+        @foreach($categories as $category)
+          <option value="{{ $category->slug }}" @selected(request('category') === $category->slug)>{{ $category->name }}</option>
+        @endforeach
+      </select>
+    </div>
+    <div class="col-sm-6 col-xl-2 d-grid gap-2">
+      <button class="btn btn-flower" type="submit">Filtrar</button>
+      @if(request()->filled('folio') || request()->filled('status') || request()->filled('category'))
+        <a class="btn btn-sm btn-outline-secondary" href="{{ route('panel.evaluations.index') }}">Limpiar</a>
+      @endif
+    </div>
+  </div>
+</form>
+
 <div class="card ff-card table-responsive">
   <table class="table align-middle mb-0">
-    <thead><tr><th>Evaluación</th><th>Juez sujeto</th><th>Categoría</th><th>Estado</th><th>Revisión</th><th>Actualización</th><th><span class="visually-hidden">Acción</span></th></tr></thead>
+    <thead><tr><th>Evaluación</th><th>Propuesta</th><th>Juez sujeto</th><th>Categoría</th><th>Estado</th><th>Revisión</th><th>Actualización</th><th><span class="visually-hidden">Acción</span></th></tr></thead>
     <tbody>
       @forelse($evaluations as $evaluation)
         <tr>
           <td><code>{{ $evaluation->public_id }}</code></td>
+          <td>
+            <span class="d-block">{{ $evaluation->judgeAssignment->submissionVersion->submission->folio ?: 'Sin folio' }}</span>
+            <code class="small">{{ $evaluation->judgeAssignment->submissionVersion->submission->public_id }}</code>
+          </td>
           <td>{{ $evaluation->judgeAssignment->judgeProfile->user->name }}</td>
           <td>{{ $evaluation->judgeAssignment->submissionVersion->submission->category->name }}</td>
           <td>{{ $evaluation->status->label() }}</td>
@@ -27,7 +65,7 @@
           <td>{{ $evaluation->updated_at->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i:s') }}</td>
           <td><a class="btn btn-sm btn-outline-primary" href="{{ route('panel.evaluations.show', $evaluation) }}">Ver detalle</a></td>
         </tr>
-      @empty<tr><td colspan="7">No hay evaluaciones registradas.</td></tr>@endforelse
+      @empty<tr><td colspan="8" class="p-4">No hay evaluaciones que coincidan con los filtros.</td></tr>@endforelse
     </tbody>
   </table>
 </div>
@@ -46,11 +84,12 @@
         <p class="text-secondary">Los archivos son confidenciales, privados y permanecen disponibles durante {{ config('flowerflow.exports.retention_hours') }} horas únicamente para quien los solicitó.</p>
         <div class="table-responsive">
           <table class="table align-middle mb-0">
-            <thead><tr><th>Solicitud</th><th>Estado</th><th>Evaluaciones</th><th>Revisiones</th><th>Vigencia</th><th><span class="visually-hidden">Acción</span></th></tr></thead>
+            <thead><tr><th>Solicitud</th><th>Tipo</th><th>Estado</th><th>Evaluaciones</th><th>Revisiones</th><th>Vigencia</th><th><span class="visually-hidden">Acción</span></th></tr></thead>
             <tbody>
             @forelse($exports as $export)
               <tr>
                 <td>{{ $export->created_at->timezone(config('flowerflow.timezone'))->format('d/m/Y H:i') }}</td>
+                <td>{{ $export->scopeLabel() }}</td>
                 <td>{{ $export->status->label() }}</td>
                 <td>{{ $export->evaluation_count }}</td>
                 <td>{{ $export->revision_count }}</td>
@@ -66,7 +105,7 @@
                 </td>
               </tr>
             @empty
-              <tr><td colspan="6">Aún no has generado exportaciones de evaluaciones.</td></tr>
+              <tr><td colspan="7">Aún no has generado exportaciones de evaluaciones.</td></tr>
             @endforelse
             </tbody>
           </table>

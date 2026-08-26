@@ -1,5 +1,7 @@
 # Modelo de datos preliminar
 
+> **Adenda ADR-0016 — 2026-08-26:** no añade migración. `evaluation_exports.scope_version` existente distingue `current_revisions_v1` de `all_revisions_v1`. Para el alcance vigente, `evaluation_count` y `revision_count` cuentan una fila por agregado propuesta–juez, `criterion_count` cuenta scores de las revisiones vigentes y `reopening_count` permanece cero. `evaluations.current_revision_id` conserva la autoridad; no se hace backfill ni se reinterpreta historia.
+
 > **Adenda ADR-0015 — 2026-08-25:** no cambia `judge_assignments`: una fila activa puede pertenecer a un perfil coherente `pending_setup` sin volver operativa su cuenta. La migración 25 crea `evaluation_exports` con ULID, solicitante, estado, versión de alcance, ubicación privada, conteos y fechas/fallo redactado. No guarda contenido de evaluación ni PII; éstos existen sólo en el XLSX efímero. El registro no se elimina al expirar y `down()` se niega ante evidencia.
 
 > **Asignación simultánea — 2026-08-25:** no añade tablas ni columnas. La evidencia queda en `eligibility_reviews/events`, `blind_review_packages/files`, `judge_assignments`, `communication_deliveries/attempts` y `audit_logs`. La intención cifrada es efímera y no sustituye el estado autoritativo. Un expediente ya admitido y un paquete activo válido se reutilizan sin actualización.

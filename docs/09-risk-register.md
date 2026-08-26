@@ -1,5 +1,7 @@
 # Registro de riesgos
 
+> **Riesgos ADR-0016 — 2026-08-26:** `R-EVAL-CURRENT-01` alto y mitigado local/test: un puntero vigente atrasado podría asociar una revisión incorrecta; el writer exige pertenencia y máximo append-only o aborta todo. `R-EVAL-CURRENT-02` medio: confundir filtro visible con alcance exportado; la confirmación declara que el XLSX es global. `R-EVAL-CURRENT-03` residual: juez es nombre actual, no snapshot histórico. Se conserva el riesgo operativo del worker/disk y el bloqueo jurídico/productivo existente.
+
 > **Riesgos ADR-0015 — 2026-08-25:** `R-EVAL-EXPORT-01` alto: el XLSX combina identidad y evaluación; mitigado con permiso exclusivo, contraseña reciente, ownership, disk privado, expiración, snapshot inmutable y auditoría redactada. `R-JUDGE-PRE-SETUP-01` medio: confundir assignment activo con cuenta operativa; mitigado manteniendo middleware/Policies y omitiendo notificaciones. Riesgo residual: el nombre del juez es actual al exportar y no histórico; el archivo lo declara. Producción no verificada.
 
 > **Riesgo de lote síncrono — 2026-08-25:** el límite fijo de veinte y la transacción por propuesta acotan locks y rollback. El preflight puede quedar obsoleto, por lo que la ejecución compara estado y falla individualmente. La medición local máxima de 200 MiB ejecutó en 2.589 s; capacidad y timeout productivos siguen `POR_CONFIRMAR`. Si un ambiente autorizado excede su timeout, el feature debe permanecer apagado; no se amplía ni vuelve asíncrono sin una decisión nueva.

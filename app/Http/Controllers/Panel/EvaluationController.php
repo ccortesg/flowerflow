@@ -6,29 +6,56 @@ use App\Actions\Evaluations\ReopenEvaluation;
 use App\Actions\Evaluations\SaveEvaluationDraft;
 use App\Actions\Evaluations\SubmitEvaluation;
 use App\Enums\EvaluationExportStatus;
+use App\Enums\EvaluationStatus;
 use App\Exceptions\StaleEvaluationDraft;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminSaveReopenedEvaluationRequest;
 use App\Http\Requests\AdminSubmitEvaluationRequest;
 use App\Http\Requests\ReopenEvaluationRequest;
+use App\Models\Category;
 use App\Models\Evaluation;
 use App\Models\EvaluationExport;
 use App\Services\EvaluationDraftCalculator;
+use App\Services\SubmissionReferenceFilter;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class EvaluationController extends Controller
 {
-    public function index(): View
+    public function index(Request $request, SubmissionReferenceFilter $referenceFilter): View
     {
         Gate::authorize('viewAny', Evaluation::class);
-        $evaluations = Evaluation::query()->with([
-            'judgeAssignment.judgeProfile.user:id,name',
-            'judgeAssignment.submissionVersion.submission.category:id,name',
-            'currentRevision:id,evaluation_id,revision_number,status,total_raw,last_saved_by_user_id,submitted_by_user_id,submitted_at,submission_mode',
-        ])->orderByDesc('updated_at')->paginate(25);
+        $request->validate([
+            'folio' => ['nullable', 'string', 'max:64'],
+            'status' => ['nullable', Rule::enum(EvaluationStatus::class)],
+            'category' => ['nullable', 'string', 'max:160'],
+        ]);
+
+        $evaluations = Evaluation::query()
+            ->with([
+                'judgeAssignment.judgeProfile.user:id,name',
+                'judgeAssignment.submissionVersion.submission.category:id,name',
+                'currentRevision:id,evaluation_id,revision_number,status,total_raw,last_saved_by_user_id,submitted_by_user_id,submitted_at,submission_mode',
+            ])
+            ->when($request->filled('folio'), fn ($query) => $query->whereHas(
+                'judgeAssignment.submissionVersion.submission',
+                fn ($submission) => $referenceFilter->apply($submission, $request->string('folio')->toString()),
+            ))
+            ->when($request->filled('status'), fn ($query) => $query->where(
+                'evaluations.status',
+                $request->string('status')->toString(),
+            ))
+            ->when($request->filled('category'), fn ($query) => $query->whereHas(
+                'judgeAssignment.submissionVersion.submission.category',
+                fn ($category) => $category->where('slug', $request->string('category')->toString()),
+            ))
+            ->orderByDesc('evaluations.updated_at')
+            ->paginate(25)
+            ->withQueryString();
 
         $exports = Gate::allows('create', EvaluationExport::class)
             ? request()->user()->evaluationExports()->latest()->limit(5)->get()
@@ -39,7 +66,13 @@ class EvaluationController extends Controller
                 && $export->created_at->lessThanOrEqualTo($staleBefore),
         );
 
-        return view('panel.evaluations.index', compact('evaluations', 'exports', 'hasStalledExports'));
+        return view('panel.evaluations.index', [
+            'evaluations' => $evaluations,
+            'exports' => $exports,
+            'hasStalledExports' => $hasStalledExports,
+            'categories' => Category::query()->orderBy('sort_order')->get(['id', 'slug', 'name']),
+            'statuses' => EvaluationStatus::cases(),
+        ]);
     }
 
     public function show(Evaluation $evaluation, EvaluationDraftCalculator $calculator): View

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\EvaluationExportScope;
 use App\Exceptions\EvaluationExportSourceInvalid;
 use App\Models\Evaluation;
 use Carbon\CarbonImmutable;
@@ -31,7 +32,18 @@ final class EvaluationWorkbookWriter
     }
 
     /** @return array{evaluation_count:int,revision_count:int,criterion_count:int,reopening_count:int} */
-    public function write(string $outputPath): array
+    public function write(
+        string $outputPath,
+        EvaluationExportScope $scope = EvaluationExportScope::AllRevisions,
+    ): array {
+        return match ($scope) {
+            EvaluationExportScope::CurrentRevisions => $this->writeCurrentRevisions($outputPath),
+            EvaluationExportScope::AllRevisions => $this->writeAllRevisions($outputPath),
+        };
+    }
+
+    /** @return array{evaluation_count:int,revision_count:int,criterion_count:int,reopening_count:int} */
+    private function writeAllRevisions(string $outputPath): array
     {
         $writer = new Writer;
         $writer->openToFile($outputPath);
@@ -43,7 +55,7 @@ final class EvaluationWorkbookWriter
         ];
 
         try {
-            $sheets = $this->createSheets($writer);
+            $sheets = $this->createHistoricalSheets($writer);
             Evaluation::query()
                 ->with([
                     'judgeAssignment.submissionVersion',
@@ -81,7 +93,7 @@ final class EvaluationWorkbookWriter
     }
 
     /** @return array<string, Sheet> */
-    private function createSheets(Writer $writer): array
+    private function createHistoricalSheets(Writer $writer): array
     {
         $definitions = [
             'evaluations' => [
@@ -133,6 +145,172 @@ final class EvaluationWorkbookWriter
         }
 
         return $sheets;
+    }
+
+    /** @return array{evaluation_count:int,revision_count:int,criterion_count:int,reopening_count:int} */
+    private function writeCurrentRevisions(string $outputPath): array
+    {
+        $writer = new Writer;
+        $writer->openToFile($outputPath);
+        $counts = [
+            'evaluation_count' => 0,
+            'revision_count' => 0,
+            'criterion_count' => 0,
+            'reopening_count' => 0,
+        ];
+
+        try {
+            $sheets = $this->createCurrentSheets($writer);
+            Evaluation::query()
+                ->with([
+                    'judgeAssignment.submissionVersion',
+                    'rubricVersion',
+                    'currentRevision.subjectJudgeProfile.user:id,name',
+                    'currentRevision.scores.criterion',
+                    'revisions:id,evaluation_id,revision_number',
+                ])
+                ->orderBy('id')
+                ->chunkById(50, function (Collection $evaluations) use ($writer, $sheets, &$counts): void {
+                    foreach ($evaluations as $evaluation) {
+                        $this->appendCurrentEvaluation($writer, $sheets, $evaluation, $counts);
+                    }
+                });
+
+            foreach (['evaluations' => 12, 'criteria' => 17] as $key => $lastColumnIndex) {
+                $sheets[$key]->setAutoFilter(new AutoFilter(
+                    0,
+                    1,
+                    $lastColumnIndex,
+                    $sheets[$key]->getWrittenRowCount(),
+                ));
+            }
+
+            return $counts;
+        } finally {
+            $writer->close();
+        }
+    }
+
+    /** @return array<string, Sheet> */
+    private function createCurrentSheets(Writer $writer): array
+    {
+        $definitions = [
+            'evaluations' => [
+                'name' => 'Evaluaciones vigentes',
+                'headers' => [
+                    'Evaluación', 'Propuesta', 'Juez sujeto', 'Categoría', 'Estado', 'Revisión',
+                    'Actualización', 'Estado de revisión', 'Calificación interna (4 decimales)',
+                    'Calificación presentada (2 decimales)', 'Comentario general', 'ID propuesta', 'Folio',
+                ],
+                'widths' => [28, 24, 38, 30, 18, 14, 28, 20, 25, 27, 72, 28, 18],
+            ],
+            'criteria' => [
+                'name' => 'Rubros vigentes',
+                'headers' => [
+                    'Evaluación', 'Propuesta', 'ID propuesta', 'Folio', 'Juez sujeto',
+                    'ID perfil juez', 'Categoría', 'Revisión', 'Estado de revisión', 'Rúbrica',
+                    'Versión de rúbrica', 'Código', 'Rubro', 'Peso', 'Puntaje',
+                    'Componente calculado', 'Comentario por rubro', 'Orden',
+                ],
+                'widths' => [28, 24, 28, 18, 38, 28, 30, 14, 20, 48, 18, 30, 58, 16, 16, 24, 72, 12],
+            ],
+        ];
+
+        $sheets = [];
+        foreach ($definitions as $key => $definition) {
+            $sheet = $sheets === [] ? $writer->getCurrentSheet() : $writer->addNewSheetAndMakeItCurrent();
+            $sheet->setName($definition['name']);
+            $sheet->setSheetView((new SheetView)->setFreezeRow(2));
+            foreach ($definition['widths'] as $index => $width) {
+                $sheet->setColumnWidth($width, $index + 1);
+            }
+            $writer->addRow($this->literalRow($definition['headers'], $this->headerStyle));
+            $sheets[$key] = $sheet;
+        }
+
+        return $sheets;
+    }
+
+    /**
+     * @param  array<string, Sheet>  $sheets
+     * @param  array{evaluation_count:int,revision_count:int,criterion_count:int,reopening_count:int}  $counts
+     */
+    private function appendCurrentEvaluation(Writer $writer, array $sheets, Evaluation $evaluation, array &$counts): void
+    {
+        $assignment = $evaluation->judgeAssignment;
+        $rubric = $evaluation->rubricVersion;
+        $revision = $evaluation->currentRevision;
+        if (! $assignment || ! $assignment->submissionVersion || ! $rubric || ! $revision) {
+            throw new EvaluationExportSourceInvalid('Current evaluation export contract is incomplete.');
+        }
+
+        $latestRevisionNumber = $evaluation->revisions->max('revision_number');
+        if ($revision->evaluation_id !== $evaluation->id
+            || $latestRevisionNumber === null
+            || $revision->revision_number !== $latestRevisionNumber
+            || ! $evaluation->revisions->contains('id', $revision->id)) {
+            throw new EvaluationExportSourceInvalid('Evaluation current revision contract is invalid.');
+        }
+
+        $judge = $revision->subjectJudgeProfile;
+        if (! $judge || ! $judge->user || $judge->id !== $assignment->judge_profile_id) {
+            throw new EvaluationExportSourceInvalid('Evaluation subject judge contract is invalid.');
+        }
+
+        $context = $this->snapshotContext($evaluation);
+        $proposal = $context['folio'] !== '' ? $context['folio'] : $context['proposal_id'];
+        $scores = $revision->scores->sortBy(
+            fn ($score): array => [$score->criterion?->sort_order ?? PHP_INT_MAX, $score->id],
+        );
+
+        $writer->setCurrentSheet($sheets['evaluations']);
+        $writer->addRow($this->literalRow([
+            $evaluation->public_id,
+            $proposal,
+            $judge->user->name,
+            $context['category'],
+            $evaluation->status->label(),
+            (string) $revision->revision_number,
+            $this->localDate($evaluation->updated_at),
+            $revision->status->label(),
+            $this->decimal($revision->total_raw),
+            $revision->total_raw === null ? '' : $this->calculator->display((string) $revision->total_raw),
+            $revision->general_comment ?? '',
+            $context['proposal_id'],
+            $context['folio'],
+        ]));
+        $counts['evaluation_count']++;
+        $counts['revision_count']++;
+
+        foreach ($scores as $score) {
+            $criterion = $score->criterion;
+            if (! $criterion || $criterion->rubric_version_id !== $evaluation->rubric_version_id) {
+                throw new EvaluationExportSourceInvalid('Evaluation criterion contract is invalid.');
+            }
+
+            $writer->setCurrentSheet($sheets['criteria']);
+            $writer->addRow($this->literalRow([
+                $evaluation->public_id,
+                $proposal,
+                $context['proposal_id'],
+                $context['folio'],
+                $judge->user->name,
+                $judge->public_id,
+                $context['category'],
+                (string) $revision->revision_number,
+                $revision->status->label(),
+                $rubric->title,
+                (string) $rubric->version,
+                $criterion->code,
+                $criterion->label,
+                $this->decimal($criterion->weight),
+                $this->decimal($score->score),
+                $this->decimal($score->calculated_component),
+                $score->comment ?? '',
+                (string) $criterion->sort_order,
+            ]));
+            $counts['criterion_count']++;
+        }
     }
 
     /**

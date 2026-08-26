@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AssignJudgesRequest;
 use App\Http\Requests\CancelJudgeAssignmentRequest;
 use App\Http\Requests\ResolveJudgeConflictRequest;
+use App\Models\Category;
 use App\Models\JudgeAssignment;
 use App\Models\JudgeConflict;
 use App\Models\JudgeProfile;
@@ -20,16 +21,26 @@ use App\Models\RubricVersion;
 use App\Models\Submission;
 use App\Services\AdministrativeJudgeEligibility;
 use App\Services\JudgeAssignmentCoverage;
+use App\Services\SubmissionReferenceFilter;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class AssignmentController extends Controller
 {
-    public function index(JudgeAssignmentCoverage $coverage): View
-    {
+    public function index(
+        Request $request,
+        JudgeAssignmentCoverage $coverage,
+        SubmissionReferenceFilter $referenceFilter,
+    ): View {
         Gate::authorize('viewAny', JudgeAssignment::class);
+        $request->validate([
+            'folio' => ['nullable', 'string', 'max:64'],
+            'category' => ['nullable', 'string', 'max:160'],
+        ]);
+
         $submissions = Submission::query()
             ->where('status', 'submitted')
             ->whereExists(function ($query): void {
@@ -41,16 +52,28 @@ class AssignmentController extends Controller
                         '(SELECT submission_versions.id FROM submission_versions WHERE submission_versions.submission_id = submissions.id ORDER BY submission_versions.version DESC, submission_versions.id DESC LIMIT 1)'
                     ));
             })
+            ->when($request->filled('folio'), fn ($query) => $referenceFilter->apply(
+                $query,
+                $request->string('folio')->toString(),
+            ))
+            ->when($request->filled('category'), fn ($query) => $query->whereHas(
+                'category',
+                fn ($category) => $category->where('slug', $request->string('category')->toString()),
+            ))
             ->with(['category:id,name', 'versions' => fn ($query) => $query->orderByDesc('version'), 'eligibilityReview'])
             ->orderBy('id')
-            ->paginate(20);
+            ->paginate(20)
+            ->withQueryString();
 
         $submissions->getCollection()->each(function (Submission $submission) use ($coverage): void {
             $version = $submission->versions->first();
             $submission->setAttribute('assignment_coverage', $version ? $coverage->summarize($version) : null);
         });
 
-        return view('panel.assignments.index', compact('submissions'));
+        return view('panel.assignments.index', [
+            'submissions' => $submissions,
+            'categories' => Category::query()->orderBy('sort_order')->get(['id', 'slug', 'name']),
+        ]);
     }
 
     public function show(

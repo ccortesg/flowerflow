@@ -18,18 +18,42 @@
   @endif
 </div>
 
-@if($submissions->isEmpty())
-  <div class="alert alert-info" role="status">No hay propuestas elegibles para asignación.</div>
-@else
-  <div class="card ff-card">
-    <div class="table-responsive">
-      <table class="table align-middle mb-0">
-        <thead><tr><th scope="col">ID técnico</th><th scope="col">Categoría</th><th scope="col">Asignaciones</th><th scope="col"><span class="visually-hidden">Acción</span></th></tr></thead>
-        <tbody>
-        @foreach($submissions as $submission)
+<form method="GET" class="card ff-card p-3 mb-4" aria-label="Filtros de asignaciones">
+  <div class="row g-3 align-items-end">
+    <div class="col-sm-6 col-xl-5">
+      <label class="form-label" for="folio">Folio o ID de propuesta</label>
+      <input class="form-control" id="folio" name="folio" maxlength="64" value="{{ request('folio') }}">
+    </div>
+    <div class="col-sm-6 col-xl-5">
+      <label class="form-label" for="category">Categoría</label>
+      <select class="form-select" id="category" name="category">
+        <option value="">Todas</option>
+        @foreach($categories as $category)
+          <option value="{{ $category->slug }}" @selected(request('category') === $category->slug)>{{ $category->name }}</option>
+        @endforeach
+      </select>
+    </div>
+    <div class="col-xl-2 d-grid gap-2">
+      <button class="btn btn-flower" type="submit">Filtrar</button>
+      @if(request()->filled('folio') || request()->filled('category'))
+        <a class="btn btn-sm btn-outline-secondary" href="{{ route('panel.assignments.index') }}">Limpiar</a>
+      @endif
+    </div>
+  </div>
+</form>
+
+<div class="card ff-card">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead><tr><th scope="col">Propuesta</th><th scope="col">Categoría</th><th scope="col">Asignaciones</th><th scope="col"><span class="visually-hidden">Acción</span></th></tr></thead>
+      <tbody>
+        @forelse($submissions as $submission)
           @php($coverage = $submission->getAttribute('assignment_coverage'))
           <tr>
-            <td><code>{{ $submission->public_id }}</code></td>
+            <td>
+              <span class="d-block">{{ $submission->folio ?: 'Sin folio' }}</span>
+              <code class="small">{{ $submission->public_id }}</code>
+            </td>
             <td>{{ $submission->category->name }}</td>
             <td>
               <span class="d-block">{{ $coverage['active'] ?? 0 }} vigentes</span>
@@ -37,11 +61,12 @@
             </td>
             <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ route('panel.assignments.show', $submission) }}">Administrar</a></td>
           </tr>
-        @endforeach
-        </tbody>
-      </table>
-    </div>
+        @empty
+          <tr><td colspan="4" class="p-4">No hay propuestas elegibles que coincidan con los filtros.</td></tr>
+        @endforelse
+      </tbody>
+    </table>
   </div>
-  <div class="mt-4">{{ $submissions->links() }}</div>
-@endif
+</div>
+<div class="mt-4">{{ $submissions->links() }}</div>
 @endsection

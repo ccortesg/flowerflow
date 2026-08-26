@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EvaluationExportScope;
 use App\Enums\EvaluationExportStatus;
 use App\Models\Concerns\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
@@ -39,5 +40,11 @@ class EvaluationExport extends Model
         return $this->status === EvaluationExportStatus::Completed
             && $this->path !== null
             && $this->expires_at?->isFuture();
+    }
+
+    public function scopeLabel(): string
+    {
+        return EvaluationExportScope::tryFrom((string) $this->scope_version)?->label()
+            ?? 'Alcance desconocido';
     }
 }
