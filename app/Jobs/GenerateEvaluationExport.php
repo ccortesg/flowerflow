@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\EvaluationExportScope;
 use App\Enums\EvaluationExportStatus;
 use App\Models\EvaluationExport;
 use App\Services\AuditLogger;
@@ -55,7 +56,8 @@ class GenerateEvaluationExport implements ShouldBeEncrypted, ShouldBeUnique, Sho
 
             return;
         }
-        if ($export->scope_version !== 'all_revisions_v1') {
+        $scope = EvaluationExportScope::tryFrom((string) $export->scope_version);
+        if (! $scope) {
             throw new RuntimeException('Unknown evaluation export scope.');
         }
 
@@ -71,8 +73,11 @@ class GenerateEvaluationExport implements ShouldBeEncrypted, ShouldBeUnique, Sho
         }
 
         try {
-            $counts = $writer->write($temporaryPath);
-            $fileName = 'flower-flow-evaluaciones-'.now(config('flowerflow.timezone'))->format('Ymd-His').'.xlsx';
+            $counts = $writer->write($temporaryPath, $scope);
+            $filePrefix = $scope === EvaluationExportScope::CurrentRevisions
+                ? 'flower-flow-evaluaciones-vigentes-'
+                : 'flower-flow-evaluaciones-';
+            $fileName = $filePrefix.now(config('flowerflow.timezone'))->format('Ymd-His').'.xlsx';
             $path = "evaluation-exports/{$export->public_id}/{$fileName}";
             $stream = fopen($temporaryPath, 'rb');
             if ($stream === false) {

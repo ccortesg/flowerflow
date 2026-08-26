@@ -6,6 +6,7 @@ use App\Actions\Evaluations\OpenEvaluationDraft;
 use App\Actions\Evaluations\ReopenEvaluation;
 use App\Actions\Evaluations\SaveEvaluationDraft;
 use App\Actions\Evaluations\SubmitEvaluation;
+use App\Enums\EvaluationExportScope;
 use App\Enums\EvaluationExportStatus;
 use App\Enums\JudgeAssignmentStatus;
 use App\Enums\JudgeAssignmentType;
@@ -175,6 +176,164 @@ class EvaluationExportTest extends TestCase
         }
     }
 
+    public function test_current_scope_exports_exactly_one_current_revision_per_proposal_judge_with_persisted_rubric_detail(): void
+    {
+        [$admin, $judges, $substitutes, $submission, $version] = $this->createEvaluationScenario();
+        $this->makeSnapshotExportable($version->id, $submission->public_id, (string) $submission->folio);
+
+        $firstAssignment = $this->assignmentFor($judges->get(0));
+        $firstEvaluation = $this->complete(
+            $judges->get(0),
+            $firstAssignment,
+            '8.0',
+            '=Rubro anterior exclusivo',
+            '=Comentario anterior exclusivo '.str_repeat('a', 110),
+        );
+        app(SubmitEvaluation::class)->execute($firstAssignment, $judges->get(0), [
+            'lock_version' => $firstEvaluation->lock_version,
+            'confirm_submission' => 1,
+        ]);
+        $firstEvaluation = $firstEvaluation->fresh();
+        app(ReopenEvaluation::class)->execute(
+            $firstEvaluation,
+            $admin,
+            $firstEvaluation->lock_version,
+            'Motivo sintético que debe permanecer cifrado y fuera de la exportación vigente.',
+        );
+        $firstEvaluation = $firstEvaluation->fresh();
+        $firstEvaluation = app(SaveEvaluationDraft::class)->execute($firstAssignment, $admin, [
+            'lock_version' => $firstEvaluation->lock_version,
+            'general_comment' => '=Comentario general vigente '.str_repeat('v', 110),
+            'criteria' => $firstAssignment->rubricVersion->criteria()->orderBy('sort_order')->get()
+                ->map(fn ($criterion): array => [
+                    'code' => $criterion->code,
+                    'score' => '9.5',
+                    'comment' => '=Rubro vigente literal',
+                ])->all(),
+        ]);
+
+        $secondAssignment = $this->assignmentFor($judges->get(1));
+        $secondEvaluation = app(OpenEvaluationDraft::class)->execute($secondAssignment, $judges->get(1));
+
+        $thirdAssignment = $this->assignmentFor($judges->get(2));
+        $thirdEvaluation = $this->complete($judges->get(2), $thirdAssignment, '0', '@Rubro cero literal');
+        app(SubmitEvaluation::class)->execute($thirdAssignment, $judges->get(2), [
+            'lock_version' => $thirdEvaluation->lock_version,
+            'confirm_submission' => 1,
+        ]);
+
+        $v2Rubric = RubricVersion::query()->where('version', 2)->sole();
+        $v2Judge = $substitutes->first();
+        $v2Assignment = new JudgeAssignment;
+        $v2Assignment->forceFill([
+            'competition_id' => $submission->competition_id,
+            'submission_version_id' => $version->id,
+            'judge_profile_id' => $v2Judge->judgeProfile->id,
+            'rubric_version_id' => $v2Rubric->id,
+            'type' => JudgeAssignmentType::Initial,
+            'status' => JudgeAssignmentStatus::Active,
+            'current_slot' => 1,
+            'due_at' => CarbonImmutable::parse(config('flowerflow.evaluation_close_at'), config('flowerflow.timezone'))->utc(),
+            'assigned_by_user_id' => $admin->id,
+            'assignment_reason' => 'Asignación sintética v2 para exportación vigente.',
+            'assigned_at' => now('UTC'),
+        ])->save();
+        $v2Evaluation = $this->complete($v2Judge, $v2Assignment, '10', '+Rubro v2 literal');
+        app(SubmitEvaluation::class)->execute($v2Assignment, $v2Judge, [
+            'lock_version' => $v2Evaluation->lock_version,
+            'confirm_submission' => 1,
+        ]);
+
+        $this->actingAs($admin)->withSession(['auth.password_confirmed_at' => time()])
+            ->post(route('panel.evaluations.exports.store'), [
+                'scope_version' => EvaluationExportScope::CurrentRevisions->value,
+            ])->assertRedirect(route('panel.evaluations.index'));
+
+        $export = EvaluationExport::query()->sole();
+        $this->assertSame(EvaluationExportStatus::Completed, $export->status);
+        $this->assertSame(EvaluationExportScope::CurrentRevisions->value, $export->scope_version);
+        $this->assertSame('Revisiones vigentes', $export->scopeLabel());
+        $this->assertSame(4, $export->evaluation_count);
+        $this->assertSame(4, $export->revision_count);
+        $this->assertSame(19, $export->criterion_count);
+        $this->assertSame(0, $export->reopening_count);
+        $this->assertMatchesRegularExpression('/^flower-flow-evaluaciones-vigentes-\d{8}-\d{6}\.xlsx$/', $export->file_name);
+
+        $path = Storage::disk('exports')->path($export->path);
+        $workbook = $this->readWorkbook($path);
+        $this->assertSame(['Evaluaciones vigentes', 'Rubros vigentes'], array_keys($workbook));
+        $this->assertCount(5, $workbook['Evaluaciones vigentes']);
+        $this->assertCount(20, $workbook['Rubros vigentes']);
+
+        $evaluationRows = collect(array_slice($workbook['Evaluaciones vigentes'], 1))
+            ->map(fn (array $row): array => array_map(fn (Cell $cell): string => (string) $cell->getValue(), $row));
+        $this->assertCount(4, $evaluationRows->pluck(0)->unique());
+        $firstRow = $evaluationRows->first(fn (array $row): bool => $row[0] === $firstEvaluation->public_id);
+        $this->assertNotNull($firstRow);
+        $this->assertSame((string) $submission->folio, $firstRow[1]);
+        $this->assertSame('Reabierta', $firstRow[4]);
+        $this->assertSame('2', $firstRow[5]);
+        $this->assertSame('Borrador', $firstRow[7]);
+        $this->assertSame('95.0000', $firstRow[8]);
+        $this->assertSame('95.00', $firstRow[9]);
+        $this->assertSame('=Comentario general vigente '.str_repeat('v', 110), $firstRow[10]);
+        $this->assertSame($submission->public_id, $firstRow[11]);
+
+        $secondRow = $evaluationRows->first(fn (array $row): bool => $row[0] === $secondEvaluation->public_id);
+        $this->assertNotNull($secondRow);
+        $this->assertSame('', $secondRow[8]);
+        $this->assertSame('', $secondRow[9]);
+
+        $allValues = collect($workbook)->flatten(2)->map(fn (Cell $cell): string => (string) $cell->getValue());
+        $this->assertTrue($allValues->contains('=Rubro vigente literal'));
+        $this->assertTrue($allValues->contains('0.0000'));
+        $this->assertTrue($allValues->contains($v2Rubric->title));
+        $this->assertFalse($allValues->contains('=Rubro anterior exclusivo'));
+        $this->assertFalse($allValues->contains('=Comentario anterior exclusivo '.str_repeat('a', 110)));
+        $this->assertFalse($allValues->contains('=Proyecto inmutable exportable'));
+        $this->assertFalse($allValues->contains('=Persona Sintética'));
+        $this->assertFalse($allValues->contains('participante-export@example.test'));
+        $this->assertFalse($allValues->contains('Motivo sintético que debe permanecer cifrado y fuera de la exportación vigente.'));
+        foreach (['xl/worksheets/sheet1.xml', 'xl/worksheets/sheet2.xml'] as $entry) {
+            $xml = $this->xlsxEntry($path, $entry);
+            $this->assertStringNotContainsString('<f>', $xml);
+            $this->assertStringContainsString('<autoFilter', $xml);
+        }
+
+        $independentWorkbook = IOFactory::load($path);
+        $this->assertSame(['Evaluaciones vigentes', 'Rubros vigentes'], $independentWorkbook->getSheetNames());
+        foreach ($independentWorkbook->getWorksheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                foreach ($row->getCellIterator() as $cell) {
+                    $this->assertNotSame(PhpSpreadsheetDataType::TYPE_FORMULA, $cell->getDataType());
+                }
+            }
+        }
+        $independentWorkbook->disconnectWorksheets();
+
+        $sourceRevisionId = DB::table('evaluation_revisions')
+            ->where('evaluation_id', $firstEvaluation->id)
+            ->where('revision_number', 1)
+            ->value('id');
+        DB::table('evaluations')->where('id', $firstEvaluation->id)->update(['current_revision_id' => $sourceRevisionId]);
+        $invalidExport = new EvaluationExport;
+        $invalidExport->forceFill([
+            'requested_by_user_id' => $admin->id,
+            'status' => EvaluationExportStatus::Queued,
+            'scope_version' => EvaluationExportScope::CurrentRevisions->value,
+            'disk' => 'exports',
+        ])->save();
+        $job = new GenerateEvaluationExport($invalidExport->id);
+        try {
+            $job->handle(app(EvaluationWorkbookWriter::class), app(AuditLogger::class));
+            $this->fail('A stale current revision pointer must abort the whole workbook.');
+        } catch (EvaluationExportSourceInvalid $exception) {
+            $job->failed($exception);
+        }
+        $this->assertSame(EvaluationExportStatus::Failed, $invalidExport->fresh()->status);
+        $this->assertNull($invalidExport->fresh()->path);
+    }
+
     public function test_export_routes_require_flag_exact_admin_permissions_recent_password_and_owner(): void
     {
         $admin = $this->admin();
@@ -212,6 +371,12 @@ class EvaluationExportTest extends TestCase
             ->assertHeader('x-content-type-options', 'nosniff');
         $this->assertStringContainsString('private', (string) $download->headers->get('cache-control'));
         $this->assertStringContainsString('no-store', (string) $download->headers->get('cache-control'));
+
+        $beforeInvalidScope = EvaluationExport::query()->count();
+        $this->actingAs($admin)->withSession(['auth.password_confirmed_at' => time()])
+            ->post(route('panel.evaluations.exports.store'), ['scope_version' => 'unknown_scope'])
+            ->assertSessionHasErrors('scope_version');
+        $this->assertSame($beforeInvalidScope, EvaluationExport::query()->count());
 
         config(['flowerflow.flags.evaluation_export' => false]);
         $this->actingAs($admin)->withSession(['auth.password_confirmed_at' => time()])
@@ -291,14 +456,19 @@ class EvaluationExportTest extends TestCase
         return JudgeAssignment::query()->where('judge_profile_id', $judge->judgeProfile->id)->firstOrFail();
     }
 
-    private function complete(User $judge, JudgeAssignment $assignment, string $score, string $criterionComment): Evaluation
-    {
+    private function complete(
+        User $judge,
+        JudgeAssignment $assignment,
+        string $score,
+        string $criterionComment,
+        ?string $generalComment = null,
+    ): Evaluation {
         $evaluation = app(OpenEvaluationDraft::class)->execute($assignment, $judge);
         $criteria = $assignment->rubricVersion->criteria()->orderBy('sort_order')->get();
 
         return app(SaveEvaluationDraft::class)->execute($assignment, $judge, [
             'lock_version' => $evaluation->lock_version,
-            'general_comment' => '=Comentario general sintético '.str_repeat('x', 110),
+            'general_comment' => $generalComment ?? '=Comentario general sintético '.str_repeat('x', 110),
             'criteria' => $criteria->map(fn ($criterion): array => [
                 'code' => $criterion->code,
                 'score' => $score,

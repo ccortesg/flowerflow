@@ -1,5 +1,7 @@
 # Roadmap y backlog
 
+> **Milestone ADR-0016 — 2026-08-26, local/test:** incorpora filtros homogéneos en Asignaciones/Evaluaciones y un alcance XLSX de revisiones vigentes con una fila por juez, preservando el historial completo. No agrega consolidación, ranking, resultados, esquema, dependencia o producción; la evidencia final vive en el informe 33.
+
 > **Milestone ADR-0015 — 2026-08-25, local/test:** implementa asignación previa al onboarding sin acceso anticipado, filtro común folio/ULID y exportación privada de evaluaciones. No añade consolidación, promedio, ranking o resultados; el flag de exportación nace apagado. Release/producción siguen bloqueados por la reconciliación jurídica pendiente.
 
 > **Milestone operativo de asignación simultánea — 2026-08-25:** implementación local de un juez por operación y hasta veinte propuestas, con preflight puro, atomicidad por propuesta y correo consolidado. Es independiente de M9/M10, nace apagado y no resuelve cobertura jurídica, producción o despliegue.

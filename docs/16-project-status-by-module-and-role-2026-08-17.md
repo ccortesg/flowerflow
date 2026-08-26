@@ -1,5 +1,7 @@
 # Diagnóstico vigente por módulo y rol — 2026-08-17
 
+> **Adenda ADR-0016 — 2026-08-26, local/test:** Asignaciones y Evaluaciones ya tienen filtros por referencia/categoría y la segunda añade estado. El XLSX administrativo ofrece revisión vigente por propuesta–juez y rubros, además del historial completo; no cambia cálculo, consolidación, resultados, esquema o producción. Evidencia final en informe 33.
+
 > **Adenda ADR-0015 — 2026-08-25, local/test:** el contrato operativo permite asignar a jueces `pending_setup` sin habilitar su cuenta ni enviarles la notificación de assignment; unifica búsqueda folio/ULID en Propuestas y Admisibilidad; y añade exportación confidencial de todas las revisiones para el admin solicitante. La migración, permiso, job, writer y UI son aditivos y default-off. Las cifras finales y gates constan en el informe 32; producción permanece fuera y el bloqueo jurídico continúa.
 
 > **Adenda de asignación simultánea — 2026-08-25, `GO LOCAL/TEST`:** el panel local incorpora selección de un juez y hasta veinte propuestas, preflight cifrado y tres fases atómicas por propuesta. Reutiliza admisibilidad, paquete, assignment y outbox; no añade migración, batch, dependencia o worker. Suite 228/2,653, prueba dirigida final 9/123, benchmark máximo 2.589 s y UAT Firefox en tres viewports. Producción no autorizada y `NO-GO RELEASE/PRODUCTION` jurídico vigente.
@@ -175,6 +177,7 @@ El runtime aislado valida cuatro propuestas y rechaza la quinta. El `.env` prima
 | Perfil y alta directa M2/M4A | 100 % | Cuenta/estados/seguridad verdes; capacidad derivada/check son `NULL` para ambos roles. | Operación productiva no acreditada; no auto-crear seis cuentas. |
 | Rúbrica M3/M6A | 100 % | V1 histórica de cinco criterios y v2 activa de cuatro×25 %, permisos admin, activación/sustitución, inmutabilidad, concurrencia, auditoría y UAT. | Operación productiva no acreditada. |
 | Asignaciones/conflictos M4/M6A | 100 % | Flujo append-only, permisos, locks, selección administrativa manual sin mínimos/máximos, roles informativos y cadenas explícitas verdes local/test. | Mantener regresión y reconciliar el mínimo jurídico antes de release. |
+| Operación panel/exportación ADR-0016 | 100 % local/test | Filtros homogéneos y XLSX vigente/histórico con privacidad, ownership y revisión fail-closed. | UAT y capacidad/worker/disk en release autorizado. |
 | Paquete ciego y anexos M5 | 100 % | Paquete único por versión, payload allowlist/hash, inventario neutro, activación explícita, Policy por asignación, integridad en descarga, canarios y concurrencia verdes. | Acreditar operación productiva sólo mediante tarea autorizada; conservar riesgo semántico aceptado. |
 | Evaluación en borrador/cálculo M6 | 100 % | Agregado/revisión/scores, apertura explícita, guardado parcial, total BCMath, lock 409, plazo, auditoría y UAT. | Operación productiva no acreditada. |
 | Envío/reapertura M7 | 100 % local/test | Confirmación, mínimo 100, `submitted` inmutable, reapertura/reenvío append-only, actor real, ventanas y 409 verificados. | M8, operación productiva y reconciliación jurídica. |

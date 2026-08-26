@@ -1,5 +1,7 @@
 # UX/UI, accesibilidad e identidad — Flower Flow 2026
 
+> **Adenda UX ADR-0016 — 2026-08-26:** Asignaciones añade filtros de folio/ID y categoría; Evaluaciones añade folio/ID, estado y categoría. Ambas tablas muestran folio e ID público y mantienen filtros al paginar. La confirmación XLSX ofrece `Revisiones vigentes` como opción inicial y `Historial completo` como alternativa explícita, declara alcance global y rotula el nombre del juez como actual al exportar. El historial reciente muestra el tipo de archivo.
+
 > **Adenda UX ADR-0015 — 2026-08-25:** los selectores individual, masivo y de reemplazo muestran primero jueces activos y después `Configuración pendiente`, con advertencia de que no pueden consultar ni evaluar hasta terminar su cuenta. Propuestas y Admisibilidad rotulan el campo `Folio o ID de propuesta`. Evaluaciones muestra `Exportar evaluaciones`, una confirmación de confidencialidad y cinco solicitudes recientes con estado, expiración, descarga y alerta de cola estancada; los controles se ocultan sin flag o permiso, sin sustituir autorización servidor.
 
 > **Adenda UX M8A — 2026-08-25:** el juez recorre un wizard semántico de cuatro pasos: inicio, proyecto asignado, evaluación y revisar/enviar. El stepper es horizontal, compacto en móvil, usa `aria-current` y comunica completado/actual/pendiente sin depender sólo del color. Proyecto y evaluación son pantallas independientes y navegables; después de iniciar desaparece el acceso superior a conflicto. La evaluación conserva guardado manual y añade autosave cada 30 segundos, estados `aria-live`, errores 422, offline y 409 sin pérdida local. En móvil los CTA ocupan el ancho disponible, la barra de acciones no cubre contenido y no hay scroll horizontal. PDF/XLSX usan ambos logotipos y estructura institucional.
@@ -35,8 +37,8 @@
 
 | Superficie | Datos | Acciones | Estados |
 |---|---|---|---|
-| `/panel/asignaciones` | ID técnico, categoría, cobertura 0..4 | abrir propuesta elegible | vacío, paginado, cobertura/conflicto |
-| `/panel/asignaciones/{submission}` | versión, jueces, tipo/estado, rúbrica versionada y plazo | activar cuatro; resolver conflicto con contraseña/razón | 0/4, 3/4, 4/4, error de composición/capacidad |
+| `/panel/asignaciones` | propuesta (folio+ID), categoría y conteos | filtrar y abrir propuesta elegible | vacío, paginado, filtros conservados, cobertura/conflicto |
+| `/panel/asignaciones/{submission}` | versión, jueces, tipo/estado, rúbrica versionada y plazo | seleccionar manualmente uno o varios; resolver conflicto con contraseña/razón | sin mínimo/máximo, duplicidad, conflicto o elegibilidad inválida |
 | `/juez/asignaciones` | alias opaco, categoría y estado propios | abrir | vacío/listado paginado |
 | `/juez/asignaciones/{assignment}` | alias, categoría, plazo y estado | declarar conflicto propio | activo, conflicto bloqueante, 403/404 |
 

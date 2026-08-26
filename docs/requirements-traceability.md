@@ -1,5 +1,15 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+## ADR-0016 — filtros y exportación de revisiones vigentes
+
+| ID | Requisito | Implementación/prueba | Estado |
+|---|---|---|---|
+| PANEL-FLT-01 | Asignaciones filtra propuesta/categoría sin alterar enviado+admitido | controller/vista, `SubmissionReferenceFilter`, `PanelAssignmentEvaluationFiltersTest` | VERIFIED LOCAL/TEST |
+| PANEL-FLT-02 | Evaluaciones filtra propuesta/estado/categoría y conserva paginación | controller/vista, enum y `PanelAssignmentEvaluationFiltersTest` | VERIFIED LOCAL/TEST |
+| EVAL-CUR-01 | Una fila por evaluación propuesta–juez desde `current_revision_id` | `EvaluationExportScope`, job/writer y `EvaluationExportTest` | VERIFIED LOCAL/TEST |
+| EVAL-CUR-02 | Estado, total/comentario general y rubros/comentarios persistidos | dos hojas vigentes e inspección OpenSpout/PhpSpreadsheet/XML | VERIFIED LOCAL/TEST |
+| EVAL-CUR-03 | Historial compatible, PII excluida y drift fail-closed | default legado, writer histórico intacto y pruebas negativas | VERIFIED LOCAL/TEST |
+
 ## ADR-0015 — asignación previa, referencias y exportación de evaluaciones
 
 | ID | Requisito | Implementación/prueba | Estado |

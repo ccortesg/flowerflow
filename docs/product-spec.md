@@ -1,5 +1,7 @@
 # Especificación de producto — Flower Flow 2026
 
+> **Contrato ADR-0016 — 2026-08-26, local/test:** Asignaciones y Evaluaciones permiten buscar folio/ID público y categoría; Evaluaciones también filtra estado. El admin autorizado puede exportar una fila por evaluación propuesta–juez usando su revisión vigente, con estado, total, comentario general y rubros/comentarios persistidos. El historial de todas las revisiones permanece disponible. Ningún alcance consolida, promedia, ordena o declara resultados; producción y release siguen bloqueados.
+
 > **Contrato ADR-0015 — 2026-08-25, local/test:** un juez coherente con configuración pendiente puede recibir asignaciones manuales individuales, masivas o de reemplazo, pero no entrar ni recibir el correo de asignación hasta quedar operativo; no hay replay. Folio/ID público comparten búsqueda parcial protegida. El admin autorizado puede solicitar un XLSX privado con evaluaciones, criterios y reaperturas de todas las revisiones; la identidad y el proyecto provienen sólo del snapshot y el nombre del juez se etiqueta como actual al exportar. Flag default-off y release bloqueado.
 
 > **Asignación simultánea local/test — 2026-08-25:** el administrador puede preparar hasta veinte propuestas para un único juez con fases explícitas de admisibilidad, paquete ciego y asignación. No existe selección automática ni cobertura mínima. Cada propuesta es atómica, el lote admite éxito parcial y el correo al juez se resume en un delivery opcional sin contenido de proyectos.

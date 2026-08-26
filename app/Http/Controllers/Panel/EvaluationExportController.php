@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Panel;
 
+use App\Enums\EvaluationExportScope;
 use App\Enums\EvaluationExportStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreEvaluationExportRequest;
 use App\Jobs\GenerateEvaluationExport;
 use App\Models\Evaluation;
 use App\Models\EvaluationExport;
@@ -30,10 +32,14 @@ class EvaluationExportController extends Controller
             'revisionCount' => EvaluationRevision::query()->count(),
             'criterionCount' => EvaluationScore::query()->count(),
             'reopeningCount' => EvaluationReopening::query()->count(),
+            'currentCriterionCount' => EvaluationScore::query()
+                ->whereIn('evaluation_revision_id', Evaluation::query()->select('current_revision_id'))
+                ->count(),
+            'scopes' => EvaluationExportScope::cases(),
         ]);
     }
 
-    public function store(Request $request, AuditLogger $audit): RedirectResponse
+    public function store(StoreEvaluationExportRequest $request, AuditLogger $audit): RedirectResponse
     {
         $this->authorize('create', EvaluationExport::class);
         $confirmedAt = (int) $request->session()->get('auth.password_confirmed_at', 0);
@@ -42,17 +48,18 @@ class EvaluationExportController extends Controller
                 ->with('warning', 'Confirma nuevamente tu contraseña antes de generar la exportación.');
         }
 
-        $export = DB::transaction(function () use ($request, $audit): EvaluationExport {
+        $scope = $request->exportScope();
+        $export = DB::transaction(function () use ($request, $audit, $scope): EvaluationExport {
             $export = new EvaluationExport;
             $export->forceFill([
                 'requested_by_user_id' => $request->user()->id,
                 'status' => EvaluationExportStatus::Queued,
-                'scope_version' => 'all_revisions_v1',
+                'scope_version' => $scope->value,
                 'disk' => config('flowerflow.exports.disk'),
             ])->save();
 
             $audit->record('evaluation_export.requested', $export, $request->user(), [
-                'scope_version' => 'all_revisions_v1',
+                'scope_version' => $scope->value,
                 'status' => EvaluationExportStatus::Queued->value,
             ]);
 
