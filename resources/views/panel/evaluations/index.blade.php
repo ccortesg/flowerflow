@@ -73,7 +73,7 @@
 
 @if(config('flowerflow.flags.evaluation_export'))
   @can('create', \App\Models\EvaluationExport::class)
-    <section class="card ff-card mt-4" aria-labelledby="recent-evaluation-exports-title">
+    <section class="card ff-card mt-4 overflow-hidden" aria-labelledby="recent-evaluation-exports-title">
       <div class="card-body">
         <h2 class="h5" id="recent-evaluation-exports-title">Exportaciones recientes</h2>
         @if($hasStalledExports)
