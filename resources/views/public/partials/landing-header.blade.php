@@ -7,9 +7,7 @@
     </a>
 
     <div class="ff-public-nav-actions">
-      @if(config('flowerflow.flags.registration'))
-        <a class="ff-button ff-button-primary ff-header-cta ff-header-cta-mobile" href="{{ url('/register') }}">Participar</a>
-      @endif
+      <a class="ff-button ff-button-primary ff-header-cta ff-header-cta-mobile" href="{{ config('flowerflow.voting.form_url') }}" target="_blank" rel="noopener noreferrer" data-voting-trigger>Votar</a>
       <button class="ff-menu-toggle" type="button" aria-expanded="false" aria-controls="landing-navigation" aria-label="Abrir menú" data-public-menu-toggle>
         <span class="ff-landing-icon ri-menu-line" aria-hidden="true"></span>
         <span class="ff-landing-icon ri-close-line" aria-hidden="true"></span>
@@ -28,11 +26,7 @@
           <span class="ff-landing-icon ri-login-box-line" aria-hidden="true"></span>
           Iniciar sesión
         </a>
-        @if(config('flowerflow.flags.registration'))
-          <a class="ff-button ff-button-primary ff-header-cta" href="{{ url('/register') }}">Quiero participar</a>
-        @else
-          <span class="ff-button ff-button-muted ff-header-cta" aria-disabled="true">Registro próximamente</span>
-        @endif
+        <a class="ff-button ff-button-primary ff-header-cta" href="{{ config('flowerflow.voting.form_url') }}" target="_blank" rel="noopener noreferrer" data-voting-trigger>Votar</a>
       </div>
     </div>
   </nav>

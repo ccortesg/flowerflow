@@ -54,6 +54,7 @@
 .ff-public-nav {
   min-height: 5.25rem;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
@@ -1297,5 +1298,241 @@
   .ff-public-landing *::after {
     scroll-behavior: auto !important;
     transition-duration: .01ms !important;
+  }
+}
+
+/* Public voting: page-owned hero and modal, independent of account screens. */
+.ff-public-landing .ff-voting-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center;
+  min-height: 35rem;
+  overflow: hidden;
+  color: #173d2b;
+  background: #fff6e5;
+  border: 1px solid #ecdfc7;
+  border-radius: 1.75rem;
+  box-shadow: 0 1.4rem 3.5rem rgba(62, 49, 27, .08);
+}
+
+.ff-public-landing .ff-voting-copy {
+  position: relative;
+  z-index: 1;
+  padding: clamp(2rem, 4.5vw, 4rem) 0 clamp(2rem, 4.5vw, 4rem) clamp(2rem, 4.5vw, 4rem);
+}
+
+.ff-public-landing .ff-voting-copy h1 {
+  margin: 1rem 0 1.5rem;
+  color: #173d2b;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3.8rem, 6.8vw, 6.4rem);
+  font-weight: 700;
+  letter-spacing: -.055em;
+  line-height: 1.02;
+}
+
+.ff-public-landing .ff-voting-copy h1 span {
+  display: block;
+  color: #bd4e10;
+}
+
+.ff-public-landing .ff-voting-lead {
+  max-width: 32ch;
+  margin-bottom: 1.8rem;
+  color: #344b3b;
+  font-size: clamp(1.06rem, 1.6vw, 1.25rem);
+  line-height: 1.7;
+}
+
+.ff-public-landing .ff-voting-actions {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.ff-public-landing .ff-voting-actions .ff-button {
+  min-width: 10.5rem;
+}
+
+.ff-public-landing .ff-voting-actions .ff-inline-link {
+  min-height: 2.75rem;
+  margin-top: .55rem;
+  color: #173d2b;
+}
+
+.ff-public-landing .ff-voting-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: 1rem;
+  border-radius: 2rem;
+}
+
+.ff-public-landing [data-voting-trigger] {
+  min-height: 2.75rem;
+}
+
+.ff-public-landing .ff-voting-modal .modal-dialog {
+  width: calc(100% - 2rem);
+  max-width: 50rem;
+  height: min(56rem, 90vh);
+  height: min(56rem, 90dvh);
+  min-height: 0;
+  margin: 5vh auto;
+  margin: 5dvh auto;
+}
+
+.ff-public-landing .ff-voting-modal .modal-content {
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  border: 0;
+  border-radius: 1.2rem;
+  box-shadow: 0 1.5rem 5rem rgba(0, 0, 0, .2);
+}
+
+.ff-public-landing .ff-voting-modal .modal-header {
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 1rem;
+  padding: .85rem 1.25rem;
+  background: #fffaf4;
+}
+
+.ff-public-landing .ff-voting-modal .modal-title {
+  color: #173d2b;
+  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.ff-public-landing .ff-voting-close {
+  flex: 0 0 auto;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  color: #173d2b;
+  background: #fff;
+  border: 1px solid #eaded5;
+  border-radius: .65rem;
+  font-size: 1.5rem;
+}
+
+.ff-public-landing .ff-voting-close:hover {
+  background: #fff0e7;
+}
+
+.ff-public-landing .ff-voting-modal .modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.ff-public-landing .ff-voting-modal iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.ff-public-landing .ff-voting-loading {
+  position: absolute;
+  z-index: 1;
+  inset: 1rem 1rem auto;
+  margin: 0;
+  padding: .8rem;
+  color: #344b3b;
+  background: #fffaf4;
+  border-radius: .5rem;
+  pointer-events: none;
+}
+
+.ff-public-landing .ff-voting-modal .modal-footer {
+  flex: 0 0 auto;
+  justify-content: space-between;
+  gap: .6rem 1rem;
+  padding: .8rem 1.25rem;
+  background: #fffaf4;
+}
+
+.ff-public-landing .ff-voting-modal .modal-footer > * {
+  margin: 0;
+}
+
+.ff-public-landing .ff-voting-modal .modal-footer p {
+  flex: 1 1 14rem;
+  color: #4d574f;
+  font-size: .875rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 61.99rem) {
+  .ff-public-landing .ff-voting-card {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .ff-public-landing .ff-voting-copy {
+    padding: 2rem 1.5rem 0;
+  }
+
+  .ff-public-landing .ff-voting-copy h1 {
+    font-size: clamp(3.4rem, 10vw, 5rem);
+  }
+
+  .ff-public-landing .ff-voting-art {
+    max-width: 32rem;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 35.99rem) {
+  .ff-public-landing .ff-voting-card {
+    border-radius: 1.15rem;
+  }
+
+  .ff-public-landing .ff-voting-copy {
+    padding: 1.7rem 1.2rem 0;
+  }
+
+  .ff-public-landing .ff-voting-copy h1 {
+    margin-block: .8rem 1rem;
+    font-size: clamp(3rem, 13vw, 4.5rem);
+  }
+
+  .ff-public-landing .ff-voting-lead {
+    margin-bottom: 1.2rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .ff-public-landing .ff-voting-actions .ff-button {
+    width: 100%;
+  }
+
+  .ff-public-landing .ff-voting-modal .modal-dialog {
+    width: 100%;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    margin: 0;
+  }
+
+  .ff-public-landing .ff-voting-modal .modal-content {
+    border-radius: 0;
+  }
+
+  .ff-public-landing .ff-voting-modal .modal-header,
+  .ff-public-landing .ff-voting-modal .modal-footer {
+    padding-inline: 1rem;
+  }
+
+  .ff-public-landing .ff-voting-modal .modal-footer {
+    padding-bottom: max(.8rem, env(safe-area-inset-bottom));
   }
 }

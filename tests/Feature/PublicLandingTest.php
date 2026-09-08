@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Competition;
+use DOMDocument;
+use DOMXPath;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,9 +17,13 @@ class PublicLandingTest extends TestCase
         $this->seedFlowerFlow();
 
         $response = $this->get('/')->assertOk()
-            ->assertSeeText('¡Para mejorar aún más Hermosillo, todos a participar!')
-            ->assertSee('23 de agosto de 2026, 23:59 horas')
-            ->assertSee('tiempo de Hermosillo')
+            ->assertSeeText('¡La gente elige!')
+            ->assertSee('Votación ciudadana · Hermosillo 2026')
+            ->assertSee('Vota por tu proyecto favorito. Tu opinión cuenta. Hagamos florecer a Hermosillo.')
+            ->assertSee('Consulta la convocatoria')
+            ->assertSee('Tu opinión cuenta')
+            ->assertSee('Elige tu proyecto favorito')
+            ->assertSee('Finaliza tu propuesta antes del 23 de agosto de 2026 a las 23:59.')
             ->assertSee('Movilidad con Flow')
             ->assertSee('Hermosillo Florece')
             ->assertSee('Mi familia, mi mascota')
@@ -30,17 +36,19 @@ class PublicLandingTest extends TestCase
             ->assertSee('ri-accessibility-line', false)
             ->assertSee('Apple')
             ->assertSee('iPad Pro')
-            ->assertSee('1 ganador por categoría')
+            ->assertSee('ganador máximo por categoría')
             ->assertSee('FUNXT, A.C.')
             ->assertSee('FUN110208BT0')
             ->assertSee('Versión 1.1')
-            ->assertSee('Recepción aún no habilitada')
+            ->assertDontSee('Recepción aún no habilitada')
+            ->assertDontSee('Recepción de propuestas abierta')
             ->assertDontSee('iPad Pro Max');
 
         $response
             ->assertSee('assets/flowerflow/logo_flowerflow_transparente.png', false)
             ->assertSee('assets/flowerflow/logo_florecehermosillo_transparente.png', false)
-            ->assertSee('assets/flowerflow/landing/hermosillo-atardecer.webp', false)
+            ->assertSee('assets/flowerflow/landing/voting-illustration-640.webp', false)
+            ->assertSee('assets/flowerflow/landing/voting-illustration-1024.webp', false)
             ->assertSee('assets/flowerflow/landing/premio-ipad-pro.webp', false);
 
         $documents = [
@@ -54,7 +62,8 @@ class PublicLandingTest extends TestCase
             $response->assertSee("documentos/2026/{$document}", false);
         }
 
-        $this->assertFileExists(public_path('assets/flowerflow/landing/hermosillo-atardecer.webp'));
+        $this->assertFileExists(public_path('assets/flowerflow/landing/voting-illustration-640.webp'));
+        $this->assertFileExists(public_path('assets/flowerflow/landing/voting-illustration-1024.webp'));
         $this->assertFileExists(public_path('assets/flowerflow/landing/premio-ipad-pro.webp'));
     }
 
@@ -65,32 +74,76 @@ class PublicLandingTest extends TestCase
         $this->get('/')->assertNotFound();
     }
 
-    public function test_registration_and_submission_calls_to_action_follow_their_flags(): void
+    public function test_voting_calls_to_action_remain_available_independently_of_registration_and_submission_flags(): void
     {
         $this->seedFlowerFlow();
 
-        config([
-            'flowerflow.flags.registration' => true,
-            'flowerflow.flags.submissions' => true,
-        ]);
+        foreach ([false, true] as $registration) {
+            foreach ([false, true] as $submissions) {
+                config([
+                    'flowerflow.flags.registration' => $registration,
+                    'flowerflow.flags.submissions' => $submissions,
+                ]);
 
-        $this->get('/')->assertOk()
-            ->assertSee('Crear mi cuenta')
-            ->assertSee('Quiero participar')
-            ->assertSee('Recepción de propuestas abierta')
-            ->assertSee('href="'.url('/register').'"', false)
-            ->assertDontSee('Registro próximamente');
+                $response = $this->get('/')->assertOk()
+                    ->assertSee('Votar')
+                    ->assertSee('href="'.route('login').'"', false)
+                    ->assertDontSee('Recepción de propuestas abierta')
+                    ->assertDontSee('Recepción aún no habilitada')
+                    ->assertDontSee('próximamente')
+                    ->assertDontSee('Próximamente')
+                    ->assertDontSee('Crear mi cuenta')
+                    ->assertDontSee('Quiero participar');
 
-        config([
-            'flowerflow.flags.registration' => false,
-            'flowerflow.flags.submissions' => false,
-        ]);
+                $this->assertSame(4, substr_count($response->getContent(), 'data-voting-trigger'));
+            }
+        }
+    }
 
-        $this->get('/')->assertOk()
-            ->assertSee('Registro próximamente')
-            ->assertSee('Recepción aún no habilitada')
-            ->assertDontSee('Crear mi cuenta')
-            ->assertDontSee('Quiero participar');
+    public function test_voting_has_one_shared_lazy_modal_and_functional_external_links(): void
+    {
+        $formUrl = 'https://forms.gle/r3jj7m8aq4GK3gSo7';
+        $embedUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScDanRPqq_iWsVx3NqT9fjTYVLmJqjYXMBstWZw1F7sdkQ1UA/viewform?embedded=true';
+        $this->assertSame($formUrl, config('flowerflow.voting.form_url'));
+        $this->assertSame($embedUrl, config('flowerflow.voting.embed_url'));
+
+        $response = $this->get('/')->assertOk()
+            ->assertSee('Google solicita iniciar sesión para responder.')
+            ->assertSee('Abrir en Google')
+            ->assertSee('public-voting-', false);
+        $document = new DOMDocument;
+        @$document->loadHTML($response->getContent());
+        $xpath = new DOMXPath($document);
+
+        $this->assertSame(1, $xpath->query('//body/div[@id="public-voting-modal"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@id="public-voting-title"]')->length);
+        $this->assertSame(1, $xpath->query('//iframe[@id="public-voting-frame"]')->length);
+        $this->assertSame(0, $xpath->query('//iframe[@id="public-voting-frame"]/@src')->length);
+        $this->assertSame($embedUrl, $xpath->evaluate('string(//iframe[@id="public-voting-frame"]/@data-src)'));
+        $this->assertNotEmpty($xpath->evaluate('string(//iframe[@id="public-voting-frame"]/@title)'));
+        $this->assertSame('public-voting-title', $xpath->evaluate('string(//*[@id="public-voting-modal"]/@aria-labelledby)'));
+        $this->assertSame('public-voting-description', $xpath->evaluate('string(//*[@id="public-voting-modal"]/@aria-describedby)'));
+        $this->assertSame(4, $xpath->query('//a[@data-voting-trigger]')->length);
+        $links = $xpath->query('//a[@data-voting-trigger] | //*[@id="public-voting-modal"]//a');
+        $this->assertSame(5, $links->length);
+        foreach ($links as $link) {
+            $this->assertSame($formUrl, $link->getAttribute('href'));
+            $this->assertSame('_blank', $link->getAttribute('target'));
+            $this->assertSame('noopener noreferrer', $link->getAttribute('rel'));
+        }
+    }
+
+    public function test_authenticated_landing_keeps_the_modal_outside_the_account_shell(): void
+    {
+        $this->seedFlowerFlow();
+        $response = $this->actingAs($this->participant())->get('/')->assertOk();
+        $document = new DOMDocument;
+        @$document->loadHTML($response->getContent());
+        $xpath = new DOMXPath($document);
+
+        $this->assertSame(1, $xpath->query('//body/div[@id="public-voting-modal"]')->length);
+        $this->assertSame(2, $xpath->query('//a[@data-voting-trigger]')->length);
+        $this->get(route('dashboard'))->assertOk()->assertDontSee('public-voting-', false);
     }
 
     public function test_landing_uses_safe_category_fallback_without_an_active_competition(): void
@@ -160,6 +213,7 @@ class PublicLandingTest extends TestCase
         $this->get('/login')->assertOk()
             ->assertDontSee('ff-public-header', false)
             ->assertDontSee('ff-final-cta', false)
+            ->assertDontSee('public-voting-', false)
             ->assertSee('ff-login-header', false);
     }
 }

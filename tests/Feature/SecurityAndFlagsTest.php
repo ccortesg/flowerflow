@@ -96,7 +96,7 @@ class SecurityAndFlagsTest extends TestCase
 
     public function test_security_headers_are_applied(): void
     {
-        $contentSecurityPolicy = "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; frame-src https://www.youtube-nocookie.com";
+        $contentSecurityPolicy = "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://docs.google.com";
 
         $response = $this->get('/')->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertHeader('X-Frame-Options', 'DENY')
@@ -122,6 +122,31 @@ class SecurityAndFlagsTest extends TestCase
         $this->assertStringContainsString("style-src-elem 'self' 'nonce-", $policy);
         $this->assertStringContainsString("style-src-attr 'unsafe-inline'", $policy);
         $this->assertStringNotContainsString("style-src 'self' 'unsafe-inline'", $policy);
+    }
+
+    public function test_google_frames_are_allowed_only_on_the_landing_in_both_csp_modes(): void
+    {
+        foreach ([false, true] as $strict) {
+            config(['flowerflow.security.enforce_strict_csp' => $strict]);
+            foreach (['/' => true, '/login' => false, '/panel/login' => false, '/documentos' => false] as $path => $allowsGoogle) {
+                $response = $this->get($path)->assertOk();
+                $headers = ['Content-Security-Policy'];
+                if (! $strict) {
+                    $headers[] = 'Content-Security-Policy-Report-Only';
+                }
+                foreach ($headers as $header) {
+                    $policy = (string) $response->headers->get($header);
+                    $frameSources = 'https://www.youtube-nocookie.com'.($allowsGoogle ? ' https://docs.google.com' : '');
+                    $this->assertMatchesRegularExpression('/(?:^|; )frame-src '.preg_quote($frameSources, '/').'(?:;|$)/', $policy);
+                    $this->assertSame($allowsGoogle ? 1 : 0, substr_count($policy, 'https://docs.google.com'));
+                    $this->assertStringContainsString("connect-src 'self';", $policy);
+                    $this->assertStringContainsString("form-action 'self';", $policy);
+                    $this->assertStringContainsString("frame-ancestors 'none';", $policy);
+                    $this->assertStringNotContainsString('accounts.google.com', $policy);
+                    $this->assertStringNotContainsString('*', $policy);
+                }
+            }
+        }
     }
 
     public function test_hsts_is_limited_to_production_https_and_has_no_shared_domain_directives(): void

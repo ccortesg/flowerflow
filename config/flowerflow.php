@@ -3,6 +3,10 @@
 return [
     'canonical_url' => env('FLOWERFLOW_CANONICAL_URL', 'https://app.flowerflow.com.mx'),
     'timezone' => env('FLOWERFLOW_TIMEZONE', 'America/Hermosillo'),
+    'voting' => [
+        'form_url' => 'https://forms.gle/r3jj7m8aq4GK3gSo7',
+        'embed_url' => 'https://docs.google.com/forms/d/e/1FAIpQLScDanRPqq_iWsVx3NqT9fjTYVLmJqjYXMBstWZw1F7sdkQ1UA/viewform?embedded=true',
+    ],
     'submissions_close_at' => env('FLOWERFLOW_SUBMISSIONS_CLOSE_AT', '2026-08-23 23:59:59'),
     'evaluation_close_at' => env('FLOWERFLOW_EVALUATION_CLOSE_AT', '2026-08-27 23:59:59'),
     'evaluation_reopen_close_at' => env('FLOWERFLOW_EVALUATION_REOPEN_CLOSE_AT', '2026-08-27 20:00:00'),

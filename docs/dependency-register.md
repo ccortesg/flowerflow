@@ -1,5 +1,18 @@
 # Registro de dependencias
 
+## Votación pública — 2026-09-08
+
+[ADR-0017](adr/0017-public-voting-google-forms.md) registra Google Forms como servicio externo de votación autorizado. No se añaden ni actualizan paquetes npm/Composer. Se reutiliza Bootstrap 5.3.6 para el modal y Vite para una tercera entrada exclusiva del landing (`resources/js/pages/public-voting.js`); las dos entradas del snapshot anterior permanecen.
+
+| Recurso | Alcance | Dependencia y límites |
+|---|---|---|
+| Google Forms (`docs.google.com`, enlace corto `forms.gle`) | Iframe bajo demanda y alternativa externa | Google administra acceso, respuestas y confirmación. Requiere sesión según el formulario entregado. Disponibilidad, cookies y redirecciones externas pueden impedir el uso incrustado; «Abrir en Google» siempre disponible. |
+| Bootstrap 5.3.6 | Modal, overlay y focus trap existentes | Sin fork ni dependencia nueva; JavaScript compartido con la aplicación. |
+| ImageGen integrado | Preparación puntual de ilustración | No es una dependencia del runtime. PNG y flyer conservados; WebP reproducibles con PHP/GD existente. No se rasterizan textos ni logotipos. |
+| Georgia y familia existente | Tipografía | Fuente serif del sistema; ninguna descarga tipográfica nueva. |
+
+Las URL aprobadas se centralizan en `config/flowerflow.php`. CSP sólo amplía `frame-src` en la ruta `landing`; no se permite autenticación incrustada adicional ni se relajan `form-action`/`connect-src`. FlowerFlow no almacena votos ni recibe credenciales Google. Ver [informe de validación](34-public-voting-integration-2026-09-08.md).
+
 ## Exportaciones del proyecto asignado M8A — 2026-08-25
 
 | Dependencia | Versión lock | Alcance | Licencia | Motivo y controles |

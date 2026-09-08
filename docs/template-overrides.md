@@ -1,5 +1,18 @@
 # Inventario de overrides de Materialize
 
+## Adenda de votación pública — 2026-09-08
+
+Integración local aprobada en [ADR-0017](adr/0017-public-voting-google-forms.md). Conserva Bootstrap 5.3.6 y el core del proveedor. Las entradas históricas siguientes describen sus respectivos cortes.
+
+| Ruta | Cambio | Prueba/reaplicación |
+|---|---|---|
+| `resources/views/public/landing.blade.php`, `resources/views/public/partials/landing-header.blade.php` | Banner, encabezado y cierre invitan a votar; información inferior conservada | `PublicLandingTest`, QA responsive y comparación visual |
+| `resources/views/public/partials/voting-modal.blade.php`, `resources/views/layouts/flowerflow.blade.php` | Un modal compartido insertado al final del body mediante stack | QA de overlay, teclado, foco y menú móvil |
+| `resources/css/pages/public-landing.css`, `resources/js/pages/public-voting.js` | Estilos encapsulados y mejora progresiva con carga diferida del iframe | QA de reapertura, fallo externo, JS desactivado y movimiento reducido |
+| `vite.config.js` | Tercera entrada, JS exclusivo del landing; Bootstrap compartido con la aplicación | Build y manifest; no cargar el módulo en auth/panel |
+| `config/flowerflow.php`, `app/Http/Middleware/SecurityHeaders.php` | URLs centralizadas; `docs.google.com` sólo en `frame-src` de `landing` | `SecurityAndFlagsTest`, CSP vigente/estricta y rutas ajenas |
+| `imagen/`, `public/assets/flowerflow/landing/voting-illustration-*.webp`, `scripts/build_voting_assets.php` | Originales preservados y derivados reproducibles | Dimensiones y SHA-256 en [informe 34](34-public-voting-integration-2026-09-08.md) |
+
 > **Actualización Fase 01:** la sección baseline siguiente se conserva históricamente. Sí existen ahora adaptaciones FlowerFlow, concentradas fuera del core vendorizado.
 
 ## Overrides/adaptaciones reales 2026-07-15

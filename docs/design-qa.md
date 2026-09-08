@@ -1,5 +1,46 @@
 # QA de diseño — Flower Flow
 
+## Votación pública — 2026-09-08
+
+**Entorno:** checkout local `codex/submission-deadline-extension`, Chromium mediante Playwright, datos sintéticos en `flowerflow_testing`. Sólo local/test; sin credenciales ni votos. Plan aprobado y referencia: [ADR-0017](adr/0017-public-voting-google-forms.md), flyer conservado en `imagen/ff-flyer-votacion-original.jpg`.
+
+**Estado:** interacción y comparación visual verificadas; cierre del control global en [informe 34](34-public-voting-integration-2026-09-08.md). UAT con sesión Google permanece `PENDING`. No constituye certificación completa de accesibilidad.
+
+| Superficie | Resultado observado |
+|---|---|
+| Tipografía | Georgia/serif para «¡La gente elige!»; familia de interfaz existente. Texto HTML seleccionable y un único H1; sin fuentes nuevas. |
+| Composición | Texto/acción a la izquierda y urna a la derecha en escritorio; texto/acción antes de ilustración en móvil. No se reproduce el formato vertical del cartel. |
+| Color y controles | Crema/verde/naranja; botones con naranja oscuro existente, altura del CTA principal 52.77 px, cierre 44 px y foco visible. |
+| Recursos | PNG generado sin textos/logos, WebP 640/1024 con dimensiones explícitas y `srcset`; logotipos oficiales conservados. No se conecta a Google antes de abrir. |
+| Contenido | Textos aprobados, sin «Próximamente». Introducción, categorías, requisitos, premios inferiores, documentos y FAQ conservados byte por byte frente al HEAD inicial. |
+
+### Medidas y comportamiento
+
+| Viewport | Inicio del botón principal | Desbordamiento horizontal |
+|---|---:|---|
+| 1440×1000 | 537 px | No |
+| 390×844 | 383 px (termina a 436 px) | No |
+| 320×780 | 378 px | No |
+| 768×1024 | 442 px | No |
+
+En 390×844 el botón anterior comenzaba a 1155 px. Las nuevas capturas son `output/playwright/ff-voting-{1440,390,320,768}.png`; vista completa: `ff-voting-desktop-full.png`. Las capturas anteriores `ff-voting-audit-*` corresponden exclusivamente al baseline.
+
+El modal mide 800×896 px en 1440×1000 y ocupa 390×844 px en móvil. Título/cierre y pie permanecen visibles; el iframe recibe la altura restante y su propio desplazamiento. Las pruebas con contenido sintético comprobaron una única carga, estado preservado al reabrir, los cuatro accesos, cierre por botón/overlay/Escape en documento principal, Tab/Shift+Tab, fondo `inert`, restauración de foco/scroll, menú móvil abierto y movimiento reducido. No se afirmó éxito de carga ni voto.
+
+Sin JavaScript se conservaron enlaces normales a la URL corta; el botón móvil sigue visible. Se verificaron también fallo de iframe, enlace alternativo y clic modificado con redirección al formulario exacto.
+
+La sesión limpia con iframe sintético confirmó **0 errores JavaScript y 0 advertencias/errores de consola** de la aplicación, FAQ operativa, cierre del menú con Escape y navegación secundaria a `#categorias`. Los errores de red de Google se documentaron en una prueba separada.
+
+La ampliación se comprobó con **zoom CSS 200 % como aproximación**, y reflow equivalente en viewport 720×500; no es una medición del zoom del navegador ni de un dispositivo físico. La primera inspección detectó solapamiento de navegación/logos con zoom CSS; `flex-wrap` en el encabezado permite una segunda fila y la revisión posterior confirmó separación. En el viewport reducido el modal mide 688×450 px. Se alineó además el cierre al extremo derecho.
+
+### Dependencia Google y evidencia
+
+La prueba real anónima del embed respondió **HTTP 401** y mostró «Accede a tu cuenta de Google». «Abrir en Google» abrió `People Choice Award` con el diálogo de acceso obligatorio. Capturas: `ff-voting-modal-google-desktop.png`, `ff-voting-modal-google-mobile.png` y `ff-voting-google-external-anonymous.png`. La votación con sesión corresponde al propietario; no se inició sesión ni se enviaron respuestas.
+
+Los archivos `ff-voting-modal-synthetic-*` usan un documento de QA identificado como sintético; no representan el contenido de Google. Los scripts y logs de navegador están en `output/playwright/ff-voting-*.{js,log}`, ignorados y fuera del release. Para evitar carreras con la suite que recrea la misma base, durante el QA se conservó la respuesta HTML pública obtenida del servidor local antes del gate y se sirvió con sus headers y los assets Vite vigentes. El smoke HTTP final se realiza nuevamente sobre la ruta real, sin esa captura.
+
+**Smoke final ejecutado:** después del gate y del build desde lock, la ruta real `/` respondió 200 y conservó los cuatro accesos, el iframe diferido y el CTA a 383–436 px en móvil, sin overflow. `/login` respondió 200 y excluyó el módulo/modal y el permiso CSP de Google. Ver `ff-voting-final-smoke.log`. La suite final terminó 247 passed / 1 skipped / 4296 assertions; el gate global conserva únicamente el fallo Pint preexistente descrito en informe 34.
+
 ## Adenda Hermosillo sin Barreras — 2026-08-06
 
 **Rama:** `codex/category-hermosillo-sin-barreras`

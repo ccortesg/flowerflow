@@ -1,5 +1,18 @@
 # Matriz de trazabilidad de requisitos — Flower Flow 2026
 
+## ADR-0017 — banner público y modal de votación
+
+Autorización del propietario: plan de implementación del 2026-09-08, sólo local/test. Evidencia final y pendientes en [informe 34](34-public-voting-integration-2026-09-08.md).
+
+| ID | Requisito | Implementación/prueba | Estado |
+|---|---|---|---|
+| VOTE-01 | Banner inspirado en el flyer, sin «Próximamente»; CTA visible en móvil | Landing/header/CSS, `PublicLandingTest`, QA 390×844: CTA a 383–436 px | VERIFIED LOCAL/TEST |
+| VOTE-02 | Modal único, URLs exactas, carga diferida, enlace externo y foco | Parcial, configuración y `public-voting.js`; Feature + navegador con iframe sintético y Google sin sesión | VERIFIED LOCAL/TEST; sesión Google pendiente |
+| VOTE-03 | Google Forms sólo permitido en `frame-src` de landing | `SecurityHeaders`, `SecurityAndFlagsTest` vigente/estricta/rutas ajenas | VERIFIED LOCAL/TEST |
+| VOTE-04 | Originales preservados y derivados documentados | `build_voting_assets.php`, dimensiones/SHA-256 reproducidos y QA visual | VERIFIED LOCAL/TEST |
+| VOTE-05 | Mantener información, PDF, categorías, cuentas y flags | Pruebas focalizadas: 21/298; secciones informativas idénticas a HEAD | VERIFIED LOCAL/TEST; gate global en informe 34 |
+| VOTE-06 | Conservar acceso Google actual y completar votación en su servicio | Alternativa «Abrir en Google»; UAT con sesión real por propietario | PENDING manual; sin votos automatizados |
+
 ## ADR-0016 — filtros y exportación de revisiones vigentes
 
 | ID | Requisito | Implementación/prueba | Estado |
