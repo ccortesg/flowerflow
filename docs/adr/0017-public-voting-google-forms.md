@@ -10,7 +10,7 @@ La portada orientaba a registrar propuestas; se solicita invitar a votar con la 
 
 ## Decisión
 
-1. Actualizar sólo hero, CTA de encabezado y CTA final. Conservar información de convocatoria y áreas autenticadas.
+1. Alcance inicial: actualizar hero, CTA de encabezado y CTA final conservando información de convocatoria y áreas autenticadas. La adenda del 2026-09-08 sustituye la conservación de las secciones del landing indicadas abajo.
 2. Usar enlaces HTTPS reales que un módulo Vite exclusivo del landing mejora para abrir un único modal Bootstrap. Sin JavaScript o con fallo del módulo, los enlaces siguen abriendo el formulario en una pestaña nueva.
 3. Guardar ambas URL entregadas por el propietario en `flowerflow.voting`. No admitir URL desde requests ni agregar endpoints de votación.
 4. Crear el iframe sólo como elemento sin `src` inicial y asignarle el embed exacto al abrir. Conservar su instancia entre aperturas, sin leer su contenido ni intentar observar votos, respuestas o credenciales.
@@ -31,3 +31,13 @@ La portada orientaba a registrar propuestas; se solicita invitar a votar con la 
 ## Evidencia
 
 Ver `.agent/execplans/flowerflow-public-voting.md` y `docs/34-public-voting-integration-2026-09-08.md`. La revisión local y la aprobación de la alternativa externa no autorizan despliegue.
+
+## Adenda — landing centrado en votación (2026-09-08)
+
+El propietario aprobó retirar del HTML público las secciones de categorías, proceso, requisitos, documentos y FAQ, adaptar la introducción a votar y comunicar «Los 2 proyectos con más votos serán los ganadores» y «Premio aún por definir». Son dos proyectos en total, sin presentar premios por categoría. La imagen del iPad deja de renderizarse; el original y sus derivados históricos se conservan.
+
+Los enlaces a las secciones ocultas se sustituyen por `#ganadores` en el landing, acceso y navegación pública compartida. `/documentos`, los PDF, términos, privacidad y acceso a cuentas siguen disponibles. No hay nuevo flag ni ocultamiento mediante CSS. El modal, las URLs, la mejora progresiva y la CSP mantienen su contrato.
+
+Esta decisión afecta a la presentación solicitada; no implementa conteo de votos, selección automática, desempates ni publicación de resultados. `PENDING`: reconciliar la regla comunicada con los PDF y pantallas de cuenta que todavía describen el premio anterior. No se editan esos contenidos ni se inventan reglas o premios en esta integración.
+
+Evidencia de esta adenda: [informe 35](../35-voting-focused-landing-2026-09-08.md). Alcance local/test, sin stage, commit, push ni despliegue. Rollback por reversión del ajuste y reconstrucción de assets, sin cambios de datos.

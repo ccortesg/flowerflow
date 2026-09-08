@@ -268,7 +268,7 @@ class ParticipantExperienceRedesignTest extends TestCase
         }
     }
 
-    public function test_public_documents_faq_pdfs_and_panel_navigation_are_preserved(): void
+    public function test_public_documents_pdfs_and_panel_navigation_are_preserved_with_voting_landing(): void
     {
         $this->get(route('documents'))
             ->assertOk()
@@ -278,8 +278,10 @@ class ParticipantExperienceRedesignTest extends TestCase
 
         $this->get(route('landing'))
             ->assertOk()
-            ->assertSee('id="preguntas"', false)
-            ->assertSee('Preguntas frecuentes');
+            ->assertDontSee('id="preguntas"', false)
+            ->assertDontSee('Preguntas frecuentes')
+            ->assertSee('Los 2 proyectos con más votos serán los ganadores')
+            ->assertSee('Premio aún por definir');
 
         $admin = User::factory()->create(['email' => 'panel-preservado@example.test']);
         $admin->assignRole('admin');

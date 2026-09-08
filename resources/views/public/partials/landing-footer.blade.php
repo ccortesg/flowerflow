@@ -9,11 +9,10 @@
       <p class="ff-footer-description">Ideas ciudadanas para ayudar a que Hermosillo florezca.</p>
     </div>
     <div>
-      <h2 class="ff-footer-heading">Convocatoria</h2>
+      <h2 class="ff-footer-heading">Votación ciudadana</h2>
       <ul class="ff-footer-links">
-        <li><a href="#categorias">Categorías</a></li>
-        <li><a href="#como-participar">Cómo participar</a></li>
-        <li><a href="#documentos">Documentos oficiales</a></li>
+        <li><a href="#ganadores">Ganadores</a></li>
+        <li><a href="{{ route('documents') }}">Documentos oficiales</a></li>
       </ul>
     </div>
     <div>

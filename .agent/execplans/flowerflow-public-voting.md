@@ -64,3 +64,54 @@ No hay despliegue en este trabajo. Una release posterior exige aprobación, back
 ## Resultado
 
 Implementación y QA de los contratos cambiados realizados en local. Gate global pendiente por Pint preexistente y UAT Google manual pendiente; el milestone no se declara cerrado. No se atribuye a HEAD ni a producción ningún cambio local.
+
+## Adenda aprobada — landing centrado en votación (2026-09-08)
+
+El propietario aprobó ocultar categorías, proceso, requisitos, documentos y FAQ del HTML del landing; adaptar la introducción a votar y comunicar «Los 2 proyectos con más votos serán los ganadores» y «Premio aún por definir». Esta decisión sustituye la conservación de esas secciones del alcance inicial. HEAD inicial de esta adenda: `55bd202` (`Votacion`), árbol limpio; el registro anterior conserva su contexto histórico.
+
+Alcance: vistas propias del landing, enlaces de encabezado/pie/login/layout público y CSS. Conservar modal, URLs, CSP, cuentas, ruta `/documentos` y PDF. No agregar flags, dependencias, endpoints, almacenamiento, conteo, selección automática ni reglas de desempate. Cambiar las referencias a anclas ocultas por `#ganadores`; conservar documentos mediante su ruta propia.
+
+`PENDING`: los PDF y algunas pantallas de cuenta todavía describen el premio anterior. Esta adenda cambia sólo la comunicación solicitada del landing; la reconciliación documental y de otras pantallas requiere una tarea separada. El premio y los desempates no se inventan. UAT con Google sigue a cargo del propietario, sin votos automatizados.
+
+### Pasos y validación de la adenda
+
+1. Registrar baseline y verificar guard de base desechable.
+2. Simplificar contenido, adaptar introducción/premio y corregir navegación.
+3. Actualizar pruebas del landing y la expectativa anterior de FAQ en experiencia participante.
+4. Revisar navegador 320/390/768/1440 px, ampliación 200 %, teclado, menú, modal, reapertura y enlaces sin JS; guardar capturas en `output/playwright/`.
+5. Ejecutar gate global y controles restantes si Pint preexistente lo interrumpe; validar JSON/manifest y diff. Actualizar ADR, trazabilidad, overrides e informe de evidencia.
+
+```bash
+FLOWERFLOW_TEST_GUARD_ONLY=true scripts/serve_local_testing.sh
+php artisan test --filter='DisposableDatabaseGuardTest|PublicLandingTest|SecurityAndFlagsTest|ParticipantExperienceRedesignTest'
+scripts/build_frontend_production.sh
+vendor/bin/pint --test
+scripts/quality_gate_local.sh
+git diff --check
+```
+
+Sólo ejecutar pruebas contra la base desechable autorizada, sin suites concurrentes. La verificación de navegador sobre servidor de pruebas se realiza fuera de las suites que recrean su esquema. No se requiere regenerar ilustraciones sin cambios. Rollback: revertir únicamente esta adenda y reconstruir assets; no revertir datos ni la integración previa de Google Forms. Sin stage, commit, push ni despliegue.
+
+### Registro de la adenda
+
+- [x] 2026-09-08 MST — Guard confirmado: `testing`, MySQL local, base `flowerflow_testing`, usuario `flowerflow_testing_user`.
+- [x] 2026-09-08 MST — Baseline focalizada: 38 pruebas, 476 aserciones, 22.44 s; build desde lock verde. Logs: `/tmp/ff-voting-focus-baseline-tests.log` y `/tmp/ff-voting-focus-baseline-build.log`.
+- [!] 2026-09-08 MST — Pint baseline exit 1 sólo por `video-tutorial/scripts/freeze-time.php`, `fully_qualified_strict_types`; `/tmp/ff-voting-focus-baseline-pint.log`.
+- [x] 2026-09-08 MST — Implementación: HTML reducido a cuatro secciones; introducción, dos ganadores y premio pendiente; anclas corregidas también en login y layout público. Sin cambios en modal/JS/CSP/controladores/configuración/PDF.
+- [x] 2026-09-08 MST — Focalizadas finales: 38 passed, 528 assertions, 21.59 s; build desde lock verde, Pint de los dos tests cambiados verde, 15 JSON válidos y manifest de tres entradas con archivos existentes.
+- [x] 2026-09-08 MST — QA responsive en 320/390/768/1440 sin overflow ni anclas rotas; sólo cuatro secciones, ningún bloque oculto en DOM ni imagen del iPad. CTA móvil: 383.42–436.19 px. Capturas `output/playwright/ff-voting-focus-*`.
+- [x] 2026-09-08 MST — QA modal: 25 comprobaciones, una sola petición de iframe entre todos los accesos, foco/teclado/overlay/reapertura/menú y movimiento reducido. Otros 11 controles de fallos, enlace sin JS y ampliación; zoom CSS 200 % y viewport equivalente 720×500, no zoom nativo.
+- [!] 2026-09-08 MST — `artisan serve` responde 404 en `/documentos`: su router usa `file_exists` y entrega al servidor PHP el directorio público homónimo. Ruta Laravel verde en Feature. QA HTTP continuado con router temporal ignorado `output/playwright/ff-voting-focus-router.php` que sirve archivos con `is_file`; sin editar proveedor/rutas/configuración de producción. Primer intento del guion de navegación también requirió reemplazar el constructor `URL` no expuesto por el runner CLI; sólo cambió el guion de QA.
+- [x] 2026-09-08 MST — Navegación final con router temporal: 13 controles verdes; enlaces desde banner/footer/login/layout, menú/Escape, títulos fuera del header fijo y tres PDF con HTTP 200. Cero excepciones JS; consola final vacía.
+- [x] 2026-09-08 MST — Google real anónimo: embed exacto 401, alternativa visible; enlace externo llega al ID exacto. Sin credenciales ni votos. Chromium y servidores temporales cerrados antes de suite global.
+- [x] Gate global ejecutado; resultado y validaciones complementarias registrados abajo.
+- [!] 2026-09-08 MST — Primer lanzamiento del gate final terminó con SIGTERM/143 sin resumen de suite ni fallo de aserción informado; log conservado en `/tmp/ff-voting-focus-quality-gate-interrupted.log`. No se cuenta como validación verde. Reintento completo iniciado en proceso independiente, con log y archivo de exit para verificar su resultado.
+- [x] 2026-09-08 MST — Suite completa del reintento: 247 passed, 1 skipped, 4348 assertions, 1044.39 s. Omitida únicamente la prueba optativa de 200 MiB (`FLOWERFLOW_RUN_BULK_PERFORMANCE_TEST`), como en el baseline histórico.
+- [!] 2026-09-08 MST — Gate exit 1 en Pint: archivo preexistente `video-tutorial/scripts/freeze-time.php` y línea vacía faltante en el router temporal de QA. Se corrigió únicamente el router propio y se repitió Pint global: sólo persiste el fallo preexistente (`fully_qualified_strict_types`). Log final: `/tmp/ff-voting-focus-final-pint.log`; sin repetir la suite por un cambio de espacio en un helper ajeno a las pruebas.
+- [x] 2026-09-08 MST — Controles complementarios: Composer validate/platform/audit verdes; Yarn un LOW (exit 2 tolerado); build final desde lock verde, 140 rutas, 15 JSON y manifest válidos, diff sin errores. Sin cambios de dependencias ni contratos externos.
+- [x] 2026-09-08 MST — Informe 35, ADR-0017, trazabilidad y overrides actualizados. Trece archivos versionables de esta adenda; evidencias QA ignoradas por Git. Sin stage, commit, push ni despliegue; HEAD sigue en `55bd202`. Servidores de QA, navegador y suite terminados.
+- [ ] Cierre integral del milestone: gate global pendiente por Pint preexistente. UAT Google y coherencia con PDF/otras pantallas continúan PENDING según el alcance aprobado.
+
+### Resultado de la adenda
+
+Landing implementado y validado en local/test, con evidencia reproducible y rollback sin datos. Suite completa y build verdes; no se declara verde el gate ni cerrado el milestone mientras persista Pint global. La ruta `/documentos` fue validada mediante Laravel y router temporal de QA; no se atribuye esa comprobación a `artisan serve` original ni a producción.

@@ -586,36 +586,28 @@
 }
 
 .ff-prize-card {
-  min-height: 31rem;
   display: grid;
-  grid-template-columns: minmax(18rem, .8fr) minmax(0, 1.2fr);
+  grid-template-columns: minmax(0, .65fr) minmax(0, 1.35fr);
+  align-items: center;
   overflow: hidden;
-  background: var(--ff-landing-charcoal);
+  background: #173d2b;
   border-radius: 1.5rem;
-  box-shadow: 0 1.5rem 3rem rgba(43, 34, 31, .16);
+  box-shadow: 0 1.5rem 3rem rgba(23, 61, 43, .12);
 }
 
-.ff-prize-visual {
-  position: relative;
-  min-height: 31rem;
-  overflow: hidden;
-  background: #f47a3d;
-}
-
-.ff-prize-visual img {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+.ff-prize-number {
+  padding: 2rem 1rem;
+  color: #ffad7c;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(12rem, 24vw, 20rem);
+  line-height: 1;
+  text-align: center;
 }
 
 .ff-prize-copy {
-  align-self: center;
-  padding: clamp(2.5rem, 6vw, 5rem);
-  color: #fff;
+  padding: clamp(2rem, 5vw, 4rem);
+  padding-left: 0;
+  color: #fffaf4;
 }
 
 .ff-prize-copy .ff-eyebrow {
@@ -623,57 +615,23 @@
 }
 
 .ff-prize-copy h2 {
-  color: #fff;
+  max-width: 21ch;
+  margin-bottom: 1.75rem;
+  color: #fffaf4;
+  text-wrap: balance;
 }
 
-.ff-prize-copy h2 span {
-  color: #ff9d66;
-}
-
-.ff-prize-copy > p {
-  max-width: 41rem;
-  color: #e6dad4;
-  font-size: 1.06rem;
-  line-height: 1.7;
-}
-
-.ff-prize-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin: 2rem 0 1.2rem;
-}
-
-.ff-prize-facts p {
-  min-width: 11rem;
-  display: flex;
-  align-items: center;
-  gap: .8rem;
+.ff-prize-pending {
+  display: inline-block;
   margin: 0;
-  padding: .9rem 1rem;
-  background: rgba(255, 255, 255, .08);
-  border: 1px solid rgba(255, 255, 255, .16);
-  border-radius: .8rem;
-}
-
-.ff-prize-facts strong {
-  color: #ff9d66;
-  font-size: 2.2rem;
-  line-height: 1;
-}
-
-.ff-prize-facts span {
-  max-width: 8rem;
-  color: #fff;
-  font-size: .86rem;
+  padding: .8rem 1.1rem;
+  color: #173d2b;
+  background: #fff6e5;
+  border: 1px solid #ecdfc7;
+  border-radius: .65rem;
+  font-size: 1rem;
   font-weight: 750;
-  line-height: 1.25;
-}
-
-.ff-prize-copy .ff-prize-note {
-  margin-bottom: 0;
-  color: #cbbdb6;
-  font-size: .86rem;
+  line-height: 1.5;
 }
 
 .ff-information-grid {
@@ -1078,9 +1036,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .ff-prize-card {
-    grid-template-columns: minmax(15rem, .7fr) minmax(0, 1.3fr);
-  }
 }
 
 @media (max-width: 47.99rem) {
@@ -1201,16 +1156,13 @@
     grid-template-columns: 1fr;
   }
 
-  .ff-prize-visual {
-    min-height: 20rem;
+  .ff-prize-number {
+    padding: 1.5rem 1.5rem .75rem;
+    font-size: 7rem;
   }
 
   .ff-prize-copy {
-    padding: 2.25rem 1.5rem;
-  }
-
-  .ff-prize-facts p {
-    flex: 1 1 10rem;
+    padding: 0 1.5rem 2.25rem;
   }
 
   .ff-information-grid {

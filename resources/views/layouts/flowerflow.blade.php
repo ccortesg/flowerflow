@@ -245,8 +245,7 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPublica" aria-controls="navPublica" aria-expanded="false" aria-label="Abrir navegación"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navPublica">
           <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-            <li class="nav-item"><a class="nav-link" href="{{ route('landing') }}#categorias">Categorías</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('landing') }}#como-participar">Cómo participar</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('landing') }}#ganadores">Ganadores</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ route('documents') }}">Documentos</a></li>
             <li class="nav-item"><a class="btn btn-flower ms-lg-2" href="{{ route('login') }}">Iniciar sesión</a></li>
           </ul>
