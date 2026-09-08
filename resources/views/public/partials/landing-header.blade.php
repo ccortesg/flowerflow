@@ -16,10 +16,7 @@
 
     <div class="ff-public-nav-panel" id="landing-navigation" data-public-nav>
       <ul class="ff-public-nav-links">
-        <li><a href="#categorias">Categorías</a></li>
-        <li><a href="#como-participar">Cómo participar</a></li>
-        <li><a href="#requisitos">Requisitos</a></li>
-        <li><a href="#preguntas">Preguntas</a></li>
+        <li><a href="#ganadores">Ganadores</a></li>
       </ul>
       <div class="ff-public-nav-account">
         <a class="ff-login-link" href="{{ route('login') }}">

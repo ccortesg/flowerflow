@@ -20,8 +20,7 @@
         <span class="ri ri-menu-line" aria-hidden="true"></span>
       </button>
       <div class="collapse ff-login-nav-panel" id="loginNavigation">
-        <a href="{{ route('landing') }}#categorias">Categorías</a>
-        <a href="{{ route('landing') }}#como-participar">Cómo participar</a>
+        <a href="{{ route('landing') }}#ganadores">Ganadores</a>
         <a href="{{ route('documents') }}">Documentos</a>
         @if(! $isJudgeLogin && config('flowerflow.flags.registration'))
           <a class="ff-login-nav-cta" href="{{ url('/register') }}">Crear cuenta</a>

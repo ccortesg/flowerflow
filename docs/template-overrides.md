@@ -1,5 +1,17 @@
 # Inventario de overrides de Materialize
 
+## Adenda de simplificación del landing — 2026-09-08
+
+Plan aprobado: centrar el contenido en votar y comunicar dos proyectos ganadores, con premio aún por definir. Se retiran del renderizado las secciones de convocatoria solicitadas, sin nuevo flag. Se reutilizan los colores, tipografía y estilos propios; la composición del reconocimiento usa un número 2 y deja de cargar la imagen del iPad. No se modifica el core del proveedor ni se añaden dependencias.
+
+| Archivos propios | Ajuste | Validación |
+|---|---|---|
+| `resources/views/public/landing.blade.php`, `resources/css/pages/public-landing.css` | Introducción, secciones ocultas y nueva composición de reconocimiento | Pruebas de contenido/ausencia y QA responsive, informe 35 |
+| `resources/views/public/partials/landing-header.blade.php`, `landing-footer.blade.php` | Ganadores y documentos por ruta propia | Destinos de anclas, menú y acceso a Google |
+| `resources/views/auth/login.blade.php`, `resources/views/layouts/flowerflow.blade.php` | Corregir enlaces públicos a secciones que dejan de existir | Login/documentos y regresión de experiencia participante |
+
+Modal, JavaScript, URLs y CSP sin cambios. Los registros siguientes conservan el contexto de las implementaciones anteriores. Evidencia: [informe 35](35-voting-focused-landing-2026-09-08.md) y adenda de ADR-0017.
+
 ## Adenda de votación pública — 2026-09-08
 
 Integración local aprobada en [ADR-0017](adr/0017-public-voting-google-forms.md). Conserva Bootstrap 5.3.6 y el core del proveedor. Las entradas históricas siguientes describen sus respectivos cortes.

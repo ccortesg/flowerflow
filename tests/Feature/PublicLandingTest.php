@@ -12,7 +12,7 @@ class PublicLandingTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_landing_contains_critical_content_assets_and_legal_downloads(): void
+    public function test_landing_contains_voting_content_assets_and_access_to_legal_documents(): void
     {
         $this->seedFlowerFlow();
 
@@ -20,51 +20,39 @@ class PublicLandingTest extends TestCase
             ->assertSeeText('¡La gente elige!')
             ->assertSee('Votación ciudadana · Hermosillo 2026')
             ->assertSee('Vota por tu proyecto favorito. Tu opinión cuenta. Hagamos florecer a Hermosillo.')
-            ->assertSee('Consulta la convocatoria')
+            ->assertSee('Cómo se eligen los ganadores')
+            ->assertSee('Tu voto puede hacer la diferencia')
+            ->assertSee('Elige tu proyecto favorito y apoya con tu voto las ideas ciudadanas para transformar Hermosillo.')
+            ->assertSee('Reconocemos las mejores ideas')
+            ->assertSee('Los 2 proyectos con más votos serán los ganadores')
+            ->assertSee('Premio aún por definir')
             ->assertSee('Tu opinión cuenta')
             ->assertSee('Elige tu proyecto favorito')
-            ->assertSee('Finaliza tu propuesta antes del 23 de agosto de 2026 a las 23:59.')
-            ->assertSee('Movilidad con Flow')
-            ->assertSee('Hermosillo Florece')
-            ->assertSee('Mi familia, mi mascota')
-            ->assertSee('Hermosillo sin Barreras')
-            ->assertSee('Ideas para mejorar la accesibilidad y la inclusión para todas y todos.')
-            ->assertSee('Cuatro formas de transformar la ciudad')
-            ->assertSee('Hasta cuatro propuestas')
-            ->assertSee('un máximo de cuatro por cuenta')
-            ->assertSeeInOrder(['<strong>4</strong>', '<span>ganadores máximos en total</span>'], false)
-            ->assertSee('ri-accessibility-line', false)
-            ->assertSee('Apple')
-            ->assertSee('iPad Pro')
-            ->assertSee('ganador máximo por categoría')
             ->assertSee('FUNXT, A.C.')
             ->assertSee('FUN110208BT0')
-            ->assertSee('Versión 1.1')
+            ->assertSee('href="'.route('documents').'"', false)
             ->assertDontSee('Recepción aún no habilitada')
-            ->assertDontSee('Recepción de propuestas abierta')
-            ->assertDontSee('iPad Pro Max');
+            ->assertDontSee('Recepción de propuestas abierta');
 
-        $response
-            ->assertSee('assets/flowerflow/logo_flowerflow_transparente.png', false)
-            ->assertSee('assets/flowerflow/logo_florecehermosillo_transparente.png', false)
-            ->assertSee('assets/flowerflow/landing/voting-illustration-640.webp', false)
-            ->assertSee('assets/flowerflow/landing/voting-illustration-1024.webp', false)
-            ->assertSee('assets/flowerflow/landing/premio-ipad-pro.webp', false);
-
-        $documents = [
-            '01_Mecanica_Convocatoria_Hermosillo_Florece_2026_v1.1.pdf',
-            '02_Terminos_y_Condiciones_Plataforma_Flower_Flow_2026_v1.1.pdf',
-            '03_Aviso_de_Privacidad_Plataforma_Flower_Flow_2026_v1.1.pdf',
-        ];
-
-        foreach ($documents as $document) {
-            $this->assertFileExists(public_path("documentos/2026/{$document}"));
-            $response->assertSee("documentos/2026/{$document}", false);
+        foreach ([
+            'assets/flowerflow/logo_flowerflow_transparente.png',
+            'assets/flowerflow/logo_florecehermosillo_transparente.png',
+            'assets/flowerflow/landing/voting-illustration-640.webp',
+            'assets/flowerflow/landing/voting-illustration-1024.webp',
+        ] as $asset) {
+            $response->assertSee($asset, false);
+            $this->assertFileExists(public_path($asset));
         }
 
-        $this->assertFileExists(public_path('assets/flowerflow/landing/voting-illustration-640.webp'));
-        $this->assertFileExists(public_path('assets/flowerflow/landing/voting-illustration-1024.webp'));
-        $this->assertFileExists(public_path('assets/flowerflow/landing/premio-ipad-pro.webp'));
+        $documents = $this->get(route('documents'))->assertOk();
+        foreach (['mechanics', 'terms', 'privacy'] as $type) {
+            $path = config("flowerflow.legal_documents.{$type}.path");
+            $this->assertFileExists(public_path($path));
+            $documents->assertSee($path, false);
+            if ($type !== 'mechanics') {
+                $response->assertSee($path, false);
+            }
+        }
     }
 
     public function test_public_flag_hides_the_landing(): void
@@ -87,6 +75,10 @@ class PublicLandingTest extends TestCase
 
                 $response = $this->get('/')->assertOk()
                     ->assertSee('Votar')
+                    ->assertSee('Los 2 proyectos con más votos serán los ganadores')
+                    ->assertSee('Premio aún por definir')
+                    ->assertDontSee('id="categorias"', false)
+                    ->assertDontSee('id="preguntas"', false)
                     ->assertSee('href="'.route('login').'"', false)
                     ->assertDontSee('Recepción de propuestas abierta')
                     ->assertDontSee('Recepción aún no habilitada')
@@ -146,21 +138,18 @@ class PublicLandingTest extends TestCase
         $this->get(route('dashboard'))->assertOk()->assertDontSee('public-voting-', false);
     }
 
-    public function test_landing_uses_safe_category_fallback_without_an_active_competition(): void
+    public function test_voting_content_is_available_without_an_active_competition(): void
     {
+        $this->assertFalse(Competition::query()->where('active', true)->exists());
+
         $this->get('/')->assertOk()
-            ->assertSee('Movilidad con Flow')
-            ->assertSee('Hermosillo Florece')
-            ->assertSee('Mi familia, mi mascota')
-            ->assertSee('Hermosillo sin Barreras')
-            ->assertSee('Ideas para mejorar la movilidad')
-            ->assertSee('Ideas para una ciudad más verde y sostenible')
-            ->assertSee('Ideas para bienestar animal')
-            ->assertSee('Ideas para mejorar la accesibilidad y la inclusión para todas y todos.')
-            ->assertSee('ri-accessibility-line', false);
+            ->assertSee('Los 2 proyectos con más votos serán los ganadores')
+            ->assertSee('Premio aún por definir')
+            ->assertSee('Votar')
+            ->assertDontSee('id="categorias"', false);
     }
 
-    public function test_landing_lists_only_active_categories_and_features_alternating_categories_by_slug(): void
+    public function test_submission_sections_and_previous_prize_are_absent_from_the_rendered_landing(): void
     {
         $this->seedFlowerFlow();
         $competition = Competition::query()->where('slug', 'hermosillo-florece-2026')->firstOrFail();
@@ -172,40 +161,64 @@ class PublicLandingTest extends TestCase
             'active' => false,
         ]);
 
-        $response = $this->get('/')->assertOk()
-            ->assertDontSee('Categoría inactiva de prueba');
+        $response = $this->get('/')->assertOk();
+        foreach ([
+            'Cuatro formas de transformar la ciudad',
+            'Un proceso sencillo',
+            'Antes de comenzar',
+            'Consulta antes de participar',
+            'Resolvemos tus dudas',
+            'Preguntas frecuentes',
+            'Categoría inactiva de prueba',
+            'Movilidad con Flow',
+            'Mi familia, mi mascota',
+            'Hermosillo sin Barreras',
+            'Puedes participar por tu cuenta',
+            'Finaliza tu propuesta antes',
+            'Apple',
+            'iPad',
+            'premio-ipad-pro.webp',
+            'ganador máximo por categoría',
+            'ganadores máximos en total',
+            'un premio por categoría',
+            'Una categoría puede declararse desierta',
+        ] as $hiddenText) {
+            $response->assertDontSee($hiddenText);
+        }
 
-        $html = $response->getContent();
-        $this->assertMatchesRegularExpression(
-            '/<article class="ff-category-card is-featured">\s*<span[^>]+>\s*<\/span>\s*<div>\s*<h3>Hermosillo Florece<\/h3>/s',
-            $html
-        );
-        $this->assertMatchesRegularExpression(
-            '/<article class="ff-category-card is-featured">\s*<span[^>]+>\s*<\/span>\s*<div>\s*<h3>Hermosillo sin Barreras<\/h3>/s',
-            $html
-        );
-        $this->assertSame(2, substr_count($html, 'ff-category-card is-featured'));
-        $this->assertStringNotContainsString('nth-child', $html);
+        foreach (['categorias', 'como-participar', 'requisitos', 'documentos', 'preguntas', 'landing-faq'] as $hiddenId) {
+            $response->assertDontSee('id="'.$hiddenId.'"', false);
+        }
     }
 
-    public function test_navigation_anchors_and_faq_relationships_are_accessible(): void
+    public function test_public_navigation_links_resolve_to_visible_sections_and_document_routes(): void
     {
         $this->seedFlowerFlow();
-
-        $this->get('/')->assertOk()
-            ->assertSee('href="#categorias"', false)
-            ->assertSee('id="categorias"', false)
-            ->assertSee('href="#como-participar"', false)
-            ->assertSee('id="como-participar"', false)
-            ->assertSee('href="#requisitos"', false)
-            ->assertSee('id="requisitos"', false)
-            ->assertSee('href="#preguntas"', false)
-            ->assertSee('id="preguntas"', false)
+        $landing = $this->get('/')->assertOk()
+            ->assertSee('href="#ganadores"', false)
+            ->assertSee('id="ganadores"', false)
             ->assertSee('aria-controls="landing-navigation"', false)
-            ->assertSee('aria-expanded="false"', false)
-            ->assertSee('aria-controls="faq-answer-1"', false)
-            ->assertSee('aria-labelledby="faq-heading-1"', false)
-            ->assertSee('data-bs-parent="#landing-faq"', false);
+            ->assertSee('aria-expanded="false"', false);
+        $document = new DOMDocument;
+        @$document->loadHTML($landing->getContent());
+        $xpath = new DOMXPath($document);
+        foreach ($xpath->query('//a[starts-with(@href, "#")]') as $link) {
+            $target = $document->getElementById(substr($link->getAttribute('href'), 1));
+            $this->assertNotNull($target, 'Missing target for '.$link->getAttribute('href'));
+            $this->assertFalse($target->hasAttribute('hidden'));
+        }
+
+        foreach (['/', '/login', '/documentos'] as $path) {
+            $response = $this->get($path)->assertOk()
+                ->assertSee('Ganadores')
+                ->assertSee('href="'.route('documents').'"', false);
+            if ($path !== '/') {
+                $response->assertSee('href="'.route('landing').'#ganadores"', false);
+            }
+            foreach (['categorias', 'como-participar', 'requisitos', 'preguntas', 'documentos'] as $hiddenId) {
+                $response->assertDontSee('#'.$hiddenId, false);
+            }
+        }
     }
 
     public function test_landing_chrome_does_not_replace_other_guest_pages(): void
