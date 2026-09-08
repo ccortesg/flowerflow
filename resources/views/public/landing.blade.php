@@ -1,6 +1,6 @@
 @extends('layouts.flowerflow')
-@section('title', 'Hermosillo Florece 2026')
-@section('description', 'Convocatoria ciudadana gratuita para compartir propuestas que ayuden a mejorar Hermosillo.')
+@section('title', '¡La gente elige! · Hermosillo 2026')
+@section('description', 'Vota por tu proyecto favorito. Tu opinión cuenta. Hagamos florecer a Hermosillo.')
 @section('content')
 @php
   $categories = $competition?->categories ?? collect([
@@ -9,47 +9,21 @@
     (object) ['slug' => 'mi-familia-mi-mascota', 'name' => 'Mi familia, mi mascota', 'description' => 'Ideas para bienestar animal, tenencia responsable y convivencia de familias con mascotas.'],
     (object) ['slug' => 'hermosillo-sin-barreras', 'name' => 'Hermosillo sin Barreras', 'description' => 'Ideas para mejorar la accesibilidad y la inclusión para todas y todos.'],
   ]);
-  $registrationOpen = config('flowerflow.flags.registration');
-  $submissionsOpen = config('flowerflow.flags.submissions');
 @endphp
 
-<section class="ff-landing-hero" aria-labelledby="landing-title">
+<section class="ff-landing-hero ff-voting-hero" aria-labelledby="landing-title">
   <div class="ff-landing-container">
-    <div class="ff-hero-card">
-      <div class="ff-hero-copy">
-        <p class="ff-eyebrow">Convocatoria ciudadana · Hermosillo 2026</p>
-        <h1 id="landing-title">¡Para mejorar aún más Hermosillo, <span>todos a participar!</span></h1>
-        <p class="ff-hero-lead">Comparte una idea clara y realizable para transformar nuestra movilidad, el entorno urbano o la convivencia con nuestras mascotas.</p>
-
-        <div class="ff-hero-deadline">
-          <span class="ff-landing-icon ri-calendar-check-line" aria-hidden="true"></span>
-          <p><strong>Fecha límite</strong><br>23 de agosto de 2026, 23:59 horas <span>(tiempo de Hermosillo)</span></p>
+    <div class="ff-voting-card">
+      <div class="ff-voting-copy">
+        <p class="ff-eyebrow">Votación ciudadana · Hermosillo 2026</p>
+        <h1 id="landing-title">¡La gente <span>elige!</span></h1>
+        <p class="ff-voting-lead">Vota por tu proyecto favorito. Tu opinión cuenta. Hagamos florecer a Hermosillo.</p>
+        <div class="ff-voting-actions">
+          <a class="ff-button ff-button-primary ff-button-large" href="{{ config('flowerflow.voting.form_url') }}" target="_blank" rel="noopener noreferrer" data-voting-trigger>Votar</a>
+          <a class="ff-inline-link" href="#categorias">Consulta la convocatoria <span class="ff-landing-icon ri-arrow-right-line" aria-hidden="true"></span></a>
         </div>
-
-        <p @class(['ff-landing-status', 'is-open' => $submissionsOpen])>
-          <span aria-hidden="true"></span>
-          {{ $submissionsOpen ? 'Recepción de propuestas abierta' : 'Recepción aún no habilitada' }}
-        </p>
-
-        <div class="ff-hero-actions">
-          @if($registrationOpen)
-            <a class="ff-button ff-button-primary ff-button-large" href="{{ url('/register') }}">Crear mi cuenta</a>
-          @else
-            <span class="ff-button ff-button-muted ff-button-large" aria-disabled="true">Registro próximamente</span>
-          @endif
-          <a class="ff-button ff-button-secondary ff-button-large" href="{{ route('login') }}">Ya tengo cuenta</a>
-        </div>
-        <a class="ff-inline-link" href="#como-participar">Conoce cómo participar <span class="ff-landing-icon ri-arrow-right-line" aria-hidden="true"></span></a>
       </div>
-
-      <div class="ff-hero-prize" aria-label="Premio de la convocatoria">
-        <p class="ff-hero-prize-label">Participa y gana</p>
-        <p class="ff-hero-prize-title">Apple <strong>iPad Pro</strong></p>
-        <img src="{{ asset('assets/flowerflow/landing/premio-ipad-pro.webp') }}" width="514" height="757" alt="" fetchpriority="high">
-        <p class="ff-prize-badge"><span class="ff-landing-icon ri-trophy-line" aria-hidden="true"></span> 1 ganador por categoría</p>
-      </div>
-
-      <img class="ff-hero-city" src="{{ asset('assets/flowerflow/landing/hermosillo-atardecer.webp') }}" width="1680" height="282" alt="Vista panorámica de Hermosillo al atardecer" fetchpriority="high">
+      <img class="ff-voting-art" src="{{ asset('assets/flowerflow/landing/voting-illustration-1024.webp') }}" srcset="{{ asset('assets/flowerflow/landing/voting-illustration-640.webp') }} 640w, {{ asset('assets/flowerflow/landing/voting-illustration-1024.webp') }} 1024w" sizes="(max-width: 575px) calc(100vw - 2rem), (max-width: 991px) 512px, (max-width: 1212px) 49vw, 576px" width="1024" height="1024" alt="" fetchpriority="high">
     </div>
   </div>
 </section>
@@ -221,15 +195,19 @@
 <section class="ff-final-cta" aria-labelledby="cta-title">
   <div class="ff-landing-container">
     <div>
-      <p class="ff-eyebrow">Hermosillo necesita tus ideas</p>
-      <h2 id="cta-title">¿Listo para hacer florecer nuestra ciudad?</h2>
-      <p>Da el primer paso y prepara una propuesta con impacto positivo.</p>
+      <p class="ff-eyebrow">Tu opinión cuenta</p>
+      <h2 id="cta-title">Elige tu proyecto favorito</h2>
+      <p>Vota y hagamos florecer a Hermosillo.</p>
     </div>
-    @if($registrationOpen)
-      <a class="ff-button ff-button-light ff-button-large" href="{{ url('/register') }}">Crear mi cuenta</a>
-    @else
-      <span class="ff-button ff-button-dark-muted ff-button-large" aria-disabled="true">Registro próximamente</span>
-    @endif
+    <a class="ff-button ff-button-light ff-button-large" href="{{ config('flowerflow.voting.form_url') }}" target="_blank" rel="noopener noreferrer" data-voting-trigger>Votar</a>
   </div>
 </section>
 @endsection
+
+@push('modals')
+  @include('public.partials.voting-modal')
+@endpush
+
+@push('scripts')
+  @vite('resources/js/pages/public-voting.js')
+@endpush
