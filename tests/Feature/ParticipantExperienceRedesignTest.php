@@ -281,7 +281,9 @@ class ParticipantExperienceRedesignTest extends TestCase
             ->assertDontSee('id="preguntas"', false)
             ->assertDontSee('Preguntas frecuentes')
             ->assertSee('Los 2 proyectos con más votos serán los ganadores')
-            ->assertSee('Premio aún por definir');
+            ->assertSee('Meta Quest 3S')
+            ->assertSee('Beats Solo 4')
+            ->assertDontSee('Premio aún por definir');
 
         $admin = User::factory()->create(['email' => 'panel-preservado@example.test']);
         $admin->assignRole('admin');

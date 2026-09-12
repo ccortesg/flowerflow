@@ -115,3 +115,33 @@ Sólo ejecutar pruebas contra la base desechable autorizada, sin suites concurre
 ### Resultado de la adenda
 
 Landing implementado y validado en local/test, con evidencia reproducible y rollback sin datos. Suite completa y build verdes; no se declara verde el gate ni cerrado el milestone mientras persista Pint global. La ruta `/documentos` fue validada mediante Laravel y router temporal de QA; no se atribuye esa comprobación a `artisan serve` original ni a producción.
+
+## Premios confirmados — 2026-09-12
+
+Autorización directa del propietario: primer lugar Meta Quest 3S; segundo lugar audífonos inalámbricos Beats Solo 4, usando las dos fotografías proporcionadas. Sustituye «Premio aún por definir» del landing. HEAD inicial `cc2bafc` (`Votacion 2`), árbol limpio.
+
+Alcance: sección `#ganadores`, CSS propio, originales en `imagen/prizes/`, derivados WebP reproducibles, expectativas de pruebas y documentación. Mostrar dos tarjetas ordenadas, con fotografías completas, primer lugar antes del segundo; conservar título de los dos proyectos con más votos y el flujo de votación. No se agregan capacidades, precios, especificaciones, reglas de desempate, dependencias ni datos. Continúa PENDING la reconciliación con PDF y otras pantallas; no se edita esa documentación jurídica.
+
+Pasos: baseline → originales/derivados → tarjetas responsive → pruebas/QA → evidencia. Validación ajustada a contenido y assets: pruebas focalizadas existentes de landing, experiencia participante, seguridad/flags y guard; Pint, build, JSON/manifest, hashes reproducibles y navegador en 320/390/768/1440. No se atribuye la suite global histórica a esta actualización. El cierre global anterior sigue condicionado por Pint preexistente y UAT Google.
+
+```bash
+FLOWERFLOW_TEST_GUARD_ONLY=true scripts/serve_local_testing.sh
+php artisan test --filter='DisposableDatabaseGuardTest|PublicLandingTest|ParticipantExperienceRedesignTest|SecurityAndFlagsTest'
+php scripts/build_voting_prize_assets.php
+vendor/bin/pint --test scripts/build_voting_prize_assets.php tests/Feature/PublicLandingTest.php tests/Feature/ParticipantExperienceRedesignTest.php
+scripts/build_frontend_production.sh
+vendor/bin/pint --test
+git diff --check
+```
+
+Rollback: revertir sólo esta actualización de premios y reconstruir Vite; sin datos ni migraciones. Local/test, sin stage, commit, push ni despliegue.
+
+- [x] 2026-09-12 MST — Fotografías localizadas en Downloads de Windows vía WSL e inspeccionadas. Meta: PNG 1810×976; Beats: PNG 892×1284.
+- [x] 2026-09-12 MST — Baseline: guard de base desechable verde, 38 passed/528 assertions/29.82 s y build desde lock verde. Pint global sigue fallando únicamente en `video-tutorial/scripts/freeze-time.php`, igual al antecedente.
+- [x] 2026-09-12 MST — Tarjetas ordenadas implementadas, fotografías originales preservadas y cuatro WebP generados. Segunda exportación idéntica byte por byte; copias PNG con SHA-256 igual al de Downloads. Dos versiones web mayores: 37918 bytes.
+- [x] 2026-09-12 MST — Focalizadas finales: 38 passed, 562 assertions, 28.00 s. Build desde lock verde (Node 22.23.1, Yarn 1.22.22), Pint de los tres PHP propios verde; 15 JSON y manifest de tres entradas con archivos/importaciones existentes. Diff sin errores.
+- [x] 2026-09-12 MST — Navegador Chromium en 320/390/768/1440: fotos completas, orden correcto, columnas responsive y sin overflow ni excepciones JS. Votar visible a 383.42–436.19 px en 390×844. Ancla de ganadores deja el título debajo del encabezado.
+- [x] 2026-09-12 MST — Doce controles de continuidad: iframe diferido/único, menú, teclado, Escape y retorno de foco, reapertura sin recargar, alternativa Google, HTML/enlaces sin JS, documentos/login HTTP 200 y tarjetas con zoom CSS al 200 %. Iframe simulado sólo en QA; ningún voto ni credencial. No es UAT de Google ni zoom nativo.
+- [x] 2026-09-12 MST — Informe 36, ADR-0017, trazabilidad y overrides actualizados; dieciséis archivos versionables. Capturas y guiones bajo `output/playwright/ff-prizes-*`, ignorados. Validación local de esta actualización concluida.
+- [x] 2026-09-12 MST — Servidor y navegador de QA cerrados. Inventario contrastado con Git, HEAD `cc2bafc` conservado y sin stage, commit, push ni despliegue.
+- [!] 2026-09-12 MST — Pint global final vuelve a fallar sólo por `video-tutorial/scripts/freeze-time.php`, `fully_qualified_strict_types`; log `/tmp/ff-prizes-final-pint.log`. No se repite la suite/gate global histórico para este ajuste de contenido y assets; no se declara cerrado el milestone integral. UAT Google y reconciliación con PDF/otras pantallas siguen PENDING.

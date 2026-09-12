@@ -33,12 +33,27 @@
 <section id="ganadores" class="ff-landing-section ff-prize-section" aria-labelledby="premio-title">
   <div class="ff-landing-container">
     <div class="ff-prize-card">
-      <div class="ff-prize-number" aria-hidden="true">2</div>
       <div class="ff-prize-copy">
         <p class="ff-eyebrow">Reconocemos las mejores ideas</p>
         <h2 id="premio-title">Los 2 proyectos con más votos serán los ganadores</h2>
-        <p class="ff-prize-pending">Premio aún por definir</p>
       </div>
+      <ol class="ff-awards-grid" aria-label="Premios de la votación ciudadana">
+        <li class="ff-award">
+          <p class="ff-award-place">Primer lugar</p>
+          <div class="ff-award-media">
+            <img src="{{ asset('assets/flowerflow/landing/prize-metaquest3s-960.webp') }}" srcset="{{ asset('assets/flowerflow/landing/prize-metaquest3s-480.webp') }} 480w, {{ asset('assets/flowerflow/landing/prize-metaquest3s-960.webp') }} 960w" sizes="(max-width: 767px) calc(100vw - 6rem), (max-width: 1212px) calc(50vw - 6rem), 460px" width="960" height="518" alt="Visor Meta Quest 3S con sus controles" loading="lazy" decoding="async">
+          </div>
+          <h3>Meta Quest 3S</h3>
+        </li>
+        <li class="ff-award">
+          <p class="ff-award-place">Segundo lugar</p>
+          <div class="ff-award-media">
+            <img src="{{ asset('assets/flowerflow/landing/prize-beats-solo4-640.webp') }}" srcset="{{ asset('assets/flowerflow/landing/prize-beats-solo4-320.webp') }} 320w, {{ asset('assets/flowerflow/landing/prize-beats-solo4-640.webp') }} 640w" sizes="(max-width: 767px) calc(100vw - 6rem), (max-width: 1212px) calc(50vw - 6rem), 460px" width="640" height="921" alt="Audífonos inalámbricos Beats Solo 4" loading="lazy" decoding="async">
+          </div>
+          <h3>Beats Solo 4</h3>
+          <p class="ff-award-description">Audífonos inalámbricos</p>
+        </li>
+      </ol>
     </div>
   </div>
 </section>
