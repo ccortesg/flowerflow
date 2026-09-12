@@ -586,28 +586,17 @@
 }
 
 .ff-prize-card {
-  display: grid;
-  grid-template-columns: minmax(0, .65fr) minmax(0, 1.35fr);
-  align-items: center;
+  padding: clamp(1.5rem, 4vw, 3rem);
   overflow: hidden;
   background: #173d2b;
   border-radius: 1.5rem;
   box-shadow: 0 1.5rem 3rem rgba(23, 61, 43, .12);
 }
 
-.ff-prize-number {
-  padding: 2rem 1rem;
-  color: #ffad7c;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(12rem, 24vw, 20rem);
-  line-height: 1;
-  text-align: center;
-}
-
 .ff-prize-copy {
-  padding: clamp(2rem, 5vw, 4rem);
-  padding-left: 0;
+  margin-bottom: 2rem;
   color: #fffaf4;
+  text-align: center;
 }
 
 .ff-prize-copy .ff-eyebrow {
@@ -615,22 +604,75 @@
 }
 
 .ff-prize-copy h2 {
-  max-width: 21ch;
-  margin-bottom: 1.75rem;
+  max-width: 26ch;
+  margin: 0 auto;
   color: #fffaf4;
   text-wrap: balance;
 }
 
-.ff-prize-pending {
+.ff-awards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ff-award {
+  min-width: 0;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  color: #173d2b;
+  background: #fff;
+  border: 1px solid #ecdfc7;
+  border-radius: 1rem;
+}
+
+.ff-award-place {
   display: inline-block;
   margin: 0;
-  padding: .8rem 1.1rem;
+  padding: .55rem .9rem;
+  color: #9e350d;
+  background: #fff0e7;
+  border-radius: .5rem;
+  font-size: .88rem;
+  font-weight: 800;
+  letter-spacing: .05em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.ff-award:nth-child(2) .ff-award-place {
   color: #173d2b;
-  background: #fff6e5;
-  border: 1px solid #ecdfc7;
-  border-radius: .65rem;
+  background: #eef4ef;
+}
+
+.ff-award-media {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  margin-block: 1.5rem;
+}
+
+.ff-award-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ff-award h3 {
+  margin: 0;
+  color: #173d2b;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -.035em;
+  line-height: 1.2;
+}
+
+.ff-award-description {
+  margin: .5rem 0 0;
+  color: var(--ff-landing-muted);
   font-size: 1rem;
-  font-weight: 750;
   line-height: 1.5;
 }
 
@@ -1153,16 +1195,11 @@
   }
 
   .ff-prize-card {
+    padding: 1.25rem;
+  }
+
+  .ff-awards-grid {
     grid-template-columns: 1fr;
-  }
-
-  .ff-prize-number {
-    padding: 1.5rem 1.5rem .75rem;
-    font-size: 7rem;
-  }
-
-  .ff-prize-copy {
-    padding: 0 1.5rem 2.25rem;
   }
 
   .ff-information-grid {

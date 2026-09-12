@@ -1,5 +1,9 @@
 # Inventario de overrides de Materialize
 
+## Premios de votación ciudadana — 2026-09-12
+
+`resources/views/public/landing.blade.php` y `resources/css/pages/public-landing.css`: dos tarjetas ordenadas para Meta Quest 3S (primer lugar) y Beats Solo 4 (segundo lugar), en sustitución del premio pendiente. Fotos completas sobre fondo blanco, proporción conservada, `srcset`, dimensiones y carga diferida. Originales en `imagen/prizes/`; derivados reproducibles por `scripts/build_voting_prize_assets.php` con GD ya instalado. Sin cambios en proveedor, modal/JS/CSP ni dependencias. Validación y hashes: [informe 36](36-voting-prizes-2026-09-12.md).
+
 ## Adenda de simplificación del landing — 2026-09-08
 
 Plan aprobado: centrar el contenido en votar y comunicar dos proyectos ganadores, con premio aún por definir. Se retiran del renderizado las secciones de convocatoria solicitadas, sin nuevo flag. Se reutilizan los colores, tipografía y estilos propios; la composición del reconocimiento usa un número 2 y deja de cargar la imagen del iPad. No se modifica el core del proveedor ni se añaden dependencias.

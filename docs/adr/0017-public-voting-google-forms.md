@@ -41,3 +41,9 @@ Los enlaces a las secciones ocultas se sustituyen por `#ganadores` en el landing
 Esta decisión afecta a la presentación solicitada; no implementa conteo de votos, selección automática, desempates ni publicación de resultados. `PENDING`: reconciliar la regla comunicada con los PDF y pantallas de cuenta que todavía describen el premio anterior. No se editan esos contenidos ni se inventan reglas o premios en esta integración.
 
 Evidencia de esta adenda: [informe 35](../35-voting-focused-landing-2026-09-08.md). Alcance local/test, sin stage, commit, push ni despliegue. Rollback por reversión del ajuste y reconstrucción de assets, sin cambios de datos.
+
+## Premios confirmados por el propietario — 2026-09-12
+
+La nueva instrucción sustituye «Premio aún por definir» en la sección de reconocimiento: **primer lugar, Meta Quest 3S; segundo lugar, audífonos inalámbricos Beats Solo 4**. Las fotografías proporcionadas se conservan sin cambios en `imagen/prizes/`; un script local con GD existente genera WebP con proporciones y transparencia conservadas. No se añaden especificaciones, importes, condiciones de entrega ni reglas de desempate.
+
+Presentación: tarjetas ordenadas en dos columnas para escritorio y una para móvil, fotografías completas con `object-fit: contain`, texto alternativo, dimensiones explícitas y carga diferida. Se conservan el título de los dos proyectos más votados, el modal, URLs, CSP y el resto del landing. La reconciliación con PDF y otras pantallas sigue PENDING fuera de este ajuste. Evidencia y validación acotada: [informe 36](../36-voting-prizes-2026-09-12.md). Sólo local/test; sin commit, push ni despliegue.

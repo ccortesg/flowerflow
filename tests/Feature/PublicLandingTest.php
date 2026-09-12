@@ -25,7 +25,9 @@ class PublicLandingTest extends TestCase
             ->assertSee('Elige tu proyecto favorito y apoya con tu voto las ideas ciudadanas para transformar Hermosillo.')
             ->assertSee('Reconocemos las mejores ideas')
             ->assertSee('Los 2 proyectos con más votos serán los ganadores')
-            ->assertSee('Premio aún por definir')
+            ->assertSee('Meta Quest 3S')
+            ->assertSee('Beats Solo 4')
+            ->assertDontSee('Premio aún por definir')
             ->assertSee('Tu opinión cuenta')
             ->assertSee('Elige tu proyecto favorito')
             ->assertSee('FUNXT, A.C.')
@@ -39,10 +41,29 @@ class PublicLandingTest extends TestCase
             'assets/flowerflow/logo_florecehermosillo_transparente.png',
             'assets/flowerflow/landing/voting-illustration-640.webp',
             'assets/flowerflow/landing/voting-illustration-1024.webp',
+            'assets/flowerflow/landing/prize-metaquest3s-480.webp',
+            'assets/flowerflow/landing/prize-metaquest3s-960.webp',
+            'assets/flowerflow/landing/prize-beats-solo4-320.webp',
+            'assets/flowerflow/landing/prize-beats-solo4-640.webp',
         ] as $asset) {
             $response->assertSee($asset, false);
             $this->assertFileExists(public_path($asset));
         }
+
+        $document = new DOMDocument;
+        @$document->loadHTML($response->getContent());
+        $xpath = new DOMXPath($document);
+        $awards = $xpath->query('//*[@id="ganadores"]//ol/li');
+        $this->assertSame(2, $awards->length);
+        foreach ([['Primer lugar', 'Meta Quest 3S', 'prize-metaquest3s-960.webp'], ['Segundo lugar', 'Beats Solo 4', 'prize-beats-solo4-640.webp']] as $index => [$place, $name, $image]) {
+            $award = $awards->item($index);
+            $this->assertSame($place, $xpath->evaluate('string(p[1])', $award));
+            $this->assertSame($name, $xpath->evaluate('string(h3)', $award));
+            $this->assertStringEndsWith($image, $xpath->evaluate('string(.//img/@src)', $award));
+            $this->assertNotEmpty($xpath->evaluate('string(.//img/@alt)', $award));
+            $this->assertSame('lazy', $xpath->evaluate('string(.//img/@loading)', $award));
+        }
+        $response->assertSee('Audífonos inalámbricos');
 
         $documents = $this->get(route('documents'))->assertOk();
         foreach (['mechanics', 'terms', 'privacy'] as $type) {
@@ -76,7 +97,9 @@ class PublicLandingTest extends TestCase
                 $response = $this->get('/')->assertOk()
                     ->assertSee('Votar')
                     ->assertSee('Los 2 proyectos con más votos serán los ganadores')
-                    ->assertSee('Premio aún por definir')
+                    ->assertSee('Meta Quest 3S')
+                    ->assertSee('Beats Solo 4')
+                    ->assertDontSee('Premio aún por definir')
                     ->assertDontSee('id="categorias"', false)
                     ->assertDontSee('id="preguntas"', false)
                     ->assertSee('href="'.route('login').'"', false)
@@ -144,7 +167,9 @@ class PublicLandingTest extends TestCase
 
         $this->get('/')->assertOk()
             ->assertSee('Los 2 proyectos con más votos serán los ganadores')
-            ->assertSee('Premio aún por definir')
+            ->assertSee('Meta Quest 3S')
+            ->assertSee('Beats Solo 4')
+            ->assertDontSee('Premio aún por definir')
             ->assertSee('Votar')
             ->assertDontSee('id="categorias"', false);
     }

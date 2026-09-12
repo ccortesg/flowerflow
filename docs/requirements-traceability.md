@@ -13,9 +13,10 @@ Autorización del propietario: plan de implementación del 2026-09-08, sólo loc
 | VOTE-05 | Alcance inicial: mantener información, PDF, categorías, cuentas y flags | Evidencia histórica: informe 34; la adenda de VOTE-07 sustituye la conservación de las secciones del landing | SUPERSEDED parcialmente por VOTE-07; PDF/cuentas/flags conservados |
 | VOTE-06 | Conservar acceso Google actual y completar votación en su servicio | Alternativa «Abrir en Google»; UAT con sesión real por propietario | PENDING manual; sin votos automatizados |
 | VOTE-07 | H-01: landing centrado en votar, sin categorías/proceso/requisitos/documentos/FAQ renderizados | Landing, introducción y `PublicLandingTest`; adenda aprobada del 2026-09-08 | VERIFIED LOCAL/TEST; gate y límites en informe 35 |
-| VOTE-08 | H-01: comunicar dos proyectos ganadores por votos y premio por definir | Sección `#ganadores`, composición tipográfica, pruebas de texto y ausencia de iPad/regla anterior | VERIFIED LOCAL/TEST; gate y límites en informe 35 |
+| VOTE-08 | H-01: comunicar dos proyectos ganadores por votos; inicialmente premio por definir | Evidencia histórica en informe 35; premios concretos confirmados después por VOTE-11 | SUPERSEDED parcialmente por VOTE-11 |
 | VOTE-09 | H-01: enlaces públicos coherentes y acceso a documentos/cuentas | Header/footer/login/layout; `PublicLandingTest`, `ParticipantExperienceRedesignTest` y QA de menú/modal | VERIFIED LOCAL/TEST con router QA temporal; limitación de artisan serve en informe 35 |
 | VOTE-10 | Reconciliar premio y criterio comunicados con PDF y otras pantallas | Sólo se cambia el landing y sus enlaces en esta adenda; no hay conteo, desempate ni selección automática | PENDING fuera de esta integración |
+| VOTE-11 | H-01: primer lugar Meta Quest 3S; segundo lugar audífonos inalámbricos Beats Solo 4 | `#ganadores`, tarjetas/fotografías responsive, originales y WebP reproducibles; `PublicLandingTest`, `ParticipantExperienceRedesignTest` | VERIFIED local/test: 38 pruebas, 562 aserciones, build y QA responsive; informe 36. Gate global/PDF/UAT siguen PENDING |
 
 ## ADR-0016 — filtros y exportación de revisiones vigentes
 
